@@ -296,3 +296,87 @@ function savePMStore(store) {
         console.error('Failed to save PM store to localStorage:', e);
     }
 }
+
+/* ===== ការជូនដំណឹងក្នុងក្បាលទំព័រ (អានដោយ portal.js) ===== */
+
+const PM_TODAY = new Date(2026, 8, 23); // 23 កញ្ញា 2026
+
+function pmFmtUSD(val) {
+    const n = Number(val) || 0;
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function pmDaysUntil(dateStr) {
+    const parts = String(dateStr || '').split('-');
+    if (parts.length !== 3) return null;
+    const target = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    return Math.round((target - PM_TODAY) / 86400000);
+}
+
+function portalNotifications() {
+    const list = [];
+    const store = getPMStore();
+
+    // ការបញ្ជាទិញដែលហួសថ្ងៃទទួលទំនិញ
+    store.purchaseOrders
+        .filter(po => po.status === 'sent' || po.threeWayStatus === 'pending_grn')
+        .forEach(po => {
+            const left = pmDaysUntil(po.deliveryDate);
+            if (left === null) return;
+            if (left < 0) {
+                list.push({
+                    icon: 'mdi:truck-alert-outline',
+                    tone: 'danger',
+                    title: `${po.id} ហួសថ្ងៃទទួលទំនិញ ${Math.abs(left)} ថ្ងៃ`,
+                    note: `${po.supplierName} · ${pmFmtUSD(po.totalAmount)} · ${po.warehouse}`
+                });
+            } else if (left <= 5) {
+                list.push({
+                    icon: 'mdi:truck-delivery-outline',
+                    tone: 'warning',
+                    title: `${po.id} នឹងទទួលទំនិញក្នុង ${left} ថ្ងៃ`,
+                    note: `${po.supplierName} · ${pmFmtUSD(po.totalAmount)} · ${po.warehouse}`
+                });
+            }
+        });
+
+    // ការបញ្ជាទិញដែលទទួលទំនិញរួច ប៉ុន្តែមិនទាន់មានវិក្កយបត្រ
+    store.purchaseOrders.filter(po => po.threeWayStatus === 'pending_bill').forEach(po => {
+        list.push({
+            icon: 'mdi:receipt-text-clock-outline',
+            tone: 'warning',
+            title: `${po.id} ទទួលទំនិញរួច តែខ្វះវិក្កយបត្រ`,
+            note: `${po.supplierName} · ${pmFmtUSD(po.totalAmount)} · មិនអាចផ្ទៀងផ្ទាត់ត្រីភាគីបានទេ`
+        });
+    });
+
+    // វិក្កយបត្រអ្នកផ្គត់ផ្គង់ដែលរង់ចាំការផ្ទៀងផ្ទាត់ត្រីភាគី
+    store.vendorBills.filter(b => b.status === 'pending_match').forEach(b => {
+        list.push({
+            icon: 'mdi:file-compare',
+            tone: 'warning',
+            title: `${b.id} រង់ចាំការផ្ទៀងផ្ទាត់ត្រីភាគី`,
+            note: `${b.supplierName} · ${pmFmtUSD(b.amount)} · យោង ${b.poId}`
+        });
+    });
+
+    // វិក្កយបត្រជិតដល់កាលកំណត់ទូទាត់
+    store.vendorBills
+        .filter(b => b.status !== 'paid')
+        .map(b => ({ b, left: pmDaysUntil(b.dueDate) }))
+        .filter(x => x.left !== null && x.left <= 15)
+        .sort((a, b) => a.left - b.left)
+        .slice(0, 3)
+        .forEach(x => {
+            list.push({
+                icon: 'mdi:calendar-clock-outline',
+                tone: x.left < 0 ? 'danger' : 'info',
+                title: x.left < 0
+                    ? `${x.b.id} ហួសកាលកំណត់ទូទាត់ ${Math.abs(x.left)} ថ្ងៃ`
+                    : `${x.b.id} ត្រូវទូទាត់ក្នុង ${x.left} ថ្ងៃ`,
+                note: `${x.b.supplierName} · ${pmFmtUSD(x.b.amount)}`
+            });
+        });
+
+    return list;
+}

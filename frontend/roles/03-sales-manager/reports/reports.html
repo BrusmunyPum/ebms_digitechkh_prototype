@@ -35,23 +35,11 @@
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="min-w-0">
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight truncate">របាយការណ៍សង្ខេបផ្នែកលក់</h2>
-                <p class="sm-card-sub text-gray-500 mt-0.5 truncate">វិភាគតាមកាលបរិច្ឆេទ ប្រភេទទំនិញ និងបុគ្គលិកលក់</p>
-            </div>
-
-            <div class="flex items-center space-x-2 flex-shrink-0">
-                <button onclick="showToast('បាននាំចេញរបាយការណ៍ជាឯកសារ PDF រួចរាល់', 'success')" class="sm-badge px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition flex items-center gap-1.5">
-                    <i class="fas fa-file-pdf text-rose-600"></i> PDF
-                </button>
-                <button onclick="showToast('បាននាំចេញរបាយការណ៍ជាឯកសារ Excel រួចរាល់', 'success')" class="sm-badge px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition flex items-center gap-1.5">
-                    <i class="fas fa-file-excel text-emerald-600"></i> Excel
-                </button>
-            </div>
-        </header>
+        <div id="headerHost" data-title="របាយការណ៍សង្ខេបផ្នែកលក់"
+             data-subtitle="វិភាគតាមកាលបរិច្ឆេទ ប្រភេទទំនិញ និងបុគ្គលិកលក់"></div>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
+
             <div class="w-full space-y-4">
 
                 <!-- Filters -->
@@ -76,6 +64,15 @@
                     <button id="tabBtn-approvals" onclick="switchReportTab('approvals')" class="sm-badge px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 font-medium transition">
                         សង្ខេបការអនុម័ត
                     </button>
+                    <span class="ml-auto w-px h-6 bg-slate-200 hidden sm:block"></span>
+                    <div class="flex flex-wrap items-center gap-2 no-print">
+                        <button onclick="showToast('បាននាំចេញរបាយការណ៍ជាឯកសារ PDF រួចរាល់', 'success')" class="sm-badge px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition flex items-center gap-1.5">
+                            <i class="fas fa-file-pdf text-rose-600"></i> PDF
+                        </button>
+                        <button onclick="showToast('បាននាំចេញរបាយការណ៍ជាឯកសារ Excel រួចរាល់', 'success')" class="sm-badge px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition flex items-center gap-1.5">
+                            <i class="fas fa-file-excel text-emerald-600"></i> Excel
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Panel: Sales Performance -->

@@ -46,37 +46,25 @@
     <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
 
         <!-- Top Header (Standard 2: h-[72px] px-6) -->
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-xs z-10 flex-shrink-0 w-full border-b border-slate-200/70">
-            <div class="flex items-center gap-4">
-                <a href="ledger.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ទៅ...">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </a>
-                <div>
-                    <div class="flex items-center gap-2.5">
-                        <h2 class="text-xl font-bold text-slate-800 leading-tight" id="jeTitleHeader">JE-2026-XXXXX</h2>
-                        <span id="headerStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold">---</span>
-                    </div>
-                    <p class="text-xs font-normal text-slate-500 mt-0.5">ព័ត៌មានលម្អិតប័ណ្ណទិន្នានុប្បវត្តគណនេយ្យ</p>
-                </div>
-            </div>
-
-            <!-- Header Action Buttons -->
-            <div class="flex items-center space-x-2.5">
-                <button type="button" onclick="window.print()" class="h-10 px-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl flex items-center gap-2 transition cursor-pointer">
-                    <i class="fas fa-print"></i>
-                    <span>បោះពុម្ពប័ណ្ណ</span>
-                </button>
-
-                <div class="flex items-center sm:border-l sm:pl-3">
-                    <div class="w-10 h-10 rounded-full bg-violet-600 text-white flex items-center justify-center font-semibold text-sm shadow-sm">
-                        ហរ
-                    </div>
-                </div>
-            </div>
-        </header>
+        <div id="headerHost" data-title="JE-2026-XXXXX"
+             data-subtitle="ព័ត៌មានលម្អិតប័ណ្ណទិន្នានុប្បវត្តគណនេយ្យ"
+             data-back="ledger.html"></div>
 
         <!-- Main Content Area -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full max-w-4xl mx-auto flex flex-wrap items-center justify-between gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span id="headerStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold">---</span>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="window.print()" class="h-10 px-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl flex items-center gap-2 transition cursor-pointer">
+                        <i class="fas fa-print"></i>
+                        <span>បោះពុម្ពប័ណ្ណ</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="w-full max-w-4xl mx-auto space-y-6">
 
                 <!-- Printable Journal Voucher Card -->
@@ -179,7 +167,7 @@
                 return;
             }
 
-            document.getElementById('jeTitleHeader').textContent = je.id;
+            document.getElementById('portalTitle').textContent = je.id;
             document.getElementById('jeNumberDoc').textContent = je.id;
             document.getElementById('jeDateDoc').textContent = je.date;
             document.getElementById('jeRefDoc').textContent = je.reference || je.source || 'មិនមាន';

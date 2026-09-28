@@ -183,3 +183,76 @@ function saveAPARStore(store) {
         console.error('Failed to save APAR store to localStorage:', e);
     }
 }
+
+/* ===== ការជូនដំណឹងក្នុងក្បាលទំព័រ (អានដោយ portal.js) ===== */
+
+const APAR_TODAY = new Date(2026, 8, 25); // 25 កញ្ញា 2026
+
+function aparFmtUSD(val) {
+    const n = Number(val) || 0;
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function aparDaysUntil(dateStr) {
+    const parts = String(dateStr || '').split('-');
+    if (parts.length !== 3) return null;
+    const target = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    return Math.round((target - APAR_TODAY) / 86400000);
+}
+
+function portalNotifications() {
+    const list = [];
+    const store = getAPARStore();
+    const kpis = store.kpis;
+
+    // បំណុលត្រូវទារហួសកាលកំណត់
+    if (kpis.overdueAR > 0) {
+        list.push({
+            icon: 'mdi:cash-clock',
+            tone: 'danger',
+            title: `បំណុលត្រូវទារហួសកាលកំណត់ ${aparFmtUSD(kpis.overdueAR)}`,
+            note: `ក្នុងបំណុលត្រូវទារសរុប ${aparFmtUSD(kpis.totalAR)} · ត្រូវទូរស័ព្ទទារបន្ទាន់`
+        });
+    }
+
+    // វិក្កយបត្រជិតដល់កាលកំណត់ទទួលប្រាក់
+    (store.upcomingReceivables || [])
+        .map(r => ({ r, left: aparDaysUntil(r.dueDate) }))
+        .sort((a, b) => (a.left === null ? 99 : a.left) - (b.left === null ? 99 : b.left))
+        .slice(0, 3)
+        .forEach(x => {
+            const overdue = x.left !== null && x.left < 0;
+            list.push({
+                icon: overdue ? 'mdi:calendar-remove-outline' : 'mdi:calendar-clock-outline',
+                tone: overdue ? 'danger' : (x.left !== null && x.left <= 3 ? 'warning' : 'info'),
+                title: overdue
+                    ? `${x.r.invoiceId} ហួសកាលកំណត់ ${Math.abs(x.left)} ថ្ងៃ`
+                    : `${x.r.invoiceId} ដល់កំណត់ក្នុង ${x.left} ថ្ងៃ`,
+                note: `${x.r.customer} · ${aparFmtUSD(x.r.amount)}`
+            });
+        });
+
+    // ប័ណ្ណចំណាយរង់ចាំការអនុម័ត
+    store.vouchers.filter(v => v.status !== 'paid' && v.status !== 'rejected').forEach(v => {
+        list.push({
+            icon: 'mdi:file-sign',
+            tone: 'warning',
+            title: `ប័ណ្ណចំណាយ ${v.id} រង់ចាំដំណើរការ`,
+            note: `${v.vendorName} · សុទ្ធ ${aparFmtUSD(v.netAmount)}${v.whtAmount ? ` · ពន្ធកាត់ទុក ${aparFmtUSD(v.whtAmount)}` : ''} · ${v.paymentMethod}`,
+            time: v.date
+        });
+    });
+
+    // បង្កាន់ដៃទទួលប្រាក់ដែលមិនទាន់ផ្ទៀងផ្ទាត់ជាមួយធនាគារ
+    store.receipts.filter(r => r.status !== 'verified').forEach(r => {
+        list.push({
+            icon: 'mdi:bank-check',
+            tone: 'warning',
+            title: `បង្កាន់ដៃ ${r.id} មិនទាន់ផ្ទៀងផ្ទាត់ធនាគារ`,
+            note: `${r.customerName} · ${aparFmtUSD(r.amount)} · ${r.paymentMethod}${r.bankRef ? ` · យោង ${r.bankRef}` : ''}`,
+            time: r.date
+        });
+    });
+
+    return list;
+}

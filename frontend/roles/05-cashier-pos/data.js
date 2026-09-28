@@ -161,7 +161,7 @@ function productImgHtml(p, iconSize) {
         <img src="${productImageSrc(p)}" alt="${p.name}" loading="lazy"
              class="w-full h-full object-contain"
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-        <span class="hidden w-full h-full items-center justify-center text-${p.tone}-600">
+        <span style="display:none" class="w-full h-full items-center justify-center text-${p.tone}-600">
             <i class="fas ${p.icon} ${iconSize || 'text-2xl'}"></i>
         </span>`;
 }
@@ -418,6 +418,50 @@ function receiptHtml(sale, options) {
                 ${opts.reprint ? '<div style="margin-top:6px;font-weight:600;">-- បោះពុម្ពឡើងវិញ --</div>' : ''}
             </div>
         </div>`;
+}
+
+/* ===== ការជូនដំណឹងសម្រាប់ក្បាលទំព័រ =====
+   បង្កើតចេញពីទិន្នន័យវេនពិតប្រាកដ មិនមែនបញ្ជីថេរឡើយ */
+function portalNotifications() {
+    const list = [];
+    const s = shiftSummary();
+
+    // ទំនិញជិតអស់ស្តុក
+    const low = PRODUCTS
+        .map(p => ({ p, left: availableStock(p.sku) }))
+        .filter(x => x.left <= 5)
+        .sort((a, b) => a.left - b.left);
+
+    low.slice(0, 3).forEach(x => {
+        list.push({
+            icon: x.left === 0 ? 'mdi:package-variant-remove' : 'mdi:alert-outline',
+            tone: x.left === 0 ? 'danger' : 'warning',
+            title: x.left === 0 ? `${x.p.name} អស់ស្តុក` : `${x.p.name} នៅសល់ ${x.left} ${x.p.unit}`,
+            note: x.left === 0 ? 'មិនអាចលក់បន្ថែមបានទេ' : 'សូមជូនដំណឹងដល់ផ្នែកឃ្លាំង'
+        });
+    });
+
+    // ព័ត៌មានវេនបច្ចុប្បន្ន
+    const openedHours = Math.floor((BMS_TODAY - new Date(SHIFT.openedAt)) / 3600000);
+    list.push({
+        icon: 'mdi:clock-outline',
+        tone: 'info',
+        title: `វេន ${SHIFT.terminal} បើកបាន ${openedHours} ម៉ោង`,
+        note: `បើកម៉ោង ${fmtTime(SHIFT.openedAt)} · លក់បាន ${s.count} វិក្កយបត្រ`,
+        time: fmtKhDate(SHIFT.openedAt)
+    });
+
+    // រំលឹកបិទវេន
+    if (openedHours >= 6) {
+        list.push({
+            icon: 'mdi:cash-lock-open',
+            tone: 'warning',
+            title: 'ដល់ពេលត្រៀមបិទវេនហើយ',
+            note: `រំពឹងទុកក្នុងថត ${fmtUSD(s.expectedUSD)} និង ${fmtKHR(s.expectedKHR)}`
+        });
+    }
+
+    return list;
 }
 
 /* ===== កូដ KHQR បាគង (គំរូសាកល្បង) ===== */

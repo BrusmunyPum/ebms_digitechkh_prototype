@@ -34,18 +34,8 @@
         <!-- Main Content Area -->
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
             <!-- Header (72px aligned) -->
-            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200/80 flex-shrink-0 z-10 shadow-xs">
-                <div>
-                    <h2 class="text-xl font-semibold text-slate-800 leading-tight">ចលនា & ការកែតម្រូវស្តុក</h2>
-                    <p class="text-xs font-normal text-slate-500 mt-0.5">គ្រប់គ្រងប័ណ្ណផ្ទេរឆ្លងឃ្លាំង អនុម័តការកែតម្រូវ និងតាមដានការដាស់តឿនស្តុក</p>
-                </div>
-                <div class="flex items-center gap-3" id="headerActionBtn">
-                    <a href="create-transfer.html" id="topActionBtn" class="h-10 px-4 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition">
-                        <i class="fas fa-plus text-xs"></i>
-                        <span id="topActionText">បង្កើតប័ណ្ណផ្ទេរថ្មី</span>
-                    </a>
-                </div>
-            </header>
+        <div id="headerHost" data-title="ចលនា & ការកែតម្រូវស្តុក"
+                 data-subtitle="គ្រប់គ្រងប័ណ្ណផ្ទេរឆ្លងឃ្លាំង អនុម័តការកែតម្រូវ និងតាមដានការដាស់តឿនស្តុក"></div>
 
             <!-- Sub-Navigation Tabs Bar -->
             <div class="bg-white px-6 border-b border-slate-200 flex items-center gap-6 flex-shrink-0">
@@ -68,6 +58,18 @@
 
             <!-- Scrollable Content Area -->
             <main class="flex-1 overflow-y-auto p-6 space-y-6">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full flex flex-wrap items-center justify-end gap-2 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <div class="flex items-center gap-3" id="headerActionBtn">
+                        <a href="create-transfer.html" id="topActionBtn" class="h-10 px-4 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition">
+                            <i class="fas fa-plus text-xs"></i>
+                            <span id="topActionText">បង្កើតប័ណ្ណផ្ទេរថ្មី</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
                 <!-- TAB 1: Transfers -->
                 <div id="tabContent-transfers" class="space-y-6">
                     <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-4">

@@ -34,41 +34,33 @@
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full print:hidden">
-            <div class="flex items-center gap-3 min-w-0">
-                <a href="companies.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70 flex-shrink-0" title="ត្រឡប់ទៅកាន់បញ្ជីក្រុមហ៊ុន">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </a>
-                <div class="min-w-0">
-                    <h2 class="text-xl font-semibold text-gray-800 leading-tight truncate">ព័ត៌មានលម្អិតក្រុមហ៊ុន</h2>
-                    <p id="headerSubtitle" class="text-xs font-normal text-gray-500 mt-0.5 truncate">ទម្រង់ព័ត៌មានក្រុមហ៊ុនពេញលេញ ស្ថិតិប្រើប្រាស់ និងប្រវត្តិការជាវ</p>
+        <div id="headerHost" data-title="ព័ត៌មានលម្អិតក្រុមហ៊ុន"
+             data-subtitle="ទម្រង់ព័ត៌មានក្រុមហ៊ុនពេញលេញ ស្ថិតិប្រើប្រាស់ និងប្រវត្តិការជាវ"
+             data-back="companies.html"></div>
+
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="window.print()" class="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200 transition shadow-sm cursor-pointer">
+                        <i class="fas fa-print mr-1 text-slate-500"></i>
+                        <span>បោះពុម្ព</span>
+                    </button>
+                    <button type="button" onclick="handleResetPassword()" class="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 text-xs font-medium border border-amber-200 transition cursor-pointer">
+                        <i class="fas fa-key mr-1"></i>
+                        <span>Reset Password</span>
+                    </button>
+                    <button type="button" id="toggleStatusBtn" onclick="handleToggleStatus()" class="px-3.5 py-2 rounded-xl text-xs font-medium transition cursor-pointer">
+                        <i id="toggleStatusIcon" class="fas fa-ban mr-1"></i>
+                        <span id="toggleStatusLabel">ផ្អាកដំណើរការ</span>
+                    </button>
+                    <a id="editCompanyBtn" href="#" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs font-medium shadow-sm transition">
+                        <i class="fas fa-pen-to-square text-xs"></i>
+                        <span>កែប្រែព័ត៌មាន</span>
+                    </a>
                 </div>
             </div>
 
-            <div class="flex items-center space-x-2.5 flex-shrink-0">
-                <button type="button" onclick="window.print()" class="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200 transition shadow-sm cursor-pointer">
-                    <i class="fas fa-print mr-1 text-slate-500"></i>
-                    <span>បោះពុម្ព</span>
-                </button>
-
-                <button type="button" onclick="handleResetPassword()" class="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 text-xs font-medium border border-amber-200 transition cursor-pointer">
-                    <i class="fas fa-key mr-1"></i>
-                    <span>Reset Password</span>
-                </button>
-
-                <button type="button" id="toggleStatusBtn" onclick="handleToggleStatus()" class="px-3.5 py-2 rounded-xl text-xs font-medium transition cursor-pointer">
-                    <i id="toggleStatusIcon" class="fas fa-ban mr-1"></i>
-                    <span id="toggleStatusLabel">ផ្អាកដំណើរការ</span>
-                </button>
-
-                <a id="editCompanyBtn" href="#" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs font-medium shadow-sm transition">
-                    <i class="fas fa-pen-to-square text-xs"></i>
-                    <span>កែប្រែព័ត៌មាន</span>
-                </a>
-            </div>
-        </header>
-
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
             <div class="w-full space-y-5">
 
                 <!-- Company Master Banner Card -->
@@ -295,7 +287,7 @@
             }
 
             // Subtitle & Header Links
-            document.getElementById('headerSubtitle').textContent = `លេខកូដក្រុមហ៊ុន៖ #${currentTenant.id} · ចុះឈ្មោះថ្ងៃទី ${fmtDateKh(currentTenant.createdAt)}`;
+            setPortalSubtitle(`លេខកូដក្រុមហ៊ុន៖ #${currentTenant.id} · ចុះឈ្មោះថ្ងៃទី ${fmtDateKh(currentTenant.createdAt)}`);
             document.getElementById('editCompanyBtn').href = `edit-company.html?id=${currentTenant.id}`;
 
             // Top Banner

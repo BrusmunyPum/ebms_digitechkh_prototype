@@ -28,27 +28,26 @@
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="min-w-0">
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight truncate">បញ្ជីវិក្កយបត្រ</h2>
-                <p id="pageSubtitle" class="sm-card-sub text-gray-500 mt-0.5 truncate">តាមដានស្ថានភាពទូទាត់ និងការប្រមូលប្រាក់</p>
-            </div>
-
-            <div class="flex items-center space-x-3 flex-shrink-0">
-                <a href="create-invoice.html" class="sm-badge inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition">
-                    <i class="fas fa-plus"></i> <span class="hidden sm:inline">បង្កើតវិក្កយបត្រ</span>
-                </a>
-            </div>
-        </header>
+        <div id="headerHost" data-title="បញ្ជីវិក្កយបត្រ"
+             data-subtitle="តាមដានស្ថានភាពទូទាត់ និងការប្រមូលប្រាក់"></div>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
+
             <div class="w-full space-y-4">
 
                 <div id="summaryRow" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
 
                 <div class="bg-white rounded-2xl p-2 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
                     <div id="statusTabs" class="flex flex-wrap items-center gap-2"></div>
-                    <div id="dateFilterHost" class="flex items-center pr-1"></div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div id="dateFilterHost" class="flex items-center pr-1"></div>
+                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
+                        <div class="flex flex-wrap items-center gap-2 no-print">
+                            <a href="create-invoice.html" class="sm-badge inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition">
+                                <i class="fas fa-plus"></i> <span class="hidden sm:inline">បង្កើតវិក្កយបត្រ</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="customerFilterChip" class="hidden"></div>
@@ -156,7 +155,7 @@
             const chip = document.getElementById('customerFilterChip');
             if (!filterCustomer) {
                 chip.classList.add('hidden');
-                document.getElementById('pageSubtitle').textContent = 'តាមដានស្ថានភាពទូទាត់ និងការប្រមូលប្រាក់';
+                setPortalSubtitle('តាមដានស្ថានភាពទូទាត់ និងការប្រមូលប្រាក់');
                 return;
             }
             const cust = getCustomer(filterCustomer);
@@ -171,7 +170,7 @@
                         <i class="fas fa-xmark text-xs"></i> សម្អាតតម្រង
                     </button>
                 </div>`;
-            document.getElementById('pageSubtitle').textContent = `វិក្កយបត្ររបស់ ${cust.name}`;
+            setPortalSubtitle(`វិក្កយបត្ររបស់ ${cust.name}`);
         }
 
         function renderInvoices() {

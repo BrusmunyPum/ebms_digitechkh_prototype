@@ -159,3 +159,89 @@ function saveWarehouseStaffData(data) {
 function totalPending() {
     return getWarehouseStaffData().inboundPOs.filter(po => po.status === 'pending').length;
 }
+
+/* ===== ការជូនដំណឹងក្នុងក្បាលទំព័រ (អានដោយ portal.js)
+   គោលការណ៍លាក់តម្លៃ ១០០%៖ មិនបង្ហាញតម្លៃទិញ តម្លៃលក់ ឬទឹកប្រាក់ណាមួយឡើយ ===== */
+
+function portalNotifications() {
+    const list = [];
+    const data = getWarehouseStaffData();
+
+    // បញ្ជីរើសទំនិញបន្ទាន់ដែលមិនទាន់ចាប់ផ្តើម
+    data.pickLists.filter(pl => pl.status === 'pending').forEach(pl => {
+        const urgent = String(pl.priority || '').includes('បន្ទាន់');
+        list.push({
+            icon: 'mdi:clipboard-list-outline',
+            tone: urgent ? 'danger' : 'warning',
+            title: `បញ្ជីរើសទំនិញ ${pl.id} រង់ចាំដំណើរការ`,
+            note: `${pl.orderNo} · ${pl.targetZone} · ${pl.items.length} ប្រភេទទំនិញ · ${pl.priority}`,
+            time: pl.createdAt
+        });
+    });
+
+    // ទំនិញចូលដែលកំពុងទទួល ឬមានចំនួនមិនត្រូវគ្នា
+    data.inboundPOs.forEach(po => {
+        const short = po.items.filter(it => (it.receivedQty || 0) < it.orderQty);
+        const damaged = po.items.filter(it => (it.damagedQty || 0) > 0);
+        if (po.status === 'receiving') {
+            list.push({
+                icon: 'mdi:truck-check-outline',
+                tone: 'info',
+                title: `ការទទួលទំនិញ ${po.poNo} កំពុងដំណើរការ`,
+                note: `${po.supplierName} · ${po.driverInfo}`,
+                time: po.arrivalDate
+            });
+        } else if (po.status === 'pending') {
+            list.push({
+                icon: 'mdi:truck-outline',
+                tone: 'warning',
+                title: `ទំនិញចូល ${po.poNo} រង់ចាំការទទួល`,
+                note: `${po.supplierName} · ${po.items.length} ប្រភេទទំនិញ`,
+                time: po.arrivalDate
+            });
+        }
+        if (damaged.length) {
+            list.push({
+                icon: 'mdi:package-variant-closed-remove',
+                tone: 'danger',
+                title: `${po.poNo} មានទំនិញខូចខាត ${damaged.length} ប្រភេទ`,
+                note: damaged.map(it => `${it.name} (${it.damagedQty})`).join(' · ')
+            });
+        } else if (short.length && po.status === 'receiving') {
+            list.push({
+                icon: 'mdi:package-variant-minus',
+                tone: 'warning',
+                title: `${po.poNo} ទទួលមិនគ្រប់ចំនួន ${short.length} ប្រភេទ`,
+                note: short.map(it => `${it.name} (${it.receivedQty}/${it.orderQty})`).join(' · ')
+            });
+        }
+    });
+
+    // ការរាប់ស្តុកដែលមានគម្លាត
+    data.cycleCounts.forEach(cc => {
+        const varItems = cc.items.filter(it => (it.variance || 0) !== 0);
+        if (cc.status === 'in_progress') {
+            list.push({
+                icon: 'mdi:counter',
+                tone: varItems.length ? 'warning' : 'info',
+                title: `ការរាប់ស្តុក ${cc.id} កំពុងដំណើរការ`,
+                note: varItems.length
+                    ? `${cc.zone} · មានគម្លាត ${varItems.length} ប្រភេទ ត្រូវរាយការណ៍`
+                    : `${cc.zone} · ចំនួនត្រូវគ្នាទាំងអស់`,
+                time: cc.date
+            });
+        }
+    });
+
+    // ទំនិញដល់ចំណុចបញ្ជាទិញឡើងវិញ (បង្ហាញតែចំនួន មិនបង្ហាញតម្លៃ)
+    data.inventoryItems.filter(it => it.onHand <= it.reorderPoint).slice(0, 3).forEach(it => {
+        list.push({
+            icon: 'mdi:alert-outline',
+            tone: it.onHand === 0 ? 'danger' : 'warning',
+            title: `${it.name} នៅសល់ ${it.onHand} ${it.unit}`,
+            note: `ធ្នើ ${it.bin} · ចំណុចបញ្ជាទិញឡើងវិញ ${it.reorderPoint} ${it.unit}`
+        });
+    });
+
+    return list;
+}

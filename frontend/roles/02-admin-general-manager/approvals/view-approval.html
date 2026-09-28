@@ -35,34 +35,25 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Content Top Header with Unified Back Button -->
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="flex items-center gap-4 min-w-0">
-                <!-- Standard Back Button (Icon Only) -->
-                <a href="approvals.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70 flex-shrink-0" title="ត្រឡប់ទៅមជ្ឈមណ្ឌលអនុម័ត...">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </a>
-                <div class="min-w-0">
-                    <div class="flex items-center gap-2">
-                        <h2 id="headerTitle" class="text-xl font-semibold text-gray-800 leading-tight truncate">ពិនិត្យសំណើអនុម័ត</h2>
-                        <span id="headerStatusBadge"></span>
-                    </div>
-                    <p id="headerSub" class="text-xs font-normal text-gray-500 mt-0.5 truncate">ព័ត៌មានលម្អិតនៃសំណើ និងការផ្ទៀងផ្ទាត់ភស្តុតាងហិរញ្ញវត្ថុ</p>
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-3 flex-shrink-0">
-                <button onclick="window.print()" class="h-9 px-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs rounded-xl flex items-center gap-2 font-medium transition shadow-xs cursor-pointer">
-                    <i class="fas fa-print text-slate-500"></i>
-                    <span class="hidden sm:inline">បោះពុម្ពឯកសារ</span>
-                </button>
-                <div class="flex items-center sm:border-l sm:pl-3">
-                    <div class="w-10 h-10 rounded-full bg-[#1e3a5f] text-white flex items-center justify-center font-semibold text-sm shadow-sm" title="លី ហាក់សេង (អភិបាលទូទៅ)">លហ</div>
-                </div>
-            </div>
-        </header>
+        <div id="headerHost" data-title="ពិនិត្យសំណើអនុម័ត"
+             data-subtitle="ព័ត៌មានលម្អិតនៃសំណើ និងការផ្ទៀងផ្ទាត់ភស្តុតាងហិរញ្ញវត្ថុ"
+             data-back="approvals.html"></div>
 
         <!-- Main Content Area -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full flex flex-wrap items-center justify-between gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span id="headerStatusBadge"></span>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="window.print()" class="h-9 px-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs rounded-xl flex items-center gap-2 font-medium transition shadow-xs cursor-pointer">
+                        <i class="fas fa-print text-slate-500"></i>
+                        <span class="hidden sm:inline">បោះពុម្ពឯកសារ</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="w-full space-y-5">
 
                 <!-- Alert Banner for Resolved Decisions -->
@@ -280,8 +271,8 @@
             }
 
             // Populate Headers
-            document.getElementById('headerTitle').textContent = `ពិនិត្យសំណើ ${currentItem.id}`;
-            document.getElementById('headerSub').textContent = `ឯកសារយោង ${currentItem.refCode} • ប្រភេទ: ${currentItem.typeNameKh}`;
+            document.getElementById('portalTitle').textContent = `ពិនិត្យសំណើ ${currentItem.id}`;
+            setPortalSubtitle(`ឯកសារយោង ${currentItem.refCode} • ប្រភេទ: ${currentItem.typeNameKh}`);
             
             // Status Badge
             const badgeHost = document.getElementById('headerStatusBadge');

@@ -26,23 +26,9 @@
 </head>
 <body id="posPortal" data-role-root="." data-active="pos" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex flex-col h-screen overflow-hidden">
 
-    <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-        <div class="flex items-center gap-4 min-w-0">
-            <a href="pos-terminal.html"
-               class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70 flex-shrink-0"
-               title="ត្រឡប់ទៅផ្ទាំងគិតលុយ">
-                <i class="fas fa-arrow-left text-sm"></i>
-            </a>
-            <div class="min-w-0">
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight truncate">ទូទាត់តាម KHQR បាគង</h2>
-                <p id="headerSub" class="sm-card-sub text-gray-500 mt-0.5 truncate"></p>
-            </div>
-        </div>
-
-        <div class="flex items-center gap-3 flex-shrink-0">
-            <span id="countdownChip" class="sm-badge hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-sky-50 text-sky-700 border border-sky-200 font-semibold"></span>
-        </div>
-    </header>
+    <div id="headerHost" data-title="ទូទាត់តាម KHQR បាគង"
+             data-subtitle="សូមឱ្យអតិថិជនស្កេនកូដដើម្បីទូទាត់"
+             data-back="pos-terminal.html"></div>
 
     <main class="flex-1 overflow-y-auto bg-slate-50 px-4 md:px-6 py-6 scrollbar-hide">
         <div id="pageBody" class="w-full"></div>
@@ -62,8 +48,7 @@
         let settled = false;
 
         function renderPage() {
-            document.getElementById('headerSub').textContent =
-                `វិក្កយបត្រ ${receiptId} · ${SHIFT.terminal} · ${SHIFT.cashier}`;
+            setPortalSubtitle(`វិក្កយបត្រ ${receiptId} · ${SHIFT.terminal} · ${SHIFT.cashier}`);
 
             document.getElementById('pageBody').innerHTML = `
                 <div class="w-full grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -78,6 +63,9 @@
                         <p class="sm-label text-slate-500">ទឹកប្រាក់ត្រូវទូទាត់</p>
                         <p class="text-5xl font-bold text-[#1e3a5f] leading-tight mt-1">${fmtUSD(amount)}</p>
                         <p class="sm-card-title text-slate-500 mt-1">${fmtKHR(toKHR(amount))}</p>
+                        <div class="mt-4 flex justify-center">
+                            <span id="countdownChip" class="sm-badge inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-sky-50 text-sky-700 border border-sky-200 font-semibold"></span>
+                        </div>
 
                         <div class="flex justify-center my-6">
                             <div id="qrBox" class="p-4 bg-white rounded-2xl border-2 border-slate-200 shadow-sm inline-block"></div>

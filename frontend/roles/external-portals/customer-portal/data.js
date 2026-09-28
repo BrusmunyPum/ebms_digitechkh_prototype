@@ -233,3 +233,52 @@ function cpActiveOrdersCount() {
     const data = getCustomerPortalData();
     return data.orders.filter(o => o.currentStage < 4).length;
 }
+
+/* ===== ការជូនដំណឹងក្នុងក្បាលទំព័រ (អានដោយ portal.js) ===== */
+
+const CP_TODAY = new Date(2026, 8, 25); // 25 កញ្ញា 2026
+
+function cpDaysUntil(dateStr) {
+    const parts = String(dateStr || '').split('-');
+    if (parts.length !== 3) return null;
+    const target = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    return Math.round((target - CP_TODAY) / 86400000);
+}
+
+function portalNotifications() {
+    const list = [];
+    const data = getCustomerPortalData();
+
+    // វិក្កយបត្រដែលនៅជំពាក់ ឬហួសកាលកំណត់
+    data.invoices
+        .filter(inv => inv.status !== 'paid')
+        .map(inv => ({ inv, left: cpDaysUntil(inv.dueDate) }))
+        .sort((a, b) => (a.left === null ? 99 : a.left) - (b.left === null ? 99 : b.left))
+        .slice(0, 3)
+        .forEach(x => {
+            const overdue = x.left !== null && x.left < 0;
+            const t = cpInvoiceTotals(x.inv);
+            list.push({
+                icon: overdue ? 'mdi:invoice-text-clock-outline' : 'mdi:invoice-text-outline',
+                tone: overdue ? 'danger' : (x.left !== null && x.left <= 3 ? 'warning' : 'info'),
+                title: overdue
+                    ? `វិក្កយបត្រ ${x.inv.id} ហួសកាលកំណត់ ${Math.abs(x.left)} ថ្ងៃ`
+                    : `វិក្កយបត្រ ${x.inv.id} ត្រូវទូទាត់ក្នុង ${x.left} ថ្ងៃ`,
+                note: `នៅសល់ត្រូវបង់ ${cpFmtUSD(t.remaining)} · ${x.inv.paymentTerm}`,
+                time: cpFmtDate(x.inv.dueDate)
+            });
+        });
+
+    // ការដឹកជញ្ជូនកំពុងដំណើរការ
+    data.orders.filter(o => o.currentStage < 4).forEach(o => {
+        list.push({
+            icon: 'mdi:truck-delivery-outline',
+            tone: 'info',
+            title: `ការបញ្ជាទិញ ${o.id} កំពុងដឹកជញ្ជូន`,
+            note: `${o.driverName} (${o.driverPhone}) · ${o.vehicle} · រំពឹងដល់ ${o.eta}`,
+            time: cpFmtDate(o.date)
+        });
+    });
+
+    return list;
+}

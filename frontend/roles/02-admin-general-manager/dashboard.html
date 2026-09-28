@@ -36,26 +36,12 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Content Top Header -->
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="min-w-0">
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight truncate">ផ្ទាំងបញ្ជាការដ្ឋានប្រតិបត្តិការ</h2>
-                <p class="text-xs font-normal text-gray-500 mt-0.5 truncate">ទិដ្ឋភាពទូទៅនៃប្រតិបត្តិការអាជីវកម្ម 360 ដឺក្រេ លំហូរសាច់ប្រាក់ និងការអនុម័តជាន់ខ្ពស់</p>
-            </div>
-
-            <div class="flex items-center space-x-3 flex-shrink-0">
-                <a href="approvals/approvals.html" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-semibold transition">
-                    <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                    <span id="headerPendingPill">សំណើរង់ចាំអនុម័ត: 0</span>
-                </a>
-
-                <div class="flex items-center sm:border-l sm:pl-3">
-                    <div class="w-10 h-10 rounded-full bg-[#1e3a5f] text-white flex items-center justify-center font-semibold text-sm shadow-sm" title="លី ហាក់សេង (អភិបាលទូទៅ)">លហ</div>
-                </div>
-            </div>
-        </header>
+        <div id="headerHost" data-title="ផ្ទាំងបញ្ជាការដ្ឋានប្រតិបត្តិការ"
+             data-subtitle="ទិដ្ឋភាពទូទៅនៃប្រតិបត្តិការអាជីវកម្ម 360 ដឺក្រេ លំហូរសាច់ប្រាក់ និងការអនុម័តជាន់ខ្ពស់"></div>
 
         <!-- Main Content Area (Full Width, Hidden Scrollbar) -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
+
             <div class="w-full space-y-5">
 
                 <!-- Filter Toolbar with Unified Date Range Picker -->
@@ -64,7 +50,16 @@
                         <i class="fas fa-filter text-slate-400 text-xs"></i>
                         <span class="text-xs font-medium text-slate-600">កាលបរិច្ឆេទវិភាគប្រតិបត្តិការ</span>
                     </div>
-                    <div id="dateFilterHost" class="flex items-center"></div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div id="dateFilterHost" class="flex items-center"></div>
+                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
+                        <div class="flex flex-wrap items-center gap-2 no-print">
+                            <a href="approvals/approvals.html" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-semibold transition">
+                                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                                <span id="headerPendingPill">សំណើរង់ចាំអនុម័ត: 0</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Top 5 Executive KPI Cards -->

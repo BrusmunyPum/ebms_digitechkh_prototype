@@ -32,23 +32,21 @@
 
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
             <!-- Header (72px aligned) -->
-            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200 flex-shrink-0 z-10 shadow-xs">
-                <div class="flex items-center gap-3">
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-900 leading-tight">ស្វែងរកទីតាំង និងស្តុកផលិតផល (Floor Scan)</h2>
-                        <p class="text-xs font-normal text-slate-500 mt-0.5">ស្កេន Barcode ឬវាយលេខកូដ SKU ដើម្បីពិនិត្យទីតាំងធ្នើរ (Bin) និងចំនួនក្នុងស្តុក</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2">
+        <div id="headerHost" data-title="ស្វែងរកទីតាំង និងស្តុកផលិតផល (Floor Scan)"
+                 data-subtitle="ស្កេន Barcode ឬវាយលេខកូដ SKU ដើម្បីពិនិត្យទីតាំងធ្នើរ (Bin) និងចំនួនក្នុងស្តុក"></div>
+
+            <!-- Main Scanner & Touch Console -->
+            <main class="flex-1 overflow-y-auto p-6 space-y-6">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full max-w-4xl mx-auto flex flex-wrap items-center justify-end gap-2 no-print">
+                <div class="flex flex-wrap items-center gap-2">
                     <span class="px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold flex items-center gap-1.5">
                         <i class="fas fa-shield-halved text-amber-600"></i>
                         <span>Zero Price UI</span>
                     </span>
                 </div>
-            </header>
+            </div>
 
-            <!-- Main Scanner & Touch Console -->
-            <main class="flex-1 overflow-y-auto p-6 space-y-6">
                 <!-- Giant Scanner Search Bar -->
                 <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm max-w-4xl mx-auto space-y-4">
                     <div class="relative">

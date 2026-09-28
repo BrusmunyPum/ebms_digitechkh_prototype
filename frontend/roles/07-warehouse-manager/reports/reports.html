@@ -34,25 +34,12 @@
 
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
             <!-- Header (72px aligned) -->
-            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200/80 flex-shrink-0 z-10 shadow-xs">
-                <div>
-                    <h2 class="text-xl font-semibold text-slate-800 leading-tight">របាយការណ៍វិភាគស្តុក</h2>
-                    <p class="text-xs font-normal text-slate-500 mt-0.5">អត្រាបង្វិលស្តុក ការវិភាគតម្លៃស្តុកសរុប និងទំនិញរំកិលយឺត</p>
-                </div>
-                <div class="flex items-center gap-3">
-                    <button onclick="showToast('បានទាញយករបាយការណ៍ជា PDF រួចរាល់', 'success')" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-2 transition cursor-pointer">
-                        <i class="fas fa-file-pdf text-rose-500"></i>
-                        <span>ទាញយក PDF</span>
-                    </button>
-                    <button onclick="showToast('បានទាញយកទិន្នន័យជា CSV រួចរាល់', 'success')" class="h-10 px-4 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition cursor-pointer">
-                        <i class="fas fa-file-excel text-emerald-400"></i>
-                        <span>ទាញយក Excel</span>
-                    </button>
-                </div>
-            </header>
+        <div id="headerHost" data-title="របាយការណ៍វិភាគស្តុក"
+                 data-subtitle="អត្រាបង្វិលស្តុក ការវិភាគតម្លៃស្តុកសរុប និងទំនិញរំកិលយឺត"></div>
 
             <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto p-6 space-y-6">
+
                 <!-- Filters Bar with Standard Date Presets -->
                 <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-4">
                     <div class="flex flex-wrap items-center gap-3">
@@ -72,8 +59,21 @@
                         </select>
                     </div>
 
-                    <div class="text-xs text-slate-500">
-                        អាប់ដេតចុងក្រោយ៖ <span class="font-medium text-slate-700">28 កញ្ញា 2026 · 10:00</span>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div class="text-xs text-slate-500">
+                            អាប់ដេតចុងក្រោយ៖ <span class="font-medium text-slate-700">28 កញ្ញា 2026 · 10:00</span>
+                        </div>
+                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
+                        <div class="flex flex-wrap items-center gap-2 no-print">
+                            <button onclick="showToast('បានទាញយករបាយការណ៍ជា PDF រួចរាល់', 'success')" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-2 transition cursor-pointer">
+                                <i class="fas fa-file-pdf text-rose-500"></i>
+                                <span>ទាញយក PDF</span>
+                            </button>
+                            <button onclick="showToast('បានទាញយកទិន្នន័យជា CSV រួចរាល់', 'success')" class="h-10 px-4 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition cursor-pointer">
+                                <i class="fas fa-file-excel text-emerald-400"></i>
+                                <span>ទាញយក Excel</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 

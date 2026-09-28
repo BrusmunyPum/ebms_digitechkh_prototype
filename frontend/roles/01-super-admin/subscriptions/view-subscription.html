@@ -32,29 +32,25 @@
 
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
             <!-- Header (72px aligned) -->
-            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200/80 flex-shrink-0 z-10 shadow-xs">
-                <div class="flex items-center gap-3">
-                    <a href="subscriptions.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ក្រោយ">
-                        <i class="fas fa-arrow-left text-sm"></i>
-                    </a>
-                    <div>
-                        <div class="flex items-center gap-2.5">
-                            <h2 class="text-xl font-semibold text-slate-800 leading-tight" id="subViewTitle">ព័ត៌មានកញ្ចប់សេវា</h2>
-                            <span id="subStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">សកម្ម</span>
-                        </div>
-                        <p class="text-xs font-normal text-slate-500 mt-0.5" id="subTenantSubtitle">ក្រុមហ៊ុន អង្គរ អេឡិចត្រូនិច</p>
-                    </div>
+        <div id="headerHost" data-title="ព័ត៌មានកញ្ចប់សេវា"
+                 data-subtitle="ក្រុមហ៊ុន អង្គរ អេឡិចត្រូនិច"
+                 data-back="subscriptions.html"></div>
+
+            <!-- Main Detail Content -->
+            <main class="flex-1 overflow-y-auto p-6">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full max-w-5xl flex flex-wrap items-center justify-between gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span id="subStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">សកម្ម</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                     <a href="create-subscription.html" class="h-10 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition">
                         <i class="fas fa-rotate text-xs"></i>
                         <span>បន្តកញ្ចប់សេវា</span>
                     </a>
                 </div>
-            </header>
+            </div>
 
-            <!-- Main Detail Content -->
-            <main class="flex-1 overflow-y-auto p-6">
                 <div class="max-w-5xl space-y-6">
                     <!-- Top Summary Card -->
                     <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
@@ -130,8 +126,8 @@
 
             const plan = SUBSCRIPTION_PLANS[t.plan] || SUBSCRIPTION_PLANS.enterprise;
 
-            document.getElementById('subViewTitle').innerText = `កញ្ចប់សេវា — ${t.nameKh}`;
-            document.getElementById('subTenantSubtitle').innerText = `${t.id} · ${t.contactName} (${t.contactPhone})`;
+            document.getElementById('portalTitle').innerText = `កញ្ចប់សេវា — ${t.nameKh}`;
+            setPortalSubtitle(`${t.id} · ${t.contactName} (${t.contactPhone})`);
             document.getElementById('subPlanTitle').innerText = `${plan.name} (${plan.nameEn})`;
             document.getElementById('subPrice').innerText = `${fmtUSD(plan.price)} / ខែ`;
             document.getElementById('subStart').innerText = t.createdAt;

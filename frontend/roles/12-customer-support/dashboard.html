@@ -41,37 +41,21 @@
     <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
 
         <!-- ក្បាលទំព័រ -->
-        <header class="h-[72px] px-6 flex items-center justify-between border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-10 flex-shrink-0">
-            <div class="flex items-center gap-3">
-                <button onclick="toggleMobileSidebar()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition md:hidden">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div>
-                    <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                        <i class="fas fa-headset text-sky-600"></i>
-                        <span>ផ្ទាំងគ្រប់គ្រងសេវាអតិថិជន</span>
-                    </h2>
-                    <p class="text-xs text-slate-500">ឆ្លើយតបសំណួរអតិថិជន ដោះស្រាយបណ្តឹង និងតាមដានកម្រិតសេវាឆ្លើយតប</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-3">
-                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                    <span>ប្រព័ន្ធជំនួយគាំទ្រ: អនឡាញ</span>
-                </div>
-                <div class="flex items-center gap-2 pl-3 border-l border-slate-200">
-                    <div class="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 font-bold text-xs">លស</div>
-                    <div class="hidden lg:block text-left">
-                        <p class="text-xs font-bold text-slate-800 leading-tight">លី ស្រីមុំ</p>
-                        <p class="text-[11px] text-slate-500">ផ្នែកគាំទ្រអតិថិជន</p>
-                    </div>
-                </div>
-            </div>
-        </header>
+        <div id="headerHost" data-title="ផ្ទាំងគ្រប់គ្រងសេវាអតិថិជន"
+             data-subtitle="ឆ្លើយតបសំណួរអតិថិជន ដោះស្រាយបណ្តឹង និងតាមដានកម្រិតសេវាឆ្លើយតប"></div>
 
         <!-- មាតិកាខាងក្នុង -->
         <main class="p-4 sm:p-6 space-y-6 flex-1">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full flex flex-wrap items-center justify-end gap-2 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                        <span>ប្រព័ន្ធជំនួយគាំទ្រ: អនឡាញ</span>
+                    </div>
+                </div>
+            </div>
+
 
             <!-- កាតសង្ខេប KPIs -->
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">

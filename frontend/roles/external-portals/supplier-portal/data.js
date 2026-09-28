@@ -188,3 +188,79 @@ function rejectPO(poId) {
     }
     return false;
 }
+
+/* ===== ការជូនដំណឹងក្នុងក្បាលទំព័រ (អានដោយ portal.js) ===== */
+
+const SP_TODAY = new Date(2026, 8, 25); // 25 កញ្ញា 2026
+
+function spFmtUSD(val) {
+    const n = Number(val) || 0;
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+const SP_KH_MONTHS = ['មករា', 'កុម្ភៈ', 'មីនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្កដា', 'សីហា', 'កញ្ញា', 'តុលា', 'វិច្ឆិកា', 'ធ្នូ'];
+
+function spFmtDate(dateStr) {
+    const head = String(dateStr || '').split(' ')[0];
+    const parts = head.split('-');
+    if (parts.length !== 3) return dateStr || '—';
+    const tail = String(dateStr).slice(head.length).trim();
+    return `${Number(parts[2])} ${SP_KH_MONTHS[Number(parts[1]) - 1]} ${parts[0]}${tail ? ' ' + tail : ''}`;
+}
+
+function spDaysUntil(dateStr) {
+    const parts = String(dateStr || '').split(' ')[0].split('-');
+    if (parts.length !== 3) return null;
+    const target = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    return Math.round((target - SP_TODAY) / 86400000);
+}
+
+function portalNotifications() {
+    const list = [];
+    const store = getSupplierStore();
+
+    // ការបញ្ជាទិញថ្មីដែលរង់ចាំការឆ្លើយតប
+    store.purchaseOrders.filter(po => po.status === 'pending' || po.status === 'sent').forEach(po => {
+        list.push({
+            icon: 'mdi:file-document-alert-outline',
+            tone: 'warning',
+            title: `ការបញ្ជាទិញ ${po.id} រង់ចាំការទទួលយក`,
+            note: `${spFmtUSD(po.totalAmount)} · ត្រូវដឹកជញ្ជូនត្រឹម ${spFmtDate(po.expectedDelivery)} · ${po.paymentTerm}`
+        });
+    });
+
+    // ការបញ្ជាទិញដែលទទួលយករួច តែមិនទាន់ចេញវិក្កយបត្រ
+    store.purchaseOrders.filter(po => po.status === 'accepted' && !po.billed).forEach(po => {
+        list.push({
+            icon: 'mdi:receipt-text-plus-outline',
+            tone: 'info',
+            title: `${po.id} អាចចេញវិក្កយបត្រទារប្រាក់បាន`,
+            note: `${spFmtUSD(po.totalAmount)} · ${po.description}`
+        });
+    });
+
+    // វិក្កយបត្រដែលរង់ចាំការទូទាត់
+    store.bills.filter(b => b.status !== 'paid').forEach(b => {
+        const left = spDaysUntil(b.dueDate);
+        list.push({
+            icon: left !== null && left < 0 ? 'mdi:cash-clock' : 'mdi:cash-check',
+            tone: left !== null && left < 0 ? 'danger' : 'warning',
+            title: left !== null && left < 0
+                ? `វិក្កយបត្រ ${b.id} ហួសកាលកំណត់ ${Math.abs(left)} ថ្ងៃ`
+                : `វិក្កយបត្រ ${b.id} រង់ចាំការទូទាត់`,
+            note: `សុទ្ធ ${spFmtUSD(b.netAmount)}${b.whtAmount ? ` · ពន្ធកាត់ទុក ${spFmtUSD(b.whtAmount)}` : ''} · កំណត់ ${spFmtDate(b.dueDate)}`
+        });
+    });
+
+    // ការដឹកជញ្ជូនកំពុងធ្វើដំណើរ
+    store.deliveries.filter(d => d.status !== 'delivered').forEach(d => {
+        list.push({
+            icon: 'mdi:truck-fast-outline',
+            tone: 'info',
+            title: `ការដឹកជញ្ជូន ${d.id} កំពុងធ្វើដំណើរ`,
+            note: `${d.carrier} · ${d.driverName} · លេខតាមដាន ${d.trackingNo} · រំពឹងដល់ ${spFmtDate(d.estimatedArrival)}`
+        });
+    });
+
+    return list;
+}

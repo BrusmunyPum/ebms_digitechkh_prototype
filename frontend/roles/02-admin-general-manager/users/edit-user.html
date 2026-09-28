@@ -35,23 +35,9 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Content Top Header with Standard Back Button -->
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="flex items-center gap-4 min-w-0">
-                <a href="users.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70 flex-shrink-0" title="ត្រឡប់ទៅបញ្ជីបុគ្គលិក...">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </a>
-                <div class="min-w-0">
-                    <h2 id="headerTitle" class="text-xl font-semibold text-gray-800 leading-tight truncate">កែប្រែព័ត៌មានបុគ្គលិក</h2>
-                    <p id="headerSub" class="text-xs font-normal text-gray-500 mt-0.5 truncate">កែសម្រួលតួនាទី សាខាធ្វើការ និងស្ថានភាពគណនី</p>
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-3 flex-shrink-0">
-                <div class="flex items-center sm:border-l sm:pl-3">
-                    <div class="w-10 h-10 rounded-full bg-[#1e3a5f] text-white flex items-center justify-center font-semibold text-sm shadow-sm" title="លី ហាក់សេង (អភិបាលទូទៅ)">លហ</div>
-                </div>
-            </div>
-        </header>
+        <div id="headerHost" data-title="កែប្រែព័ត៌មានបុគ្គលិក"
+             data-subtitle="កែសម្រួលតួនាទី សាខាធ្វើការ និងស្ថានភាពគណនី"
+             data-back="users.html"></div>
 
         <!-- Main Content Area -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
@@ -280,7 +266,7 @@
                 return;
             }
 
-            document.getElementById('headerTitle').textContent = `កែប្រែព័ត៌មាន ${currentUser.fullNameKh}`;
+            document.getElementById('portalTitle').textContent = `កែប្រែព័ត៌មាន ${currentUser.fullNameKh}`;
             document.getElementById('lblUserId').textContent = currentUser.id;
             document.getElementById('fullNameKh').value = currentUser.fullNameKh;
             document.getElementById('fullNameEn').value = currentUser.fullNameEn;

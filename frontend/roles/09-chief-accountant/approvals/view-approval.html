@@ -37,33 +37,27 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Content Top Header with Unified Back Button -->
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="flex items-center gap-3">
-                <a href="approvals.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ទៅមជ្ឈមណ្ឌលអនុម័ត">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </a>
-                <div>
-                    <h2 class="text-xl font-semibold text-gray-800 leading-tight flex items-center gap-2">
-                        <span>ពិនិត្យសំណើ</span>
-                        <span id="headerRefNo" class="text-primary font-bold">DIS-2026-0089</span>
-                    </h2>
-                    <p class="text-xs font-normal text-gray-500 mt-0.5">ផ្ទៀងផ្ទាត់ការចុះបញ្ជីទ្វេគណនេយ្យ Debit/Credit មុនចុះហត្ថលេខាអនុម័ត</p>
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-3" id="actionBtnsContainer">
-                <button type="button" onclick="handleReject()" class="px-4 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-medium text-xs border border-rose-200 transition">
-                    បដិសេធ
-                </button>
-                <button type="button" onclick="handleApprove()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs shadow-sm transition flex items-center gap-2">
-                    <i class="fas fa-check"></i>
-                    <span>អនុម័តសំណើជាផ្លូវការ</span>
-                </button>
-            </div>
-        </header>
+        <div id="headerHost" data-title="ពិនិត្យសំណើ DIS-2026-0089"
+             data-subtitle="ផ្ទៀងផ្ទាត់ការចុះបញ្ជីទ្វេគណនេយ្យ Debit/Credit មុនចុះហត្ថលេខាអនុម័ត"
+             data-back="approvals.html"></div>
 
         <!-- Main Content Area -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-6">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full max-w-4xl mx-auto flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <div class="flex items-center space-x-3" id="actionBtnsContainer">
+                        <button type="button" onclick="handleReject()" class="px-4 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-medium text-xs border border-rose-200 transition">
+                            បដិសេធ
+                        </button>
+                        <button type="button" onclick="handleApprove()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs shadow-sm transition flex items-center gap-2">
+                            <i class="fas fa-check"></i>
+                            <span>អនុម័តសំណើជាផ្លូវការ</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <div class="w-full max-w-4xl mx-auto space-y-5">
 
                 <!-- Summary Overview Card -->
@@ -159,9 +153,9 @@
     </div>
 
     <!-- Scripts -->
-    <script src="../../../shared/scripts/portal.js"></script>
     <script src="../../../shared/scripts/ui-components.js"></script>
     <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
     <script>
         let currentApproval = null;
 
@@ -178,7 +172,7 @@
 
             if (!currentApproval) return;
 
-            document.getElementById('headerRefNo').innerText = currentApproval.refNo;
+            setPortalTitle('ពិនិត្យសំណើ ' + currentApproval.refNo);
             document.getElementById('voucherTitleDisplay').innerText = currentApproval.title;
             document.getElementById('refNoDisplay').innerText = currentApproval.refNo;
             document.getElementById('dateDisplay').innerText = currentApproval.date;

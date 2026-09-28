@@ -685,3 +685,67 @@ function fmtDateKh(dateStr) {
     const year = parts[0];
     return `${day} ${months[mIdx] || parts[1]} ${year}`;
 }
+
+/* ===== ការជូនដំណឹងក្នុងក្បាលទំព័រ (អានដោយ portal.js) ===== */
+
+function daysUntilSA(dateStr) {
+    const parts = String(dateStr || '').split('-');
+    if (parts.length !== 3) return null;
+    const target = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    return Math.round((target - BMS_SA_TODAY) / 86400000);
+}
+
+function portalNotifications() {
+    const list = [];
+    const tenants = getTenants();
+
+    // ការជាវជិតផុតកំណត់
+    tenants.filter(t => t.status === 'expiring')
+        .sort((a, b) => (daysUntilSA(a.expiresAt) || 0) - (daysUntilSA(b.expiresAt) || 0))
+        .slice(0, 3)
+        .forEach(t => {
+            const left = daysUntilSA(t.expiresAt);
+            list.push({
+                icon: 'mdi:calendar-alert',
+                tone: left !== null && left <= 7 ? 'danger' : 'warning',
+                title: `ការជាវរបស់ ${t.nameKh} ជិតផុតកំណត់`,
+                note: `កញ្ចប់ ${SUBSCRIPTION_PLANS[t.plan] ? SUBSCRIPTION_PLANS[t.plan].name : t.plan} · នៅសល់ ${left} ថ្ងៃ`,
+                time: fmtDateKh(t.expiresAt)
+            });
+        });
+
+    // គណនីដែលត្រូវបានផ្អាក
+    tenants.filter(t => t.status === 'suspended').slice(0, 2).forEach(t => {
+        list.push({
+            icon: 'mdi:account-cancel-outline',
+            tone: 'danger',
+            title: `${t.nameKh} ត្រូវបានផ្អាកដំណើរការ`,
+            note: t.notes || 'សូមពិនិត្យស្ថានភាពការទូទាត់ មុនបើកដំណើរការឡើងវិញ'
+        });
+    });
+
+    // កូតាអ្នកប្រើប្រាស់ជិតពេញ
+    tenants.filter(t => t.quotaUsers && t.usersCount / t.quotaUsers >= 0.9 && t.status !== 'suspended')
+        .slice(0, 2)
+        .forEach(t => {
+            list.push({
+                icon: 'mdi:account-group-outline',
+                tone: 'warning',
+                title: `${t.nameKh} ប្រើកូតាអ្នកប្រើប្រាស់ជិតពេញ`,
+                note: `${t.usersCount} / ${t.quotaUsers} គណនី · គួរស្នើឲ្យតម្លើងកញ្ចប់សេវា`
+            });
+        });
+
+    // ព្រឹត្តិការណ៍សុវត្ថិភាពដែលបរាជ័យ
+    getAuditLogs().filter(l => l.result !== 'SUCCESS').slice(0, 3).forEach(l => {
+        list.push({
+            icon: 'mdi:shield-alert-outline',
+            tone: 'danger',
+            title: `${l.actionLabel} បរាជ័យ · ${l.userName}`,
+            note: `${l.companyName} · ${l.ipAddress} · ${l.details}`,
+            time: l.timestamp
+        });
+    });
+
+    return list;
+}

@@ -37,22 +37,12 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Content Top Header -->
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="min-w-0">
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight truncate">បញ្ជីការបញ្ជាទិញទំនិញ</h2>
-                <p class="text-xs font-normal text-gray-500 mt-0.5 truncate">គ្រប់គ្រងការចេញបញ្ជាទិញទំនិញចូល តាមដានការដឹកជញ្ជូន និងផ្ទៀងផ្ទាត់ប័ណ្ណទំនិញ</p>
-            </div>
-
-            <div class="flex items-center space-x-3 flex-shrink-0">
-                <a href="create-po.html" class="px-4 py-2 rounded-xl bg-primary hover:bg-[#142842] text-white font-medium text-xs flex items-center gap-2 shadow-sm transition">
-                    <i class="fas fa-plus"></i>
-                    <span>បង្កើតការបញ្ជាទិញថ្មី</span>
-                </a>
-            </div>
-        </header>
+        <div id="headerHost" data-title="បញ្ជីការបញ្ជាទិញទំនិញ"
+             data-subtitle="គ្រប់គ្រងការចេញបញ្ជាទិញទំនិញចូល តាមដានការដឹកជញ្ជូន និងផ្ទៀងផ្ទាត់ប័ណ្ណទំនិញ"></div>
 
         <!-- Main Content -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
+
             <div class="w-full space-y-4">
 
                 <!-- Filters & Search Bar -->
@@ -85,8 +75,17 @@
                         </select>
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs text-slate-400">សរុប: <strong id="totalCount" class="text-slate-700">0</strong> កំណត់ត្រា</span>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-slate-400">សរុប: <strong id="totalCount" class="text-slate-700">0</strong> កំណត់ត្រា</span>
+                        </div>
+                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
+                        <div class="flex flex-wrap items-center gap-2 no-print">
+                            <a href="create-po.html" class="px-4 py-2 rounded-xl bg-primary hover:bg-[#142842] text-white font-medium text-xs flex items-center gap-2 shadow-sm transition">
+                                <i class="fas fa-plus"></i>
+                                <span>បង្កើតការបញ្ជាទិញថ្មី</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -117,9 +116,9 @@
     </div>
 
     <!-- Scripts -->
-    <script src="../../../shared/scripts/portal.js"></script>
     <script src="../../../shared/scripts/ui-components.js"></script>
     <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             renderPortalSidebar();

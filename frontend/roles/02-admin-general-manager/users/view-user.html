@@ -35,37 +35,29 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Content Top Header with Standard Back Button -->
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="flex items-center gap-4 min-w-0">
-                <a href="users.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70 flex-shrink-0" title="ត្រឡប់ទៅបញ្ជីបុគ្គលិក...">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </a>
-                <div class="min-w-0">
-                    <div class="flex items-center gap-2">
-                        <h2 id="headerTitle" class="text-xl font-semibold text-gray-800 leading-tight truncate">ប្រវត្តិរូបបុគ្គលិក</h2>
-                        <span id="userStatusBadge"></span>
-                    </div>
-                    <p id="headerSub" class="text-xs font-normal text-gray-500 mt-0.5 truncate">ព័ត៌មានលម្អិត សិទ្ធិចូលប្រើប្រាស់ និងកំណត់ត្រាសកម្មភាព</p>
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-3 flex-shrink-0">
-                <button onclick="window.print()" class="h-9 px-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs rounded-xl flex items-center gap-2 font-medium transition shadow-xs cursor-pointer">
-                    <i class="fas fa-print text-slate-500"></i>
-                    <span class="hidden sm:inline">បោះពុម្ពប្រវត្តិរូប</span>
-                </button>
-                <a id="editUserBtn" href="#" class="h-9 px-4 bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs rounded-xl flex items-center gap-2 font-medium transition shadow-sm cursor-pointer">
-                    <i class="fas fa-user-pen"></i>
-                    <span>កែប្រែព័ត៌មាន</span>
-                </a>
-                <div class="flex items-center sm:border-l sm:pl-3">
-                    <div class="w-10 h-10 rounded-full bg-[#1e3a5f] text-white flex items-center justify-center font-semibold text-sm shadow-sm" title="លី ហាក់សេង (អភិបាលទូទៅ)">លហ</div>
-                </div>
-            </div>
-        </header>
+        <div id="headerHost" data-title="ប្រវត្តិរូបបុគ្គលិក"
+             data-subtitle="ព័ត៌មានលម្អិត សិទ្ធិចូលប្រើប្រាស់ និងកំណត់ត្រាសកម្មភាព"
+             data-back="users.html"></div>
 
         <!-- Main Content Area -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full flex flex-wrap items-center justify-between gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span id="userStatusBadge"></span>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="window.print()" class="h-9 px-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs rounded-xl flex items-center gap-2 font-medium transition shadow-xs cursor-pointer">
+                        <i class="fas fa-print text-slate-500"></i>
+                        <span class="hidden sm:inline">បោះពុម្ពប្រវត្តិរូប</span>
+                    </button>
+                    <a id="editUserBtn" href="#" class="h-9 px-4 bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs rounded-xl flex items-center gap-2 font-medium transition shadow-sm cursor-pointer">
+                        <i class="fas fa-user-pen"></i>
+                        <span>កែប្រែព័ត៌មាន</span>
+                    </a>
+                </div>
+            </div>
+
             <div class="w-full space-y-6">
 
                 <!-- Profile Hero Card -->
@@ -214,7 +206,7 @@
                 return;
             }
 
-            document.getElementById('headerTitle').textContent = `ប្រវត្តិរូប ${currentUser.fullNameKh}`;
+            document.getElementById('portalTitle').textContent = `ប្រវត្តិរូប ${currentUser.fullNameKh}`;
             document.getElementById('editUserBtn').href = `edit-user.html?id=${currentUser.id}`;
 
             // Hero

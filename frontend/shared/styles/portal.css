@@ -125,6 +125,101 @@
     font-weight: 500 !important;
 }
 
+/* ===== របារចំហៀងកំណែទី 2 (បង្រួមបាន) =====
+   ធាតុ .sb-* ប្រើតែក្នុងរបារចំហៀងដែលបើក sidebarV2 ប៉ុណ្ណោះ */
+
+#portalSidebar {
+    transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* បង្រួមបានតែលើអេក្រង់ធំ ព្រោះក្រោម 1024px វាជាថតរអិលរួចទៅហើយ */
+@media (min-width: 1024px) {
+    #portalSidebar.is-collapsed {
+        width: 5.25rem !important;
+    }
+
+    #portalSidebar.is-collapsed .sb-expand-only {
+        display: none !important;
+    }
+
+    #portalSidebar.is-collapsed .sb-brand,
+    #portalSidebar.is-collapsed .sb-nav-item,
+    #portalSidebar.is-collapsed .sb-user {
+        justify-content: center !important;
+    }
+
+    /* ទទឹង 84px មិនគ្រប់សម្រាប់ទាំងឡូហ្គោ និងប៊ូតុង
+       ដូច្នេះពេលបង្រួម បង្ហាញតែប៊ូតុងពង្រីកវិញ */
+    #portalSidebar.is-collapsed .sb-brand {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+
+    #portalSidebar.is-collapsed .sb-nav-item {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    /* ផ្លាកលេខប្រែជាចំណុចតូច ពេលបង្រួម */
+    #portalSidebar.is-collapsed .sb-badge {
+        position: absolute;
+        top: 6px;
+        right: 14px;
+        min-width: 9px;
+        height: 9px;
+        padding: 0 !important;
+        font-size: 0 !important;
+        border-radius: 9999px;
+    }
+
+    /* ស្លាកលេចឡើងពេលដាក់ទស្សន៍ទ្រនិច — ជំនួស native tooltip (ស្តង់ដារលេខ 6) */
+    #portalSidebar.is-collapsed .sb-tip {
+        display: block;
+        position: absolute;
+        left: calc(100% + 10px);
+        top: 50%;
+        transform: translateY(-50%) translateX(-4px);
+        white-space: nowrap;
+        background: #0f172a;
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        line-height: 1.4;
+        box-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.6);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.15s ease, transform 0.15s ease;
+        z-index: 60;
+    }
+
+    #portalSidebar.is-collapsed .sb-nav-item:hover .sb-tip,
+    #portalSidebar.is-collapsed .sb-collapse-btn:hover .sb-tip,
+    #portalSidebar.is-collapsed .sb-user:hover .sb-tip {
+        opacity: 1;
+        transform: translateY(-50%) translateX(0);
+    }
+}
+
+/* លាក់ជាលំនាំដើម — បង្ហាញតែពេលបង្រួមលើអេក្រង់ធំប៉ុណ្ណោះ
+   បើមិនដូច្នេះទេ វានឹងលេចជាអក្សរធម្មតាក្នុងថតរអិលលើទូរស័ព្ទ */
+.sb-tip {
+    display: none;
+}
+
+/* បន្ទាត់សម្គាល់ធាតុសកម្ម */
+.sb-nav-item[aria-current="page"]::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    border-radius: 0 3px 3px 0;
+    background: #7dd3fc;
+}
+
 /* ===== ស្តង់ដារបោះពុម្ពឯកសារផ្លូវការ A4 (ស្តង់ដារលេខ 12) ===== */
 .print-footer {
     display: none;

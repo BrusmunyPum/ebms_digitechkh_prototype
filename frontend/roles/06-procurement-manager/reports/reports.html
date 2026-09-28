@@ -39,31 +39,8 @@
     <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
 
         <!-- Top Header (Standard 2: h-[72px] px-6) -->
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-xs z-10 flex-shrink-0 w-full border-b border-slate-200/70">
-            <div>
-                <h2 class="text-xl font-semibold text-slate-800 leading-tight">របាយការណ៍លទ្ធកម្ម និងការវិភាគ</h2>
-                <p class="text-xs font-normal text-slate-500 mt-0.5">ការវិភាគទំហំចំណាយទិញ ស្ថានភាពបញ្ជាទិញ និងដំណើរការអ្នកផ្គត់ផ្គង់</p>
-            </div>
-
-            <!-- Export Buttons -->
-            <div class="flex items-center space-x-2.5">
-                <button type="button" onclick="exportData('Excel')" class="h-10 px-3.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-xl border border-emerald-200 transition flex items-center gap-1.5 cursor-pointer">
-                    <i class="fas fa-file-excel text-emerald-600"></i>
-                    <span>ទាញយក Excel</span>
-                </button>
-
-                <button type="button" onclick="exportData('PDF')" class="h-10 px-3.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold rounded-xl border border-rose-200 transition flex items-center gap-1.5 cursor-pointer">
-                    <i class="fas fa-file-pdf text-rose-600"></i>
-                    <span>ទាញយក PDF</span>
-                </button>
-
-                <div class="flex items-center sm:border-l sm:pl-3">
-                    <div class="w-10 h-10 rounded-full bg-amber-600 text-white flex items-center justify-center font-semibold text-sm shadow-sm">
-                        សផ
-                    </div>
-                </div>
-            </div>
-        </header>
+        <div id="headerHost" data-title="របាយការណ៍លទ្ធកម្ម និងការវិភាគ"
+             data-subtitle="ការវិភាគទំហំចំណាយទិញ ស្ថានភាពបញ្ជាទិញ និងដំណើរការអ្នកផ្គត់ផ្គង់"></div>
 
         <!-- Filter Bar -->
         <div class="bg-white px-6 py-3 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 flex-shrink-0">
@@ -80,6 +57,20 @@
 
         <!-- Main Content Area -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="exportData('Excel')" class="h-10 px-3.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-xl border border-emerald-200 transition flex items-center gap-1.5 cursor-pointer">
+                        <i class="fas fa-file-excel text-emerald-600"></i>
+                        <span>ទាញយក Excel</span>
+                    </button>
+                    <button type="button" onclick="exportData('PDF')" class="h-10 px-3.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold rounded-xl border border-rose-200 transition flex items-center gap-1.5 cursor-pointer">
+                        <i class="fas fa-file-pdf text-rose-600"></i>
+                        <span>ទាញយក PDF</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="w-full space-y-6">
 
                 <!-- KPI Strip (4 compact cards) -->

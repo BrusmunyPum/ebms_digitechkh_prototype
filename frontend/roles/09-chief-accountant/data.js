@@ -222,3 +222,71 @@ function saveCAStore(store) {
         console.error('Failed to save CA store to localStorage:', e);
     }
 }
+
+/* ===== ការជូនដំណឹងក្នុងក្បាលទំព័រ (អានដោយ portal.js) ===== */
+
+const CA_APPROVAL_LABEL = {
+    disbursement: 'ប័ណ្ណចំណាយទូទាត់',
+    adjustment: 'ទិន្នានុប្បវត្តកែតម្រូវ',
+    writeoff: 'ការលុបបំណុលជាបាត់បង់'
+};
+
+function caFmtUSD(val) {
+    const n = Number(val) || 0;
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function portalNotifications() {
+    const list = [];
+    const store = getCAStore();
+    const kpis = store.kpis;
+
+    // សំណើរង់ចាំការអនុម័តរបស់ប្រធានគណនេយ្យ
+    const pending = store.approvals
+        .filter(a => a.status === 'pending')
+        .sort((a, b) => (b.amount || 0) - (a.amount || 0));
+
+    pending.slice(0, 3).forEach(a => {
+        list.push({
+            icon: 'mdi:file-check-outline',
+            tone: (a.amount || 0) >= 1000 ? 'danger' : 'warning',
+            title: `${CA_APPROVAL_LABEL[a.type] || 'សំណើ'} ${a.refNo} រង់ចាំអនុម័ត`,
+            note: `${a.requestor} · ${caFmtUSD(a.amount)}`,
+            time: a.date
+        });
+    });
+
+    // ការប្រកាសពន្ធអាករលើតម្លៃបន្ថែម និងពន្ធកាត់ទុក
+    ['vat', 'wht'].forEach(key => {
+        const t = store.taxReturns[key];
+        if (!t || t.status !== 'draft') return;
+        list.push({
+            icon: key === 'vat' ? 'mdi:percent-outline' : 'mdi:cash-minus',
+            tone: 'warning',
+            title: key === 'vat'
+                ? `ពន្ធអាករលើតម្លៃបន្ថែម ${t.month} មិនទាន់ដាក់លិខិតប្រកាស`
+                : `ពន្ធកាត់ទុក ${t.month} មិនទាន់ដាក់លិខិតប្រកាស`,
+            note: `ត្រូវបង់ ${caFmtUSD(key === 'vat' ? t.netVatPayable : t.totalWhtPayable)} · ផុតកំណត់ ${t.dueDate}`
+        });
+    });
+
+    // ស្ថានភាពបិទគ្រាហិរញ្ញវត្ថុ
+    if (kpis.periodLockStatus !== 'locked') {
+        list.push({
+            icon: 'mdi:lock-open-variant-outline',
+            tone: 'info',
+            title: `គ្រាហិរញ្ញវត្ថុ ${kpis.currentPeriod} នៅបើកចំហ`,
+            note: 'ទិន្នានុប្បវត្តនៅតែអាចកែប្រែបាន រហូតដល់បិទគ្រា'
+        });
+    }
+
+    // តុល្យភាពបំណុលត្រូវទារ និងត្រូវសង
+    list.push({
+        icon: 'mdi:scale-balance',
+        tone: kpis.totalAR > kpis.totalAP ? 'info' : 'warning',
+        title: `បំណុលត្រូវទារ ${caFmtUSD(kpis.totalAR)} · ត្រូវសង ${caFmtUSD(kpis.totalAP)}`,
+        note: `សាច់ប្រាក់ និងប្រាក់បញ្ញើធនាគារសរុប ${caFmtUSD(kpis.totalCashBank)}`
+    });
+
+    return list;
+}

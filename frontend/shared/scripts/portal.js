@@ -25,6 +25,7 @@ function getIconHtml(icon, extraClass = '') {
 
 const PORTAL_CONFIGS = {
     smPortal: {
+        sidebarV2: true,
         title: 'ច្រកគ្រប់គ្រងលក់',
         roleName: 'អ្នកគ្រប់គ្រងផ្នែកលក់',
         roleIcon: 'mdi:account-tie',
@@ -40,6 +41,7 @@ const PORTAL_CONFIGS = {
         ]
     },
     sePortal: {
+        sidebarV2: true,
         title: 'ច្រកបុគ្គលិកលក់',
         roleName: 'បុគ្គលិកប្រតិបត្តិផ្នែកលក់',
         roleIcon: 'mdi:briefcase-account-outline',
@@ -55,6 +57,7 @@ const PORTAL_CONFIGS = {
         ]
     },
     posPortal: {
+        sidebarV2: true,
         title: 'ច្រកគិតលុយលក់រាយ',
         roleName: 'អ្នកគិតលុយ',
         roleIcon: 'mdi:cash-register',
@@ -69,6 +72,7 @@ const PORTAL_CONFIGS = {
         ]
     },
     wmPortal: {
+        sidebarV2: true,
         title: 'ច្រកគ្រប់គ្រងស្តុក',
         roleName: 'អ្នកគ្រប់គ្រងឃ្លាំងស្តុក',
         roleIcon: 'mdi:store-24-hour',
@@ -84,6 +88,7 @@ const PORTAL_CONFIGS = {
         ]
     },
     wsPortal: {
+        sidebarV2: true,
         title: 'ច្រកបុគ្គលិកឃ្លាំង',
         roleName: 'បុគ្គលិកជាន់ឃ្លាំង',
         roleIcon: 'mdi:account-hard-hat',
@@ -100,6 +105,7 @@ const PORTAL_CONFIGS = {
         ]
     },
     csPortal: {
+        sidebarV2: true,
         title: 'ច្រកបម្រើអតិថិជន',
         roleName: 'ផ្នែកគាំទ្រអតិថិជន',
         roleIcon: 'mdi:headset',
@@ -113,7 +119,30 @@ const PORTAL_CONFIGS = {
             { id: 'delivery-status', label: 'តាមដានការដឹកជញ្ជូន', icon: 'mdi:truck-check-outline', href: 'delivery-status.html' }
         ]
     },
+    cpPortal: {
+        sidebarV2: false,
+        title: 'ច្រកអតិថិជន',
+        roleName: 'អតិថិជន',
+        roleIcon: 'mdi:account-star-outline',
+        userInitials: 'អរ',
+        userName: 'ក្រុមហ៊ុន អាកទិក រីនីវ ឯ.ក',
+        userRole: 'អតិថិជនកម្រិតមាស',
+        policyNote: 'មើលវិក្កយបត្រ ទូទាត់តាម KHQR និងតាមដានការដឹកជញ្ជូនរបស់ខ្លួន។',
+        nav: []
+    },
+    spPortal: {
+        sidebarV2: false,
+        title: 'ច្រកអ្នកផ្គត់ផ្គង់',
+        roleName: 'អ្នកផ្គត់ផ្គង់',
+        roleIcon: 'mdi:truck-outline',
+        userInitials: 'ហត',
+        userName: 'ក្រុមហ៊ុន ហ៊ុន ត្រេឌីង ឯ.ក',
+        userRole: 'ដៃគូផ្គត់ផ្គង់កម្រិតមាស',
+        policyNote: 'ទទួលការបញ្ជាទិញ ចេញវិក្កយបត្រទារប្រាក់ និងតាមដានការដឹកជញ្ជូន។',
+        nav: []
+    },
     gmPortal: {
+        sidebarV2: true,
         title: 'ច្រកអភិបាលទូទៅ',
         roleName: 'អភិបាលទូទៅ',
         roleIcon: 'mdi:shield-account',
@@ -130,6 +159,7 @@ const PORTAL_CONFIGS = {
         ]
     },
     saPortal: {
+        sidebarV2: true,
         title: 'ច្រកស៊ុបភើរអភិបាល',
         roleName: 'ស៊ុបភើរ អភិបាល',
         roleIcon: 'mdi:shield-crown-outline',
@@ -145,6 +175,7 @@ const PORTAL_CONFIGS = {
         ]
     },
     iaPortal: {
+        sidebarV2: true,
         title: 'ច្រកសវនករផ្ទៃក្នុង',
         roleName: 'សវនករផ្ទៃក្នុង / នាយកប្រតិបត្តិ',
         roleIcon: 'mdi:shield-search',
@@ -161,6 +192,7 @@ const PORTAL_CONFIGS = {
         ]
     },
     pmPortal: {
+        sidebarV2: true,
         title: 'ច្រកគ្រប់គ្រងលទ្ធកម្ម',
         roleName: 'អ្នកគ្រប់គ្រងលទ្ធកម្ម',
         roleIcon: 'mdi:cart-outline',
@@ -176,6 +208,7 @@ const PORTAL_CONFIGS = {
         ]
     },
     caPortal: {
+        sidebarV2: true,
         title: 'ច្រកប្រធានគណនេយ្យ',
         roleName: 'ប្រធានគណនេយ្យ',
         roleIcon: 'mdi:bank',
@@ -192,6 +225,7 @@ const PORTAL_CONFIGS = {
         ]
     },
     aparPortal: {
+        sidebarV2: true,
         title: 'ច្រកគណនេយ្យករទូទាត់',
         roleName: 'គណនេយ្យករបំណុល និងទារប្រាក់',
         roleIcon: 'mdi:cash-multiple',
@@ -219,8 +253,280 @@ function getRoleRoot() {
     return isSub ? '..' : '.';
 }
 
+/* ===== របារចំហៀងកំណែទី 2 =====
+   បើកដោយដាក់ sidebarV2: true ក្នុងការកំណត់ច្រកនីមួយៗ។
+   កែលម្អធៀបនឹងកំណែដើម៖
+     • បង្ហាញអ្នកប្រើដែលកំពុងចូល (ប្រើ userName/userInitials/userRole ដែលមានស្រាប់)
+     • បង្រួមបាន ហើយចងចាំស្ថានភាព
+     • ផ្លាកលេខលាក់ពេលគ្មានអ្វី
+     • ធាតុសកម្មមានបន្ទាត់សម្គាល់ និង aria-current
+     • សេចក្តីណែនាំគោលការណ៍បត់បាន ដើម្បីសន្សំទីធ្លា */
+
+const SIDEBAR_KEY = 'bms_sidebar_collapsed';
+
+function sidebarCollapsed() {
+    try {
+        return localStorage.getItem(SIDEBAR_KEY) === '1';
+    } catch (e) {
+        return false;
+    }
+}
+
+function togglePortalSidebar() {
+    const el = document.getElementById('portalSidebar');
+    if (!el) return;
+    const collapsed = el.classList.toggle('is-collapsed');
+    const chevron = document.getElementById('sbCollapseIcon');
+    if (chevron) chevron.setAttribute('icon', collapsed ? 'mdi:chevron-right' : 'mdi:chevron-left');
+    try {
+        localStorage.setItem(SIDEBAR_KEY, collapsed ? '1' : '0');
+    } catch (e) {
+        // ការផ្ទុកត្រូវបានបិទ — ស្ថានភាពនៅរស់ត្រឹមទំព័របច្ចុប្បន្ន
+    }
+}
+
+function togglePolicyNote() {
+    const box = document.getElementById('sbPolicyBody');
+    const icon = document.getElementById('sbPolicyIcon');
+    if (!box) return;
+    const hidden = box.classList.toggle('hidden');
+    if (icon) icon.setAttribute('icon', hidden ? 'mdi:chevron-down' : 'mdi:chevron-up');
+}
+
+function renderPortalSidebarV2(host, cfg, roleRoot, activeId, sharedRoot) {
+    const collapsed = sidebarCollapsed();
+
+    const navHtml = cfg.nav.map(item => {
+        const isActive = item.id === activeId;
+        let badgeHtml = '';
+        if (item.badge) {
+            badgeHtml = '<span id="navQueueBadge" class="sb-badge sm-badge bg-rose-500 text-white px-2 py-0.5 rounded-full flex-shrink-0 hidden">0</span>';
+        } else if (item.alertBadge) {
+            badgeHtml = '<span id="navAlertBadge" class="sb-badge sm-badge bg-amber-500 text-white px-2 py-0.5 rounded-full flex-shrink-0 hidden">0</span>';
+        }
+        return `
+            <a href="${roleRoot}/${item.href}" ${isActive ? 'aria-current="page"' : ''}
+               class="sb-nav-item relative flex items-center justify-between gap-2 p-3 rounded-xl transition-all whitespace-nowrap ${isActive
+                   ? 'bg-white/15 text-white border border-white/10 shadow-sm'
+                   : 'text-sky-100 hover:bg-white/10 hover:text-white border border-transparent'}">
+                <span class="flex items-center min-w-0">
+                    <span class="w-6 flex items-center justify-center text-sky-300 flex-shrink-0">
+                        ${getIconHtml(item.icon)}
+                    </span>
+                    <span class="ml-3 sm-nav-label truncate sb-expand-only">${item.label}</span>
+                </span>
+                ${badgeHtml}
+                <span class="sb-tip">${item.label}</span>
+            </a>`;
+    }).join('');
+
+    host.outerHTML = `
+        <aside id="portalSidebar" class="w-64 bg-[#1e3a5f] text-white flex flex-col flex-shrink-0 select-none z-20 border-r border-slate-700${collapsed ? ' is-collapsed' : ''}">
+            <div class="sb-brand h-[72px] px-6 flex items-center gap-3 border-b border-white/10 flex-shrink-0">
+                <div class="sb-expand-only w-9 h-9 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center p-1 shadow-sm overflow-hidden flex-shrink-0">
+                    <img src="${sharedRoot}/assets/logo-mark-transparent.png" alt="DIGITECHKH" class="w-full h-full object-contain">
+                </div>
+                <div class="min-w-0 flex-1 sb-expand-only">
+                    <h1 class="text-lg font-semibold tracking-wider whitespace-nowrap text-white">DIGITECHKH</h1>
+                    <span class="sm-nav-note font-medium text-sky-300 uppercase tracking-wider block truncate">${cfg.title}</span>
+                </div>
+                <button onclick="togglePortalSidebar()" type="button" aria-label="បង្រួម ឬពង្រីករបារចំហៀង"
+                    class="sb-collapse-btn relative hidden lg:flex w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 text-sky-200 hover:text-white items-center justify-center transition flex-shrink-0">
+                    <iconify-icon id="sbCollapseIcon" icon="${collapsed ? 'mdi:chevron-right' : 'mdi:chevron-left'}" class="text-lg"></iconify-icon>
+                    <span class="sb-tip">ពង្រីករបារចំហៀង</span>
+                </button>
+            </div>
+
+            <nav aria-label="ម៉ឺនុយរុករក" class="flex-1 overflow-y-auto px-3 py-4 space-y-1.5 scrollbar-hide">
+                ${navHtml}
+
+                <div class="sb-expand-only pt-4 mt-4 border-t border-white/10">
+                    <button onclick="togglePolicyNote()" type="button"
+                        class="w-full flex items-center justify-between gap-2 px-2 py-1.5 rounded-lg text-sky-300 hover:bg-white/5 transition">
+                        <span class="sm-nav-note inline-flex items-center gap-1.5">
+                            <iconify-icon icon="mdi:shield-check-outline" class="text-base"></iconify-icon>
+                            គោលការណ៍សិទ្ធិ
+                        </span>
+                        <iconify-icon id="sbPolicyIcon" icon="mdi:chevron-down" class="text-base"></iconify-icon>
+                    </button>
+                    <div id="sbPolicyBody" class="hidden mt-2 p-3 rounded-xl bg-white/5 border border-white/10 sm-nav-note text-sky-200">
+                        ${cfg.policyNote}
+                    </div>
+                </div>
+            </nav>
+
+            <div class="border-t border-white/10 bg-black/20 p-3 space-y-2">
+                <div class="sb-user relative flex items-center gap-3 px-2 py-1.5 rounded-xl">
+                    <div class="w-9 h-9 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-100 flex items-center justify-center font-semibold text-xs flex-shrink-0">
+                        ${cfg.userInitials}
+                    </div>
+                    <div class="min-w-0 sb-expand-only">
+                        <p class="sm-value text-white truncate">${cfg.userName}</p>
+                        <p class="sm-nav-note text-sky-300 truncate">${cfg.userRole}</p>
+                    </div>
+                    <span class="sb-tip">${cfg.userName} · ${cfg.userRole}</span>
+                </div>
+
+                <button onclick="handleLogout()" type="button" aria-label="ចាកចេញពីប្រព័ន្ធ"
+                    class="sb-nav-item relative w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white/10 hover:bg-rose-600 text-sky-100 hover:text-white font-semibold transition border border-white/10 shadow-sm cursor-pointer group">
+                    <iconify-icon icon="mdi:logout" class="text-lg text-rose-300 group-hover:text-white transition-colors"></iconify-icon>
+                    <span class="sm-nav-label sb-expand-only">ចាកចេញ</span>
+                    <span class="sb-tip">ចាកចេញ</span>
+                </button>
+            </div>
+        </aside>`;
+}
+
+/* ===== ក្បាលទំព័ររួម =====
+   ទំព័រគ្រាន់តែដាក់ <div id="headerHost" data-title="..." data-subtitle="..."></div>
+   រួចក្បាលទំព័របង្កើតចេញពីអនុគមន៍តែមួយ ដូច្នេះគ្រប់ទំព័រដូចគ្នា 100%។
+   រចនា៖ ចំណងជើង និងចំណងជើងរងខាងឆ្វេង · ជូនដំណឹង និងប្រវត្តិរូបខាងស្តាំ។
+
+   ទិន្នន័យជូនដំណឹងមកពីអនុគមន៍ portalNotifications() ក្នុង data.js របស់តួនាទី
+   នីមួយៗ (ស្រេចចិត្ត)។ បើគ្មាន ប្រអប់នឹងបង្ហាញសារថាគ្មានដំណឹងថ្មី។ */
+
+function portalNotificationList() {
+    if (typeof portalNotifications === 'function') {
+        try {
+            return portalNotifications() || [];
+        } catch (e) {
+            return [];
+        }
+    }
+    return [];
+}
+
+/* ទំព័រខ្លះកំណត់ចំណងជើង និងចំណងជើងរងតាមទិន្នន័យពេលដំណើរការ (ឧ. លេខវេន ឬលេខវិក្កយបត្រ) */
+function setPortalSubtitle(text) {
+    const el = document.getElementById('portalSubtitle');
+    if (el) el.textContent = text;
+}
+
+function setPortalTitle(text) {
+    const el = document.getElementById('portalTitle');
+    if (el) el.textContent = text;
+}
+
+/* ប្តូរគោលដៅប៊ូតុងត្រឡប់ក្រោយពេលដំណើរការ (ទំព័រកែប្រែខ្លះត្រឡប់ទៅទំព័រលម្អិត) */
+function setPortalBackHref(href) {
+    const el = document.getElementById('portalBackBtn');
+    if (el) el.href = href;
+}
+
+function renderPortalHeader() {
+    const host = document.getElementById('headerHost');
+    if (!host) return;
+
+    const portalId = document.body.dataset.portal || document.body.id || 'smPortal';
+    const cfg = PORTAL_CONFIGS[portalId] || PORTAL_CONFIGS.smPortal;
+    const title = host.dataset.title || '';
+    const subtitle = host.dataset.subtitle || '';
+    const backHref = host.dataset.back || '';
+    // ក្បាលទំព័រមានតែចំណងជើង ចំណងជើងរង ការជូនដំណឹង និងគណនី។
+    // ប៊ូតុងសកម្មភាពរបស់ទំព័រត្រូវដាក់ក្នុងតួទំព័រ (របារសកម្មភាពនៅដើម <main>) ជំនួសវិញ។
+    const avatarSrc = `${getRoleRoot()}/../../shared/assets/avatars/${portalId}.jpg`;
+
+    const notes = portalNotificationList();
+    const toneMap = {
+        info: 'bg-sky-100 text-sky-700',
+        success: 'bg-emerald-100 text-emerald-700',
+        warning: 'bg-amber-100 text-amber-700',
+        danger: 'bg-rose-100 text-rose-700'
+    };
+
+    const notifRows = notes.length
+        ? notes.map(n => `
+            <div class="flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition">
+                <span class="w-8 h-8 rounded-lg ${toneMap[n.tone] || toneMap.info} flex items-center justify-center flex-shrink-0">
+                    <iconify-icon icon="${n.icon || 'mdi:bell-outline'}" class="text-base"></iconify-icon>
+                </span>
+                <span class="min-w-0 flex-1">
+                    <span class="sm-td text-slate-700 block">${n.title}</span>
+                    <span class="sm-td-sub text-slate-500 block">${n.note || ''}</span>
+                    ${n.time ? `<span class="sm-td-sub text-slate-400 block mt-0.5">${n.time}</span>` : ''}
+                </span>
+            </div>`).join('')
+        : `<div class="py-10 text-center">
+               <p class="sm-card-sub text-slate-500">គ្មានដំណឹងថ្មីទេ</p>
+           </div>`;
+
+    const backBtn = backHref
+        ? `<a id="portalBackBtn" href="${backHref}" title="ត្រឡប់ក្រោយ"
+              class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70 flex-shrink-0">
+               <i class="fas fa-arrow-left text-sm"></i>
+           </a>`
+        : '';
+
+    host.outerHTML = `
+        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
+            <div class="flex items-center gap-4 min-w-0">
+                ${backBtn}
+                <div class="min-w-0">
+                    <h2 id="portalTitle" class="text-xl font-semibold text-gray-800 leading-tight truncate">${title}</h2>
+                    <p id="portalSubtitle" class="sm-card-sub text-gray-500 mt-0.5 truncate">${subtitle}</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1 flex-shrink-0">
+                <div class="relative">
+                    <button onclick="toggleRowActionMenu(event, 'portalNotifMenu')" type="button" aria-label="ការជូនដំណឹង"
+                        class="relative w-10 h-10 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition">
+                        <iconify-icon icon="mdi:bell-outline" class="text-xl"></iconify-icon>
+                        ${notes.length
+                            ? '<span class="absolute top-2 right-2.5 w-2.5 h-2.5 rounded-full bg-rose-500 border-2 border-white"></span>'
+                            : ''}
+                    </button>
+                    <div id="portalNotifMenu" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 text-left">
+                        <div class="px-3 py-2 mb-1 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-2">
+                            <p class="sm-value text-slate-700">ការជូនដំណឹង</p>
+                            <span class="sm-badge px-2 py-0.5 rounded-full bg-white border border-slate-200 text-slate-600">${notes.length}</span>
+                        </div>
+                        <div class="max-h-[320px] overflow-y-auto scrollbar-hide space-y-0.5">${notifRows}</div>
+                    </div>
+                </div>
+
+                <span class="w-px h-7 bg-slate-200 mx-1.5"></span>
+
+                <div class="relative">
+                    <button onclick="toggleRowActionMenu(event, 'portalProfileMenu')" type="button" aria-label="គណនីរបស់ខ្ញុំ"
+                        class="relative block w-9 h-9 rounded-full transition hover:ring-2 hover:ring-slate-200">
+                        <img src="${avatarSrc}" alt="${cfg.userName}"
+                             class="w-9 h-9 rounded-full object-cover bg-slate-100"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <!-- ប្រើ style ផ្ទាល់ មិនមែនថ្នាក់ hidden ព្រោះ custom.css កំណត់
+                             .hidden { display: none !important } ដែលឈ្នះលើ style ពី onerror -->
+                        <span style="display:none"
+                              class="w-9 h-9 rounded-full bg-[#1e3a5f] text-white items-center justify-center font-semibold text-xs">
+                            ${cfg.userInitials}
+                        </span>
+                        <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"></span>
+                    </button>
+                    <div id="portalProfileMenu" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 text-left">
+                        <div class="px-3 py-2.5 mb-1 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-3">
+                            <span class="w-10 h-10 rounded-full bg-[#1e3a5f] text-white flex items-center justify-center font-semibold text-xs flex-shrink-0">
+                                ${cfg.userInitials}
+                            </span>
+                            <span class="min-w-0">
+                                <span class="sm-value text-slate-700 block truncate">${cfg.userName}</span>
+                                <span class="sm-td-sub text-slate-500 block truncate">${cfg.userRole}</span>
+                            </span>
+                        </div>
+                        <button onclick="handleLogout()" type="button"
+                            class="sm-row-menu-item w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-rose-700 hover:bg-rose-50 transition text-left">
+                            <span class="w-7 h-7 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center flex-shrink-0">
+                                <iconify-icon icon="mdi:logout" class="text-sm"></iconify-icon>
+                            </span>
+                            ចាកចេញពីប្រព័ន្ធ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>`;
+}
+
 function renderPortalSidebar() {
-    const host = document.getElementById('sidebarHost') || document.querySelector('aside');
+    // ច្រកខាងក្រៅ (អតិថិជន/អ្នកផ្គត់ផ្គង់) មាន <aside> ផ្ទាល់ខ្លួន ដូច្នេះមិនជំនួសទេ
+    const host = document.getElementById('sidebarHost');
     if (!host) return;
 
     const portalId = document.body.dataset.portal || document.body.id || 'smPortal';
@@ -228,6 +534,11 @@ function renderPortalSidebar() {
     const roleRoot = getRoleRoot();
     const activeId = document.body.dataset.active || '';
     const sharedRoot = `${roleRoot}/../../shared`;
+
+    if (cfg.sidebarV2) {
+        renderPortalSidebarV2(host, cfg, roleRoot, activeId, sharedRoot);
+        return;
+    }
 
     const navHtml = cfg.nav.map(item => {
         const isActive = item.id === activeId;
@@ -735,6 +1046,7 @@ async function navigateSeamlessly(targetUrl, pushState = true) {
 
             // Update sidebar navigation active highlight with updated location
             renderPortalSidebar();
+            renderPortalHeader();
             initPortalMobileDrawer();
 
             // Update badge counters
@@ -768,18 +1080,21 @@ async function navigateSeamlessly(targetUrl, pushState = true) {
 }
 
 function updatePortalBadges() {
-    if (typeof totalPending === 'function') {
-        const badge = document.getElementById('navQueueBadge');
-        if (badge) badge.textContent = totalPending();
-    }
-    if (typeof totalAlerts === 'function') {
-        const alertBadge = document.getElementById('navAlertBadge');
-        if (alertBadge) alertBadge.textContent = totalAlerts();
-    }
+    // ផ្លាកលេខបង្ហាញតែពេលមានចំនួនពិតប្រាកដ — លេខ 0 ជារំខាន
+    const paint = (id, value) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = value;
+        el.classList.toggle('hidden', !value);
+    };
+    if (typeof totalPending === 'function') paint('navQueueBadge', totalPending());
+    if (typeof totalAlerts === 'function') paint('navAlertBadge', totalAlerts());
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     renderPortalSidebar();
+    // ក្បាលទំព័រត្រូវបង្កើតមុនថតចល័ត ព្រោះថតចល័តបញ្ចូលប៊ូតុងម៉ឺនុយទៅក្នុងក្បាលទំព័រ
+    renderPortalHeader();
     initPortalMobileDrawer();
     // initSeamlessNavigation(); // បិទការស្ទាក់ចាប់ SPA នេះ ដើម្បីឱ្យការប្តូរទំព័រដំណើរការតាម Browser ធម្មជាតិ និងដំណើរការ DOMContentLoaded គ្រប់ទំព័រ 100%
     updatePortalBadges();

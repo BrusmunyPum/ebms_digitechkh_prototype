@@ -367,3 +367,65 @@ function totalPending() {
 function totalAlerts() {
     return getLowStockAlerts().length;
 }
+
+/* ===== ការជូនដំណឹងក្នុងក្បាលទំព័រ (អានដោយ portal.js) ===== */
+
+function portalNotifications() {
+    const list = [];
+
+    // ស្តុកក្រោមចំណុចបញ្ជាទិញ
+    getLowStockAlerts().slice(0, 3).forEach(a => {
+        list.push({
+            icon: a.urgency === 'critical' ? 'mdi:package-variant-remove' : 'mdi:alert-outline',
+            tone: a.urgency === 'critical' ? 'danger' : 'warning',
+            title: `${a.name} នៅសល់ ${fmtNumber(a.totalStock)} ${a.unit}`,
+            note: `${a.urgencyLabel} · ខ្វះ ${fmtNumber(a.deficit)} ${a.unit} · គួរបញ្ជាទិញបន្ថែម ${fmtNumber(a.suggestedOrder)} ${a.unit}`
+        });
+    });
+
+    // ប័ណ្ណកែតម្រូវស្តុករង់ចាំការអនុម័ត
+    getAdjustments()
+        .filter(a => a.status === 'pending_approval' || a.status === 'escalated_gm')
+        .slice(0, 3)
+        .forEach(a => {
+            const p = getProduct(a.sku);
+            const wh = getWarehouse(a.whId);
+            const diff = a.physicalQty - a.systemQty;
+            list.push({
+                icon: 'mdi:clipboard-edit-outline',
+                tone: a.status === 'escalated_gm' ? 'danger' : 'warning',
+                title: a.status === 'escalated_gm'
+                    ? `ប័ណ្ណកែតម្រូវ ${a.id} បញ្ជូនទៅអភិបាលទូទៅ`
+                    : `ប័ណ្ណកែតម្រូវ ${a.id} រង់ចាំអនុម័ត`,
+                note: `${p ? p.name : a.sku} · ${wh ? wh.name : a.whId} · ${diff > 0 ? '+' : ''}${fmtNumber(diff)} ${p ? p.unit : ''} · ${a.reasonLabel}`,
+                time: fmtKhDateTime(a.date)
+            });
+        });
+
+    // ប័ណ្ណផ្ទេរស្តុករង់ចាំការអនុម័ត
+    getMovements().filter(m => m.status === 'pending_approval').slice(0, 2).forEach(m => {
+        const from = getWarehouse(m.fromWh);
+        const to = getWarehouse(m.toWh);
+        list.push({
+            icon: 'mdi:swap-horizontal',
+            tone: 'warning',
+            title: `ប័ណ្ណផ្ទេរ ${m.id} រង់ចាំអនុម័ត`,
+            note: `${from ? from.name : m.fromWh} → ${to ? to.name : m.toWh} · ${m.items.length} ប្រភេទទំនិញ · ស្នើដោយ ${m.requester}`,
+            time: fmtKhDateTime(m.date)
+        });
+    });
+
+    // ប័ណ្ណផ្ទេរកំពុងដឹកជញ្ជូន
+    getMovements().filter(m => m.status === 'in_transit').slice(0, 2).forEach(m => {
+        const to = getWarehouse(m.toWh);
+        list.push({
+            icon: 'mdi:truck-fast-outline',
+            tone: 'info',
+            title: `ប័ណ្ណផ្ទេរ ${m.id} កំពុងដឹកជញ្ជូន`,
+            note: `ទិសដៅ ${to ? to.name : m.toWh} · អ្នកបើកបរ ${m.driver} · ត្រូវបញ្ជាក់ការទទួល`,
+            time: fmtKhDateTime(m.date)
+        });
+    });
+
+    return list;
+}

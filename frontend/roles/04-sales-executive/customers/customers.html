@@ -28,20 +28,11 @@
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="min-w-0">
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight truncate">អតិថិជនរបស់ខ្ញុំ</h2>
-                <p class="sm-card-sub text-gray-500 mt-0.5 truncate">បញ្ជីអតិថិជនដែលខ្ញុំទទួលបន្ទុក ជាមួយកម្រិត និងពិដានឥណទាន</p>
-            </div>
-
-            <div class="flex items-center space-x-3 flex-shrink-0">
-                <a href="create-customer.html" class="sm-badge inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition">
-                    <i class="fas fa-user-plus"></i> <span class="hidden sm:inline">ចុះឈ្មោះអតិថិជនថ្មី</span>
-                </a>
-            </div>
-        </header>
+        <div id="headerHost" data-title="អតិថិជនរបស់ខ្ញុំ"
+             data-subtitle="បញ្ជីអតិថិជនដែលខ្ញុំទទួលបន្ទុក ជាមួយកម្រិត និងពិដានឥណទាន"></div>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
+
             <div class="w-full space-y-4">
 
                 <!-- Filters -->
@@ -54,7 +45,15 @@
                         </div>
                         <div id="tierFilterHost" class="relative"></div>
                     </div>
-                    <span id="resultCount" class="sm-badge text-slate-500"></span>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span id="resultCount" class="sm-badge text-slate-500"></span>
+                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
+                        <div class="flex flex-wrap items-center gap-2 no-print">
+                            <a href="create-customer.html" class="sm-badge inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition">
+                                <i class="fas fa-user-plus"></i> <span class="hidden sm:inline">ចុះឈ្មោះអតិថិជនថ្មី</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Table -->

@@ -32,37 +32,35 @@
 
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
             <!-- Header (72px aligned) -->
-            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200/80 flex-shrink-0 z-10 shadow-xs">
-                <div class="flex items-center gap-3">
-                    <a href="movements.html#adjustments" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ក្រោយ">
-                        <i class="fas fa-arrow-left text-sm"></i>
-                    </a>
-                    <div>
-                        <div class="flex items-center gap-2.5">
-                            <h2 class="text-xl font-semibold text-slate-800 leading-tight" id="adjTitle">ប័ណ្ណកែតម្រូវ ADJ-2026-0017</h2>
-                            <span id="adjStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">រង់ចាំអនុម័ត</span>
-                        </div>
-                        <p class="text-xs font-normal text-slate-500 mt-0.5" id="adjSubtitle">បង្កើតឡើងនៅ 21 កញ្ញា 2026 ដោយ ស៊្រុន ធារ៉ា</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2" id="adjActions">
-                    <button onclick="window.print()" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-2 transition cursor-pointer">
-                        <i class="fas fa-print text-slate-400"></i>
-                        <span>បោះពុម្ព</span>
-                    </button>
-                    <button id="approveAdjBtn" onclick="handleApproveAdj()" class="h-10 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition cursor-pointer">
-                        <i class="fas fa-check text-xs"></i>
-                        <span>អនុម័តកែតម្រូវ</span>
-                    </button>
-                    <button id="rejectAdjBtn" onclick="handleRejectAdj()" class="h-10 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer">
-                        <i class="fas fa-times text-xs"></i>
-                        <span>បដិសេធ</span>
-                    </button>
-                </div>
-            </header>
+        <div id="headerHost" data-title="ប័ណ្ណកែតម្រូវ ADJ-2026-0017"
+                 data-subtitle="បង្កើតឡើងនៅ 21 កញ្ញា 2026 ដោយ ស៊្រុន ធារ៉ា"
+                 data-back="movements.html#adjustments"></div>
 
             <!-- Main Detail Content -->
             <main class="flex-1 overflow-y-auto p-6">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full max-w-4xl flex flex-wrap items-center justify-between gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span id="adjStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">រង់ចាំអនុម័ត</span>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <div class="flex items-center gap-2" id="adjActions">
+                        <button onclick="window.print()" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-2 transition cursor-pointer">
+                            <i class="fas fa-print text-slate-400"></i>
+                            <span>បោះពុម្ព</span>
+                        </button>
+                        <button id="approveAdjBtn" onclick="handleApproveAdj()" class="h-10 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition cursor-pointer">
+                            <i class="fas fa-check text-xs"></i>
+                            <span>អនុម័តកែតម្រូវ</span>
+                        </button>
+                        <button id="rejectAdjBtn" onclick="handleRejectAdj()" class="h-10 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer">
+                            <i class="fas fa-times text-xs"></i>
+                            <span>បដិសេធ</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
                 <div class="max-w-4xl space-y-6">
                     <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-6">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-4 border-b border-slate-100">
@@ -141,8 +139,8 @@
             const diff = currentAdj.physicalQty - currentAdj.systemQty;
             const diffCost = diff * currentAdj.unitCost;
 
-            document.getElementById('adjTitle').innerText = `ប័ណ្ណកែតម្រូវ ${currentAdj.id}`;
-            document.getElementById('adjSubtitle').innerText = `បង្កើតឡើងនៅ ${fmtKhDate(currentAdj.date)} ដោយ ${currentAdj.reporter}`;
+            document.getElementById('portalTitle').innerText = `ប័ណ្ណកែតម្រូវ ${currentAdj.id}`;
+            setPortalSubtitle(`បង្កើតឡើងនៅ ${fmtKhDate(currentAdj.date)} ដោយ ${currentAdj.reporter}`);
             document.getElementById('whNameDisplay').innerText = getWarehouse(currentAdj.whId).name;
             document.getElementById('reporterDisplay').innerText = currentAdj.reporter;
             document.getElementById('skuDisplay').innerText = currentAdj.sku;

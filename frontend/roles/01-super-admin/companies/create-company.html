@@ -34,29 +34,24 @@
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="flex items-center gap-3 min-w-0">
-                <a href="companies.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70 flex-shrink-0" title="ត្រឡប់ទៅកាន់បញ្ជីក្រុមហ៊ុន">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </a>
-                <div class="min-w-0">
-                    <h2 class="text-xl font-semibold text-gray-800 leading-tight truncate">ចុះឈ្មោះក្រុមហ៊ុនថ្មី</h2>
-                    <p class="text-xs font-normal text-gray-500 mt-0.5 truncate">បង្កើតគណនីក្រុមហ៊ុន កំណត់កញ្ចប់សេវាជាវ និងជ្រើសរើសមុខងារប្រើប្រាស់</p>
+        <div id="headerHost" data-title="ចុះឈ្មោះក្រុមហ៊ុនថ្មី"
+             data-subtitle="បង្កើតគណនីក្រុមហ៊ុន កំណត់កញ្ចប់សេវាជាវ និងជ្រើសរើសមុខងារប្រើប្រាស់"
+             data-back="companies.html"></div>
+
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <a href="companies.html" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition cursor-pointer">
+                        បោះបង់
+                    </a>
+                    <button type="button" onclick="submitCreateCompany()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs font-medium shadow-sm transition cursor-pointer">
+                        <i class="fas fa-check text-xs"></i>
+                        <span>ចុះឈ្មោះក្រុមហ៊ុន</span>
+                    </button>
                 </div>
             </div>
 
-            <div class="flex items-center space-x-3 flex-shrink-0">
-                <a href="companies.html" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition cursor-pointer">
-                    បោះបង់
-                </a>
-                <button type="button" onclick="submitCreateCompany()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs font-medium shadow-sm transition cursor-pointer">
-                    <i class="fas fa-check text-xs"></i>
-                    <span>ចុះឈ្មោះក្រុមហ៊ុន</span>
-                </button>
-            </div>
-        </header>
-
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
             <form id="createCompanyForm" onsubmit="event.preventDefault(); submitCreateCompany();" class="w-full space-y-5">
 
                 <!-- 2-Column Grid -->

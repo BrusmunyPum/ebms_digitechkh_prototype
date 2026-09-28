@@ -33,20 +33,18 @@
 
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
             <!-- Header (72px aligned) -->
-            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200/80 flex-shrink-0 z-10 shadow-xs">
-                <div class="flex items-center gap-3">
-                    <a href="customers.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ក្រោយ">
-                        <i class="fas fa-arrow-left text-sm"></i>
-                    </a>
-                    <div>
-                        <div class="flex items-center gap-2.5">
-                            <h2 class="text-xl font-semibold text-slate-800 leading-tight" id="custHeaderName">ក្រុមហ៊ុន រស្មី អភិវឌ្ឍន៍</h2>
-                            <span id="custTierBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">អតិថិជនដុំ</span>
-                        </div>
-                        <p class="text-xs font-normal text-slate-500 mt-0.5" id="custHeaderCode">កូដអតិថិជន៖ CUST-2026-0001</p>
-                    </div>
+        <div id="headerHost" data-title="ក្រុមហ៊ុន រស្មី អភិវឌ្ឍន៍"
+                 data-subtitle="កូដអតិថិជន៖ CUST-2026-0001"
+                 data-back="customers.html"></div>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto p-6 space-y-6">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full flex flex-wrap items-center justify-between gap-2 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span id="custTierBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">អតិថិជនដុំ</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                     <a href="edit-customer.html" id="editCustBtn" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-2 transition cursor-pointer">
                         <i class="fas fa-pen-to-square text-slate-400"></i>
                         <span>កែប្រែព័ត៌មាន</span>
@@ -56,10 +54,8 @@
                         <span>បង្កើតសម្រង់តម្លៃ</span>
                     </a>
                 </div>
-            </header>
+            </div>
 
-            <!-- Main Content Area -->
-            <main class="flex-1 overflow-y-auto p-6 space-y-6">
                 <!-- Customer Hero KPI Cards -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
@@ -205,8 +201,8 @@
 
             if (!currentCust) return;
 
-            document.getElementById('custHeaderName').innerText = currentCust.name;
-            document.getElementById('custHeaderCode').innerText = `កូដអតិថិជន៖ ${currentCust.code}`;
+            document.getElementById('portalTitle').innerText = currentCust.name;
+            setPortalSubtitle(`កូដអតិថិជន៖ ${currentCust.code}`);
             document.getElementById('custCreditLimit').innerText = fmtUSD(currentCust.creditLimit);
             document.getElementById('custTerms').innerText = `${currentCust.paymentTerms} ថ្ងៃ`;
             document.getElementById('custSince').innerText = currentCust.since;

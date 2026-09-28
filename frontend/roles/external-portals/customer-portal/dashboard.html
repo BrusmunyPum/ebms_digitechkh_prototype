@@ -29,6 +29,7 @@
         }
     </script>
     <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
     <style>
         /* custom.css ដាក់ពណ៌បៃតងលើ <aside> ទាំងអស់ជាសកល — ច្រកអតិថិជននេះត្រូវការពណ៌ស្វាយ/ខៀវក្រម់ផ្ទាល់ខ្លួន ដូច្នេះត្រូវបដិសេធដោយ ID-scoped rule ដែលមាន specificity ខ្ពស់ជាង */
         #cpPortal aside {
@@ -37,7 +38,7 @@
     </style>
 </head>
 
-<body id="cpPortal" class="bg-indigo-50/30 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
+<body id="cpPortal" class="bg-indigo-50/30 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden" data-role-root="..">
 
     <!-- របារចំហៀងអតិថិជន -->
     <aside class="w-64 bg-[#1e1b4b] text-white flex flex-col flex-shrink-0 select-none z-20 border-r border-indigo-950">
@@ -87,23 +88,19 @@
     </aside>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div>
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight">ច្រករបៀងអតិថិជន</h2>
-                <p class="text-xs font-normal text-gray-500 mt-0.5" id="welcomeText">សូមស្វាគមន៍</p>
-            </div>
-
-            <div class="flex items-center space-x-3">
-                <div class="flex items-center gap-2 bg-purple-50 text-purple-800 px-3 py-1.5 rounded-xl border border-purple-200 text-xs font-semibold">
-                    <i class="fas fa-star text-amber-500"></i> អតិថិជន VIP
-                </div>
-                <div class="flex items-center border-l pl-3">
-                    <div id="userAvatar" class="w-10 h-10 rounded-full bg-[#1e1b4b] text-purple-300 flex items-center justify-center font-bold text-sm shadow-sm">--</div>
-                </div>
-            </div>
-        </header>
+        <div id="headerHost" data-title="ច្រករបៀងអតិថិជន"
+             data-subtitle="សូមស្វាគមន៍"></div>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-indigo-50/20 px-4 md:px-6 py-4">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <div class="flex items-center gap-2 bg-purple-50 text-purple-800 px-3 py-1.5 rounded-xl border border-purple-200 text-xs font-semibold">
+                        <i class="fas fa-star text-amber-500"></i> អតិថិជន VIP
+                    </div>
+                </div>
+            </div>
+
             <div class="w-full space-y-5">
 
                 <!-- ជួរកាត KPI -->
@@ -159,14 +156,13 @@
 
     <script src="../../../shared/scripts/ui-components.js"></script>
     <script src="data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
     <script>
         function renderDashboard() {
             const data = getCustomerPortalData();
             const profile = data.customerProfile;
 
-            document.getElementById('welcomeText').textContent = `សូមស្វាគមន៍, ${profile.companyName}`;
-            const initials = profile.companyName.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
-            document.getElementById('userAvatar').textContent = initials;
+            setPortalSubtitle(`សូមស្វាគមន៍, ${profile.companyName}`);
 
             const totalPaid = data.invoices.reduce((s, inv) => s + inv.paidAmount, 0);
             const outstandingInvoices = data.invoices

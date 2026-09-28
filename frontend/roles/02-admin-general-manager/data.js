@@ -760,3 +760,90 @@ window.BMS_GM = {
     fmtPercent,
     fmtDateKh
 };
+
+/* ===== ការជូនដំណឹងក្នុងក្បាលទំព័រ (អានដោយ portal.js) ===== */
+
+function portalNotifications() {
+    const list = [];
+    const store = getGMStore();
+    const kpis = store.kpis;
+
+    // សំណើរង់ចាំការអនុម័តរបស់អភិបាលទូទៅ
+    const pending = store.approvals
+        .filter(a => a.status === 'pending')
+        .sort((a, b) => (b.amount || 0) - (a.amount || 0));
+
+    pending.slice(0, 3).forEach(a => {
+        list.push({
+            icon: 'mdi:clipboard-check-outline',
+            tone: (a.amount || 0) >= 1000 ? 'danger' : 'warning',
+            title: `${a.typeNameKh} ${a.refCode} រង់ចាំអនុម័ត`,
+            note: `${a.requesterName} (${a.requesterRole}) · ${fmtCurrencyKh(a.amount)}`,
+            time: a.requestedDate
+        });
+    });
+
+    if (pending.length > 3) {
+        list.push({
+            icon: 'mdi:inbox-full-outline',
+            tone: 'info',
+            title: `មានសំណើរង់ចាំការអនុម័តសរុប ${pending.length}`,
+            note: `ទឹកប្រាក់សរុប ${fmtCurrencyKh(pending.reduce((s, a) => s + (a.amount || 0), 0))}`
+        });
+    }
+
+    // បំណុលត្រូវទារហួសកាលកំណត់
+    if (kpis.overdueAR > 0) {
+        list.push({
+            icon: 'mdi:cash-clock',
+            tone: 'danger',
+            title: `បំណុលត្រូវទារហួសកាលកំណត់ ${fmtCurrencyKh(kpis.overdueAR)}`,
+            note: `គិតជា ${fmtPercent(kpis.overdueAR / kpis.totalAR * 100)} នៃបំណុលត្រូវទារសរុប ${fmtCurrencyKh(kpis.totalAR)}`
+        });
+    }
+
+    // បំណុលត្រូវសងជិតដល់កាលកំណត់
+    if (kpis.dueSoonAP > 0) {
+        list.push({
+            icon: 'mdi:file-document-arrow-right-outline',
+            tone: 'warning',
+            title: `បំណុលត្រូវសងជិតដល់កំណត់ ${fmtCurrencyKh(kpis.dueSoonAP)}`,
+            note: `បំណុលត្រូវសងសរុប ${fmtCurrencyKh(kpis.totalAP)} · សាច់ប្រាក់ងាយស្រួល ${fmtCurrencyKh(kpis.cashLiquidity)}`
+        });
+    }
+
+    // សមត្ថភាពសាច់ប្រាក់
+    if (kpis.cashRunwayMonths < 6) {
+        list.push({
+            icon: 'mdi:gauge-low',
+            tone: kpis.cashRunwayMonths < 3 ? 'danger' : 'warning',
+            title: `សាច់ប្រាក់គ្រប់ប្រើបាន ${kpis.cashRunwayMonths} ខែ`,
+            note: `ចំណាយប្រចាំខែជាមធ្យម ${fmtCurrencyKh(kpis.monthlyBurnRate)}`
+        });
+    }
+
+    // គ្រាហិរញ្ញវត្ថុដែលមិនទាន់បិទបញ្ជី
+    (store.systemSettings.periodLocks || [])
+        .filter(p => !p.isLocked && p.status === 'pending')
+        .forEach(p => {
+            list.push({
+                icon: 'mdi:lock-open-alert-outline',
+                tone: 'warning',
+                title: `គ្រា ${p.nameKh} មិនទាន់បិទបញ្ជី`,
+                note: p.note || 'សូមបិទគ្រាបន្ទាប់ពីប្រកាសពន្ធរួចរាល់'
+            });
+        });
+
+    // គណនីបុគ្គលិកដែលត្រូវបានផ្អាក
+    const suspended = store.users.filter(u => u.status === 'suspended');
+    if (suspended.length) {
+        list.push({
+            icon: 'mdi:account-lock-outline',
+            tone: 'info',
+            title: `គណនីបុគ្គលិកត្រូវបានផ្អាក ${suspended.length}`,
+            note: suspended.map(u => u.fullNameKh).join(' · ')
+        });
+    }
+
+    return list;
+}

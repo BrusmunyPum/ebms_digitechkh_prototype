@@ -487,3 +487,73 @@ function quoteStatusBreakdown(range) {
         { label: 'ផុតសុពលភាព', value: count('expired'), color: 'text-slate-500' }
     ];
 }
+
+/* ===== ការជូនដំណឹងក្នុងក្បាលទំព័រ (អានដោយ portal.js) ===== */
+
+function portalNotifications() {
+    const list = [];
+
+    pendingQuotes().slice(0, 3).forEach(q => {
+        const c = getCustomer(q.customerId);
+        const rep = getRep(q.repId);
+        list.push({
+            icon: 'mdi:file-percent-outline',
+            tone: q.discountPercent >= 10 ? 'danger' : 'warning',
+            title: `សម្រង់តម្លៃ ${q.id} រង់ចាំអនុម័ត`,
+            note: `${c ? c.name : ''} · បញ្ចុះតម្លៃ ${fmtPercent(q.discountPercent)} · ${fmtUSD(quoteTotals(q).grandTotal)} · ${rep ? rep.name : ''}`,
+            time: fmtKhDate(q.date)
+        });
+    });
+
+    pendingVoids().forEach(v => {
+        const c = getCustomer(v.customerId);
+        list.push({
+            icon: 'mdi:file-remove-outline',
+            tone: 'danger',
+            title: `សំណើលុបចោលវិក្កយបត្រ ${v.id}`,
+            note: `${c ? c.name : ''} · ${fmtUSD(v.amount)} · ${v.stockReleased ? 'ទំនិញចេញពីឃ្លាំងរួច' : 'ទំនិញមិនទាន់ចេញ'}`,
+            time: fmtKhDate(v.date)
+        });
+    });
+
+    pendingCredits().forEach(c => {
+        const cust = getCustomer(c.customerId);
+        list.push({
+            icon: 'mdi:credit-card-clock-outline',
+            tone: 'warning',
+            title: `សំណើបង្កើនឥណទាន ${c.id}`,
+            note: `${cust ? cust.name : ''} · ${fmtUSD(c.currentLimit)} → ${fmtUSD(c.requestedLimit)}`,
+            time: fmtKhDate(c.date)
+        });
+    });
+
+    // វិក្កយបត្រហួសកាលកំណត់ទូទាត់
+    const overdue = INVOICES.filter(i => i.status === 'overdue');
+    if (overdue.length) {
+        const amount = overdue.reduce((sum, i) => sum + Math.max(i.total - i.paid, 0), 0);
+        const worst = overdue.slice().sort((a, b) => daysBetween(b.dueDate) - daysBetween(a.dueDate))[0];
+        list.push({
+            icon: 'mdi:cash-clock',
+            tone: 'danger',
+            title: `វិក្កយបត្រហួសកាលកំណត់ ${overdue.length} ច្បាប់`,
+            note: `សរុបត្រូវទារ ${fmtUSD(amount)} · យឺតបំផុត ${worst.id} ${daysBetween(worst.dueDate)} ថ្ងៃ`
+        });
+    }
+
+    // ឱកាសលក់ដែលនៅដំណាក់កាលចរចាយូរថ្ងៃ
+    const stuck = PIPELINE_DEALS
+        .filter(d => dealStage(d) === 'negotiation' && daysBetween(d.date) >= 7)
+        .sort((a, b) => daysBetween(b.date) - daysBetween(a.date));
+    if (stuck.length) {
+        const top = stuck[0];
+        const c = getCustomer(top.customerId);
+        list.push({
+            icon: 'mdi:handshake-outline',
+            tone: 'info',
+            title: `ឱកាសលក់ ${stuck.length} កំពុងជាប់គាំងក្នុងការចរចា`,
+            note: `${c ? c.name : ''} · ${fmtUSD(top.value)} · មិនមានចលនា ${daysBetween(top.date)} ថ្ងៃ`
+        });
+    }
+
+    return list;
+}

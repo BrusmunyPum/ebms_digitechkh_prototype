@@ -37,18 +37,8 @@
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="min-w-0">
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight truncate">វិក្កយបត្រក្នុងវេនបច្ចុប្បន្ន</h2>
-                <p id="shiftSub" class="sm-card-sub text-gray-500 mt-0.5 truncate"></p>
-            </div>
-
-            <div class="flex items-center space-x-3 flex-shrink-0">
-                <a href="../pos-terminal.html" class="sm-badge inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition">
-                    <i class="fas fa-point-of-sale"></i> <span class="hidden sm:inline">ត្រឡប់ទៅផ្ទាំងគិតលុយ</span>
-                </a>
-            </div>
-        </header>
+        <div id="headerHost" data-title="វិក្កយបត្រក្នុងវេនបច្ចុប្បន្ន"
+                 data-subtitle="ប្រតិបត្តិការទាំងអស់ក្នុងវេនបច្ចុប្បន្ន"></div>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
             <div class="w-full space-y-4">
@@ -58,10 +48,14 @@
                     <div class="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center text-lg flex-shrink-0">
                         <i class="fas fa-lock"></i>
                     </div>
-                    <div>
+                    <div class="flex-1 min-w-0">
                         <h4 class="sm-card-title text-sky-900">ទិន្នន័យជាប់សោរត្រឹមវេនបច្ចុប្បន្ន</h4>
                         <p id="lockNote" class="sm-card-sub text-sky-800 mt-0.5"></p>
                     </div>
+                    <a href="../pos-terminal.html"
+                       class="sm-badge inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-sky-100 text-sky-800 border border-sky-200 font-semibold transition flex-shrink-0">
+                        <i class="fas fa-arrow-left"></i> <span class="hidden sm:inline">ត្រឡប់ទៅផ្ទាំងគិតលុយ</span>
+                    </a>
                 </div>
 
                 <div id="summaryRow" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
@@ -272,8 +266,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('shiftSub').textContent =
-                `វេន ${SHIFT.id} · ${SHIFT.terminal} · ${SHIFT.cashier}`;
+            setPortalSubtitle(`វេន ${SHIFT.id} · ${SHIFT.terminal} · ${SHIFT.cashier}`);
             document.getElementById('lockNote').textContent =
                 `បង្ហាញតែប្រតិបត្តិការចាប់ពីម៉ោង ${fmtTime(SHIFT.openedAt)} ថ្ងៃទី ${fmtKhDate(SHIFT.openedAt)} មកប៉ុណ្ណោះ។ ប្រតិបត្តិការពីវេនមុន និងចំណូលប្រចាំខែ មិនអាចចូលមើលបានឡើយ។`;
 

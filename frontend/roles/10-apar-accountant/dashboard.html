@@ -38,30 +38,12 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Content Top Header -->
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="min-w-0">
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight truncate">ផ្ទាំងគ្រប់គ្រងចរន្តសាច់ប្រាក់ និងបំណុល</h2>
-                <p class="text-xs font-normal text-gray-500 mt-0.5 truncate">គ្រប់គ្រងការប្រមូលប្រាក់ពីអតិថិជន (AR) និងការទូទាត់បំណុលអ្នកផ្គត់ផ្គង់ (AP)</p>
-            </div>
-
-            <div class="flex items-center space-x-3 flex-shrink-0">
-                <a href="receipts/receipts.html" class="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 font-semibold text-xs transition">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>ប្រមូលប្រាក់ AR</span>
-                </a>
-                <a href="vouchers/vouchers.html" class="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 font-semibold text-xs transition">
-                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                    <span>ប័ណ្ណចំណាយរង់ចាំ: 3</span>
-                </a>
-
-                <div class="flex items-center sm:border-l sm:pl-3">
-                    <div class="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-semibold text-sm shadow-sm" title="អ៊ុំ ម៉ានី">អម</div>
-                </div>
-            </div>
-        </header>
+        <div id="headerHost" data-title="ផ្ទាំងគ្រប់គ្រងចរន្តសាច់ប្រាក់ និងបំណុល"
+             data-subtitle="គ្រប់គ្រងការប្រមូលប្រាក់ពីអតិថិជន (AR) និងការទូទាត់បំណុលអ្នកផ្គត់ផ្គង់ (AP)"></div>
 
         <!-- Main Content -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
+
             <div class="w-full space-y-5">
 
                 <!-- Filter Toolbar -->
@@ -70,7 +52,20 @@
                         <i class="fas fa-money-bill-transfer text-slate-400 text-xs"></i>
                         <span class="text-xs font-semibold text-slate-700">ស្ថានភាពលំហូរសាច់ប្រាក់ និងបំណុលជាក់ស្តែង</span>
                     </div>
-                    <div id="dateFilterHost" class="flex items-center"></div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div id="dateFilterHost" class="flex items-center"></div>
+                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
+                        <div class="flex flex-wrap items-center gap-2 no-print">
+                            <a href="receipts/receipts.html" class="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 font-semibold text-xs transition">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span>ប្រមូលប្រាក់ AR</span>
+                            </a>
+                            <a href="vouchers/vouchers.html" class="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 font-semibold text-xs transition">
+                                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                                <span>ប័ណ្ណចំណាយរង់ចាំ: 3</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- KPI Cards Row -->
@@ -216,9 +211,9 @@
     </div>
 
     <!-- Scripts -->
-    <script src="../../shared/scripts/portal.js"></script>
     <script src="../../shared/scripts/ui-components.js"></script>
     <script src="data.js"></script>
+    <script src="../../shared/scripts/portal.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             renderPortalSidebar();

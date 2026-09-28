@@ -37,30 +37,25 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Content Top Header with Unified Back Button -->
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="flex items-center gap-3">
-                <a href="receipts.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ទៅបញ្ជីបង្កាន់ដៃ">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </a>
-                <div>
-                    <h2 class="text-xl font-semibold text-gray-800 leading-tight">ចេញបង្កាន់ដៃទទួលប្រាក់ផ្លូវការ</h2>
-                    <p class="text-xs font-normal text-gray-500 mt-0.5">កត់ត្រាការទូទាត់សាច់ប្រាក់ ឬផ្ទេរប្រាក់បាគង KHQR ពីអតិថិជន</p>
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-3">
-                <button type="button" onclick="window.location.href='receipts.html'" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs transition">
-                    បោះបង់
-                </button>
-                <button type="button" onclick="handleSaveReceipt()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs shadow-sm transition flex items-center gap-2">
-                    <i class="fas fa-check"></i>
-                    <span>ចេញបង្កាន់ដៃទទួលប្រាក់</span>
-                </button>
-            </div>
-        </header>
+        <div id="headerHost" data-title="ចេញបង្កាន់ដៃទទួលប្រាក់ផ្លូវការ"
+             data-subtitle="កត់ត្រាការទូទាត់សាច់ប្រាក់ ឬផ្ទេរប្រាក់បាគង KHQR ពីអតិថិជន"
+             data-back="receipts.html"></div>
 
         <!-- Main Form Container -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-6">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full max-w-4xl mx-auto flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="window.location.href='receipts.html'" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs transition">
+                        បោះបង់
+                    </button>
+                    <button type="button" onclick="handleSaveReceipt()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs shadow-sm transition flex items-center gap-2">
+                        <i class="fas fa-check"></i>
+                        <span>ចេញបង្កាន់ដៃទទួលប្រាក់</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="w-full max-w-4xl mx-auto space-y-5">
 
                 <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
@@ -127,9 +122,9 @@
     </div>
 
     <!-- Scripts -->
-    <script src="../../../shared/scripts/portal.js"></script>
     <script src="../../../shared/scripts/ui-components.js"></script>
     <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             renderPortalSidebar();

@@ -29,6 +29,7 @@
         }
     </script>
     <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
     <style>
         #spPortal aside {
             background-color: #0b253a !important;
@@ -36,7 +37,7 @@
     </style>
 </head>
 
-<body id="spPortal" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
+<body id="spPortal" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden" data-role-root="..">
 
     <!-- របារចំហៀងអ្នកផ្គត់ផ្គង់ -->
     <aside class="w-64 bg-[#0b253a] text-white flex flex-col flex-shrink-0 select-none z-20 border-r border-slate-800">
@@ -95,12 +96,8 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Content Top Header -->
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div>
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight">តាមដានការដឹកជញ្ជូន</h2>
-                <p class="text-xs font-normal text-gray-500 mt-0.5">ស្ថានភាពដឹកជញ្ជូនទំនិញចូលឃ្លាំងក្រុមហ៊ុន ឌីជីថេក ខេអេច ឯ.ក</p>
-            </div>
-        </header>
+        <div id="headerHost" data-title="តាមដានការដឹកជញ្ជូន"
+             data-subtitle="ស្ថានភាពដឹកជញ្ជូនទំនិញចូលឃ្លាំងក្រុមហ៊ុន ឌីជីថេក ខេអេច ឯ.ក"></div>
 
         <!-- Main Content -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-6">
@@ -221,6 +218,7 @@
     <!-- Scripts -->
     <script src="../../../shared/scripts/ui-components.js"></script>
     <script src="data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             renderDeliveries();

@@ -428,3 +428,67 @@ function buildKhqrPayload(invoiceId, amount) {
         `62${String(invoiceId.length + 4).padStart(2, '0')}01${String(invoiceId.length).padStart(2, '0')}${invoiceId}`
     ].join('');
 }
+
+/* ===== ការជូនដំណឹងក្នុងក្បាលទំព័រ (អានដោយ portal.js) ===== */
+
+function portalNotifications() {
+    const list = [];
+
+    // កិច្ចការតាមដានដល់កំណត់ ឬហួសកំណត់
+    followUps().filter(f => f.urgency !== 'upcoming').slice(0, 3).forEach(f => {
+        list.push({
+            icon: f.type === 'quote' ? 'mdi:phone-outgoing-outline' : 'mdi:calendar-check-outline',
+            tone: f.urgency === 'overdue' ? 'danger' : 'warning',
+            title: f.urgency === 'overdue'
+                ? `កិច្ចការតាមដានយឺត ${f.late} ថ្ងៃ · ${f.refId}`
+                : `កិច្ចការតាមដានថ្ងៃនេះ · ${f.refId}`,
+            note: `${f.customer ? f.customer.name : ''} · ${f.note}`,
+            time: fmtKhDate(f.due)
+        });
+    });
+
+    // សម្រង់តម្លៃជិតផុតសុពលភាព
+    QUOTES.filter(q => ['pending_approval', 'approved'].includes(q.status))
+        .map(q => ({ q, e: quoteExpiry(q) }))
+        .filter(x => x.e.days <= 3)
+        .sort((a, b) => a.e.days - b.e.days)
+        .slice(0, 3)
+        .forEach(x => {
+            const c = getCustomer(x.q.customerId);
+            list.push({
+                icon: 'mdi:file-clock-outline',
+                tone: x.e.days < 0 ? 'danger' : 'warning',
+                title: `សម្រង់តម្លៃ ${x.q.id} ${x.e.label}`,
+                note: `${c ? c.name : ''} · ${fmtUSD(docTotals(x.q).grandTotal)}`,
+                time: fmtKhDate(x.q.validUntil)
+            });
+        });
+
+    // វិក្កយបត្រហួសកាលកំណត់ទូទាត់របស់ខ្ញុំ
+    const overdue = INVOICES.map(i => ({ i, s: invoiceState(i) }))
+        .filter(x => x.s.key === 'overdue')
+        .sort((a, b) => b.s.overdueDays - a.s.overdueDays);
+    if (overdue.length) {
+        const total = overdue.reduce((sum, x) => sum + x.s.due, 0);
+        const c = getCustomer(overdue[0].i.customerId);
+        list.push({
+            icon: 'mdi:cash-clock',
+            tone: 'danger',
+            title: `វិក្កយបត្រហួសកាលកំណត់ ${overdue.length} ច្បាប់`,
+            note: `សរុប ${fmtUSD(total)} · យឺតបំផុត ${c ? c.name : ''} ${overdue[0].s.overdueDays} ថ្ងៃ`
+        });
+    }
+
+    // ព្រំដែនបញ្ចុះតម្លៃដោយខ្លួនឯង
+    const needApproval = QUOTES.filter(q => q.status === 'pending_approval');
+    if (needApproval.length) {
+        list.push({
+            icon: 'mdi:shield-check-outline',
+            tone: 'info',
+            title: `សម្រង់តម្លៃ ${needApproval.length} រង់ចាំប្រធានផ្នែកលក់អនុម័ត`,
+            note: `ការបញ្ចុះតម្លៃលើសពី ${fmtPercent(DISCOUNT_SELF_LIMIT)} ត្រូវការការអនុម័ត`
+        });
+    }
+
+    return list;
+}

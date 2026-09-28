@@ -29,6 +29,7 @@
         }
     </script>
     <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
     <style>
         /* custom.css ដាក់ពណ៌បៃតងលើ <aside> ទាំងអស់ជាសកល — ច្រកអតិថិជននេះត្រូវការពណ៌ស្វាយ/ខៀវក្រម់ផ្ទាល់ខ្លួន ដូច្នេះត្រូវបដិសេធដោយ ID-scoped rule ដែលមាន specificity ខ្ពស់ជាង */
         #cpPortal aside {
@@ -37,7 +38,7 @@
     </style>
 </head>
 
-<body id="cpPortal" class="bg-indigo-50/30 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
+<body id="cpPortal" class="bg-indigo-50/30 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden" data-role-root="..">
 
     <!-- របារចំហៀងអតិថិជន -->
     <aside class="w-64 bg-[#1e1b4b] text-white flex flex-col flex-shrink-0 select-none z-20 border-r border-indigo-950">
@@ -87,12 +88,8 @@
     </aside>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div>
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight">វិក្កយបត្ររបស់ខ្ញុំពី DIGITECHKH</h2>
-                <p class="text-xs font-normal text-gray-500 mt-0.5">ទាញយកវិក្កយបត្រផ្លូវការ និងពិនិត្យសមតុល្យ</p>
-            </div>
-        </header>
+        <div id="headerHost" data-title="វិក្កយបត្ររបស់ខ្ញុំពី DIGITECHKH"
+             data-subtitle="ទាញយកវិក្កយបត្រផ្លូវការ និងពិនិត្យសមតុល្យ"></div>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-indigo-50/20 px-4 md:px-6 py-4">
             <div class="w-full space-y-4">
@@ -137,6 +134,7 @@
 
     <script src="../../../shared/scripts/ui-components.js"></script>
     <script src="data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
     <script>
         let currentInvoiceFilter = 'all';
 

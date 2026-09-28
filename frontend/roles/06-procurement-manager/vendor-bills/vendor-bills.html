@@ -37,21 +37,20 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Content Top Header -->
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="min-w-0">
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight truncate">វិក្កយបត្រអ្នកផ្គត់ផ្គង់</h2>
-                <p class="text-xs font-normal text-gray-500 mt-0.5 truncate">ផ្ទៀងផ្ទាត់ 3-Way Matching (PO + GRN ឃ្លាំង + Bill) មុនបញ្ជូនទៅទូទាត់</p>
-            </div>
-
-            <div class="flex items-center space-x-3 flex-shrink-0">
-                <span class="px-3.5 py-1.5 rounded-xl bg-purple-50 text-purple-700 font-semibold text-xs border border-purple-200">
-                    <i class="fas fa-shield-halved mr-1"></i> 3-Way Matching Standard
-                </span>
-            </div>
-        </header>
+        <div id="headerHost" data-title="វិក្កយបត្រអ្នកផ្គត់ផ្គង់"
+             data-subtitle="ផ្ទៀងផ្ទាត់ 3-Way Matching (PO + GRN ឃ្លាំង + Bill) មុនបញ្ជូនទៅទូទាត់"></div>
 
         <!-- Main Content -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="px-3.5 py-1.5 rounded-xl bg-purple-50 text-purple-700 font-semibold text-xs border border-purple-200">
+                        <i class="fas fa-shield-halved mr-1"></i> 3-Way Matching Standard
+                    </span>
+                </div>
+            </div>
+
             <div class="w-full space-y-4">
 
                 <!-- Alert Notice for 3-Way Matching Rule -->
@@ -101,9 +100,9 @@
     </div>
 
     <!-- Scripts -->
-    <script src="../../../shared/scripts/portal.js"></script>
     <script src="../../../shared/scripts/ui-components.js"></script>
     <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             renderPortalSidebar();

@@ -38,21 +38,11 @@
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="min-w-0">
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight truncate">បំពង់លំហូរការលក់</h2>
-                <p class="sm-card-sub text-gray-500 mt-0.5 truncate">តាមដានឱកាសលក់តាមដំណាក់កាល ចាប់ពីអតិថិជនសក្តានុពលរហូតដល់ការបិទការលក់</p>
-            </div>
-
-            <div class="flex items-center space-x-3 flex-shrink-0">
-                <span id="headerOpenValue" class="sm-badge hidden sm:inline-flex font-semibold px-3 py-1.5 rounded-xl bg-sky-50 text-sky-700 border border-sky-200"></span>
-                <div class="flex items-center sm:border-l sm:pl-3">
-                    <div class="w-10 h-10 rounded-full bg-[#1e3a5f] text-white flex items-center justify-center font-semibold text-sm shadow-sm">ហវ</div>
-                </div>
-            </div>
-        </header>
+        <div id="headerHost" data-title="បំពង់លំហូរការលក់"
+             data-subtitle="តាមដានឱកាសលក់តាមដំណាក់កាល ចាប់ពីអតិថិជនសក្តានុពលរហូតដល់ការបិទការលក់"></div>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
+
             <div class="w-full space-y-4">
 
                 <!-- Filters -->
@@ -63,7 +53,13 @@
                         <div id="repFilterHost" class="relative"></div>
                         <div id="categoryFilterHost" class="relative"></div>
                     </div>
-                    <div id="dateFilterHost" class="flex items-center"></div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div id="dateFilterHost" class="flex items-center"></div>
+                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
+                        <div class="flex flex-wrap items-center gap-2 no-print">
+                            <span id="headerOpenValue" class="sm-badge hidden sm:inline-flex font-semibold px-3 py-1.5 rounded-xl bg-sky-50 text-sky-700 border border-sky-200"></span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Summary -->

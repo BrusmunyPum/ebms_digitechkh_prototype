@@ -34,29 +34,23 @@
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="flex items-center gap-3 min-w-0">
-                <a id="backLink" href="companies.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70 flex-shrink-0" title="ត្រឡប់ក្រោយ">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </a>
-                <div class="min-w-0">
-                    <h2 class="text-xl font-semibold text-gray-800 leading-tight truncate">កែប្រែព័ត៌មានក្រុមហ៊ុន</h2>
-                    <p id="subHeaderTenantId" class="text-xs font-normal text-gray-500 mt-0.5 truncate">កំពុងកែប្រែទិន្នន័យក្រុមហ៊ុន...</p>
+        <div id="headerHost" data-title="កែប្រែព័ត៌មានក្រុមហ៊ុន"
+             data-subtitle="កំពុងកែប្រែទិន្នន័យក្រុមហ៊ុន..."></div>
+
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <a id="cancelBtn" href="companies.html" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition cursor-pointer">
+                        បោះបង់
+                    </a>
+                    <button type="button" onclick="submitEditCompany()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs font-medium shadow-sm transition cursor-pointer">
+                        <i class="fas fa-save text-xs"></i>
+                        <span>រក្សាទុកការកែប្រែ</span>
+                    </button>
                 </div>
             </div>
 
-            <div class="flex items-center space-x-3 flex-shrink-0">
-                <a id="cancelBtn" href="companies.html" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition cursor-pointer">
-                    បោះបង់
-                </a>
-                <button type="button" onclick="submitEditCompany()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs font-medium shadow-sm transition cursor-pointer">
-                    <i class="fas fa-save text-xs"></i>
-                    <span>រក្សាទុកការកែប្រែ</span>
-                </button>
-            </div>
-        </header>
-
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
             <form id="editCompanyForm" onsubmit="event.preventDefault(); submitEditCompany();" class="w-full space-y-5">
 
                 <!-- 2-Column Grid -->
@@ -327,8 +321,8 @@
                 return;
             }
 
-            document.getElementById('subHeaderTenantId').textContent = `លេខសម្គាល់ក្រុមហ៊ុន៖ #${tenant.id} (${tenant.nameKh})`;
-            document.getElementById('backLink').href = `view-company.html?id=${tenant.id}`;
+            setPortalSubtitle(`លេខសម្គាល់ក្រុមហ៊ុន៖ #${tenant.id} (${tenant.nameKh})`);
+            setPortalBackHref(`view-company.html?id=${tenant.id}`);
             document.getElementById('cancelBtn').href = `view-company.html?id=${tenant.id}`;
             document.getElementById('cancelBtnBottom').href = `view-company.html?id=${tenant.id}`;
 

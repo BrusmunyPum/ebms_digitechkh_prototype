@@ -587,3 +587,88 @@ window.BMS_IA = {
         return (Number(num) || 0).toFixed(1) + '%';
     }
 };
+
+/* ===== ការជូនដំណឹងក្នុងក្បាលទំព័រ (អានដោយ portal.js) ===== */
+
+function portalNotifications() {
+    const list = [];
+    const store = getIAStore();
+    const fmt = window.BMS_IA.fmtCurrencyKh;
+
+    // សញ្ញាក្រហមដែលមិនទាន់បិទបញ្ចប់
+    (store.redFlags || [])
+        .filter(f => f.status !== 'resolved')
+        .sort((a, b) => (a.severity === 'critical' ? -1 : 1) - (b.severity === 'critical' ? -1 : 1))
+        .slice(0, 3)
+        .forEach(f => {
+            list.push({
+                icon: f.severity === 'critical' ? 'mdi:flag-remove' : 'mdi:flag-outline',
+                tone: f.severity === 'critical' ? 'danger' : 'warning',
+                title: `${f.code} · ${f.title}`,
+                note: `${f.category} · ${fmt(f.amount)} · ${f.actor} (${f.role})`,
+                time: f.detectedAt
+            });
+        });
+
+    const ce = store.complianceExceptions || {};
+
+    // ការបំពានការបែងចែកភារកិច្ច
+    (ce.sodViolations || []).filter(v => v.status !== 'resolved').slice(0, 2).forEach(v => {
+        list.push({
+            icon: 'mdi:account-alert-outline',
+            tone: v.severity === 'critical' ? 'danger' : 'warning',
+            title: `${v.id} · ការបំពានការបែងចែកភារកិច្ច`,
+            note: `${v.actor} (${v.actorRole}) · ${v.title}`,
+            time: v.detectedAt
+        });
+    });
+
+    // ភាពមិនស៊ីគ្នានៃការផ្ទៀងផ្ទាត់ត្រីភាគី
+    (ce.threeWayMismatches || []).slice(0, 2).forEach(m => {
+        list.push({
+            icon: 'mdi:file-compare',
+            tone: 'danger',
+            title: `${m.poCode} មិនស៊ីគ្នានឹងវិក្កយបត្រទិញ`,
+            note: `${m.supplierName} · គម្លាត ${fmt(m.varianceAmount)}${m.varianceQty ? ` · ចំនួន ${m.varianceQty}` : ''}`,
+            time: m.detectedAt
+        });
+    });
+
+    // ការលើសពិដានឥណទានអតិថិជន
+    (ce.creditBreaches || []).slice(0, 2).forEach(c => {
+        list.push({
+            icon: 'mdi:credit-card-off-outline',
+            tone: 'danger',
+            title: `${c.customerName} លើសពិដានឥណទាន ${fmt(c.exceededAmount)}`,
+            note: `${c.invoiceCode} · បំណុលសរុប ${fmt(c.newTotalDebt)} / ពិដាន ${fmt(c.creditLimit)} · យឺត ${c.overdueDays} ថ្ងៃ`,
+            time: c.detectedAt
+        });
+    });
+
+    // គម្លាតសាច់ប្រាក់បិទវេនរបស់បេឡាករ
+    const short = (ce.cashierVariances || []).filter(v => v.status === 'short');
+    if (short.length) {
+        const total = short.reduce((sum, v) => sum + Math.abs(v.variance), 0);
+        list.push({
+            icon: 'mdi:cash-remove',
+            tone: 'warning',
+            title: `គម្លាតសាច់ប្រាក់បិទវេនខ្វះ ${short.length} វេន`,
+            note: `ខ្វះសរុប ${fmt(total)} · ${short[0].cashierName} · ${short[0].terminal}`,
+            time: short[0].shiftDate
+        });
+    }
+
+    // សកម្មភាពគួរឲ្យសង្ស័យក្នុងកំណត់ហេតុប្រព័ន្ធ
+    const suspicious = (store.auditLogs || []).filter(l => l.isSuspicious);
+    if (suspicious.length) {
+        list.push({
+            icon: 'mdi:eye-check-outline',
+            tone: 'info',
+            title: `សកម្មភាពគួរឲ្យសង្ស័យក្នុងកំណត់ហេតុ ${suspicious.length}`,
+            note: `ថ្មីបំផុត៖ ${suspicious[0].user} · ${suspicious[0].actionKh} · ${suspicious[0].refCode}`,
+            time: suspicious[0].timestamp
+        });
+    }
+
+    return list;
+}

@@ -34,26 +34,20 @@
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="flex items-center gap-4 min-w-0">
-                <a href="approvals.html"
-                   class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70 flex-shrink-0"
-                   title="ត្រឡប់ទៅបញ្ជីអនុម័ត">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </a>
-                <div class="min-w-0">
-                    <h2 class="text-xl font-semibold text-gray-800 leading-tight flex items-center gap-2 truncate">
-                        <span id="docTitle">សម្រង់តម្លៃ</span>
-                        <span id="docStatus" class="sm-badge px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-semibold flex-shrink-0"></span>
-                    </h2>
-                    <p id="docSubtitle" class="sm-card-sub text-gray-500 mt-0.5 truncate"></p>
+        <div id="headerHost" data-title="សម្រង់តម្លៃ"
+             data-back="approvals.html"></div>
+
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-6">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full flex flex-wrap items-center justify-between gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span id="docStatus" class="sm-badge px-2.5 py-0.5 rounded-full border font-semibold flex-shrink-0"></span>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <div id="headerActions" class="flex items-center space-x-2 no-print flex-shrink-0"></div>
                 </div>
             </div>
 
-            <div id="headerActions" class="flex items-center space-x-2 no-print flex-shrink-0"></div>
-        </header>
-
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-6">
             <div id="pageBody" class="w-full space-y-6"></div>
         </main>
     </div>
@@ -90,9 +84,9 @@
         }
 
         function renderNotFound() {
-            document.getElementById('docTitle').textContent = 'រកមិនឃើញឯកសារ';
+            setPortalTitle('រកមិនឃើញឯកសារ');
             document.getElementById('docStatus').classList.add('hidden');
-            document.getElementById('docSubtitle').textContent = 'លេខឯកសារ ' + quoteId + ' មិនមានក្នុងប្រព័ន្ធទេ';
+            setPortalSubtitle('លេខឯកសារ ' + quoteId + ' មិនមានក្នុងប្រព័ន្ធទេ');
             document.getElementById('pageBody').innerHTML = `
                 <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm py-16 text-center">
                     <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
@@ -110,14 +104,13 @@
             const auth = authorityOf(quote.discountPercent);
             const status = decided ? (decided === 'approve' ? 'approved' : decided === 'reject' ? 'rejected' : 'pending_approval') : quote.status;
 
-            document.getElementById('docTitle').textContent = 'សម្រង់តម្លៃ ' + quote.id;
+            setPortalTitle('សម្រង់តម្លៃ ' + quote.id);
             const statusEl = document.getElementById('docStatus');
             statusEl.textContent = decided === 'forward' ? 'បញ្ជូនទៅអភិបាលទូទៅ' : STATUS_LABEL[status];
             statusEl.className = 'sm-badge px-2.5 py-0.5 rounded-full border font-semibold flex-shrink-0 ' +
                 (decided === 'forward' ? 'bg-purple-50 text-purple-700 border-purple-200' : STATUS_TONE[status]);
 
-            document.getElementById('docSubtitle').textContent =
-                `សុពលភាពដល់ ${fmtKhDate(quote.validUntil)} · ស្នើសុំដោយ ${getRep(quote.repId).name}`;
+            setPortalSubtitle(`សុពលភាពដល់ ${fmtKhDate(quote.validUntil)} · ស្នើសុំដោយ ${getRep(quote.repId).name}`);
 
             const actions = document.getElementById('headerActions');
             const printBtn = `

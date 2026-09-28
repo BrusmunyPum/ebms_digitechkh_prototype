@@ -29,6 +29,7 @@
         }
     </script>
     <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
     <style>
         #spPortal aside {
             background-color: #0b253a !important;
@@ -36,7 +37,7 @@
     </style>
 </head>
 
-<body id="spPortal" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
+<body id="spPortal" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden" data-role-root="..">
 
     <!-- របារចំហៀងអ្នកផ្គត់ផ្គង់ -->
     <aside class="w-64 bg-[#0b253a] text-white flex flex-col flex-shrink-0 select-none z-20 border-r border-slate-800">
@@ -95,24 +96,20 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Content Top Header -->
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div>
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight">ច្រកអ្នកផ្គត់ផ្គង់ស្វ័យសេវា</h2>
-                <p class="text-xs font-normal text-gray-500 mt-0.5" id="welcomeText">សូមស្វាគមន៍ ក្រុមហ៊ុន ហ៊ុន ត្រេឌីង ឯ.ក</p>
-            </div>
-
-            <div class="flex items-center space-x-3">
-                <div class="flex items-center gap-2 bg-amber-50 text-amber-800 px-3 py-1.5 rounded-xl border border-amber-200 text-xs font-semibold">
-                    <i class="fas fa-medal text-amber-500"></i> ដៃគូកម្រិតមាស
-                </div>
-                <div class="flex items-center border-l pl-3">
-                    <div id="userAvatar" class="w-10 h-10 rounded-full bg-[#0b253a] text-cyan-300 flex items-center justify-center font-bold text-sm shadow-sm">ហត</div>
-                </div>
-            </div>
-        </header>
+        <div id="headerHost" data-title="ច្រកអ្នកផ្គត់ផ្គង់ស្វ័យសេវា"
+             data-subtitle="សូមស្វាគមន៍ ក្រុមហ៊ុន ហ៊ុន ត្រេឌីង ឯ.ក"></div>
 
         <!-- Main Content -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <div class="flex items-center gap-2 bg-amber-50 text-amber-800 px-3 py-1.5 rounded-xl border border-amber-200 text-xs font-semibold">
+                        <i class="fas fa-medal text-amber-500"></i> ដៃគូកម្រិតមាស
+                    </div>
+                </div>
+            </div>
+
             <div class="w-full space-y-5">
 
                 <!-- KPI Cards Row -->
@@ -240,6 +237,7 @@
     <!-- Scripts -->
     <script src="../../../shared/scripts/ui-components.js"></script>
     <script src="data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             renderDashboard();
@@ -250,7 +248,7 @@
 
             // Set Profile Header
             document.getElementById('sideCompanyName').innerText = store.profile.companyName;
-            document.getElementById('welcomeText').innerText = `សូមស្វាគមន៍ ${store.profile.companyName} (${store.profile.contactName})`;
+            setPortalSubtitle(`សូមស្វាគមន៍ ${store.profile.companyName} (${store.profile.contactName})`);
 
             // Set KPIs
             const pendingPOs = store.purchaseOrders.filter(p => p.status === 'pending').length;

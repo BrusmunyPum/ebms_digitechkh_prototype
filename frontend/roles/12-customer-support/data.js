@@ -191,3 +191,59 @@ function saveCustomerSupportData(data) {
         console.error('Error saving customer support data', e);
     }
 }
+
+/* ===== ការជូនដំណឹងក្នុងក្បាលទំព័រ (អានដោយ portal.js) ===== */
+
+function portalNotifications() {
+    const list = [];
+    const data = getCustomerSupportData();
+
+    // សំបុត្រជំនួយដែលជិតហួសកាលកំណត់ឆ្លើយតប
+    (data.tickets || [])
+        .filter(t => t.status !== 'closed')
+        .sort((a, b) => (a.slaMinutesRemaining || 0) - (b.slaMinutesRemaining || 0))
+        .slice(0, 3)
+        .forEach(t => {
+            const late = (t.slaMinutesRemaining || 0) <= 0;
+            const soon = (t.slaMinutesRemaining || 0) <= 30;
+            list.push({
+                icon: late ? 'mdi:timer-alert-outline' : 'mdi:ticket-confirmation-outline',
+                tone: late ? 'danger' : (soon ? 'warning' : 'info'),
+                title: late
+                    ? `សំបុត្រ ${t.id} ហួសកាលកំណត់ឆ្លើយតប`
+                    : `សំបុត្រ ${t.id} នៅសល់ ${t.slaMinutesRemaining} នាទី`,
+                note: `${t.customerName} · ${t.channel} · ${t.category} · អាទិភាព ${t.priority}`,
+                time: t.createdAt
+            });
+        });
+
+    // ការដឹកជញ្ជូនដែលកំពុងដំណើរការ
+    (data.deliveries || []).forEach(d => {
+        const stageLabel = (d.stageLabels || [])[d.currentStage] || '';
+        const done = d.currentStage >= (d.stageLabels || []).length - 1;
+        if (done) return;
+        list.push({
+            icon: 'mdi:map-marker-path',
+            tone: 'info',
+            title: `${d.trackingCode} · ${stageLabel}`,
+            note: `${d.customerName} · ${d.destination} · អ្នកបើកបរ ${d.driverName} (${d.driverPhone}) · រំពឹងដល់ ${d.estimatedArrival}`,
+            time: d.lastUpdated
+        });
+    });
+
+    // ការបញ្ជាទិញដែលនៅរង់ចាំការទូទាត់
+    (data.orders || [])
+        .filter(o => !String(o.paymentStatus || '').includes('រួច'))
+        .slice(0, 2)
+        .forEach(o => {
+            list.push({
+                icon: 'mdi:cash-clock',
+                tone: 'warning',
+                title: `${o.orderNo} មិនទាន់ទូទាត់ពេញ`,
+                note: `${o.customerName} · ${o.phone} · ${o.paymentStatus}`,
+                time: o.date
+            });
+        });
+
+    return list;
+}

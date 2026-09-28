@@ -29,6 +29,7 @@
         }
     </script>
     <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
     <style>
         #spPortal aside {
             background-color: #0b253a !important;
@@ -36,7 +37,7 @@
     </style>
 </head>
 
-<body id="spPortal" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
+<body id="spPortal" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden" data-role-root="..">
 
     <!-- របារចំហៀងអ្នកផ្គត់ផ្គង់ -->
     <aside class="w-64 bg-[#0b253a] text-white flex flex-col flex-shrink-0 select-none z-20 border-r border-slate-800">
@@ -95,22 +96,12 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Content Top Header -->
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div>
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight">ការបញ្ជាទិញពី DIGITECHKH</h2>
-                <p class="text-xs font-normal text-gray-500 mt-0.5">ពិនិត្យលម្អិតមុខទំនិញ និងឆ្លើយតបទទួលយកការបញ្ជាទិញ</p>
-            </div>
-
-            <div class="flex items-center space-x-3">
-                <a href="create-bill.html" class="px-4 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white font-medium text-xs flex items-center gap-2 shadow-sm transition">
-                    <i class="fas fa-plus"></i>
-                    <span>ចេញវិក្កយបត្រទារប្រាក់</span>
-                </a>
-            </div>
-        </header>
+        <div id="headerHost" data-title="ការបញ្ជាទិញពី DIGITECHKH"
+             data-subtitle="ពិនិត្យលម្អិតមុខទំនិញ និងឆ្លើយតបទទួលយកការបញ្ជាទិញ"></div>
 
         <!-- Main Content -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
+
             <div class="w-full space-y-4">
 
                 <!-- Search & Status Filter -->
@@ -123,11 +114,20 @@
                             class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs focus:bg-white focus:border-primary outline-none transition font-medium">
                     </div>
 
-                    <div class="flex items-center gap-1.5 overflow-x-auto text-xs" id="statusFilterGroup">
-                        <button onclick="setStatusFilter('all')" class="status-btn px-3 py-1.5 rounded-xl font-medium bg-primary text-white transition cursor-pointer" data-status="all">ទាំងអស់</button>
-                        <button onclick="setStatusFilter('pending')" class="status-btn px-3 py-1.5 rounded-xl font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer" data-status="pending">រង់ចាំឆ្លើយតប</button>
-                        <button onclick="setStatusFilter('confirmed')" class="status-btn px-3 py-1.5 rounded-xl font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer" data-status="confirmed">បានទទួលយក</button>
-                        <button onclick="setStatusFilter('completed')" class="status-btn px-3 py-1.5 rounded-xl font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer" data-status="completed">បានបញ្ចប់</button>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div class="flex items-center gap-1.5 overflow-x-auto text-xs" id="statusFilterGroup">
+                            <button onclick="setStatusFilter('all')" class="status-btn px-3 py-1.5 rounded-xl font-medium bg-primary text-white transition cursor-pointer" data-status="all">ទាំងអស់</button>
+                            <button onclick="setStatusFilter('pending')" class="status-btn px-3 py-1.5 rounded-xl font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer" data-status="pending">រង់ចាំឆ្លើយតប</button>
+                            <button onclick="setStatusFilter('confirmed')" class="status-btn px-3 py-1.5 rounded-xl font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer" data-status="confirmed">បានទទួលយក</button>
+                            <button onclick="setStatusFilter('completed')" class="status-btn px-3 py-1.5 rounded-xl font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer" data-status="completed">បានបញ្ចប់</button>
+                        </div>
+                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
+                        <div class="flex flex-wrap items-center gap-2 no-print">
+                            <a href="create-bill.html" class="px-4 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white font-medium text-xs flex items-center gap-2 shadow-sm transition">
+                                <i class="fas fa-plus"></i>
+                                <span>ចេញវិក្កយបត្រទារប្រាក់</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -159,6 +159,7 @@
     <!-- Scripts -->
     <script src="../../../shared/scripts/ui-components.js"></script>
     <script src="data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
     <script>
         let currentStatusFilter = 'all';
 

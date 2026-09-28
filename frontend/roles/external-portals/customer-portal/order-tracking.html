@@ -29,6 +29,7 @@
         }
     </script>
     <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
     <style>
         /* custom.css ដាក់ពណ៌បៃតងលើ <aside> ទាំងអស់ជាសកល — ច្រកអតិថិជននេះត្រូវការពណ៌ស្វាយ/ខៀវក្រម់ផ្ទាល់ខ្លួន ដូច្នេះត្រូវបដិសេធដោយ ID-scoped rule ដែលមាន specificity ខ្ពស់ជាង */
         #cpPortal aside {
@@ -37,7 +38,7 @@
     </style>
 </head>
 
-<body id="cpPortal" class="bg-indigo-50/30 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
+<body id="cpPortal" class="bg-indigo-50/30 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden" data-role-root="..">
 
     <!-- របារចំហៀងអតិថិជន -->
     <aside class="w-64 bg-[#1e1b4b] text-white flex flex-col flex-shrink-0 select-none z-20 border-r border-indigo-950">
@@ -87,24 +88,23 @@
     </aside>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div>
-                <div class="flex items-center gap-2.5">
-                    <h2 class="text-xl font-semibold text-gray-800 leading-tight" id="pageOrderTitle">តាមដានការដឹកជញ្ជូន</h2>
-                    <span id="orderStatusBadge" class="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold flex items-center gap-1.5">-</span>
-                </div>
-                <p class="text-xs font-normal text-gray-500 mt-0.5" id="orderDateSub">-</p>
-            </div>
-
-            <div class="flex items-center gap-2.5">
-                <button onclick="showToast('ទាក់ទងផ្នែកបម្រើអតិថិជន: 023 888 999', 'info')"
-                    class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition flex items-center gap-2">
-                    <i class="fas fa-headset text-purple-600"></i> ជំនួយបច្ចេកទេស
-                </button>
-            </div>
-        </header>
+        <div id="headerHost" data-title="តាមដានការដឹកជញ្ជូន"
+             data-subtitle="-"></div>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-indigo-50/20 px-4 md:px-6 py-4">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full flex flex-wrap items-center justify-between gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span id="orderStatusBadge" class="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold flex items-center gap-1.5">-</span>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="showToast('ទាក់ទងផ្នែកបម្រើអតិថិជន: 023 888 999', 'info')"
+                        class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition flex items-center gap-2">
+                        <i class="fas fa-headset text-purple-600"></i> ជំនួយបច្ចេកទេស
+                    </button>
+                </div>
+            </div>
+
             <div class="w-full flex flex-col lg:flex-row gap-5 items-start">
 
                 <!-- បញ្ជីការបញ្ជាទិញ -->
@@ -213,6 +213,7 @@
 
     <script src="../../../shared/scripts/ui-components.js"></script>
     <script src="data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
     <script>
         const STAGE_LABELS = ['បានបញ្ជាទិញ', 'រៀបចំទំនិញរួចរាល់', 'កំពុងដឹកជញ្ជូន', 'បានប្រគល់ទំនិញ'];
         const STAGE_ICONS = ['fa-check', 'fa-check', 'fa-truck-fast', 'fa-box'];
@@ -255,8 +256,8 @@
             const isDelivered = order.currentStage >= 4;
 
             document.title = `DIGITECHKH - តាមដានការដឹកជញ្ជូន ${order.id}`;
-            document.getElementById('pageOrderTitle').textContent = `តាមដានការដឹកជញ្ជូន ${order.id}`;
-            document.getElementById('orderDateSub').textContent = `ការបញ្ជាទិញកាលពី ${cpFmtDate(order.date)} | ${order.eta}`;
+            document.getElementById('portalTitle').textContent = `តាមដានការដឹកជញ្ជូន ${order.id}`;
+            setPortalSubtitle(`ការបញ្ជាទិញកាលពី ${cpFmtDate(order.date)} | ${order.eta}`);
 
             const statusBadge = document.getElementById('orderStatusBadge');
             if (isDelivered) {

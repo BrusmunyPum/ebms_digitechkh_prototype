@@ -34,24 +34,8 @@
         <!-- Main Content Area -->
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
             <!-- Header (72px aligned) -->
-            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200/80 flex-shrink-0 z-10 shadow-xs">
-                <div class="flex items-center gap-3">
-                    <div>
-                        <h2 class="text-xl font-semibold text-slate-800 leading-tight">តុល្យភាពស្តុក & កាតាឡុកទំនិញ</h2>
-                        <p class="text-xs font-normal text-slate-500 mt-0.5">ពិនិត្យចំនួនទំនិញក្នុងឃ្លាំងទាំងអស់ និងគ្រប់គ្រងទិន្នន័យផលិតផល</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    <button onclick="exportData()" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-2 transition cursor-pointer">
-                        <i class="fas fa-file-export text-slate-400"></i>
-                        <span>ទាញយកទិន្នន័យ (CSV)</span>
-                    </button>
-                    <a href="../movements/create-transfer.html" class="h-10 px-4 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition">
-                        <i class="fas fa-plus text-xs"></i>
-                        <span>បង្កើតប័ណ្ណផ្ទេរថ្មី</span>
-                    </a>
-                </div>
-            </header>
+        <div id="headerHost" data-title="តុល្យភាពស្តុក & កាតាឡុកទំនិញ"
+                 data-subtitle="ពិនិត្យចំនួនទំនិញក្នុងឃ្លាំងទាំងអស់ និងគ្រប់គ្រងទិន្នន័យផលិតផល"></div>
 
             <!-- Sub-Navigation Tabs Bar -->
             <div class="bg-white px-6 border-b border-slate-200 flex items-center gap-6 flex-shrink-0">
@@ -69,6 +53,20 @@
 
             <!-- Scrollable Content -->
             <main class="flex-1 overflow-y-auto p-6 space-y-6">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full flex flex-wrap items-center justify-end gap-2 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="exportData()" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-2 transition cursor-pointer">
+                        <i class="fas fa-file-export text-slate-400"></i>
+                        <span>ទាញយកទិន្នន័យ (CSV)</span>
+                    </button>
+                    <a href="../movements/create-transfer.html" class="h-10 px-4 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition">
+                        <i class="fas fa-plus text-xs"></i>
+                        <span>បង្កើតប័ណ្ណផ្ទេរថ្មី</span>
+                    </a>
+                </div>
+            </div>
+
                 <!-- TAB 1: Stock Balance -->
                 <div id="tabContent-balance" class="space-y-6">
                     <!-- Filters Toolbar -->

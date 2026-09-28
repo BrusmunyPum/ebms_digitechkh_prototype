@@ -35,27 +35,22 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Header with Unified Back Button (Standard 5) -->
-        <header class="bg-white px-6 h-[72px] flex items-center justify-between shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="flex items-center gap-3 min-w-0">
-                <a href="movements.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70 flex-shrink-0" title="ត្រឡប់ទៅបញ្ជីប័ណ្ណផ្ទេរ">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </a>
-                <div class="min-w-0">
-                    <h2 class="text-xl font-semibold text-gray-800 leading-tight truncate">បង្កើតប័ណ្ណផ្ទេរស្តុកថ្មី</h2>
-                    <p class="sm-card-sub text-gray-500 mt-0.5 truncate">ផ្ទេរបំពេញស្តុករវាងឃ្លាំងកណ្តាល និងបណ្តាសាខា</p>
+        <div id="headerHost" data-title="បង្កើតប័ណ្ណផ្ទេរស្តុកថ្មី"
+             data-subtitle="ផ្ទេរបំពេញស្តុករវាងឃ្លាំងកណ្តាល និងបណ្តាសាខា"
+             data-back="movements.html"></div>
+
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full max-w-5xl mx-auto flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <a href="movements.html" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs transition">បោះបង់</a>
+                    <button onclick="submitTransferForm()" class="px-5 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white font-semibold text-xs shadow-sm transition flex items-center gap-1.5">
+                        <i class="fas fa-paper-plane text-xs"></i>
+                        <span>ស្នើសុំផ្ទេរស្តុក</span>
+                    </button>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2">
-                <a href="movements.html" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs transition">បោះបង់</a>
-                <button onclick="submitTransferForm()" class="px-5 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white font-semibold text-xs shadow-sm transition flex items-center gap-1.5">
-                    <i class="fas fa-paper-plane text-xs"></i>
-                    <span>ស្នើសុំផ្ទេរស្តុក</span>
-                </button>
-            </div>
-        </header>
-
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
             <form id="transferForm" onsubmit="event.preventDefault(); submitTransferForm();" class="w-full space-y-5 max-w-5xl mx-auto">
 
                 <!-- Origin and Destination Card -->

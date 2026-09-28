@@ -37,30 +37,22 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Content Top Header -->
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full no-print">
-            <div class="flex items-center gap-3">
-                <a href="vouchers.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ទៅបញ្ជីប័ណ្ណចំណាយ">
-                    <i class="fas fa-arrow-left text-sm"></i>
-                </a>
-                <div>
-                    <h2 class="text-xl font-semibold text-gray-800 leading-tight flex items-center gap-2">
-                        <span>ប័ណ្ណចំណាយទូទាត់</span>
-                        <span id="headerVoucherId" class="text-primary font-bold">DIS-2026-0089</span>
-                    </h2>
-                    <p class="text-xs font-normal text-gray-500 mt-0.5">ភស្តុតាងបើកប្រាក់ផ្លូវការ បោះពុម្ពកម្រិតសហគ្រាស A4</p>
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-3">
-                <button type="button" onclick="window.print()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs transition flex items-center gap-2">
-                    <i class="fas fa-print"></i>
-                    <span>បោះពុម្ពប័ណ្ណចំណាយ</span>
-                </button>
-            </div>
-        </header>
+        <div id="headerHost" data-title="ប័ណ្ណចំណាយទូទាត់ DIS-2026-0089"
+             data-subtitle="ភស្តុតាងបើកប្រាក់ផ្លូវការ បោះពុម្ពកម្រិតសហគ្រាស A4"
+             data-back="vouchers.html"></div>
 
         <!-- Printable Document Area -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-100/70 p-4 md:p-8">
+            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
+            <div class="w-full max-w-3xl mx-auto flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="window.print()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs transition flex items-center gap-2">
+                        <i class="fas fa-print"></i>
+                        <span>បោះពុម្ពប័ណ្ណចំណាយ</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="w-full max-w-3xl mx-auto bg-white rounded-2xl shadow-md border border-slate-200 p-8 sm:p-12 print:shadow-none print:border-none print:p-0 print:m-0 print:max-w-full">
 
                 <!-- Company Header & Voucher Title -->
@@ -171,9 +163,9 @@
     </div>
 
     <!-- Scripts -->
-    <script src="../../../shared/scripts/portal.js"></script>
     <script src="../../../shared/scripts/ui-components.js"></script>
     <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             renderPortalSidebar();
@@ -189,7 +181,7 @@
 
             if (!voucher) return;
 
-            document.getElementById('headerVoucherId').innerText = voucher.id;
+            setPortalTitle('ប័ណ្ណចំណាយទូទាត់ ' + voucher.id);
             document.getElementById('voucherNumberDisplay').innerText = voucher.id;
             document.getElementById('voucherDateDisplay').innerText = voucher.date;
             document.getElementById('vendorDisplay').innerText = voucher.vendorName;

@@ -34,21 +34,11 @@
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="min-w-0">
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight truncate">ការដាស់តឿនស្តុកទំនិញ (Low Stock Alerts)</h2>
-                <p class="sm-card-sub text-gray-500 mt-0.5 truncate">តាមដានមុខទំនិញក្រោមចំណុចសុវត្ថិភាពត្រូវបញ្ជាទិញបន្ថែម (Reorder Point & Safety Stock)</p>
-            </div>
-
-            <div class="flex items-center space-x-3 flex-shrink-0">
-                <button onclick="handleBatchPR()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs shadow-sm transition cursor-pointer">
-                    <i class="fas fa-file-invoice text-xs"></i>
-                    <span>បង្កើតសំណើទិញចូល (Batch PR)</span>
-                </button>
-            </div>
-        </header>
+        <div id="headerHost" data-title="ការដាស់តឿនស្តុកទំនិញ (Low Stock Alerts)"
+             data-subtitle="តាមដានមុខទំនិញក្រោមចំណុចសុវត្ថិភាពត្រូវបញ្ជាទិញបន្ថែម (Reorder Point & Safety Stock)"></div>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
+
             <div class="w-full space-y-4">
 
                 <!-- Alert KPI Summary -->
@@ -98,10 +88,19 @@
                             <button onclick="setUrgencyFilter('warning')" id="btnUrgency-warning" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-800 transition">ក្រោមចំណុចទិញ</button>
                         </div>
                     </div>
-                    <button onclick="window.print()" class="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold inline-flex items-center gap-1.5 transition">
-                        <i class="fas fa-print text-xs"></i>
-                        <span>បោះពុម្ពបញ្ជី</span>
-                    </button>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="window.print()" class="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold inline-flex items-center gap-1.5 transition">
+                            <i class="fas fa-print text-xs"></i>
+                            <span>បោះពុម្ពបញ្ជី</span>
+                        </button>
+                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
+                        <div class="flex flex-wrap items-center gap-2 no-print">
+                            <button onclick="handleBatchPR()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs shadow-sm transition cursor-pointer">
+                                <i class="fas fa-file-invoice text-xs"></i>
+                                <span>បង្កើតសំណើទិញចូល (Batch PR)</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Table Card -->
