@@ -75,12 +75,12 @@ const PORTAL_CONFIGS = {
         userInitials: 'គវ',
         userName: 'គង់ វិបុល',
         userRole: 'អ្នកគ្រប់គ្រងឃ្លាំងស្តុក',
-        policyNote: 'អនុម័តការកែតម្រូវស្តុក ≤ $200.00 ដោយផ្ទាល់។ លើសពី $200.00 ត្រូវបញ្ជូនទៅអភិបាលទូទៅ។',
+        policyNote: 'អនុម័តការកែតម្រូវស្តុក ≤ $200.00 ដោយផ្ទាល់។ លើសពី $200.00 ត្រូវបញ្ជូនទៅអភិបាលទូទៅ។ ហាមបង្ហាញតម្លៃលក់។',
         nav: [
-            { id: 'dashboard', label: 'ផ្ទាំងគ្រប់គ្រង', icon: 'mdi:chart-pie', href: 'dashboard.html' },
-            { id: 'movements', label: 'ប័ណ្ណផ្ទេរស្តុក', icon: 'mdi:truck-fast-outline', href: 'stock-movements/movements.html' },
-            { id: 'adjustments', label: 'ការកែតម្រូវស្តុក', icon: 'mdi:tune-vertical', href: 'stock-adjustments/adjustments.html', badge: true },
-            { id: 'alerts', label: 'ការដាស់តឿនស្តុក', icon: 'mdi:alert-circle-outline', href: 'stock-alerts/alerts.html', alertBadge: true }
+            { id: 'dashboard', label: 'ផ្ទាំងគ្រប់គ្រងស្តុក', icon: 'mdi:view-dashboard-outline', href: 'dashboard.html' },
+            { id: 'balance', label: 'តុល្យភាពស្តុក', icon: 'mdi:package-variant-closed', href: 'stock-balance/balance.html' },
+            { id: 'movements', label: 'ចលនា & កែតម្រូវ', icon: 'mdi:swap-horizontal', href: 'movements/movements.html', badge: true },
+            { id: 'reports', label: 'របាយការណ៍ស្តុក', icon: 'mdi:chart-bar', href: 'reports/reports.html' }
         ]
     },
     wsPortal: {
@@ -92,10 +92,11 @@ const PORTAL_CONFIGS = {
         userRole: 'បុគ្គលិកជាន់ឃ្លាំង',
         policyNote: 'គោលការណ៍រក្សាការសម្ងាត់ថ្លៃដើម — ឃើញតែចំនួនទំនិញ និងទីតាំងធ្នើរប៉ុណ្ណោះ។',
         nav: [
-            { id: 'dashboard', label: 'ផ្ទាំងគ្រប់គ្រងស្តុក', icon: 'mdi:view-dashboard-outline', href: 'dashboard.html' },
+            { id: 'dashboard', label: 'ផ្ទាំងការងារប្រចាំថ្ងៃ', icon: 'mdi:view-dashboard-outline', href: 'dashboard.html' },
             { id: 'pick-pack', label: 'រើស និងវេចខ្ចប់', icon: 'mdi:package-variant-closed', href: 'pick-and-pack.html' },
             { id: 'receive-stock', label: 'ទទួលទំនិញចូលស្តុក', icon: 'mdi:truck-delivery-outline', href: 'receive-stock.html', badge: true },
-            { id: 'stock-count', label: 'រាប់ស្តុកជាក់ស្តែង', icon: 'mdi:clipboard-check-outline', href: 'stock-count.html' }
+            { id: 'stock-count', label: 'រាប់ស្តុកជាក់ស្តែង', icon: 'mdi:clipboard-check-outline', href: 'stock-count.html' },
+            { id: 'product-lookup', label: 'ស្វែងរកផលិតផល', icon: 'mdi:barcode-scan', href: 'product-lookup.html' }
         ]
     },
     csPortal: {
@@ -184,6 +185,7 @@ const PORTAL_CONFIGS = {
         policyNote: 'សិទ្ធិផ្តាច់មុខលើតារាងគណនី (COA), ចាក់សោរគ្រាហិរញ្ញវត្ថុ, អនុម័តប័ណ្ណចំណាយ > $500, និងរបាយការណ៍ពន្ធដារ GDT ផ្លូវការ។',
         nav: [
             { id: 'dashboard', label: 'ផ្ទាំងគ្រប់គ្រង', icon: 'mdi:chart-pie', href: 'dashboard.html' },
+            { id: 'ledger', label: 'សៀវភៅធំ & COA', icon: 'mdi:book-open-outline', href: 'ledger/ledger.html' },
             { id: 'approvals', label: 'មជ្ឈមណ្ឌលអនុម័ត', icon: 'mdi:stamper', href: 'approvals/approvals.html', badge: true },
             { id: 'financial-statements', label: 'របាយការណ៍ហិរញ្ញវត្ថុ', icon: 'mdi:finance', href: 'financial-statements/financial-statements.html' },
             { id: 'tax-reports', label: 'របាយការណ៍ពន្ធដារ GDT', icon: 'mdi:file-percent-outline', href: 'tax-reports/tax-reports.html' }
@@ -213,7 +215,7 @@ function getRoleRoot() {
         return document.body.dataset.roleRoot;
     }
     const loc = window.location.pathname.replace(/\\/g, '/');
-    const isSub = /\/(stock-[a-z]+|approvals|pipeline|reports|companies|subscriptions|audit-logs|users|company-profile|system-settings|customers|quotes|invoices|receipts|purchase-orders|vendor-bills|suppliers|financial-statements|tax-reports|vouchers)(\/|$)/.test(loc);
+    const isSub = /\/(stock-[a-z]+|movements|approvals|pipeline|reports|companies|subscriptions|audit-logs|users|company-profile|system-settings|customers|quotes|invoices|receipts|purchase-orders|vendor-bills|suppliers|financial-statements|tax-reports|vouchers|ledger)(\/|$)/.test(loc);
     return isSub ? '..' : '.';
 }
 
@@ -221,7 +223,7 @@ function renderPortalSidebar() {
     const host = document.getElementById('sidebarHost') || document.querySelector('aside');
     if (!host) return;
 
-    const portalId = document.body.id || 'smPortal';
+    const portalId = document.body.dataset.portal || document.body.id || 'smPortal';
     const cfg = PORTAL_CONFIGS[portalId] || PORTAL_CONFIGS.smPortal;
     const roleRoot = getRoleRoot();
     const activeId = document.body.dataset.active || '';

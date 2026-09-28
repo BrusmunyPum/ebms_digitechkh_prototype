@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ចលនា & កែតម្រូវស្តុក — eBMS v2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#475569',
+                        'primary-dark': '#334155'
+                    },
+                    fontFamily: {
+                        sans: ['"Kantumruy Pro"', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased" data-portal="wmPortal" data-role-root="../" data-active="movements">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar host -->
+        <div id="sidebarHost"></div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Header (72px aligned) -->
+            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200/80 flex-shrink-0 z-10 shadow-xs">
+                <div>
+                    <h2 class="text-xl font-semibold text-slate-800 leading-tight">ចលនា & ការកែតម្រូវស្តុក</h2>
+                    <p class="text-xs font-normal text-slate-500 mt-0.5">គ្រប់គ្រងប័ណ្ណផ្ទេរឆ្លងឃ្លាំង អនុម័តការកែតម្រូវ និងតាមដានការដាស់តឿនស្តុក</p>
+                </div>
+                <div class="flex items-center gap-3" id="headerActionBtn">
+                    <a href="create-transfer.html" id="topActionBtn" class="h-10 px-4 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition">
+                        <i class="fas fa-plus text-xs"></i>
+                        <span id="topActionText">បង្កើតប័ណ្ណផ្ទេរថ្មី</span>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Sub-Navigation Tabs Bar -->
+            <div class="bg-white px-6 border-b border-slate-200 flex items-center gap-6 flex-shrink-0">
+                <button onclick="switchTab('transfers')" id="tabBtn-transfers" class="h-12 border-b-2 border-slate-700 text-slate-800 text-sm font-semibold flex items-center gap-2 px-1 transition cursor-pointer">
+                    <i class="fas fa-truck-fast text-slate-600"></i>
+                    <span>ប័ណ្ណផ្ទេរស្តុក</span>
+                    <span id="tabCount-transfers" class="px-2 py-0.5 rounded-full text-[11px] bg-slate-100 text-slate-700 font-medium">0</span>
+                </button>
+                <button onclick="switchTab('adjustments')" id="tabBtn-adjustments" class="h-12 border-b-2 border-transparent text-slate-500 hover:text-slate-700 text-sm font-medium flex items-center gap-2 px-1 transition cursor-pointer">
+                    <i class="fas fa-tune text-slate-400"></i>
+                    <span>ការកែតម្រូវស្តុក</span>
+                    <span id="tabCount-adjustments" class="px-2 py-0.5 rounded-full text-[11px] bg-amber-100 text-amber-800 font-semibold">0</span>
+                </button>
+                <button onclick="switchTab('alerts')" id="tabBtn-alerts" class="h-12 border-b-2 border-transparent text-slate-500 hover:text-slate-700 text-sm font-medium flex items-center gap-2 px-1 transition cursor-pointer">
+                    <i class="fas fa-triangle-exclamation text-slate-400"></i>
+                    <span>ការដាស់តឿនស្តុកទាប</span>
+                    <span id="tabCount-alerts" class="px-2 py-0.5 rounded-full text-[11px] bg-rose-100 text-rose-700 font-semibold">0</span>
+                </button>
+            </div>
+
+            <!-- Scrollable Content Area -->
+            <main class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- TAB 1: Transfers -->
+                <div id="tabContent-transfers" class="space-y-6">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex flex-wrap items-center gap-3 flex-1">
+                            <div class="relative min-w-[260px] flex-1 max-w-md">
+                                <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                <input type="text" id="transferSearch" onkeyup="filterTransfers()" placeholder="ស្វែងរកតាមលេខប័ណ្ណ, ឃ្លាំង, អ្នកបើកបរ..." class="w-full h-10 pl-9 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400 transition">
+                            </div>
+                            <select id="transferStatusFilter" onchange="filterTransfers()" class="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-slate-400">
+                                <option value="all">គ្រប់ស្ថានភាព</option>
+                                <option value="pending_approval">រង់ចាំអនុម័ត</option>
+                                <option value="in_transit">កំពុងដឹកជញ្ជូន</option>
+                                <option value="completed">បានបញ្ចប់</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                                    <tr>
+                                        <th class="py-3.5 px-4">លេខប័ណ្ណផ្ទេរ</th>
+                                        <th class="py-3.5 px-4">កាលបរិច្ឆេទ</th>
+                                        <th class="py-3.5 px-4">ពីឃ្លាំងដើម</th>
+                                        <th class="py-3.5 px-4">ទៅកាន់ឃ្លាំងគោលដៅ</th>
+                                        <th class="py-3.5 px-4">អ្នកស្នើសុំ</th>
+                                        <th class="py-3.5 px-4">មុខទំនិញសរុប</th>
+                                        <th class="py-3.5 px-4 text-center">ស្ថានភាព</th>
+                                        <th class="py-3.5 px-4 text-right">សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transfersTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
+                                    <!-- Rendered by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: Adjustments -->
+                <div id="tabContent-adjustments" class="hidden space-y-6">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex flex-wrap items-center gap-3 flex-1">
+                            <div class="relative min-w-[260px] flex-1 max-w-md">
+                                <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                <input type="text" id="adjSearch" onkeyup="filterAdjustments()" placeholder="ស្វែងរកតាមលេខប័ណ្ណ, SKU, មូលហេតុ..." class="w-full h-10 pl-9 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400 transition">
+                            </div>
+                            <select id="adjStatusFilter" onchange="filterAdjustments()" class="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-slate-400">
+                                <option value="all">គ្រប់ស្ថានភាព</option>
+                                <option value="pending_approval">រង់ចាំ WM អនុម័ត (≤ $200)</option>
+                                <option value="escalated_gm">បញ្ជូនទៅ GM (> $200)</option>
+                                <option value="approved">បានអនុម័ត</option>
+                                <option value="rejected">បានបដិសេធ</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                                    <tr>
+                                        <th class="py-3.5 px-4">លេខប័ណ្ណកែតម្រូវ</th>
+                                        <th class="py-3.5 px-4">កាលបរិច្ឆេទ</th>
+                                        <th class="py-3.5 px-4">ឃ្លាំង</th>
+                                        <th class="py-3.5 px-4">មុខទំនិញ (SKU)</th>
+                                        <th class="py-3.5 px-4 text-right">ស្តុកប្រព័ន្ធ</th>
+                                        <th class="py-3.5 px-4 text-right">ស្តុករាប់ជាក់ស្តែង</th>
+                                        <th class="py-3.5 px-4 text-right">បំរែបំរួល (Cost)</th>
+                                        <th class="py-3.5 px-4">មូលហេតុ</th>
+                                        <th class="py-3.5 px-4 text-center">ស្ថានភាព</th>
+                                        <th class="py-3.5 px-4 text-right">សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adjustmentsTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
+                                    <!-- Rendered by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: Alerts -->
+                <div id="tabContent-alerts" class="hidden space-y-6">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-2 text-xs text-slate-600">
+                            <i class="fas fa-info-circle text-slate-400"></i>
+                            <span>មុខទំនិញខាងក្រោមនេះស្ថិតក្រោមចំណុចស្តុកសុវត្ថិភាព។ លោកអ្នកអាចចុច <strong>«ស្នើសុំបញ្ជាទិញ»</strong> ដើម្បីផ្ញើ Purchase Request ទៅកាន់អ្នកគ្រប់គ្រងលទ្ធកម្ម (PM)។</span>
+                        </div>
+                        <button onclick="requestAllPR()" class="h-9 px-3.5 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-1.5 transition">
+                            <i class="fas fa-paper-plane text-[10px]"></i>
+                            <span>ស្នើសុំបញ្ជាទិញទាំងអស់</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                                    <tr>
+                                        <th class="py-3.5 px-4">កូដទំនិញ (SKU)</th>
+                                        <th class="py-3.5 px-4">ឈ្មោះមុខទំនិញ</th>
+                                        <th class="py-3.5 px-4">ប្រភេទ</th>
+                                        <th class="py-3.5 px-4">ទីតាំងធ្នើរ</th>
+                                        <th class="py-3.5 px-4 text-right">ស្តុកបច្ចុប្បន្ន</th>
+                                        <th class="py-3.5 px-4 text-right">ស្តុកសុវត្ថិភាព</th>
+                                        <th class="py-3.5 px-4 text-right">ចំនួនខ្វះខាត</th>
+                                        <th class="py-3.5 px-4 text-right">ចំនួនស្នើទិញ</th>
+                                        <th class="py-3.5 px-4 text-center">កម្រិតអាសន្ន</th>
+                                        <th class="py-3.5 px-4 text-right">សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="alertsTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
+                                    <!-- Rendered by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        let currentTab = 'transfers';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            const btnT = document.getElementById('tabBtn-transfers');
+            const btnA = document.getElementById('tabBtn-adjustments');
+            const btnL = document.getElementById('tabBtn-alerts');
+            const cntT = document.getElementById('tabContent-transfers');
+            const cntA = document.getElementById('tabContent-adjustments');
+            const cntL = document.getElementById('tabContent-alerts');
+            const topBtn = document.getElementById('topActionBtn');
+            const topText = document.getElementById('topActionText');
+
+            [btnT, btnA, btnL].forEach(b => b.className = 'h-12 border-b-2 border-transparent text-slate-500 hover:text-slate-700 text-sm font-medium flex items-center gap-2 px-1 transition cursor-pointer');
+            [cntT, cntA, cntL].forEach(c => c.classList.add('hidden'));
+
+            if (tab === 'transfers') {
+                btnT.className = 'h-12 border-b-2 border-slate-700 text-slate-800 text-sm font-semibold flex items-center gap-2 px-1 transition cursor-pointer';
+                cntT.classList.remove('hidden');
+                topBtn.href = 'create-transfer.html';
+                topText.innerText = 'បង្កើតប័ណ្ណផ្ទេរថ្មី';
+                topBtn.style.display = 'flex';
+            } else if (tab === 'adjustments') {
+                btnA.className = 'h-12 border-b-2 border-slate-700 text-slate-800 text-sm font-semibold flex items-center gap-2 px-1 transition cursor-pointer';
+                cntA.classList.remove('hidden');
+                topBtn.href = 'create-adjustment.html';
+                topText.innerText = 'បង្កើតប័ណ្ណកែតម្រូវថ្មី';
+                topBtn.style.display = 'flex';
+            } else {
+                btnL.className = 'h-12 border-b-2 border-slate-700 text-slate-800 text-sm font-semibold flex items-center gap-2 px-1 transition cursor-pointer';
+                cntL.classList.remove('hidden');
+                topBtn.style.display = 'none';
+            }
+        }
+
+        function renderTransfers() {
+            const list = getMovements();
+            const tbody = document.getElementById('transfersTableBody');
+            document.getElementById('tabCount-transfers').innerText = list.length;
+
+            tbody.innerHTML = list.map(m => {
+                let badge = '';
+                if (m.status === 'pending_approval') badge = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800">រង់ចាំអនុម័ត</span>';
+                else if (m.status === 'in_transit') badge = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-100 text-indigo-700">កំពុងដឹកជញ្ជូន</span>';
+                else badge = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-700">បានបញ្ចប់</span>';
+
+                const totalQty = m.items.reduce((sum, it) => sum + it.qty, 0);
+
+                return `
+                    <tr class="hover:bg-slate-50 transition" data-status="${m.status}" data-search="${m.id.toLowerCase()} ${m.fromWh.toLowerCase()} ${m.toWh.toLowerCase()} ${m.driver.toLowerCase()}">
+                        <td class="py-3.5 px-4 font-mono font-bold text-slate-800"><a href="view-transfer.html?id=${m.id}" class="hover:underline text-slate-700">${m.id}</a></td>
+                        <td class="py-3.5 px-4 text-slate-600">${fmtKhDate(m.date)}</td>
+                        <td class="py-3.5 px-4 text-slate-800 font-semibold">${getWarehouse(m.fromWh).name}</td>
+                        <td class="py-3.5 px-4 text-slate-800 font-semibold">${getWarehouse(m.toWh).name}</td>
+                        <td class="py-3.5 px-4 text-slate-600">${m.requester}</td>
+                        <td class="py-3.5 px-4 text-slate-700 font-bold tabular-nums">${fmtNumber(totalQty)} ឯកតា</td>
+                        <td class="py-3.5 px-4 text-center">${badge}</td>
+                        <td class="py-3.5 px-4 text-right">
+                            <a href="view-transfer.html?id=${m.id}" class="px-2.5 py-1 text-xs rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition inline-flex items-center gap-1">
+                                <i class="fas fa-eye text-[10px]"></i> មើល
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderAdjustments() {
+            const list = getAdjustments();
+            const tbody = document.getElementById('adjustmentsTableBody');
+            const pendingCount = list.filter(a => a.status === 'pending_approval').length;
+            document.getElementById('tabCount-adjustments').innerText = pendingCount > 0 ? pendingCount : list.length;
+
+            tbody.innerHTML = list.map(a => {
+                const diff = a.physicalQty - a.systemQty;
+                const diffCost = diff * a.unitCost;
+                const prod = getProduct(a.sku);
+                const prodName = prod ? prod.name : a.sku;
+
+                let badge = '';
+                if (a.status === 'pending_approval') badge = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800">រង់ចាំ WM អនុម័ត</span>';
+                else if (a.status === 'escalated_gm') badge = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-purple-100 text-purple-800">បញ្ជូនទៅ GM</span>';
+                else if (a.status === 'approved') badge = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-700">បានអនុម័ត</span>';
+                else badge = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-100 text-rose-700">បានបដិសេធ</span>';
+
+                let actionHtml = '';
+                if (a.status === 'pending_approval') {
+                    actionHtml = `
+                        <div class="flex items-center justify-end gap-1.5">
+                            <button onclick="handleApproveAdj('${a.id}')" class="px-2.5 py-1 text-xs rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium transition cursor-pointer">អនុម័ត</button>
+                            <button onclick="handleRejectAdj('${a.id}')" class="px-2.5 py-1 text-xs rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-medium transition cursor-pointer">បដិសេធ</button>
+                        </div>
+                    `;
+                } else {
+                    actionHtml = `
+                        <a href="view-adjustment.html?id=${a.id}" class="px-2.5 py-1 text-xs rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition inline-flex items-center gap-1">
+                            <i class="fas fa-eye text-[10px]"></i> មើល
+                        </a>
+                    `;
+                }
+
+                return `
+                    <tr class="hover:bg-slate-50 transition" data-status="${a.status}" data-search="${a.id.toLowerCase()} ${a.sku.toLowerCase()} ${prodName.toLowerCase()} ${a.reasonLabel.toLowerCase()}">
+                        <td class="py-3.5 px-4 font-mono font-bold text-slate-800"><a href="view-adjustment.html?id=${a.id}" class="hover:underline text-slate-700">${a.id}</a></td>
+                        <td class="py-3.5 px-4 text-slate-600">${fmtKhDate(a.date)}</td>
+                        <td class="py-3.5 px-4 text-slate-800 font-semibold">${getWarehouse(a.whId).name}</td>
+                        <td class="py-3.5 px-4">
+                            <div class="font-bold text-slate-900">${prodName}</div>
+                            <div class="font-mono text-[11px] text-slate-500">${a.sku}</div>
+                        </td>
+                        <td class="py-3.5 px-4 text-right tabular-nums text-slate-600">${fmtNumber(a.systemQty)}</td>
+                        <td class="py-3.5 px-4 text-right tabular-nums font-bold text-slate-800">${fmtNumber(a.physicalQty)}</td>
+                        <td class="py-3.5 px-4 text-right tabular-nums ${diff < 0 ? 'text-rose-600 font-bold' : 'text-emerald-600 font-bold'}">
+                            ${diff > 0 ? '+' : ''}${fmtNumber(diff)} (${diffCost >= 0 ? '+' : ''}${fmtUSD(diffCost)})
+                        </td>
+                        <td class="py-3.5 px-4 text-slate-600 max-w-[200px] truncate" title="${a.reasonLabel}">${a.reasonLabel}</td>
+                        <td class="py-3.5 px-4 text-center">${badge}</td>
+                        <td class="py-3.5 px-4 text-right">${actionHtml}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderAlerts() {
+            const alerts = getLowStockAlerts();
+            const tbody = document.getElementById('alertsTableBody');
+            document.getElementById('tabCount-alerts').innerText = alerts.length;
+
+            tbody.innerHTML = alerts.map(p => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="py-3.5 px-4 font-mono font-bold text-slate-800">${p.sku}</td>
+                    <td class="py-3.5 px-4 font-semibold text-slate-900">${p.name}</td>
+                    <td class="py-3.5 px-4 text-slate-500">${CATEGORIES[p.category] || p.category}</td>
+                    <td class="py-3.5 px-4 text-slate-600 font-mono"><span class="px-2 py-0.5 bg-slate-100 rounded text-[11px]">${p.bin}</span></td>
+                    <td class="py-3.5 px-4 text-right font-bold tabular-nums ${p.totalStock === 0 ? 'text-rose-700' : 'text-amber-700'}">${fmtNumber(p.totalStock)} ${p.unit}</td>
+                    <td class="py-3.5 px-4 text-right text-slate-500 tabular-nums">${fmtNumber(p.min)} ${p.unit}</td>
+                    <td class="py-3.5 px-4 text-right font-bold text-rose-600 tabular-nums">${fmtNumber(p.deficit)} ${p.unit}</td>
+                    <td class="py-3.5 px-4 text-right font-bold text-slate-800 tabular-nums">${fmtNumber(p.suggestedOrder)} ${p.unit}</td>
+                    <td class="py-3.5 px-4 text-center">
+                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${p.urgency === 'critical' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'}">${p.urgencyLabel}</span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right">
+                        <button onclick="requestSinglePR('${p.sku}', '${p.name}', ${p.suggestedOrder})" class="px-2.5 py-1 text-xs rounded-lg bg-slate-700 hover:bg-slate-800 text-white font-medium transition inline-flex items-center gap-1 cursor-pointer">
+                            <i class="fas fa-paper-plane text-[10px]"></i> ស្នើសុំទិញ
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function handleApproveAdj(id) {
+            approveAdjustment(id);
+            showToast(`បានអនុម័តប័ណ្ណកែតម្រូវ ${id} ដោយជោគជ័យ`, 'success');
+            renderAdjustments();
+        }
+
+        function handleRejectAdj(id) {
+            rejectAdjustment(id, 'មិនត្រូវតាមស្តង់ដារកែតម្រូវ');
+            showToast(`បានបដិសេធប័ណ្ណកែតម្រូវ ${id}`, 'error');
+            renderAdjustments();
+        }
+
+        function requestSinglePR(sku, name, qty) {
+            showToast(`បានផ្ញើសំណើទិញមុខទំនិញ ${name} ចំនួន ${qty} ទៅកាន់ Procurement Manager រួចរាល់`, 'success');
+        }
+
+        function requestAllPR() {
+            showToast('បានផ្ញើសំណើទិញទំនិញខ្វះខាតទាំងអស់ទៅកាន់ Procurement Manager', 'success');
+        }
+
+        function filterTransfers() {
+            const q = document.getElementById('transferSearch').value.toLowerCase().trim();
+            const status = document.getElementById('transferStatusFilter').value;
+            const rows = document.querySelectorAll('#transfersTableBody tr');
+
+            rows.forEach(r => {
+                const s = r.getAttribute('data-status');
+                const text = r.getAttribute('data-search');
+                const matchQ = !q || text.includes(q);
+                const matchS = status === 'all' || s === status;
+                r.style.display = (matchQ && matchS) ? '' : 'none';
+            });
+        }
+
+        function filterAdjustments() {
+            const q = document.getElementById('adjSearch').value.toLowerCase().trim();
+            const status = document.getElementById('adjStatusFilter').value;
+            const rows = document.querySelectorAll('#adjustmentsTableBody tr');
+
+            rows.forEach(r => {
+                const s = r.getAttribute('data-status');
+                const text = r.getAttribute('data-search');
+                const matchQ = !q || text.includes(q);
+                const matchS = status === 'all' || s === status;
+                r.style.display = (matchQ && matchS) ? '' : 'none';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTransfers();
+            renderAdjustments();
+            renderAlerts();
+
+            // Hash navigation support
+            if (window.location.hash === '#adjustments') switchTab('adjustments');
+            else if (window.location.hash === '#alerts') switchTab('alerts');
+        });
+    </script>
+</body>
+</html>

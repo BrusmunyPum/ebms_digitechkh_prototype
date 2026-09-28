@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ស្វែងរកផលិតផល & ទីតាំង Bin — eBMS v2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../shared/styles/portal.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#334155',
+                        'primary-dark': '#1e293b'
+                    },
+                    fontFamily: {
+                        sans: ['"Kantumruy Pro"', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-slate-100 font-sans text-slate-800 antialiased select-none" data-portal="wsPortal" data-role-root="./" data-active="product-lookup">
+    <div class="flex h-screen overflow-hidden">
+        <div id="sidebarHost"></div>
+
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Header (72px aligned) -->
+            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200 flex-shrink-0 z-10 shadow-xs">
+                <div class="flex items-center gap-3">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 leading-tight">ស្វែងរកទីតាំង និងស្តុកផលិតផល (Floor Scan)</h2>
+                        <p class="text-xs font-normal text-slate-500 mt-0.5">ស្កេន Barcode ឬវាយលេខកូដ SKU ដើម្បីពិនិត្យទីតាំងធ្នើរ (Bin) និងចំនួនក្នុងស្តុក</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold flex items-center gap-1.5">
+                        <i class="fas fa-shield-halved text-amber-600"></i>
+                        <span>Zero Price UI</span>
+                    </span>
+                </div>
+            </header>
+
+            <!-- Main Scanner & Touch Console -->
+            <main class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- Giant Scanner Search Bar -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm max-w-4xl mx-auto space-y-4">
+                    <div class="relative">
+                        <i class="fas fa-barcode absolute left-5 top-1/2 -translate-y-1/2 text-2xl text-slate-400"></i>
+                        <input type="text" id="barcodeScannerInput" autofocus placeholder="ស្កេន Barcode ឬវាយឈ្មោះទំនិញ / SKU..." class="w-full h-16 pl-16 pr-24 bg-slate-50 border-2 border-slate-300 rounded-2xl text-lg font-bold text-slate-900 focus:bg-white focus:outline-none focus:border-slate-700 transition placeholder:text-slate-400">
+                        <button onclick="triggerSearch()" class="absolute right-2.5 top-1/2 -translate-y-1/2 h-11 px-5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs shadow transition cursor-pointer">
+                            ស្វែងរក
+                        </button>
+                    </div>
+
+                    <!-- Quick Preset Buttons -->
+                    <div class="flex flex-wrap items-center gap-2 pt-2">
+                        <span class="text-xs text-slate-400 font-medium">ស្វែងរករហ័ស៖</span>
+                        <button onclick="quickLookup('SKU-001')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-mono font-bold transition">SKU-001</button>
+                        <button onclick="quickLookup('SKU-002')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-mono font-bold transition">SKU-002</button>
+                        <button onclick="quickLookup('SKU-005')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-mono font-bold transition">SKU-005</button>
+                        <button onclick="quickLookup('SKU-006')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-mono font-bold transition">SKU-006</button>
+                    </div>
+                </div>
+
+                <!-- Result Card Display (Giant readable text from arm's length) -->
+                <div id="resultCard" class="max-w-4xl mx-auto hidden">
+                    <div class="bg-white p-8 rounded-3xl border-2 border-slate-300 shadow-md space-y-6">
+                        <div class="flex flex-wrap items-start justify-between gap-4 pb-6 border-b border-slate-200">
+                            <div>
+                                <span class="px-3 py-1 rounded-lg bg-slate-800 text-white font-mono font-bold text-sm tracking-wider" id="resSku">SKU-001</span>
+                                <h3 class="text-2xl font-bold text-slate-900 mt-2" id="resName">ម៉ាស៊ីនត្រជាក់ Inverter 1.5HP</h3>
+                                <p class="text-sm text-slate-500 mt-0.5" id="resCat">គ្រឿងអេឡិចត្រូនិច</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs text-slate-400 block mb-1">Barcode លេខកូដ</span>
+                                <span class="font-mono text-base font-bold text-slate-700" id="resBarcode">885123456001</span>
+                            </div>
+                        </div>
+
+                        <!-- 2 Big Highlight Boxes: Bin Location & Current Stock -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <!-- Bin Location Box -->
+                            <div class="p-6 rounded-2xl bg-amber-50 border-2 border-amber-300 flex flex-col justify-between">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-amber-800 uppercase tracking-wider">ទីតាំងធ្នើរ (Bin Location)</span>
+                                    <i class="fas fa-location-dot text-amber-600 text-xl"></i>
+                                </div>
+                                <div class="text-4xl font-extrabold text-amber-900 font-mono my-3 tracking-wide" id="resBin">
+                                    A-01-03
+                                </div>
+                                <p class="text-xs text-amber-700 font-medium">តំបន់ A · ជួរទី 01 · ថ្នាក់ទី 03</p>
+                            </div>
+
+                            <!-- On-Hand Stock Box -->
+                            <div class="p-6 rounded-2xl bg-emerald-50 border-2 border-emerald-300 flex flex-col justify-between">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider">ស្តុកក្នុងដៃជាក់ស្តែង</span>
+                                    <i class="fas fa-boxes-stacked text-emerald-600 text-xl"></i>
+                                </div>
+                                <div class="text-4xl font-extrabold text-emerald-900 font-mono my-3 tabular-nums" id="resOnHand">
+                                    45 គ្រឿង
+                                </div>
+                                <p class="text-xs text-emerald-700 font-medium" id="resStockStatus">ស្តុកគ្រប់គ្រាន់សម្រាប់បំពេញការបញ្ជាទិញ</p>
+                            </div>
+                        </div>
+
+                        <!-- Touch Actions Strip -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-200">
+                            <a href="stock-count.html" class="h-14 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer">
+                                <i class="fas fa-clipboard-check text-base"></i>
+                                <span>រាប់ស្តុកមុខទំនិញនេះ</span>
+                            </a>
+                            <a href="pick-and-pack.html" class="h-14 rounded-2xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition cursor-pointer">
+                                <i class="fas fa-box-open text-base"></i>
+                                <span>ទៅកាន់ការរើស & វេចខ្ចប់</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty Prompt State -->
+                <div id="emptyPrompt" class="max-w-md mx-auto text-center py-12 text-slate-400 space-y-3">
+                    <i class="fas fa-barcode text-5xl text-slate-300 animate-pulse"></i>
+                    <h4 class="text-sm font-bold text-slate-600">រង់ចាំការស្កេន Barcode...</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">ប្រើប្រាស់ម៉ាស៊ីនស្កេន Barcode Gun ឬវាយលេខកូដក្នុងប្រអប់ខាងលើ ដើម្បីបង្ហាញទីតាំងធ្នើរភ្លាមៗ</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="data.js"></script>
+    <script src="../../shared/scripts/portal.js"></script>
+    <script>
+        const input = document.getElementById('barcodeScannerInput');
+        input.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') triggerSearch();
+        });
+
+        function triggerSearch() {
+            const query = input.value.trim().toLowerCase();
+            if (!query) return;
+
+            const items = DEFAULT_WAREHOUSE_STAFF_DATA.inventoryItems;
+            const found = items.find(i => 
+                i.barcode === query || 
+                i.sku.toLowerCase() === query || 
+                i.name.toLowerCase().includes(query) ||
+                i.bin.toLowerCase() === query
+            );
+
+            if (found) {
+                displayProduct(found);
+            } else {
+                showToast(`រកមិនឃើញទំនិញដែលមានលេខកូដ "${query}" ឡើយ`, 'error');
+            }
+        }
+
+        function quickLookup(sku) {
+            input.value = sku;
+            triggerSearch();
+        }
+
+        function displayProduct(p) {
+            document.getElementById('emptyPrompt').classList.add('hidden');
+            const card = document.getElementById('resultCard');
+            card.classList.remove('hidden');
+
+            document.getElementById('resSku').innerText = p.sku;
+            document.getElementById('resName').innerText = p.name;
+            document.getElementById('resCat').innerText = p.category;
+            document.getElementById('resBarcode').innerText = p.barcode;
+            document.getElementById('resBin').innerText = p.bin;
+            document.getElementById('resOnHand').innerText = `${p.onHand} ${p.unit}`;
+
+            const status = document.getElementById('resStockStatus');
+            if (p.onHand <= p.reorderPoint) {
+                status.innerText = `⚠️ ស្តុកទាប (ក្រោមចំណុចសុវត្ថិភាព ${p.reorderPoint} ${p.unit})`;
+                status.className = 'text-xs text-rose-700 font-bold';
+            } else {
+                status.innerText = `✓ ស្តុកគ្រប់គ្រាន់ (កម្រិតសុវត្ថិភាព ${p.reorderPoint} ${p.unit})`;
+                status.className = 'text-xs text-emerald-700 font-medium';
+            }
+
+            showToast(`បានរកឃើញ ${p.name} នៅធ្នើរ ${p.bin}`, 'success');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បង្កើតប័ណ្ណកែតម្រូវស្តុក — eBMS v2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#475569',
+                        'primary-dark': '#334155'
+                    },
+                    fontFamily: {
+                        sans: ['"Kantumruy Pro"', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased" data-portal="wmPortal" data-role-root="../" data-active="movements">
+    <div class="flex h-screen overflow-hidden">
+        <div id="sidebarHost"></div>
+
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Header (72px aligned) -->
+            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200/80 flex-shrink-0 z-10 shadow-xs">
+                <div class="flex items-center gap-3">
+                    <a href="movements.html#adjustments" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ក្រោយ">
+                        <i class="fas fa-arrow-left text-sm"></i>
+                    </a>
+                    <div>
+                        <h2 class="text-xl font-semibold text-slate-800 leading-tight">បង្កើតប័ណ្ណកែតម្រូវស្តុក</h2>
+                        <p class="text-xs font-normal text-slate-500 mt-0.5">កែតម្រូវទិន្នន័យស្តុកជាក់ស្តែងបន្ទាប់ពីរាប់ស្តុក ឬទំនិញខូចខាត</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="window.location.href='movements.html#adjustments'" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition cursor-pointer">
+                        បោះបង់
+                    </button>
+                    <button type="button" onclick="submitAdjustmentForm()" class="h-10 px-5 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition cursor-pointer">
+                        <i class="fas fa-check text-xs"></i>
+                        <span>ដាក់ស្នើកែតម្រូវ</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Content Form -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <form id="adjForm" onsubmit="event.preventDefault(); submitAdjustmentForm();" class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl">
+                    <!-- Left 2 Cols -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+                            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                                <i class="fas fa-sliders text-slate-500"></i>
+                                <span>ព័ត៌មានមុខទំនិញ និងមូលហេតុកែតម្រូវ</span>
+                            </h3>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 mb-1.5">ឃ្លាំងដែលត្រូវកែតម្រូវ <span class="text-rose-500">*</span></label>
+                                    <select id="adjWh" onchange="onAdjustmentProductChange()" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400">
+                                        <option value="WH-01">ឃ្លាំងកណ្តាល (ភ្នំពេញ)</option>
+                                        <option value="WH-02">ឃ្លាំងសាខាទួលគោក</option>
+                                        <option value="WH-03">ឃ្លាំងសាខាសៀមរាប</option>
+                                        <option value="WH-04">ឃ្លាំងសាខាបាត់ដំបង</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 mb-1.5">ជ្រើសរើសមុខទំនិញ (SKU) <span class="text-rose-500">*</span></label>
+                                    <select id="adjSku" onchange="onAdjustmentProductChange()" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400">
+                                        <!-- Rendered by JS -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">ស្តុកក្នុងប្រព័ន្ធបច្ចុប្បន្ន</label>
+                                    <div class="text-base font-bold text-slate-800 font-mono" id="systemQtyDisplay">0 ឯកតា</div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 mb-1">ស្តុករាប់ជាក់ស្តែង <span class="text-rose-500">*</span></label>
+                                    <input type="number" id="physicalQty" min="0" value="0" oninput="calculateDifference()" class="w-full h-10 px-3 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-slate-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">ផលសងបំរែបំរួល</label>
+                                    <div class="text-base font-bold text-slate-800 font-mono" id="diffDisplay">0 ឯកតា</div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 mb-1.5">ប្រភេទមូលហេតុ <span class="text-rose-500">*</span></label>
+                                    <select id="adjReason" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400">
+                                        <option value="damaged">ខូចខាតពេលលើកដាក់ / ដឹកជញ្ជូន</option>
+                                        <option value="count_error">កំហុសរាប់ស្តុកជុំមុន</option>
+                                        <option value="expired">ផុតកំណត់កាលបរិច្ឆេទប្រើប្រាស់</option>
+                                        <option value="sample_loss">ដកជាគំរូតាំងបង្ហាញអតិថិជន</option>
+                                        <option value="other">មូលហេតុផ្សេងៗ</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 mb-1.5">អ្នករាយការណ៍</label>
+                                    <input type="text" id="reporterName" value="គង់ វិបុល (អ្នកគ្រប់គ្រងឃ្លាំង)" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 mb-1.5">កំណត់ហេតុលម្អិត</label>
+                                <textarea id="adjNote" rows="2" placeholder="សរសេរពិពណ៌នាបន្ថែមអំពីហេតុការណ៍..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Col: Policy & Approval Threshold -->
+                    <div class="space-y-6">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4 sticky top-6">
+                            <h3 class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3">លក្ខខណ្ឌអនុម័ត (Policy)</h3>
+                            
+                            <div class="space-y-3 text-xs">
+                                <div class="flex justify-between py-1 border-b border-slate-100">
+                                    <span class="text-slate-500">ថ្លៃដើមឯកតា (Cost):</span>
+                                    <span class="font-mono font-bold text-slate-800 tabular-nums" id="unitCostDisplay">$0.00</span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-slate-100">
+                                    <span class="text-slate-500">តម្លៃប៉ះពាល់សរុប (Impact):</span>
+                                    <span class="font-mono font-bold text-slate-900 text-sm tabular-nums" id="totalImpactDisplay">$0.00</span>
+                                </div>
+                                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
+                                    <div class="font-semibold text-slate-800 text-xs">កម្រិតសិទ្ធិអនុម័ត៖</div>
+                                    <div id="approvalLevelBadge" class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 inline-block">
+                                        WM អនុម័តផ្ទាល់ (≤ $200)
+                                    </div>
+                                    <p class="text-[11px] text-slate-500 leading-relaxed" id="approvalLevelNote">
+                                        តម្លៃប៉ះពាល់ស្ថិតក្នុងដែនសមត្ថកិច្ចរបស់ Warehouse Manager។ អាចអនុម័តភ្លាមៗ។
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 border-t border-slate-100">
+                                <button type="button" onclick="submitAdjustmentForm()" class="w-full h-11 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
+                                    <i class="fas fa-check"></i>
+                                    <span>បញ្ជាក់ និងដាក់ស្នើកែតម្រូវ</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        let currentProd = null;
+        let systemQty = 0;
+
+        function initSkuOptions() {
+            const products = getProducts();
+            const sel = document.getElementById('adjSku');
+            sel.innerHTML = products.map(p => `<option value="${p.sku}">${p.sku} - ${p.name}</option>`).join('');
+            onAdjustmentProductChange();
+        }
+
+        function onAdjustmentProductChange() {
+            const sku = document.getElementById('adjSku').value;
+            const wh = document.getElementById('adjWh').value;
+            currentProd = getProduct(sku);
+
+            if (currentProd) {
+                systemQty = currentProd.stocks[wh] || 0;
+                document.getElementById('systemQtyDisplay').innerText = `${fmtNumber(systemQty)} ${currentProd.unit}`;
+                document.getElementById('physicalQty').value = systemQty;
+                document.getElementById('unitCostDisplay').innerText = fmtUSD(currentProd.mac);
+                calculateDifference();
+            }
+        }
+
+        function calculateDifference() {
+            if (!currentProd) return;
+            const physical = parseInt(document.getElementById('physicalQty').value) || 0;
+            const diff = physical - systemQty;
+            const impactVal = Math.abs(diff * currentProd.mac);
+
+            const diffDisplay = document.getElementById('diffDisplay');
+            if (diff > 0) {
+                diffDisplay.className = 'text-base font-bold text-emerald-600 font-mono';
+                diffDisplay.innerText = `+${fmtNumber(diff)} ${currentProd.unit}`;
+            } else if (diff < 0) {
+                diffDisplay.className = 'text-base font-bold text-rose-600 font-mono';
+                diffDisplay.innerText = `${fmtNumber(diff)} ${currentProd.unit}`;
+            } else {
+                diffDisplay.className = 'text-base font-bold text-slate-700 font-mono';
+                diffDisplay.innerText = `0 ${currentProd.unit}`;
+            }
+
+            document.getElementById('totalImpactDisplay').innerText = fmtUSD(impactVal);
+
+            const badge = document.getElementById('approvalLevelBadge');
+            const note = document.getElementById('approvalLevelNote');
+
+            if (impactVal > 200) {
+                badge.className = 'text-xs font-semibold px-2.5 py-1 rounded-lg bg-purple-100 text-purple-800 inline-block';
+                badge.innerText = 'បញ្ជូនទៅ GM អនុម័ត (> $200)';
+                note.innerText = `តម្លៃប៉ះពាល់លើសពី $200.00 (${fmtUSD(impactVal)})។ ប័ណ្ណនេះនឹងត្រូវបានបញ្ជូនទៅ General Manager ដោយស្វ័យប្រវត្តិ។`;
+            } else {
+                badge.className = 'text-xs font-semibold px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 inline-block';
+                badge.innerText = 'WM អនុម័តផ្ទាល់ (≤ $200)';
+                note.innerText = 'តម្លៃប៉ះពាល់ស្ថិតក្នុងដែនសមត្ថកិច្ចរបស់ Warehouse Manager។ អាចអនុម័តភ្លាមៗ។';
+            }
+        }
+
+        function submitAdjustmentForm() {
+            if (!currentProd) return;
+            const whId = document.getElementById('adjWh').value;
+            const physicalQty = parseInt(document.getElementById('physicalQty').value);
+            const reasonSelect = document.getElementById('adjReason');
+            const reason = reasonSelect.value;
+            const reasonLabel = reasonSelect.options[reasonSelect.selectedIndex].text;
+            const note = document.getElementById('adjNote').value;
+
+            if (isNaN(physicalQty) || physicalQty < 0) {
+                showToast('សូមបញ្ចូលចំនួនស្តុករាប់ជាក់ស្តែងឱ្យបានត្រឹមត្រូវ', 'error');
+                return;
+            }
+
+            if (physicalQty === systemQty) {
+                showToast('ចំនួនស្តុករាប់ជាក់ស្តែងស្មើនឹងស្តុកប្រព័ន្ធ គ្មានការប្រែប្រួលឡើយ', 'warning');
+                return;
+            }
+
+            const newAdj = createAdjustment({
+                whId,
+                sku: currentProd.sku,
+                systemQty,
+                physicalQty,
+                reason,
+                reasonLabel,
+                note
+            });
+
+            if (newAdj.status === 'escalated_gm') {
+                showToast(`ប័ណ្ណកែតម្រូវ ${newAdj.id} ត្រូវបានបញ្ជូនទៅកាន់ General Manager (លើសពី $200)`, 'warning');
+            } else {
+                showToast(`បានបង្កើតប័ណ្ណកែតម្រូវ ${newAdj.id} ដោយជោគជ័យ`, 'success');
+            }
+
+            setTimeout(() => {
+                window.location.href = 'movements.html#adjustments';
+            }, 800);
+        }
+
+        document.addEventListener('DOMContentLoaded', initSkuOptions);
+    </script>
+</body>
+</html>

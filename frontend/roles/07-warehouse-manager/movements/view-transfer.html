@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ព័ត៌មានលម្អិតប័ណ្ណផ្ទេរស្តុក — eBMS v2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#475569',
+                        'primary-dark': '#334155'
+                    },
+                    fontFamily: {
+                        sans: ['"Kantumruy Pro"', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased" data-portal="wmPortal" data-role-root="../" data-active="movements">
+    <div class="flex h-screen overflow-hidden">
+        <div id="sidebarHost"></div>
+
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Header (72px aligned) -->
+            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200/80 flex-shrink-0 z-10 shadow-xs">
+                <div class="flex items-center gap-3">
+                    <a href="movements.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ក្រោយ">
+                        <i class="fas fa-arrow-left text-sm"></i>
+                    </a>
+                    <div>
+                        <div class="flex items-center gap-2.5">
+                            <h2 class="text-xl font-semibold text-slate-800 leading-tight" id="trfTitle">ប័ណ្ណផ្ទេរស្តុក TRF-2026-0046</h2>
+                            <span id="trfStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">រង់ចាំអនុម័ត</span>
+                        </div>
+                        <p class="text-xs font-normal text-slate-500 mt-0.5" id="trfSubtitle">បង្កើតឡើងនៅ 23 កញ្ញា 2026 ដោយ ស៊្រុន ធារ៉ា</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2" id="headerActions">
+                    <button onclick="window.print()" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-2 transition cursor-pointer">
+                        <i class="fas fa-print text-slate-400"></i>
+                        <span>បោះពុម្ពប័ណ្ណផ្ទេរ</span>
+                    </button>
+                    <button id="approveBtn" onclick="handleApprove()" class="h-10 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition cursor-pointer">
+                        <i class="fas fa-check text-xs"></i>
+                        <span>អនុម័តការផ្ទេរ</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Detail Content -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <div class="max-w-6xl space-y-6">
+                    <!-- Top Route Card -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
+                                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">ចេញពីឃ្លាំងដើម</span>
+                                <h4 class="text-sm font-bold text-slate-900" id="fromWhName">ឃ្លាំងកណ្តាល (ភ្នំពេញ)</h4>
+                                <p class="text-xs text-slate-500" id="fromWhLoc">រាជធានីភ្នំពេញ</p>
+                            </div>
+
+                            <div class="flex flex-col items-center justify-center text-slate-400 py-2">
+                                <i class="fas fa-truck-moving text-2xl text-slate-600 mb-1 animate-pulse"></i>
+                                <span class="text-xs font-medium text-slate-600" id="driverText">កែវ វិចិត្រ (PP-2A-5566)</span>
+                                <span class="text-[11px] text-slate-400">ផ្លូវដឹកជញ្ជូន</span>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
+                                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">ទៅកាន់ឃ្លាំងគោលដៅ</span>
+                                <h4 class="text-sm font-bold text-slate-900" id="toWhName">ឃ្លាំងសាខាទួលគោក</h4>
+                                <p class="text-xs text-slate-500" id="toWhLoc">ខណ្ឌទួលគោក</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between text-xs text-slate-600 gap-3">
+                            <div><strong>មូលហេតុ / កំណត់ហេតុ៖</strong> <span id="noteText">ផ្ទេរបំពេញស្តុកសាខាទួលគោកប្រចាំសប្តាហ៍</span></div>
+                            <div><strong>អ្នកស្នើសុំ៖</strong> <span id="reqText">ស៊្រុន ធារ៉ា</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Items Table Card -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+                        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <i class="fas fa-boxes-stacked text-slate-500"></i>
+                            <span>បញ្ជីមុខទំនិញក្នុងប័ណ្ណផ្ទេរ</span>
+                        </h3>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                                    <tr>
+                                        <th class="py-3 px-4">កូដទំនិញ (SKU)</th>
+                                        <th class="py-3 px-4">ឈ្មោះមុខទំនិញ</th>
+                                        <th class="py-3 px-4">ប្រភេទ</th>
+                                        <th class="py-3 px-4 text-right">បរិមាណផ្ទេរ</th>
+                                        <th class="py-3 px-4">ខ្នាត</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detailItemsBody" class="divide-y divide-slate-100 font-medium text-slate-700">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        let currentMov = null;
+
+        function loadTransferDetail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id') || 'TRF-2026-0046';
+            const list = getMovements();
+            currentMov = list.find(m => m.id === id) || list[0];
+
+            if (!currentMov) return;
+
+            document.getElementById('trfTitle').innerText = `ប័ណ្ណផ្ទេរស្តុក ${currentMov.id}`;
+            document.getElementById('trfSubtitle').innerText = `បង្កើតឡើងនៅ ${fmtKhDate(currentMov.date)} ដោយ ${currentMov.requester}`;
+            document.getElementById('fromWhName').innerText = getWarehouse(currentMov.fromWh).name;
+            document.getElementById('fromWhLoc').innerText = getWarehouse(currentMov.fromWh).location;
+            document.getElementById('toWhName').innerText = getWarehouse(currentMov.toWh).name;
+            document.getElementById('toWhLoc').innerText = getWarehouse(currentMov.toWh).location;
+            document.getElementById('driverText').innerText = currentMov.driver;
+            document.getElementById('noteText').innerText = currentMov.note || '-';
+            document.getElementById('reqText').innerText = currentMov.requester;
+
+            const badge = document.getElementById('trfStatusBadge');
+            const approveBtn = document.getElementById('approveBtn');
+
+            if (currentMov.status === 'pending_approval') {
+                badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800';
+                badge.innerText = 'រង់ចាំអនុម័ត';
+                approveBtn.style.display = 'flex';
+            } else if (currentMov.status === 'in_transit') {
+                badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700';
+                badge.innerText = 'កំពុងដឹកជញ្ជូន';
+                approveBtn.style.display = 'none';
+            } else {
+                badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700';
+                badge.innerText = 'បានបញ្ចប់';
+                approveBtn.style.display = 'none';
+            }
+
+            const tbody = document.getElementById('detailItemsBody');
+            tbody.innerHTML = currentMov.items.map(it => {
+                const prod = getProduct(it.sku);
+                const name = prod ? prod.name : it.sku;
+                const cat = prod ? (CATEGORIES[prod.category] || prod.category) : '-';
+                const unit = prod ? prod.unit : 'ឯកតា';
+
+                return `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3 px-4 font-mono font-bold text-slate-800">${it.sku}</td>
+                        <td class="py-3 px-4 font-semibold text-slate-900">${name}</td>
+                        <td class="py-3 px-4 text-slate-500">${cat}</td>
+                        <td class="py-3 px-4 text-right font-bold text-slate-800 tabular-nums">${fmtNumber(it.qty)}</td>
+                        <td class="py-3 px-4 text-slate-600">${unit}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function handleApprove() {
+            if (!currentMov) return;
+            approveMovement(currentMov.id);
+            showToast(`បានអនុម័តប័ណ្ណផ្ទេរ ${currentMov.id} រួចរាល់។ ទំនិញកំពុងស្ថិតក្នុងដំណាក់កាលដឹកជញ្ជូន`, 'success');
+            setTimeout(() => {
+                window.location.reload();
+            }, 600);
+        }
+
+        document.addEventListener('DOMContentLoaded', loadTransferDetail);
+    </script>
+</body>
+</html>

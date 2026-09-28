@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បង្កើតប័ណ្ណផ្ទេរស្តុកថ្មី — eBMS v2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#475569',
+                        'primary-dark': '#334155'
+                    },
+                    fontFamily: {
+                        sans: ['"Kantumruy Pro"', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased" data-portal="wmPortal" data-role-root="../" data-active="movements">
+    <div class="flex h-screen overflow-hidden">
+        <div id="sidebarHost"></div>
+
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Header (72px aligned) -->
+            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200/80 flex-shrink-0 z-10 shadow-xs">
+                <div class="flex items-center gap-3">
+                    <a href="movements.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ក្រោយ">
+                        <i class="fas fa-arrow-left text-sm"></i>
+                    </a>
+                    <div>
+                        <h2 class="text-xl font-semibold text-slate-800 leading-tight">បង្កើតប័ណ្ណផ្ទេរស្តុក</h2>
+                        <p class="text-xs font-normal text-slate-500 mt-0.5">ផ្ទេរទំនិញរវាងឃ្លាំងកណ្តាល និងឃ្លាំងសាខា</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="window.location.href='movements.html'" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition cursor-pointer">
+                        បោះបង់
+                    </button>
+                    <button type="button" onclick="submitTransferForm()" class="h-10 px-5 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition cursor-pointer">
+                        <i class="fas fa-check text-xs"></i>
+                        <span>ដាក់ស្នើប័ណ្ណផ្ទេរ</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Form Content -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <form id="transferForm" onsubmit="event.preventDefault(); submitTransferForm();" class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl">
+                    <!-- Left 2 Cols: Main Info + Item Rows -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Card 1: Transfer Header Details -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+                            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                                <i class="fas fa-truck-ramp-box text-slate-500"></i>
+                                <span>ព័ត៌មានទូទៅនៃប័ណ្ណផ្ទេរ</span>
+                            </h3>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 mb-1.5">ពីឃ្លាំងដើម (From) <span class="text-rose-500">*</span></label>
+                                    <select id="fromWh" onchange="onWarehouseChange()" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400">
+                                        <option value="WH-01">ឃ្លាំងកណ្តាល (ភ្នំពេញ)</option>
+                                        <option value="WH-02">ឃ្លាំងសាខាទួលគោក</option>
+                                        <option value="WH-03">ឃ្លាំងសាខាសៀមរាប</option>
+                                        <option value="WH-04">ឃ្លាំងសាខាបាត់ដំបង</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 mb-1.5">ទៅកាន់ឃ្លាំងគោលដៅ (To) <span class="text-rose-500">*</span></label>
+                                    <select id="toWh" onchange="onWarehouseChange()" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400">
+                                        <option value="WH-02" selected>ឃ្លាំងសាខាទួលគោក</option>
+                                        <option value="WH-01">ឃ្លាំងកណ្តាល (ភ្នំពេញ)</option>
+                                        <option value="WH-03">ឃ្លាំងសាខាសៀមរាប</option>
+                                        <option value="WH-04">ឃ្លាំងសាខាបាត់ដំបង</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 mb-1.5">អ្នកបើកបរ / រថយន្តដឹក</label>
+                                    <input type="text" id="driverName" value="កែវ វិចិត្រ (PP-2A-5566)" placeholder="ឧ. កែវ វិចិត្រ (PP-2A-5566)" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 mb-1.5">កាលបរិច្ឆេទផ្ទេរ</label>
+                                    <input type="date" id="transferDate" value="2026-09-28" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 mb-1.5">កំណត់ហេតុ / មូលហេតុផ្ទេរ</label>
+                                <textarea id="transferNote" rows="2" placeholder="បញ្ជាក់មូលហេតុនៃការផ្ទេរទំនិញ..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400">ផ្ទេរបំពេញស្តុកសាខាប្រចាំសប្តាហ៍</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Items Table -->
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+                            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                                <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                    <i class="fas fa-list-ol text-slate-500"></i>
+                                    <span>បញ្ជីមុខទំនិញដែលត្រូវផ្ទេរ</span>
+                                </h3>
+                                <button type="button" onclick="addItemRow()" class="h-8 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer">
+                                    <i class="fas fa-plus text-[10px]"></i> បន្ថែមទំនិញ
+                                </button>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                                        <tr>
+                                            <th class="py-2.5 px-3">មុខទំនិញ</th>
+                                            <th class="py-2.5 px-3 text-right">ស្តុកក្នុងដៃ (ដើម)</th>
+                                            <th class="py-2.5 px-3 text-right w-32">ចំនួនផ្ទេរ</th>
+                                            <th class="py-2.5 px-3">ខ្នាត</th>
+                                            <th class="py-2.5 px-3 text-center w-12">លុប</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="itemsBody" class="divide-y divide-slate-100 font-medium text-slate-700">
+                                        <!-- Rendered dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Col: Summary Card -->
+                    <div class="space-y-6">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4 sticky top-6">
+                            <h3 class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3">សង្ខេបប័ណ្ណផ្ទេរ</h3>
+                            
+                            <div class="space-y-3 text-xs">
+                                <div class="flex justify-between py-1 border-b border-slate-100">
+                                    <span class="text-slate-500">លេខប័ណ្ណប្រព័ន្ធ៖</span>
+                                    <span class="font-mono font-bold text-slate-800" id="previewId">TRF-2026-0047</span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-slate-100">
+                                    <span class="text-slate-500">មុខទំនិញសរុប៖</span>
+                                    <span class="font-bold text-slate-800" id="summaryTotalLines">0 មុខ</span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-slate-100">
+                                    <span class="text-slate-500">បរិមាណសរុប៖</span>
+                                    <span class="font-bold text-slate-800 tabular-nums" id="summaryTotalQty">0 ឯកតា</span>
+                                </div>
+                                <div class="flex justify-between py-1 border-b border-slate-100">
+                                    <span class="text-slate-500">អ្នកស្នើសុំ៖</span>
+                                    <span class="font-medium text-slate-700">គង់ វិបុល</span>
+                                </div>
+                                <div class="flex justify-between py-1">
+                                    <span class="text-slate-500">ស្ថានភាពដំបូង៖</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-800">រង់ចាំអនុម័ត</span>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 border-t border-slate-100">
+                                <button type="button" onclick="submitTransferForm()" class="w-full h-11 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
+                                    <i class="fas fa-check"></i>
+                                    <span>បញ្ជាក់ និងដាក់ស្នើប័ណ្ណផ្ទេរ</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        let rowCount = 0;
+
+        function onWarehouseChange() {
+            const from = document.getElementById('fromWh').value;
+            const to = document.getElementById('toWh').value;
+            if (from === to) {
+                showToast('ឃ្លាំងដើម និងឃ្លាំងគោលដៅមិនអាចដូចគ្នាបានឡើយ', 'error');
+            }
+            updateItemSelectOptions();
+        }
+
+        function addItemRow(initialSku = '', initialQty = 1) {
+            rowCount++;
+            const tbody = document.getElementById('itemsBody');
+            const row = document.createElement('tr');
+            row.id = `itemRow-${rowCount}`;
+            row.className = 'hover:bg-slate-50/80 transition';
+
+            const products = getProducts();
+            const fromWh = document.getElementById('fromWh').value;
+
+            row.innerHTML = `
+                <td class="py-2.5 px-3">
+                    <select onchange="onProductSelect(${rowCount})" id="prodSelect-${rowCount}" class="w-full h-9 px-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 focus:bg-white focus:outline-none">
+                        ${products.map(p => `<option value="${p.sku}" ${p.sku === initialSku ? 'selected' : ''}>${p.sku} - ${p.name}</option>`).join('')}
+                    </select>
+                </td>
+                <td class="py-2.5 px-3 text-right font-mono font-bold text-slate-700 tabular-nums" id="onHand-${rowCount}">0</td>
+                <td class="py-2.5 px-3 text-right">
+                    <input type="number" min="1" value="${initialQty}" oninput="updateSummary()" id="qtyInput-${rowCount}" class="w-full h-9 px-2 text-right bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-900 focus:bg-white focus:outline-none">
+                </td>
+                <td class="py-2.5 px-3 text-slate-600" id="unit-${rowCount}">គ្រឿង</td>
+                <td class="py-2.5 px-3 text-center">
+                    <button type="button" onclick="removeItemRow(${rowCount})" class="text-rose-500 hover:text-rose-700 p-1 cursor-pointer">
+                        <i class="fas fa-trash-can text-xs"></i>
+                    </button>
+                </td>
+            `;
+
+            tbody.appendChild(row);
+            onProductSelect(rowCount);
+            updateSummary();
+        }
+
+        function removeItemRow(id) {
+            const r = document.getElementById(`itemRow-${id}`);
+            if (r) r.remove();
+            updateSummary();
+        }
+
+        function onProductSelect(rowId) {
+            const sel = document.getElementById(`prodSelect-${rowId}`);
+            if (!sel) return;
+            const sku = sel.value;
+            const prod = getProduct(sku);
+            const fromWh = document.getElementById('fromWh').value;
+
+            if (prod) {
+                const stock = prod.stocks[fromWh] || 0;
+                document.getElementById(`onHand-${rowId}`).innerText = `${fmtNumber(stock)} ${prod.unit}`;
+                document.getElementById(`unit-${rowId}`).innerText = prod.unit;
+            }
+            updateSummary();
+        }
+
+        function updateItemSelectOptions() {
+            const rows = document.querySelectorAll('#itemsBody tr');
+            rows.forEach((r, idx) => {
+                const rowId = r.id.replace('itemRow-', '');
+                onProductSelect(rowId);
+            });
+        }
+
+        function updateSummary() {
+            const rows = document.querySelectorAll('#itemsBody tr');
+            let totalQty = 0;
+            let lines = 0;
+
+            rows.forEach(r => {
+                const rowId = r.id.replace('itemRow-', '');
+                const qty = parseInt(document.getElementById(`qtyInput-${rowId}`).value) || 0;
+                totalQty += qty;
+                lines++;
+            });
+
+            document.getElementById('summaryTotalLines').innerText = `${lines} មុខ`;
+            document.getElementById('summaryTotalQty').innerText = `${fmtNumber(totalQty)} ឯកតា`;
+        }
+
+        function submitTransferForm() {
+            const fromWh = document.getElementById('fromWh').value;
+            const toWh = document.getElementById('toWh').value;
+
+            if (fromWh === toWh) {
+                showToast('សូមជ្រើសរើសឃ្លាំងដើម និងឃ្លាំងគោលដៅឱ្យខុសគ្នា', 'error');
+                return;
+            }
+
+            const rows = document.querySelectorAll('#itemsBody tr');
+            if (rows.length === 0) {
+                showToast('សូមបន្ថែមមុខទំនិញយ៉ាងហោចណាស់ ១ មុខ', 'error');
+                return;
+            }
+
+            const items = [];
+            let hasError = false;
+
+            rows.forEach(r => {
+                const rowId = r.id.replace('itemRow-', '');
+                const sku = document.getElementById(`prodSelect-${rowId}`).value;
+                const qty = parseInt(document.getElementById(`qtyInput-${rowId}`).value) || 0;
+                const prod = getProduct(sku);
+                const stock = prod ? (prod.stocks[fromWh] || 0) : 0;
+
+                if (qty <= 0) {
+                    showToast('បរិមាណផ្ទេរត្រូវតែធំជាង 0', 'error');
+                    hasError = true;
+                    return;
+                }
+                if (qty > stock) {
+                    showToast(`ទំនិញ ${prod.name} មានស្តុកតែ ${stock} ប៉ុណ្ណោះ មិនអាចផ្ទេរ ${qty} បានទេ`, 'error');
+                    hasError = true;
+                    return;
+                }
+
+                items.push({ sku, qty });
+            });
+
+            if (hasError) return;
+
+            const newMov = createMovement({
+                fromWh,
+                toWh,
+                driver: document.getElementById('driverName').value,
+                note: document.getElementById('transferNote').value,
+                items
+            });
+
+            showToast(`បានបង្កើតប័ណ្ណផ្ទេរ ${newMov.id} ដោយជោគជ័យ`, 'success');
+            setTimeout(() => {
+                window.location.href = 'movements.html#transfers';
+            }, 800);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialSku = urlParams.get('sku') || 'DEL-OPT-7010';
+            addItemRow(initialSku, 5);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>របាយការណ៍វិភាគស្តុក — eBMS v2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+    <!-- ECharts CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#475569',
+                        'primary-dark': '#334155'
+                    },
+                    fontFamily: {
+                        sans: ['"Kantumruy Pro"', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased" data-portal="wmPortal" data-role-root="../" data-active="reports">
+    <div class="flex h-screen overflow-hidden">
+        <div id="sidebarHost"></div>
+
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Header (72px aligned) -->
+            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200/80 flex-shrink-0 z-10 shadow-xs">
+                <div>
+                    <h2 class="text-xl font-semibold text-slate-800 leading-tight">របាយការណ៍វិភាគស្តុក</h2>
+                    <p class="text-xs font-normal text-slate-500 mt-0.5">អត្រាបង្វិលស្តុក ការវិភាគតម្លៃស្តុកសរុប និងទំនិញរំកិលយឺត</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="showToast('បានទាញយករបាយការណ៍ជា PDF រួចរាល់', 'success')" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-2 transition cursor-pointer">
+                        <i class="fas fa-file-pdf text-rose-500"></i>
+                        <span>ទាញយក PDF</span>
+                    </button>
+                    <button onclick="showToast('បានទាញយកទិន្នន័យជា CSV រួចរាល់', 'success')" class="h-10 px-4 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition cursor-pointer">
+                        <i class="fas fa-file-excel text-emerald-400"></i>
+                        <span>ទាញយក Excel</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- Filters Bar with Standard Date Presets -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <span class="text-xs text-slate-500 font-medium">ចន្លោះពេល៖</span>
+                        <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl">
+                            <button onclick="setDateRange('month')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-800 shadow-xs transition">ខែនេះ</button>
+                            <button onclick="setDateRange('quarter')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-800 transition">ត្រីមាសនេះ</button>
+                            <button onclick="setDateRange('year')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-800 transition">ឆ្នាំនេះ</button>
+                        </div>
+
+                        <select id="reportWhFilter" onchange="refreshCharts()" class="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none">
+                            <option value="all">គ្រប់ឃ្លាំងទាំងអស់</option>
+                            <option value="WH-01">ឃ្លាំងកណ្តាល (ភ្នំពេញ)</option>
+                            <option value="WH-02">ឃ្លាំងសាខាទួលគោក</option>
+                            <option value="WH-03">ឃ្លាំងសាខាសៀមរាប</option>
+                            <option value="WH-04">ឃ្លាំងសាខាបាត់ដំបង</option>
+                        </select>
+                    </div>
+
+                    <div class="text-xs text-slate-500">
+                        អាប់ដេតចុងក្រោយ៖ <span class="font-medium text-slate-700">28 កញ្ញា 2026 · 10:00</span>
+                    </div>
+                </div>
+
+                <!-- 4 KPI Summary Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+                        <div class="text-slate-500 text-xs font-medium">តម្លៃស្តុកសរុប (Cost Valuation)</div>
+                        <div class="text-2xl font-bold text-slate-900 mt-1 tabular-nums font-mono">$84,250.00</div>
+                        <div class="flex items-center gap-1.5 mt-2 text-[11px] text-emerald-600 font-semibold">
+                            <i class="fas fa-arrow-trend-up"></i>
+                            <span>+4.8% ធៀបខែមុន</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+                        <div class="text-slate-500 text-xs font-medium">អត្រាបង្វិលស្តុកមធ្យម (Turnover)</div>
+                        <div class="text-2xl font-bold text-slate-900 mt-1 tabular-nums">4.2 ដង/ឆ្នាំ</div>
+                        <div class="flex items-center gap-1.5 mt-2 text-[11px] text-emerald-600 font-semibold">
+                            <i class="fas fa-check-circle"></i>
+                            <span>ស្ថិតក្នុងស្តង់ដារល្អ</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+                        <div class="text-slate-500 text-xs font-medium">ចំនួនផលិតផលសកម្ម</div>
+                        <div class="text-2xl font-bold text-slate-900 mt-1 tabular-nums">10 មុខទំនិញ</div>
+                        <div class="flex items-center gap-1.5 mt-2 text-[11px] text-slate-500">
+                            <span>4 ឃ្លាំងសាខា</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+                        <div class="text-slate-500 text-xs font-medium">ទំនិញកកស្ទះ (Dead Stock)</div>
+                        <div class="text-2xl font-bold text-rose-600 mt-1 tabular-nums">1 មុខទំនិញ</div>
+                        <div class="flex items-center gap-1.5 mt-2 text-[11px] text-rose-600 font-semibold">
+                            <i class="fas fa-triangle-exclamation"></i>
+                            <span>គ្មានចលនា > 90 ថ្ងៃ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Chart 1: Stock Valuation Trend -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+                        <h3 class="text-sm font-bold text-slate-900 flex items-center justify-between">
+                            <span>និន្នាការតម្លៃស្តុកសរុប (12 ខែចុងក្រោយ)</span>
+                            <span class="text-xs font-normal text-slate-400">USD (ថ្លៃដើម)</span>
+                        </h3>
+                        <div id="valuationChart" class="w-full h-72"></div>
+                    </div>
+
+                    <!-- Chart 2: Category Turnover Rate -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+                        <h3 class="text-sm font-bold text-slate-900 flex items-center justify-between">
+                            <span>អត្រាបង្វិលស្តុកតាមប្រភេទផលិតផល (Turnover Rate)</span>
+                            <span class="text-xs font-normal text-slate-400">ដង / ឆ្នាំ</span>
+                        </h3>
+                        <div id="turnoverChart" class="w-full h-72"></div>
+                    </div>
+                </div>
+
+                <!-- Table: Slow Moving & Dead Stock Analysis -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden space-y-4 p-6">
+                    <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                        <i class="fas fa-hourglass-half text-amber-500"></i>
+                        <span>ការវិភាគទំនិញចលនាយឺត និងកកស្ទះ (Slow-Moving & Dead Stock)</span>
+                    </h3>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                                <tr>
+                                    <th class="py-3 px-4">កូដទំនិញ (SKU)</th>
+                                    <th class="py-3 px-4">ឈ្មោះមុខទំនិញ</th>
+                                    <th class="py-3 px-4">ប្រភេទ</th>
+                                    <th class="py-3 px-4 text-right">ស្តុកនៅសល់</th>
+                                    <th class="py-3 px-4 text-right">ថ្លៃដើមកកស្ទះ</th>
+                                    <th class="py-3 px-4 text-center">ថ្ងៃគ្មានចលនា</th>
+                                    <th class="py-3 px-4">ចំណាត់ថ្នាក់</th>
+                                    <th class="py-3 px-4">អនុសាសន៍</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
+                                <tr class="hover:bg-slate-50 transition bg-rose-50/20">
+                                    <td class="py-3.5 px-4 font-mono font-bold text-slate-800">SW-CISCO-24</td>
+                                    <td class="py-3.5 px-4 font-semibold text-slate-900">ស្វីត Cisco Catalyst 24 Port</td>
+                                    <td class="py-3.5 px-4 text-slate-500">គ្រឿងបន្លាស់</td>
+                                    <td class="py-3.5 px-4 text-right font-bold text-slate-800 tabular-nums">7 គ្រឿង</td>
+                                    <td class="py-3.5 px-4 text-right font-mono font-bold text-rose-700 tabular-nums">$2,380.00</td>
+                                    <td class="py-3.5 px-4 text-center font-bold text-rose-600 tabular-nums">98 ថ្ងៃ</td>
+                                    <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-100 text-rose-700">Dead Stock</span></td>
+                                    <td class="py-3.5 px-4 text-slate-600">រៀបចំប្រូម៉ូសិន ឬបង្វិលសងអ្នកផ្គត់ផ្គង់</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition bg-amber-50/20">
+                                    <td class="py-3.5 px-4 font-mono font-bold text-slate-800">CHR-ERG-01</td>
+                                    <td class="py-3.5 px-4 font-semibold text-slate-900">កៅអីការិយាល័យ Ergonomic</td>
+                                    <td class="py-3.5 px-4 text-slate-500">គ្រឿងសង្ហារិម</td>
+                                    <td class="py-3.5 px-4 text-right font-bold text-slate-800 tabular-nums">61 គ្រឿង</td>
+                                    <td class="py-3.5 px-4 text-right font-mono font-bold text-amber-700 tabular-nums">$8,845.00</td>
+                                    <td class="py-3.5 px-4 text-center font-bold text-amber-600 tabular-nums">54 ថ្ងៃ</td>
+                                    <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">Slow Moving</span></td>
+                                    <td class="py-3.5 px-4 text-slate-600">ជូនដំណឹងទៅផ្នែកលក់ដើម្បីជំរុញការលក់</td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="py-3.5 px-4 font-mono font-bold text-slate-800">DSK-OFC-120</td>
+                                    <td class="py-3.5 px-4 font-semibold text-slate-900">តុការិយាល័យទំនើប 1.2m</td>
+                                    <td class="py-3.5 px-4 text-slate-500">គ្រឿងសង្ហារិម</td>
+                                    <td class="py-3.5 px-4 text-right font-bold text-slate-800 tabular-nums">39 គ្រឿង</td>
+                                    <td class="py-3.5 px-4 text-right font-mono font-bold text-slate-700 tabular-nums">$4,485.00</td>
+                                    <td class="py-3.5 px-4 text-center font-bold text-slate-600 tabular-nums">38 ថ្ងៃ</td>
+                                    <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-700">ធម្មតា</span></td>
+                                    <td class="py-3.5 px-4 text-slate-600">តាមដានកម្រិតស្តុកធម្មតា</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        let valChart = null;
+        let turnChart = null;
+
+        function initCharts() {
+            const valDom = document.getElementById('valuationChart');
+            const turnDom = document.getElementById('turnoverChart');
+
+            if (valDom) {
+                valChart = echarts.init(valDom);
+                valChart.setOption({
+                    tooltip: { trigger: 'axis', valueFormatter: v => '$' + v.toLocaleString() },
+                    grid: { left: '3%', right: '4%', bottom: '3%', top: '10%', containLabel: true },
+                    xAxis: {
+                        type: 'category',
+                        data: ['តុលា', 'វិច្ឆិកា', 'ធ្នូ', 'មករា', 'កុម្ភៈ', 'មីនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្កដា', 'សីហា', 'កញ្ញា'],
+                        axisLine: { lineStyle: { color: '#cbd5e1' } },
+                        axisLabel: { color: '#64748b' }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        axisLine: { show: false },
+                        splitLine: { lineStyle: { color: '#f1f5f9' } },
+                        axisLabel: { color: '#64748b', formatter: v => '$' + (v / 1000) + 'k' }
+                    },
+                    series: [{
+                        name: 'តម្លៃស្តុក (USD)',
+                        type: 'line',
+                        smooth: true,
+                        data: [68000, 72000, 85000, 78000, 74000, 80000, 82000, 86000, 81000, 83000, 80400, 84250],
+                        itemStyle: { color: '#475569' },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: 'rgba(71, 85, 105, 0.3)' },
+                                { offset: 1, color: 'rgba(71, 85, 105, 0.02)' }
+                            ])
+                        }
+                    }]
+                });
+            }
+
+            if (turnDom) {
+                turnChart = echarts.init(turnDom);
+                turnChart.setOption({
+                    tooltip: { trigger: 'axis', valueFormatter: v => v + ' ដង/ឆ្នាំ' },
+                    grid: { left: '3%', right: '4%', bottom: '3%', top: '10%', containLabel: true },
+                    xAxis: {
+                        type: 'category',
+                        data: ['កុំព្យូទ័រ', 'អេក្រង់', 'ម៉ាស៊ីនបោះពុម្ព', 'គ្រឿងបន្លាស់', 'គ្រឿងសង្ហារិម'],
+                        axisLine: { lineStyle: { color: '#cbd5e1' } },
+                        axisLabel: { color: '#64748b' }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        splitLine: { lineStyle: { color: '#f1f5f9' } },
+                        axisLabel: { color: '#64748b' }
+                    },
+                    series: [{
+                        name: 'Turnover Rate',
+                        type: 'bar',
+                        barWidth: '35%',
+                        data: [5.8, 4.9, 3.2, 4.6, 2.1],
+                        itemStyle: {
+                            color: function(params) {
+                                const colors = ['#0284c7', '#0d9488', '#eab308', '#6366f1', '#f43f5e'];
+                                return colors[params.dataIndex % colors.length];
+                            },
+                            borderRadius: [6, 6, 0, 0]
+                        }
+                    }]
+                });
+            }
+
+            window.addEventListener('resize', () => {
+                if (valChart) valChart.resize();
+                if (turnChart) turnChart.resize();
+            });
+        }
+
+        function setDateRange(range) {
+            showToast(`បានប្តូរជួរកាលបរិច្ឆេទទៅ ${range === 'month' ? 'ខែនេះ' : range === 'quarter' ? 'ត្រីមាសនេះ' : 'ឆ្នាំនេះ'}`, 'success');
+        }
+
+        function refreshCharts() {
+            showToast('បានទាញទិន្នន័យរបាយការណ៍ថ្មី', 'success');
+        }
+
+        document.addEventListener('DOMContentLoaded', initCharts);
+    </script>
+</body>
+</html>

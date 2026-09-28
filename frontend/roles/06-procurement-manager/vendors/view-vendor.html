@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGITECHKH - ប្រវត្តិរូបអ្នកផ្គត់ផ្គង់</title>
+    <link rel="icon" type="image/png" href="../../../shared/assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#d97706",
+                        'primary-dark': "#b45309",
+                        accent: "#f59e0b",
+                    },
+                    fontFamily: {
+                        sans: ["'Kantumruy Pro'", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+</head>
+<body id="pmPortal" data-role-root=".." data-active="vendors" class="bg-slate-50 font-sans text-slate-800 text-[16px] flex h-screen overflow-hidden">
+
+    <!-- Unified Sidebar Runtime -->
+    <div id="sidebarHost"></div>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+
+        <!-- Top Header (Standard 2: h-[72px] px-6) -->
+        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-xs z-10 flex-shrink-0 w-full border-b border-slate-200/70">
+            <div class="flex items-center gap-4">
+                <a href="vendors.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ទៅ...">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </a>
+                <div>
+                    <h2 class="text-xl font-semibold text-slate-800 leading-tight">ប្រវត្តិរូបអ្នកផ្គត់ផ្គង់</h2>
+                    <p class="text-xs font-normal text-slate-500 mt-0.5">ព័ត៌មានលម្អិតសហគ្រាស ប្រវត្តិបញ្ជាទិញ និងដំណើរការផ្គត់ផ្គង់</p>
+                </div>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center space-x-2.5">
+                <a href="#" id="editVendorBtn" class="h-10 px-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl flex items-center gap-2 transition cursor-pointer">
+                    <i class="fas fa-edit text-sky-600"></i>
+                    <span>កែប្រែព័ត៌មាន</span>
+                </a>
+
+                <a href="#" id="createPoForVendorBtn" class="h-10 px-4 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-xl flex items-center gap-2 shadow-xs transition cursor-pointer">
+                    <i class="fas fa-cart-plus"></i>
+                    <span>ចេញបញ្ជាទិញថ្មី</span>
+                </a>
+
+                <div class="flex items-center sm:border-l sm:pl-3">
+                    <div class="w-10 h-10 rounded-full bg-amber-600 text-white flex items-center justify-center font-semibold text-sm shadow-sm">
+                        សផ
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
+            <div class="w-full space-y-6">
+
+                <!-- Section A: Vendor Overview Card -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xl">
+                                <i class="fas fa-truck-field"></i>
+                            </span>
+                            <div>
+                                <div class="flex items-center gap-2.5">
+                                    <h1 class="text-xl font-bold text-slate-900" id="vendorNameKh">---</h1>
+                                    <span class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold" id="vendorCodeBadge">VND-XXX</span>
+                                    <span id="vendorStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold">---</span>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-0.5" id="vendorNameEn">---</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-4 text-xs text-slate-500 mt-4 pt-3 border-t border-slate-100">
+                            <span><i class="fas fa-phone mr-1.5 text-amber-600"></i><strong class="text-slate-700 font-mono" id="vendorPhone">---</strong></span>
+                            <span>•</span>
+                            <span><i class="fas fa-envelope mr-1.5 text-sky-600"></i><span id="vendorEmail">---</span></span>
+                            <span>•</span>
+                            <span><i class="fas fa-location-dot mr-1.5 text-rose-500"></i><span id="vendorAddress">---</span></span>
+                            <span>•</span>
+                            <span>TIN: <strong class="text-slate-700 font-mono" id="vendorTin">---</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- AP Balance & On Time Rate Stats -->
+                    <div class="flex items-center gap-4">
+                        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 text-right">
+                            <span class="text-[11px] text-slate-400 block">បំណុលនៅសល់ (AP)</span>
+                            <span class="text-base font-bold text-rose-600 tabular-nums" id="outstandingApDisplay">$0.00</span>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 text-right">
+                            <span class="text-[11px] text-slate-400 block">អត្រាផ្គត់ផ្គង់ទាន់ពេល</span>
+                            <span class="text-base font-bold text-emerald-600 tabular-nums" id="onTimeRateDisplay">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section B: 3 Tabs Container -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                    <div class="flex border-b border-slate-200 px-6">
+                        <button type="button" onclick="switchVendorTab('tabHistory')" id="btnTabHistory"
+                            class="py-3.5 px-4 text-xs font-semibold border-b-2 border-amber-600 text-amber-700 flex items-center gap-2 transition cursor-pointer">
+                            <i class="fas fa-clock-rotate-left"></i>
+                            <span>ប្រវត្តិបញ្ជាទិញ (Purchase Orders)</span>
+                        </button>
+                        <button type="button" onclick="switchVendorTab('tabGeneral')" id="btnTabGeneral"
+                            class="py-3.5 px-4 text-xs font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 transition cursor-pointer">
+                            <i class="fas fa-circle-info"></i>
+                            <span>ព័ត៌មានទូទៅ និងធនាគារ</span>
+                        </button>
+                        <button type="button" onclick="switchVendorTab('tabProducts')" id="btnTabProducts"
+                            class="py-3.5 px-4 text-xs font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 transition cursor-pointer">
+                            <i class="fas fa-boxes-stacked"></i>
+                            <span>មុខទំនិញផ្គត់ផ្គង់</span>
+                        </button>
+                    </div>
+
+                    <div class="p-6">
+
+                        <!-- Tab 1: Purchase History -->
+                        <div id="tabHistory" class="space-y-4">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
+                                            <th class="py-2.5 px-3">លេខកូដ PO</th>
+                                            <th class="py-2.5 px-3">កាលបរិច្ឆេទ</th>
+                                            <th class="py-2.5 px-3">ថ្ងៃរំពឹងទទួល</th>
+                                            <th class="py-2.5 px-3 text-right">ទឹកប្រាក់សរុប</th>
+                                            <th class="py-2.5 px-3 text-center">ស្ថានភាព</th>
+                                            <th class="py-2.5 px-3 text-center">មើល</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 text-xs" id="vendorPoHistoryTbody">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Tab 2: General Information -->
+                        <div id="tabGeneral" class="hidden">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+                                <div class="space-y-3 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                                    <h4 class="font-semibold text-slate-800 text-sm pb-2 border-b border-slate-200">ព័ត៌មានអាជីវកម្ម និងកិច្ចសន្យា</h4>
+                                    <div class="flex justify-between py-1">
+                                        <span class="text-slate-500">ទម្រង់អាជីវកម្ម:</span>
+                                        <span class="font-medium text-slate-800" id="genBusinessType">---</span>
+                                    </div>
+                                    <div class="flex justify-between py-1">
+                                        <span class="text-slate-500">លក្ខខណ្ឌទូទាត់:</span>
+                                        <span class="font-medium text-slate-800" id="genPaymentTerms">---</span>
+                                    </div>
+                                    <div class="flex justify-between py-1">
+                                        <span class="text-slate-500">រយៈពេលដឹកជញ្ជូន (Lead Time):</span>
+                                        <span class="font-medium text-slate-800" id="genLeadTime">---</span>
+                                    </div>
+                                    <div class="flex justify-between py-1">
+                                        <span class="text-slate-500">បរិមាណបញ្ជាទិញអប្បបរមា (MOQ):</span>
+                                        <span class="font-medium text-slate-800" id="genMoq">---</span>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-3 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                                    <h4 class="font-semibold text-slate-800 text-sm pb-2 border-b border-slate-200">គណនីធនាគារសម្រាប់ទូទាត់</h4>
+                                    <div class="flex justify-between py-1">
+                                        <span class="text-slate-500">ធនាគារ:</span>
+                                        <span class="font-medium text-slate-800" id="genBankName">---</span>
+                                    </div>
+                                    <div class="flex justify-between py-1">
+                                        <span class="text-slate-500">លេខគណនី (សុវត្ថិភាព):</span>
+                                        <span class="font-mono font-medium text-slate-800" id="genAccountNo">---</span>
+                                    </div>
+                                    <div class="flex justify-between py-1">
+                                        <span class="text-slate-500">ឈ្មោះម្ចាស់គណនី:</span>
+                                        <span class="font-medium text-slate-800" id="genAccountName">---</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab 3: Products Supplied -->
+                        <div id="tabProducts" class="hidden">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
+                                            <th class="py-2.5 px-3">លេខកូដ SKU</th>
+                                            <th class="py-2.5 px-3">ឈ្មោះផលិតផល</th>
+                                            <th class="py-2.5 px-3 text-center">ឯកតា</th>
+                                            <th class="py-2.5 px-3 text-right">ថ្លៃដើមចុងក្រោយ</th>
+                                            <th class="py-2.5 px-3 text-center">ស្តុកសុវត្ថិភាព</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 text-xs" id="vendorProductsTbody">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        let currentVendor = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPortalSidebar();
+            loadVendorProfile();
+        });
+
+        function loadVendorProfile() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const vendorId = urlParams.get('id');
+            currentVendor = getVendorById(vendorId);
+
+            if (!currentVendor) {
+                showToast('មិនអាចរកឃើញទិន្នន័យអ្នកផ្គត់ផ្គង់ឡើយ', 'error');
+                setTimeout(() => window.location.href = 'vendors.html', 1500);
+                return;
+            }
+
+            // Header Elements
+            document.getElementById('vendorNameKh').textContent = currentVendor.nameKh;
+            document.getElementById('vendorNameEn').textContent = currentVendor.nameEn || '';
+            document.getElementById('vendorCodeBadge').textContent = currentVendor.code;
+            document.getElementById('vendorPhone').textContent = currentVendor.phone;
+            document.getElementById('vendorEmail').textContent = currentVendor.email || 'មិនមាន';
+            document.getElementById('vendorAddress').textContent = currentVendor.addressKh;
+            document.getElementById('vendorTin').textContent = currentVendor.tin || 'មិនមាន';
+            document.getElementById('outstandingApDisplay').textContent = `$${currentVendor.outstandingAp.toLocaleString()}`;
+            document.getElementById('onTimeRateDisplay').textContent = `${currentVendor.onTimeRate}%`;
+
+            const statusBadge = document.getElementById('vendorStatusBadge');
+            statusBadge.textContent = currentVendor.status === 'Active' ? 'សកម្ម' : 'អសកម្ម';
+            statusBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-semibold ${currentVendor.status === 'Active' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-700 border border-slate-200'}`;
+
+            document.getElementById('editVendorBtn').href = `edit-vendor.html?id=${currentVendor.id}`;
+            document.getElementById('createPoForVendorBtn').href = `../purchase-orders/create-po.html?vendor=${currentVendor.id}`;
+
+            // Tab 2: General details
+            document.getElementById('genBusinessType').textContent = currentVendor.businessType || 'ក្រុមហ៊ុនទទួលខុសត្រូវមានកម្រិត';
+            document.getElementById('genPaymentTerms').textContent = currentVendor.paymentTerms;
+            document.getElementById('genLeadTime').textContent = `${currentVendor.leadTime || 7} ថ្ងៃ`;
+            document.getElementById('genMoq').textContent = `${currentVendor.moq || 5} ឯកតា`;
+            document.getElementById('genBankName').textContent = currentVendor.bankName || 'មិនទាន់កំណត់';
+            document.getElementById('genAccountName').textContent = currentVendor.accountName || '---';
+
+            // Mask bank account number
+            if (currentVendor.accountNo) {
+                const len = currentVendor.accountNo.length;
+                document.getElementById('genAccountNo').textContent = len > 4 ? '****' + currentVendor.accountNo.slice(-4) : currentVendor.accountNo;
+            } else {
+                document.getElementById('genAccountNo').textContent = '---';
+            }
+
+            // Tab 1: PO History
+            const pos = getPurchaseOrders().filter(p => p.vendorId === currentVendor.id);
+            const poTbody = document.getElementById('vendorPoHistoryTbody');
+            if (pos.length === 0) {
+                poTbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400">មិនទាន់មានប្រវត្តិបញ្ជាទិញសម្រាប់អ្នកផ្គត់ផ្គង់នេះឡើយ</td></tr>`;
+            } else {
+                poTbody.innerHTML = pos.map(p => `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-2.5 px-3 font-mono font-semibold text-amber-700">${p.id}</td>
+                        <td class="py-2.5 px-3 text-slate-600">${p.poDate}</td>
+                        <td class="py-2.5 px-3 text-slate-600">${p.deliveryDate}</td>
+                        <td class="py-2.5 px-3 text-right font-bold text-slate-800 tabular-nums">$${p.grandTotal.toLocaleString()}</td>
+                        <td class="py-2.5 px-3 text-center">
+                            <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700">${p.status}</span>
+                        </td>
+                        <td class="py-2.5 px-3 text-center">
+                            <a href="../purchase-orders/view-po.html?id=${p.id}" class="text-amber-600 hover:underline">
+                                <i class="fas fa-arrow-up-right-from-square"></i>
+                            </a>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            // Tab 3: Products Supplied
+            const products = PM_CATALOG_ITEMS.filter(item => item.preferredVendorId === currentVendor.id);
+            const prodTbody = document.getElementById('vendorProductsTbody');
+            if (products.length === 0) {
+                prodTbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-400">មិនទាន់មានទំនិញត្រូវបានភ្ជាប់ជាមួយអ្នកផ្គត់ផ្គង់នេះឡើយ</td></tr>`;
+            } else {
+                prodTbody.innerHTML = products.map(item => `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-2.5 px-3 font-mono font-bold text-slate-700">${item.sku}</td>
+                        <td class="py-2.5 px-3 text-slate-800 font-medium">${item.nameKh}</td>
+                        <td class="py-2.5 px-3 text-center text-slate-500">${item.unit}</td>
+                        <td class="py-2.5 px-3 text-right font-bold text-slate-800 tabular-nums">$${item.lastCost.toFixed(2)}</td>
+                        <td class="py-2.5 px-3 text-center text-slate-600 tabular-nums">${item.safetyStock} ${item.unit}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function switchVendorTab(tabId) {
+            ['tabHistory', 'tabGeneral', 'tabProducts'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            ['btnTabHistory', 'btnTabGeneral', 'btnTabProducts'].forEach(id => {
+                document.getElementById(id).className = 'py-3.5 px-4 text-xs font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 transition cursor-pointer';
+            });
+
+            document.getElementById(tabId).classList.remove('hidden');
+            const btnId = tabId.replace('tab', 'btnTab');
+            document.getElementById(btnId).className = 'py-3.5 px-4 text-xs font-semibold border-b-2 border-amber-600 text-amber-700 flex items-center gap-2 transition cursor-pointer';
+        }
+    </script>
+</body>
+</html>

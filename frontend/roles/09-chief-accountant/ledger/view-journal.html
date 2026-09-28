@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGITECHKH - ព័ត៌មានលម្អិតទិន្នានុប្បវត្ត</title>
+    <link rel="icon" type="image/png" href="../../../shared/assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#7c3aed",
+                        'primary-dark': "#6d28d9",
+                        accent: "#a78bfa",
+                    },
+                    fontFamily: {
+                        sans: ["'Kantumruy Pro'", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+    <style>
+        @media print {
+            body { background: white !important; }
+            #sidebarHost, header, .no-print { display: none !important; }
+            main { padding: 0 !important; overflow: visible !important; }
+            .print-clean { box-shadow: none !important; border: none !important; }
+        }
+    </style>
+</head>
+<body id="caPortal" data-role-root=".." data-active="ledger" class="bg-slate-50 font-sans text-slate-800 text-[16px] flex h-screen overflow-hidden">
+
+    <!-- Unified Sidebar Runtime -->
+    <div id="sidebarHost"></div>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+
+        <!-- Top Header (Standard 2: h-[72px] px-6) -->
+        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-xs z-10 flex-shrink-0 w-full border-b border-slate-200/70">
+            <div class="flex items-center gap-4">
+                <a href="ledger.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ទៅ...">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </a>
+                <div>
+                    <div class="flex items-center gap-2.5">
+                        <h2 class="text-xl font-bold text-slate-800 leading-tight" id="jeTitleHeader">JE-2026-XXXXX</h2>
+                        <span id="headerStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold">---</span>
+                    </div>
+                    <p class="text-xs font-normal text-slate-500 mt-0.5">ព័ត៌មានលម្អិតប័ណ្ណទិន្នានុប្បវត្តគណនេយ្យ</p>
+                </div>
+            </div>
+
+            <!-- Header Action Buttons -->
+            <div class="flex items-center space-x-2.5">
+                <button type="button" onclick="window.print()" class="h-10 px-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl flex items-center gap-2 transition cursor-pointer">
+                    <i class="fas fa-print"></i>
+                    <span>បោះពុម្ពប័ណ្ណ</span>
+                </button>
+
+                <div class="flex items-center sm:border-l sm:pl-3">
+                    <div class="w-10 h-10 rounded-full bg-violet-600 text-white flex items-center justify-center font-semibold text-sm shadow-sm">
+                        ហរ
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
+            <div class="w-full max-w-4xl mx-auto space-y-6">
+
+                <!-- Printable Journal Voucher Card -->
+                <div class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-xs print-clean space-y-6">
+
+                    <!-- Document Header -->
+                    <div class="flex flex-wrap items-start justify-between gap-4 pb-6 border-b border-slate-200">
+                        <div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center font-bold text-lg">
+                                    D
+                                </div>
+                                <div>
+                                    <h1 class="text-xl font-bold text-slate-900 tracking-wider">ក្រុមហ៊ុន ឌីជីថេក ខេអេច ឯ.ក</h1>
+                                    <p class="text-xs text-slate-500">DIGITECHKH CO., LTD. • នាយកដ្ឋានហិរញ្ញវត្ថុ និងគណនេយ្យ</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-right">
+                            <span class="text-xs font-bold text-violet-700 uppercase tracking-widest block">ប័ណ្ណទិន្នានុប្បវត្តគណនេយ្យ (Journal Voucher)</span>
+                            <h2 class="text-2xl font-mono font-bold text-slate-900 mt-0.5" id="jeNumberDoc">JE-2026-XXXXX</h2>
+                            <p class="text-xs text-slate-500 mt-1">កាលបរិច្ឆេទ: <strong class="text-slate-800 tabular-nums" id="jeDateDoc">--/--/----</strong></p>
+                            <p class="text-xs text-slate-500">ឯកសារយោង: <strong class="text-slate-800 font-mono" id="jeRefDoc">---</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 text-xs">
+                        <span class="text-slate-400 font-medium block mb-1">បរិយាយអំពីប្រតិបត្តិការ (Memo / Description):</span>
+                        <p class="text-sm font-semibold text-slate-800" id="jeDescriptionDoc">---</p>
+                    </div>
+
+                    <!-- Double-Entry Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 border-b border-slate-200 text-xs font-semibold text-slate-700">
+                                    <th class="py-2.5 px-3 w-28">លេខកូដគណនី</th>
+                                    <th class="py-2.5 px-3">ឈ្មោះគណនី</th>
+                                    <th class="py-2.5 px-3">បរិយាយជួរ</th>
+                                    <th class="py-2.5 px-3 w-32 text-right">ឥណពន្ធ (Dr) $</th>
+                                    <th class="py-2.5 px-3 w-32 text-right">ឥណទាន (Cr) $</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-xs" id="jeLinesTbody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                            <tfoot>
+                                <tr class="bg-violet-50/70 border-t-2 border-violet-300 font-bold text-xs text-slate-900">
+                                    <td colspan="3" class="py-3 px-3 text-right">សរុប (Total):</td>
+                                    <td class="py-3 px-3 text-right font-mono text-violet-800" id="jeDocTotalDr">$0.00</td>
+                                    <td class="py-3 px-3 text-right font-mono text-violet-800" id="jeDocTotalCr">$0.00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <!-- Signatures Section -->
+                    <div class="pt-8 grid grid-cols-3 gap-6 text-center text-xs">
+                        <div class="space-y-12">
+                            <p class="font-semibold text-slate-700">រៀបចំដោយ</p>
+                            <p class="font-medium text-slate-600 border-t border-slate-300 pt-1.5 mx-6" id="postedByDoc">ហ៊ន រតនា (ប្រធានគណនេយ្យ)</p>
+                        </div>
+                        <div class="space-y-12">
+                            <p class="font-semibold text-slate-700">ពិនិត្យដោយសវនករ</p>
+                            <p class="font-medium text-slate-600 border-t border-slate-300 pt-1.5 mx-6">អ៊ុំ សុវណ្ណារ៉ា (សវនករ)</p>
+                        </div>
+                        <div class="space-y-12">
+                            <p class="font-semibold text-slate-700">អនុម័តដោយ</p>
+                            <p class="font-medium text-slate-600 border-t border-slate-300 pt-1.5 mx-6">លី ហាក់សេង (អភិបាលទូទៅ)</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPortalSidebar();
+            loadJournalDetail();
+        });
+
+        function loadJournalDetail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const jeId = urlParams.get('id');
+            const jes = getStoredJEs();
+            const je = jes.find(j => j.id === jeId);
+
+            if (!je) {
+                showToast('មិនអាចរកឃើញទិន្នន័យទិន្នានុប្បវត្តឡើយ', 'error');
+                setTimeout(() => window.location.href = 'ledger.html', 1500);
+                return;
+            }
+
+            document.getElementById('jeTitleHeader').textContent = je.id;
+            document.getElementById('jeNumberDoc').textContent = je.id;
+            document.getElementById('jeDateDoc').textContent = je.date;
+            document.getElementById('jeRefDoc').textContent = je.reference || je.source || 'មិនមាន';
+            document.getElementById('jeDescriptionDoc').textContent = je.description;
+            document.getElementById('postedByDoc').textContent = `${je.postedBy || 'ហ៊ន រតនា'} (គណនេយ្យករ)`;
+
+            const badge = document.getElementById('headerStatusBadge');
+            badge.textContent = je.status === 'Posted' ? 'បានចុះបញ្ជី (Posted)' : 'ព្រាងទុក (Draft)';
+            badge.className = `px-2.5 py-0.5 rounded-full text-xs font-semibold ${je.status === 'Posted' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-700 border border-slate-200'}`;
+
+            const tbody = document.getElementById('jeLinesTbody');
+            tbody.innerHTML = je.lines.map(l => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="py-2.5 px-3 font-mono font-bold text-violet-800">${l.accountCode}</td>
+                    <td class="py-2.5 px-3 font-medium text-slate-800">${l.accountName}</td>
+                    <td class="py-2.5 px-3 text-slate-500 text-[11px]">${l.description || '---'}</td>
+                    <td class="py-2.5 px-3 text-right font-mono font-bold text-slate-800 tabular-nums">${l.dr > 0 ? '$' + l.dr.toFixed(2) : '-'}</td>
+                    <td class="py-2.5 px-3 text-right font-mono font-bold text-slate-800 tabular-nums">${l.cr > 0 ? '$' + l.cr.toFixed(2) : '-'}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('jeDocTotalDr').textContent = `$${je.drTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            document.getElementById('jeDocTotalCr').textContent = `$${je.crTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        }
+    </script>
+</body>
+</html>

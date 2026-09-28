@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>កែប្រែសម្រង់តម្លៃ — eBMS v2</title>
+    <link rel="icon" type="image/png" href="../../../shared/assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: "#1e3a5f", 'primary-dark': "#142842", accent: "#0ea5e9" },
+                    fontFamily: { sans: ["'Kantumruy Pro'", "sans-serif"] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+</head>
+<body id="sePortal" data-role-root=".." data-active="quotes" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
+
+    <div id="sidebarHost"></div>
+
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
+            <div class="flex items-center gap-4 min-w-0">
+                <a href="quotes.html"
+                   class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70 flex-shrink-0"
+                   title="ត្រឡប់ទៅបញ្ជីសម្រង់តម្លៃ">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </a>
+                <div class="min-w-0">
+                    <h2 id="pageTitle" class="text-xl font-semibold text-gray-800 leading-tight truncate">កែប្រែសម្រង់តម្លៃ</h2>
+                    <p class="sm-card-sub text-gray-500 mt-0.5 truncate" id="quoteSubTitle">កែសម្រួលព័ត៌មានមុខទំនិញ និងបញ្ចុះតម្លៃ</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 flex-shrink-0">
+                <button onclick="saveQuote('draft')" class="sm-badge px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition cursor-pointer">
+                    រក្សាទុកជាសេចក្តីព្រាង
+                </button>
+                <button onclick="saveQuote('send')" class="sm-badge px-5 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition inline-flex items-center gap-2 cursor-pointer">
+                    <i class="fas fa-paper-plane"></i> <span>រក្សាទុក និងផ្ញើ</span>
+                </button>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-6">
+            <div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Customer -->
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
+                        <h3 class="sm-card-title text-slate-700 border-b border-slate-100 pb-3 mb-4">អតិថិជន</h3>
+                        <div id="customerPickerHost"></div>
+                    </div>
+
+                    <!-- Item lines -->
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                        <div class="p-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                                <h3 class="sm-card-title text-slate-700">មុខទំនិញ</h3>
+                                <p class="sm-card-sub text-slate-500">តម្លៃឯកតាអាចកែសម្រួលបានតាមការចរចាជាក់ស្តែង</p>
+                            </div>
+                            <button onclick="addLine()" class="sm-badge px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition inline-flex items-center gap-2 cursor-pointer">
+                                <i class="fas fa-plus text-xs"></i> បន្ថែមបន្ទាត់
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 text-slate-500 border-b border-slate-100">
+                                    <tr>
+                                        <th class="sm-th py-3 px-3">មុខទំនិញ</th>
+                                        <th class="sm-th py-3 px-3">ចំនួន</th>
+                                        <th class="sm-th py-3 px-3">តម្លៃឯកតា</th>
+                                        <th class="sm-th py-3 px-3 text-right">សរុប</th>
+                                        <th class="sm-th py-3 px-3"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="itemLinesBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                            </table>
+                        </div>
+                        <div id="itemLinesEmpty" class="hidden py-10 px-6 text-center">
+                            <p class="sm-card-sub text-slate-500">មិនទាន់មានបន្ទាត់មុខទំនិញទេ</p>
+                        </div>
+                    </div>
+
+                    <!-- Note -->
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
+                        <label class="sm-label text-slate-700 font-semibold block mb-2">កំណត់ចំណាំសម្រាប់អតិថិជន</label>
+                        <textarea id="fNote" rows="2" placeholder="ឧទាហរណ៍៖ តម្លៃរួមបញ្ចូលការដឹកជញ្ជូនក្នុងរាជធានីភ្នំពេញ..."
+                            class="sm-td w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-[#1e3a5f] transition resize-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- Right sidebar: Meta + Calculation Summary -->
+                <div class="space-y-6">
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+                        <h3 class="sm-card-title text-slate-700 border-b border-slate-100 pb-3">លក្ខខណ្ឌឯកសារ</h3>
+
+                        <div>
+                            <label class="sm-label text-slate-600 block mb-1.5">កាលបរិច្ឆេទ</label>
+                            <input id="fDate" type="date"
+                                class="sm-td w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-[#1e3a5f]">
+                        </div>
+
+                        <div>
+                            <label class="sm-label text-slate-600 block mb-1.5">សុពលភាពដល់ថ្ងៃ</label>
+                            <input id="fValidUntil" type="date"
+                                class="sm-td w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-[#1e3a5f]">
+                        </div>
+
+                        <div>
+                            <label class="sm-label text-slate-600 block mb-1.5">អ្នកទទួលខុសត្រូវ</label>
+                            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-[#1e3a5f] text-white flex items-center justify-center font-semibold text-xs">សស</div>
+                                <div>
+                                    <div class="sm-value text-slate-700 font-semibold">សៅ សុខា</div>
+                                    <div class="sm-td-sub text-slate-400">បុគ្គលិកប្រតិបត្តិផ្នែកលក់</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary Card -->
+                    <div id="summaryHost"></div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="../data.js"></script>
+    <script src="../doc-editor.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        let editQuoteId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            editQuoteId = params.get('id') || 'QT-2026-0089';
+
+            const quote = getQuote(editQuoteId);
+            if (quote) {
+                document.getElementById('pageTitle').innerText = `កែប្រែសម្រង់តម្លៃ ${quote.id}`;
+                document.getElementById('quoteSubTitle').innerText = `ស្ថានភាពបច្ចុប្បន្ន៖ ${quote.status}`;
+                document.getElementById('fDate').value = quote.date.slice(0, 10);
+                document.getElementById('fValidUntil').value = quote.validUntil;
+                document.getElementById('fNote').value = quote.note || '';
+
+                initDocEditor({
+                    mode: 'quote',
+                    prefillFrom: quote.id
+                });
+            } else {
+                initDocEditor({ mode: 'quote' });
+            }
+        });
+
+        function saveQuote(action) {
+            const totals = editorTotals();
+            if (!DOC_EDITOR.customerId) {
+                showToast('សូមជ្រើសរើសអតិថិជនជាមុនសិន', 'error');
+                return;
+            }
+            if (!DOC_EDITOR.items.length || !DOC_EDITOR.items.some(i => i.sku && i.qty > 0)) {
+                showToast('សូមបន្ថែមមុខទំនិញយ៉ាងហោចណាស់ ១ មុខ', 'error');
+                return;
+            }
+
+            const needsApproval = DOC_EDITOR.discountPercent > DISCOUNT_SELF_LIMIT;
+            const status = action === 'draft' ? 'draft' : (needsApproval ? 'pending_approval' : 'approved');
+
+            const quote = getQuote(editQuoteId);
+            if (quote) {
+                quote.customerId = DOC_EDITOR.customerId;
+                quote.items = DOC_EDITOR.items.filter(it => it.sku && it.qty > 0);
+                quote.discountPercent = DOC_EDITOR.discountPercent;
+                quote.downPayment = DOC_EDITOR.downPayment;
+                quote.status = status;
+                quote.validUntil = document.getElementById('fValidUntil').value;
+                quote.note = document.getElementById('fNote').value;
+            }
+
+            if (needsApproval && action === 'send') {
+                showToast(`បានរក្សាទុក និងបញ្ជូនសម្រង់តម្លៃ ${editQuoteId} ទៅកាន់ Manager ដើម្បីអនុម័តបញ្ចុះតម្លៃ ${DOC_EDITOR.discountPercent}%`, 'warning');
+            } else {
+                showToast(`បានរក្សាទុកការកែប្រែសម្រង់តម្លៃ ${editQuoteId} ដោយជោគជ័យ`, 'success');
+            }
+
+            setTimeout(() => {
+                window.location.href = `view-quote.html?id=${editQuoteId}`;
+            }, 800);
+        }
+    </script>
+</body>
+</html>

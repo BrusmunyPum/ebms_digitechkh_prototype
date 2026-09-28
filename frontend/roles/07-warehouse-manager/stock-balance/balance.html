@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>តុល្យភាពស្តុក & កាតាឡុក — eBMS v2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#475569',
+                        'primary-dark': '#334155'
+                    },
+                    fontFamily: {
+                        sans: ['"Kantumruy Pro"', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased" data-portal="wmPortal" data-role-root="../" data-active="balance">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar host -->
+        <div id="sidebarHost"></div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Header (72px aligned) -->
+            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200/80 flex-shrink-0 z-10 shadow-xs">
+                <div class="flex items-center gap-3">
+                    <div>
+                        <h2 class="text-xl font-semibold text-slate-800 leading-tight">តុល្យភាពស្តុក & កាតាឡុកទំនិញ</h2>
+                        <p class="text-xs font-normal text-slate-500 mt-0.5">ពិនិត្យចំនួនទំនិញក្នុងឃ្លាំងទាំងអស់ និងគ្រប់គ្រងទិន្នន័យផលិតផល</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="exportData()" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-2 transition cursor-pointer">
+                        <i class="fas fa-file-export text-slate-400"></i>
+                        <span>ទាញយកទិន្នន័យ (CSV)</span>
+                    </button>
+                    <a href="../movements/create-transfer.html" class="h-10 px-4 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition">
+                        <i class="fas fa-plus text-xs"></i>
+                        <span>បង្កើតប័ណ្ណផ្ទេរថ្មី</span>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Sub-Navigation Tabs Bar -->
+            <div class="bg-white px-6 border-b border-slate-200 flex items-center gap-6 flex-shrink-0">
+                <button onclick="switchTab('balance')" id="tabBtn-balance" class="h-12 border-b-2 border-slate-700 text-slate-800 text-sm font-semibold flex items-center gap-2 px-1 transition cursor-pointer">
+                    <i class="fas fa-boxes-stacked text-slate-600"></i>
+                    <span>តុល្យភាពស្តុកជាក់ស្តែង</span>
+                    <span id="tabCount-balance" class="px-2 py-0.5 rounded-full text-[11px] bg-slate-100 text-slate-700 font-medium">0</span>
+                </button>
+                <button onclick="switchTab('catalog')" id="tabBtn-catalog" class="h-12 border-b-2 border-transparent text-slate-500 hover:text-slate-700 text-sm font-medium flex items-center gap-2 px-1 transition cursor-pointer">
+                    <i class="fas fa-list-check text-slate-400"></i>
+                    <span>កាតាឡុកផលិតផលមេ</span>
+                    <span id="tabCount-catalog" class="px-2 py-0.5 rounded-full text-[11px] bg-slate-100 text-slate-600 font-medium">0</span>
+                </button>
+            </div>
+
+            <!-- Scrollable Content -->
+            <main class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- TAB 1: Stock Balance -->
+                <div id="tabContent-balance" class="space-y-6">
+                    <!-- Filters Toolbar -->
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex flex-wrap items-center gap-3 flex-1">
+                            <div class="relative min-w-[260px] flex-1 max-w-md">
+                                <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                <input type="text" id="balanceSearch" onkeyup="filterBalanceTable()" placeholder="ស្វែងរកតាម SKU, ឈ្មោះទំនិញ, ទីតាំង Bin..." class="w-full h-10 pl-9 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400 transition">
+                            </div>
+                            
+                            <!-- Category Filter -->
+                            <select id="balanceCategoryFilter" onchange="filterBalanceTable()" class="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-slate-400">
+                                <option value="all">គ្រប់ប្រភេទទាំងអស់</option>
+                                <option value="computer">កុំព្យូទ័រ</option>
+                                <option value="monitor">អេក្រង់</option>
+                                <option value="printer">ម៉ាស៊ីនបោះពុម្ព</option>
+                                <option value="accessory">គ្រឿងបន្លាស់</option>
+                                <option value="furniture">គ្រឿងសង្ហារិម</option>
+                            </select>
+
+                            <!-- Warehouse Location Filter -->
+                            <select id="balanceWhFilter" onchange="filterBalanceTable()" class="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-slate-400">
+                                <option value="all">គ្រប់ឃ្លាំងទាំងអស់ (សរុប)</option>
+                                <option value="WH-01">ឃ្លាំងកណ្តាល (ភ្នំពេញ)</option>
+                                <option value="WH-02">ឃ្លាំងសាខាទួលគោក</option>
+                                <option value="WH-03">ឃ្លាំងសាខាសៀមរាប</option>
+                                <option value="WH-04">ឃ្លាំងសាខាបាត់ដំបង</option>
+                            </select>
+
+                            <!-- Stock Status Filter -->
+                            <select id="balanceStatusFilter" onchange="filterBalanceTable()" class="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-slate-400">
+                                <option value="all">គ្រប់ស្ថានភាពស្តុក</option>
+                                <option value="ok">ស្តុកគ្រប់គ្រាន់</option>
+                                <option value="low">ស្តុកទាប</option>
+                                <option value="critical">កម្រិតអាសន្ន</option>
+                                <option value="out">អស់ពីស្តុក</option>
+                            </select>
+                        </div>
+                        <div class="text-xs text-slate-500 font-medium" id="balanceResultCount">
+                            បង្ហាញ 0 មុខទំនិញ
+                        </div>
+                    </div>
+
+                    <!-- Policy Banner -->
+                    <div class="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3.5 flex items-center justify-between gap-3 text-xs text-amber-900">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fas fa-shield-halved text-amber-600 text-sm"></i>
+                            <span><strong>គោលការណ៍រក្សាការសម្ងាត់៖</strong> តារាងនេះបង្ហាញតែ <strong>«ថ្លៃដើមទិញ»</strong> សម្រាប់វាយតម្លៃស្តុកប៉ុណ្ណោះ។ តម្លៃលក់ត្រូវបានលាក់ 100% តាមបទបញ្ជាសុវត្ថិភាព។</span>
+                        </div>
+                        <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-amber-100 text-amber-800 uppercase tracking-wider">Archetype B+C</span>
+                    </div>
+
+                    <!-- Table Container -->
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                                    <tr>
+                                        <th class="py-3.5 px-4">កូដទំនិញ (SKU)</th>
+                                        <th class="py-3.5 px-4">ឈ្មោះមុខទំនិញ</th>
+                                        <th class="py-3.5 px-4">ប្រភេទ</th>
+                                        <th class="py-3.5 px-4">ទីតាំងធ្នើរ (Bin)</th>
+                                        <th class="py-3.5 px-4 text-right">ស្តុកក្នុងដៃ</th>
+                                        <th class="py-3.5 px-4 text-right">កក់ទុក</th>
+                                        <th class="py-3.5 px-4 text-right">អាចប្រើបាន</th>
+                                        <th class="py-3.5 px-4 text-right">ស្តុកសុវត្ថិភាព</th>
+                                        <th class="py-3.5 px-4 text-right">ថ្លៃដើមមធ្យម</th>
+                                        <th class="py-3.5 px-4 text-center">ស្ថានភាព</th>
+                                        <th class="py-3.5 px-4 text-right">សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="balanceTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
+                                    <!-- Rendered by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: Product Catalog -->
+                <div id="tabContent-catalog" class="hidden space-y-6">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex flex-wrap items-center gap-3 flex-1">
+                            <div class="relative min-w-[260px] flex-1 max-w-md">
+                                <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                <input type="text" id="catalogSearch" onkeyup="filterCatalogTable()" placeholder="ស្វែងរកតាម SKU, ឈ្មោះទំនិញ, Barcode..." class="w-full h-10 pl-9 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400 transition">
+                            </div>
+                            <select id="catalogCategoryFilter" onchange="filterCatalogTable()" class="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-slate-400">
+                                <option value="all">គ្រប់ប្រភេទទាំងអស់</option>
+                                <option value="computer">កុំព្យូទ័រ</option>
+                                <option value="monitor">អេក្រង់</option>
+                                <option value="printer">ម៉ាស៊ីនបោះពុម្ព</option>
+                                <option value="accessory">គ្រឿងបន្លាស់</option>
+                                <option value="furniture">គ្រឿងសង្ហារិម</option>
+                            </select>
+                        </div>
+                        <div class="text-xs text-slate-500 font-medium" id="catalogResultCount">
+                            បង្ហាញ 0 ផលិតផល
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                                    <tr>
+                                        <th class="py-3.5 px-4">កូដទំនិញ (SKU)</th>
+                                        <th class="py-3.5 px-4">ឈ្មោះមុខទំនិញ</th>
+                                        <th class="py-3.5 px-4">ប្រភេទ</th>
+                                        <th class="py-3.5 px-4">ខ្នាតគិត</th>
+                                        <th class="py-3.5 px-4">ទីតាំងលំនាំដើម</th>
+                                        <th class="py-3.5 px-4 text-right">កម្រិតស្តុកអប្បបរមា</th>
+                                        <th class="py-3.5 px-4 text-right">កម្រិតស្តុកអតិបរមា</th>
+                                        <th class="py-3.5 px-4 text-center">ស្ថានភាព</th>
+                                        <th class="py-3.5 px-4 text-right">សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="catalogTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
+                                    <!-- Rendered by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        let currentTab = 'balance';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            const balanceBtn = document.getElementById('tabBtn-balance');
+            const catalogBtn = document.getElementById('tabBtn-catalog');
+            const balanceContent = document.getElementById('tabContent-balance');
+            const catalogContent = document.getElementById('tabContent-catalog');
+
+            if (tab === 'balance') {
+                balanceBtn.className = 'h-12 border-b-2 border-slate-700 text-slate-800 text-sm font-semibold flex items-center gap-2 px-1 transition cursor-pointer';
+                catalogBtn.className = 'h-12 border-b-2 border-transparent text-slate-500 hover:text-slate-700 text-sm font-medium flex items-center gap-2 px-1 transition cursor-pointer';
+                balanceContent.classList.remove('hidden');
+                catalogContent.classList.add('hidden');
+            } else {
+                catalogBtn.className = 'h-12 border-b-2 border-slate-700 text-slate-800 text-sm font-semibold flex items-center gap-2 px-1 transition cursor-pointer';
+                balanceBtn.className = 'h-12 border-b-2 border-transparent text-slate-500 hover:text-slate-700 text-sm font-medium flex items-center gap-2 px-1 transition cursor-pointer';
+                catalogContent.classList.remove('hidden');
+                balanceContent.classList.add('hidden');
+            }
+        }
+
+        function renderStockBalance() {
+            const products = getProducts();
+            const tbody = document.getElementById('balanceTableBody');
+            document.getElementById('tabCount-balance').innerText = products.length;
+
+            tbody.innerHTML = products.map(p => {
+                const total = totalProductStock(p);
+                const reserved = Math.round(total * 0.15); // Mock reserved 15%
+                const available = total - reserved;
+                
+                let statusBadge = '';
+                let rowBg = '';
+                if (total === 0) {
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-100 text-rose-700">អស់ពីស្តុក</span>';
+                    rowBg = 'bg-rose-50/40';
+                } else if (total <= Math.round(p.min * 0.35)) {
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-orange-100 text-orange-700">កម្រិតអាសន្ន</span>';
+                    rowBg = 'bg-orange-50/30';
+                } else if (total <= p.min) {
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-700">ស្តុកទាប</span>';
+                    rowBg = 'bg-amber-50/20';
+                } else {
+                    statusBadge = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-700">គ្រប់គ្រាន់</span>';
+                }
+
+                return `
+                    <tr class="hover:bg-slate-50/80 transition ${rowBg}" data-category="${p.category}" data-status="${total === 0 ? 'out' : total <= Math.round(p.min * 0.35) ? 'critical' : total <= p.min ? 'low' : 'ok'}" data-search="${p.sku.toLowerCase()} ${p.name.toLowerCase()} ${p.bin.toLowerCase()}">
+                        <td class="py-3.5 px-4 font-mono font-semibold text-slate-800">${p.sku}</td>
+                        <td class="py-3.5 px-4 font-semibold text-slate-900">${p.name}</td>
+                        <td class="py-3.5 px-4 text-slate-500">${CATEGORIES[p.category] || p.category}</td>
+                        <td class="py-3.5 px-4 text-slate-600"><span class="px-2 py-0.5 bg-slate-100 rounded text-[11px] font-mono">${p.bin}</span></td>
+                        <td class="py-3.5 px-4 text-right font-bold text-slate-800 tabular-nums">${fmtNumber(total)} ${p.unit}</td>
+                        <td class="py-3.5 px-4 text-right text-slate-500 tabular-nums">${fmtNumber(reserved)} ${p.unit}</td>
+                        <td class="py-3.5 px-4 text-right font-semibold text-emerald-700 tabular-nums">${fmtNumber(available)} ${p.unit}</td>
+                        <td class="py-3.5 px-4 text-right text-slate-500 tabular-nums">${fmtNumber(p.min)} ${p.unit}</td>
+                        <td class="py-3.5 px-4 text-right font-mono text-slate-700 tabular-nums">${fmtUSD(p.mac)}</td>
+                        <td class="py-3.5 px-4 text-center">${statusBadge}</td>
+                        <td class="py-3.5 px-4 text-right">
+                            <a href="../movements/create-transfer.html?sku=${p.sku}" class="px-2.5 py-1 text-xs rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition inline-flex items-center gap-1">
+                                <i class="fas fa-arrow-right-arrow-left text-[10px]"></i> ផ្ទេរ
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            filterBalanceTable();
+        }
+
+        function renderProductCatalog() {
+            const products = getProducts();
+            const tbody = document.getElementById('catalogTableBody');
+            document.getElementById('tabCount-catalog').innerText = products.length;
+
+            tbody.innerHTML = products.map(p => `
+                <tr class="hover:bg-slate-50/80 transition" data-category="${p.category}" data-search="${p.sku.toLowerCase()} ${p.name.toLowerCase()}">
+                    <td class="py-3.5 px-4 font-mono font-semibold text-slate-800">${p.sku}</td>
+                    <td class="py-3.5 px-4 font-semibold text-slate-900">${p.name}</td>
+                    <td class="py-3.5 px-4 text-slate-500">${CATEGORIES[p.category] || p.category}</td>
+                    <td class="py-3.5 px-4 text-slate-600">${p.unit}</td>
+                    <td class="py-3.5 px-4 text-slate-600 font-mono">${p.bin}</td>
+                    <td class="py-3.5 px-4 text-right text-slate-600 tabular-nums">${fmtNumber(p.min)} ${p.unit}</td>
+                    <td class="py-3.5 px-4 text-right text-slate-600 tabular-nums">${fmtNumber(p.max)} ${p.unit}</td>
+                    <td class="py-3.5 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-700">សកម្ម</span></td>
+                    <td class="py-3.5 px-4 text-right">
+                        <button onclick="showToast('បានចម្លង Barcode ផលិតផល', 'success')" class="px-2.5 py-1 text-xs rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition inline-flex items-center gap-1">
+                            <i class="fas fa-barcode text-[10px]"></i> Barcode
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            filterCatalogTable();
+        }
+
+        function filterBalanceTable() {
+            const q = document.getElementById('balanceSearch').value.toLowerCase().trim();
+            const cat = document.getElementById('balanceCategoryFilter').value;
+            const status = document.getElementById('balanceStatusFilter').value;
+            const rows = document.querySelectorAll('#balanceTableBody tr');
+
+            let visible = 0;
+            rows.forEach(r => {
+                const rowCat = r.getAttribute('data-category');
+                const rowStatus = r.getAttribute('data-status');
+                const rowSearch = r.getAttribute('data-search');
+
+                const matchQ = !q || rowSearch.includes(q);
+                const matchCat = cat === 'all' || rowCat === cat;
+                const matchStatus = status === 'all' || rowStatus === status;
+
+                if (matchQ && matchCat && matchStatus) {
+                    r.style.display = '';
+                    visible++;
+                } else {
+                    r.style.display = 'none';
+                }
+            });
+
+            document.getElementById('balanceResultCount').innerText = `បង្ហាញ ${visible} មុខទំនិញ`;
+        }
+
+        function filterCatalogTable() {
+            const q = document.getElementById('catalogSearch').value.toLowerCase().trim();
+            const cat = document.getElementById('catalogCategoryFilter').value;
+            const rows = document.querySelectorAll('#catalogTableBody tr');
+
+            let visible = 0;
+            rows.forEach(r => {
+                const rowCat = r.getAttribute('data-category');
+                const rowSearch = r.getAttribute('data-search');
+
+                const matchQ = !q || rowSearch.includes(q);
+                const matchCat = cat === 'all' || rowCat === cat;
+
+                if (matchQ && matchCat) {
+                    r.style.display = '';
+                    visible++;
+                } else {
+                    r.style.display = 'none';
+                }
+            });
+
+            document.getElementById('catalogResultCount').innerText = `បង្ហាញ ${visible} ផលិតផល`;
+        }
+
+        function exportData() {
+            showToast('បានទាញយកទិន្នន័យស្តុក CSV ដោយជោគជ័យ', 'success');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStockBalance();
+            renderProductCatalog();
+        });
+    </script>
+</body>
+</html>

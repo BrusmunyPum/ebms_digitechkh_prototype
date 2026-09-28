@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ព័ត៌មានលម្អិតប័ណ្ណកែតម្រូវស្តុក — eBMS v2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#475569',
+                        'primary-dark': '#334155'
+                    },
+                    fontFamily: {
+                        sans: ['"Kantumruy Pro"', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased" data-portal="wmPortal" data-role-root="../" data-active="movements">
+    <div class="flex h-screen overflow-hidden">
+        <div id="sidebarHost"></div>
+
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Header (72px aligned) -->
+            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200/80 flex-shrink-0 z-10 shadow-xs">
+                <div class="flex items-center gap-3">
+                    <a href="movements.html#adjustments" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ក្រោយ">
+                        <i class="fas fa-arrow-left text-sm"></i>
+                    </a>
+                    <div>
+                        <div class="flex items-center gap-2.5">
+                            <h2 class="text-xl font-semibold text-slate-800 leading-tight" id="adjTitle">ប័ណ្ណកែតម្រូវ ADJ-2026-0017</h2>
+                            <span id="adjStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">រង់ចាំអនុម័ត</span>
+                        </div>
+                        <p class="text-xs font-normal text-slate-500 mt-0.5" id="adjSubtitle">បង្កើតឡើងនៅ 21 កញ្ញា 2026 ដោយ ស៊្រុន ធារ៉ា</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2" id="adjActions">
+                    <button onclick="window.print()" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-2 transition cursor-pointer">
+                        <i class="fas fa-print text-slate-400"></i>
+                        <span>បោះពុម្ព</span>
+                    </button>
+                    <button id="approveAdjBtn" onclick="handleApproveAdj()" class="h-10 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition cursor-pointer">
+                        <i class="fas fa-check text-xs"></i>
+                        <span>អនុម័តកែតម្រូវ</span>
+                    </button>
+                    <button id="rejectAdjBtn" onclick="handleRejectAdj()" class="h-10 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer">
+                        <i class="fas fa-times text-xs"></i>
+                        <span>បដិសេធ</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Detail Content -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <div class="max-w-4xl space-y-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-4 border-b border-slate-100">
+                            <div>
+                                <span class="text-xs text-slate-400">ទីតាំងឃ្លាំង៖</span>
+                                <h4 class="text-sm font-bold text-slate-900 mt-0.5" id="whNameDisplay">-</h4>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-400">អ្នករាយការណ៍៖</span>
+                                <h4 class="text-sm font-bold text-slate-900 mt-0.5" id="reporterDisplay">-</h4>
+                            </div>
+                        </div>
+
+                        <!-- Product & Quantities Comparison -->
+                        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="text-[11px] font-mono text-slate-400 font-semibold" id="skuDisplay">-</span>
+                                    <h3 class="text-base font-bold text-slate-900" id="prodNameDisplay">-</h3>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-[11px] text-slate-400">ថ្លៃដើមឯកតា (Cost)</span>
+                                    <div class="font-mono font-bold text-slate-800 text-sm" id="costDisplay">$0.00</div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-4 pt-3 border-t border-slate-200/80 text-center">
+                                <div class="p-3 bg-white rounded-xl border border-slate-200">
+                                    <span class="text-[11px] text-slate-500 block mb-1">ស្តុកប្រព័ន្ធ</span>
+                                    <span class="text-base font-bold text-slate-700 font-mono" id="sysQtyDisplay">0</span>
+                                </div>
+                                <div class="p-3 bg-white rounded-xl border border-slate-200">
+                                    <span class="text-[11px] text-slate-500 block mb-1">ស្តុករាប់ជាក់ស្តែង</span>
+                                    <span class="text-base font-bold text-slate-900 font-mono" id="physQtyDisplay">0</span>
+                                </div>
+                                <div class="p-3 bg-white rounded-xl border border-slate-200">
+                                    <span class="text-[11px] text-slate-500 block mb-1">បំរែបំរួល (ផលសង)</span>
+                                    <span class="text-base font-bold font-mono" id="diffValDisplay">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reasons & Notes -->
+                        <div class="space-y-3 text-xs">
+                            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+                                <span class="font-semibold text-slate-700 block mb-1">មូលហេតុនៃការកែតម្រូវ៖</span>
+                                <p class="text-slate-600 text-xs leading-relaxed" id="reasonLabelDisplay">-</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+                                <span class="font-semibold text-slate-700 block mb-1">កំណត់ហេតុបន្ថែម៖</span>
+                                <p class="text-slate-600 text-xs leading-relaxed" id="noteDisplay">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        let currentAdj = null;
+
+        function loadAdjustmentDetail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id') || 'ADJ-2026-0017';
+            const list = getAdjustments();
+            currentAdj = list.find(a => a.id === id) || list[0];
+
+            if (!currentAdj) return;
+
+            const prod = getProduct(currentAdj.sku);
+            const prodName = prod ? prod.name : currentAdj.sku;
+            const diff = currentAdj.physicalQty - currentAdj.systemQty;
+            const diffCost = diff * currentAdj.unitCost;
+
+            document.getElementById('adjTitle').innerText = `ប័ណ្ណកែតម្រូវ ${currentAdj.id}`;
+            document.getElementById('adjSubtitle').innerText = `បង្កើតឡើងនៅ ${fmtKhDate(currentAdj.date)} ដោយ ${currentAdj.reporter}`;
+            document.getElementById('whNameDisplay').innerText = getWarehouse(currentAdj.whId).name;
+            document.getElementById('reporterDisplay').innerText = currentAdj.reporter;
+            document.getElementById('skuDisplay').innerText = currentAdj.sku;
+            document.getElementById('prodNameDisplay').innerText = prodName;
+            document.getElementById('costDisplay').innerText = fmtUSD(currentAdj.unitCost);
+            document.getElementById('sysQtyDisplay').innerText = `${fmtNumber(currentAdj.systemQty)} ${prod ? prod.unit : 'ឯកតា'}`;
+            document.getElementById('physQtyDisplay').innerText = `${fmtNumber(currentAdj.physicalQty)} ${prod ? prod.unit : 'ឯកតា'}`;
+            
+            const diffElem = document.getElementById('diffValDisplay');
+            if (diff > 0) {
+                diffElem.className = 'text-base font-bold font-mono text-emerald-600';
+                diffElem.innerText = `+${fmtNumber(diff)} (${fmtUSD(diffCost)})`;
+            } else if (diff < 0) {
+                diffElem.className = 'text-base font-bold font-mono text-rose-600';
+                diffElem.innerText = `${fmtNumber(diff)} (${fmtUSD(diffCost)})`;
+            } else {
+                diffElem.className = 'text-base font-bold font-mono text-slate-700';
+                diffElem.innerText = `0 ($0.00)`;
+            }
+
+            document.getElementById('reasonLabelDisplay').innerText = currentAdj.reasonLabel || currentAdj.reason;
+            document.getElementById('noteDisplay').innerText = currentAdj.note || 'គ្មាន';
+
+            const badge = document.getElementById('adjStatusBadge');
+            const approveBtn = document.getElementById('approveAdjBtn');
+            const rejectBtn = document.getElementById('rejectAdjBtn');
+
+            if (currentAdj.status === 'pending_approval') {
+                badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800';
+                badge.innerText = 'រង់ចាំ WM អនុម័ត';
+                approveBtn.style.display = 'flex';
+                rejectBtn.style.display = 'flex';
+            } else if (currentAdj.status === 'escalated_gm') {
+                badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-800';
+                badge.innerText = 'បញ្ជូនទៅ GM';
+                approveBtn.style.display = 'none';
+                rejectBtn.style.display = 'none';
+            } else if (currentAdj.status === 'approved') {
+                badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700';
+                badge.innerText = 'បានអនុម័ត';
+                approveBtn.style.display = 'none';
+                rejectBtn.style.display = 'none';
+            } else {
+                badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-100 text-rose-700';
+                badge.innerText = 'បានបដិសេធ';
+                approveBtn.style.display = 'none';
+                rejectBtn.style.display = 'none';
+            }
+        }
+
+        function handleApproveAdj() {
+            if (!currentAdj) return;
+            approveAdjustment(currentAdj.id);
+            showToast(`បានអនុម័តប័ណ្ណកែតម្រូវ ${currentAdj.id} ដោយជោគជ័យ`, 'success');
+            setTimeout(() => {
+                window.location.reload();
+            }, 600);
+        }
+
+        function handleRejectAdj() {
+            if (!currentAdj) return;
+            rejectAdjustment(currentAdj.id, 'មិនត្រូវតាមស្តង់ដារកែតម្រូវ');
+            showToast(`បានបដិសេធប័ណ្ណកែតម្រូវ ${currentAdj.id}`, 'error');
+            setTimeout(() => {
+                window.location.reload();
+            }, 600);
+        }
+
+        document.addEventListener('DOMContentLoaded', loadAdjustmentDetail);
+    </script>
+</body>
+</html>

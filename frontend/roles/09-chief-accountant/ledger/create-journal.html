@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGITECHKH - បង្កើតទិន្នានុប្បវត្តថ្មី</title>
+    <link rel="icon" type="image/png" href="../../../shared/assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#7c3aed",
+                        'primary-dark': "#6d28d9",
+                        accent: "#a78bfa",
+                    },
+                    fontFamily: {
+                        sans: ["'Kantumruy Pro'", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+</head>
+<body id="caPortal" data-role-root=".." data-active="ledger" class="bg-slate-50 font-sans text-slate-800 text-[16px] flex h-screen overflow-hidden">
+
+    <!-- Unified Sidebar Runtime -->
+    <div id="sidebarHost"></div>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+
+        <!-- Top Header (Standard 2: h-[72px] px-6) -->
+        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-xs z-10 flex-shrink-0 w-full border-b border-slate-200/70">
+            <div class="flex items-center gap-4">
+                <a href="ledger.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ទៅ...">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </a>
+                <div>
+                    <h2 class="text-xl font-semibold text-slate-800 leading-tight">បង្កើតទិន្នានុប្បវត្តថ្មី (Manual Journal Entry)</h2>
+                    <p class="text-xs font-normal text-slate-500 mt-0.5">ការកត់ត្រាប្រតិបត្តិការគណនេយ្យទ្វេភាគ (Double-Entry Enforcement)</p>
+                </div>
+            </div>
+
+            <div class="flex items-center sm:border-l sm:pl-3">
+                <div class="w-10 h-10 rounded-full bg-violet-600 text-white flex items-center justify-center font-semibold text-sm shadow-sm">
+                    ហរ
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
+            <form id="createJeForm" onsubmit="handleSubmitJE(event, 'Posted')" class="w-full max-w-6xl mx-auto space-y-6">
+
+                <!-- Section 1: Entry Metadata Card -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-4">
+                    <h3 class="text-sm font-semibold text-slate-800 pb-3 border-b border-slate-100 flex items-center gap-2">
+                        <i class="fas fa-file-invoice text-violet-600"></i>
+                        <span>ព័ត៌មានក្បាលទិន្នានុប្បវត្ត</span>
+                    </h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1.5">កាលបរិច្ឆេទ <span class="text-rose-500">*</span></label>
+                            <input type="date" id="jeDate" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 outline-none focus:border-violet-600">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1.5">ឯកសារយោង (Reference)</label>
+                            <input type="text" id="jeReference" placeholder="ឧ. ADJ-2026-009" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 outline-none focus:border-violet-600 font-mono">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1.5">ការិយបរិច្ឆេទ</label>
+                            <input type="text" value="កញ្ញា 2026 (បើក)" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-600 outline-none font-semibold cursor-not-allowed">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1.5">ស្ថានភាពបញ្ចូល</label>
+                            <input type="text" value="ទិន្នានុប្បវត្តទូទៅ" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-600 outline-none cursor-not-allowed">
+                        </div>
+
+                        <div class="sm:col-span-4">
+                            <label class="block text-xs font-medium text-slate-700 mb-1.5">បរិយាយសង្ខេបអំពីប្រតិបត្តិការ <span class="text-rose-500">*</span></label>
+                            <input type="text" id="jeDescription" required placeholder="ឧ. កត់ត្រាការទិញសម្ភារៈការិយាល័យ និងចំណាយផ្សេងៗ..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 outline-none focus:border-violet-600">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Double-Entry Grid Card -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div>
+                            <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                                <i class="fas fa-scale-balanced text-violet-600"></i>
+                                <span>តារាងគណនេយ្យទ្វេភាគ (Dr & Cr Grid)</span>
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5">ផលបូក Dr ត្រូវតែស្មើគ្នានឹង Cr ដើម្បីអាចចុះបញ្ជីបាន</p>
+                        </div>
+
+                        <button type="button" onclick="addNewEntryRow()"
+                            class="px-3.5 py-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-semibold rounded-xl border border-violet-200 transition flex items-center gap-1.5 cursor-pointer">
+                            <i class="fas fa-plus text-[11px]"></i>
+                            <span>បន្ថែមជួរគណនី</span>
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse" id="entryGridTable">
+                            <thead>
+                                <tr class="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
+                                    <th class="py-2.5 px-3 min-w-[280px]">គណនី (Account)</th>
+                                    <th class="py-2.5 px-3 min-w-[200px]">បរិយាយជួរ (Line Memo)</th>
+                                    <th class="py-2.5 px-3 w-32 text-right">ឥណពន្ធ (Dr) $</th>
+                                    <th class="py-2.5 px-3 w-32 text-right">ឥណទាន (Cr) $</th>
+                                    <th class="py-2.5 px-3 w-12 text-center">លុប</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-xs" id="entryGridTbody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                            <tfoot>
+                                <tr class="bg-slate-50/80 border-t-2 border-slate-300 font-bold text-xs text-slate-900">
+                                    <td colspan="2" class="py-3 px-3 text-right">ផលបូកសរុប (Total):</td>
+                                    <td class="py-3 px-3 text-right font-mono text-violet-700" id="gridTotalDr">$0.00</td>
+                                    <td class="py-3 px-3 text-right font-mono text-violet-700" id="gridTotalCr">$0.00</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <!-- Balance Status Indicator -->
+                    <div id="balanceAlertBox" class="p-3.5 rounded-xl border flex items-center justify-between text-xs bg-slate-50 border-slate-200 text-slate-600">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-info-circle text-slate-400"></i>
+                            <span id="balanceAlertText">សូមបញ្ចូលទិន្នន័យដើម្បីផ្ទៀងផ្ទាត់តុល្យភាព</span>
+                        </div>
+                        <span class="font-mono font-bold" id="balanceDiffText">$0.00</span>
+                    </div>
+                </div>
+
+                <!-- Form Action Buttons -->
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <a href="ledger.html" class="px-5 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">
+                        បោះបង់
+                    </a>
+
+                    <button type="button" onclick="handleSubmitJE(event, 'Draft')"
+                        class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition cursor-pointer">
+                        <i class="fas fa-floppy-disk mr-1.5 text-slate-500"></i>
+                        <span>រក្សាទុកជាព្រាង (Draft)</span>
+                    </button>
+
+                    <button type="submit" id="btnPostEntry" disabled
+                        class="px-6 py-2.5 bg-violet-600 hover:bg-violet-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-semibold rounded-xl shadow-xs transition cursor-pointer flex items-center gap-2">
+                        <i class="fas fa-check"></i>
+                        <span>ចុះបញ្ជីទិន្នានុប្បវត្ត (Post)</span>
+                    </button>
+                </div>
+
+            </form>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        let rowCount = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPortalSidebar();
+            initDate();
+            // Default 2 rows for double entry
+            addNewEntryRow();
+            addNewEntryRow();
+        });
+
+        function initDate() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('jeDate').value = `${yyyy}-${mm}-${dd}`;
+        }
+
+        function addNewEntryRow() {
+            rowCount++;
+            const tbody = document.getElementById('entryGridTbody');
+            const tr = document.createElement('tr');
+            tr.id = `row_${rowCount}`;
+            tr.className = 'hover:bg-slate-50 transition';
+
+            const coa = getStoredCOA().filter(a => !a.isGroup);
+            const coaOptions = coa.map(a => `<option value="${a.code}" data-name="${a.nameKh}">[${a.code}] ${a.nameKh}</option>`).join('');
+
+            tr.innerHTML = `
+                <td class="py-2.5 px-3">
+                    <select id="acc_${rowCount}" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs text-slate-800 outline-none focus:border-violet-600" required>
+                        <option value="">-- ជ្រើសរើសគណនី --</option>
+                        ${coaOptions}
+                    </select>
+                </td>
+                <td class="py-2.5 px-3">
+                    <input type="text" id="memo_${rowCount}" placeholder="បរិយាយជួរ..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs text-slate-800 outline-none focus:border-violet-600">
+                </td>
+                <td class="py-2.5 px-3 text-right">
+                    <input type="number" step="0.01" min="0" oninput="onAmountInput(${rowCount}, 'dr')" id="dr_${rowCount}" placeholder="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-right text-xs font-mono font-bold text-slate-800 outline-none focus:border-violet-600">
+                </td>
+                <td class="py-2.5 px-3 text-right">
+                    <input type="number" step="0.01" min="0" oninput="onAmountInput(${rowCount}, 'cr')" id="cr_${rowCount}" placeholder="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-right text-xs font-mono font-bold text-slate-800 outline-none focus:border-violet-600">
+                </td>
+                <td class="py-2.5 px-3 text-center">
+                    <button type="button" onclick="removeEntryRow(${rowCount})" class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition">
+                        <i class="fas fa-xmark"></i>
+                    </button>
+                </td>
+            `;
+
+            tbody.appendChild(tr);
+        }
+
+        function onAmountInput(rowId, type) {
+            if (type === 'dr') {
+                const drVal = document.getElementById(`dr_${rowId}`).value;
+                if (drVal && parseFloat(drVal) > 0) {
+                    document.getElementById(`cr_${rowId}`).value = '';
+                }
+            } else {
+                const crVal = document.getElementById(`cr_${rowId}`).value;
+                if (crVal && parseFloat(crVal) > 0) {
+                    document.getElementById(`dr_${rowId}`).value = '';
+                }
+            }
+            recalcGrid();
+        }
+
+        function removeEntryRow(rowId) {
+            const tr = document.getElementById(`row_${rowId}`);
+            if (tr) tr.remove();
+            recalcGrid();
+        }
+
+        function recalcGrid() {
+            let totalDr = 0;
+            let totalCr = 0;
+
+            const rows = document.querySelectorAll('#entryGridTbody tr');
+            rows.forEach(r => {
+                const id = r.id.replace('row_', '');
+                const dr = parseFloat(document.getElementById(`dr_${id}`)?.value) || 0;
+                const cr = parseFloat(document.getElementById(`cr_${id}`)?.value) || 0;
+                totalDr += dr;
+                totalCr += cr;
+            });
+
+            document.getElementById('gridTotalDr').textContent = `$${totalDr.toFixed(2)}`;
+            document.getElementById('gridTotalCr').textContent = `$${totalCr.toFixed(2)}`;
+
+            const diff = Math.abs(totalDr - totalCr);
+            const box = document.getElementById('balanceAlertBox');
+            const alertText = document.getElementById('balanceAlertText');
+            const diffText = document.getElementById('balanceDiffText');
+            const postBtn = document.getElementById('btnPostEntry');
+
+            if (totalDr > 0 && totalCr > 0 && diff < 0.001) {
+                box.className = 'p-3.5 rounded-xl border flex items-center justify-between text-xs bg-emerald-50 border-emerald-300 text-emerald-800';
+                alertText.innerHTML = '<i class="fas fa-check-circle text-emerald-600 mr-1.5"></i> តុល្យភាពសមគ្នាល្អឥតខ្ចោះ (Balanced) អាចចុះបញ្ជីបាន!';
+                diffText.textContent = 'ខុសគ្នា $0.00';
+                postBtn.disabled = false;
+            } else {
+                box.className = 'p-3.5 rounded-xl border flex items-center justify-between text-xs bg-rose-50 border-rose-300 text-rose-800';
+                alertText.innerHTML = '<i class="fas fa-triangle-exclamation text-rose-600 mr-1.5"></i> មិនទាន់សមគ្នាទេ! ឥណពន្ធ (Dr) ត្រូវតែស្មើគ្នានឹង ឥណទាន (Cr)';
+                diffText.textContent = `ខុសគ្នា $${diff.toFixed(2)}`;
+                postBtn.disabled = true;
+            }
+        }
+
+        function handleSubmitJE(e, status) {
+            if (e) e.preventDefault();
+
+            const rows = document.querySelectorAll('#entryGridTbody tr');
+            if (rows.length < 2) {
+                showToast('ត្រូវមានជួរគណនីយ៉ាងហោចណាស់ 2 ជួរ', 'error');
+                return;
+            }
+
+            const lines = [];
+            let totalDr = 0;
+            let totalCr = 0;
+
+            for (let r of rows) {
+                const id = r.id.replace('row_', '');
+                const sel = document.getElementById(`acc_${id}`);
+                if (!sel.value) continue;
+
+                const dr = parseFloat(document.getElementById(`dr_${id}`).value) || 0;
+                const cr = parseFloat(document.getElementById(`cr_${id}`).value) || 0;
+                const memo = document.getElementById(`memo_${id}`).value.trim();
+                const accName = sel.options[sel.selectedIndex].dataset.name;
+
+                totalDr += dr;
+                totalCr += cr;
+
+                lines.push({
+                    accountCode: sel.value,
+                    accountName: accName,
+                    description: memo || document.getElementById('jeDescription').value.trim(),
+                    dr: dr,
+                    cr: cr
+                });
+            }
+
+            if (status === 'Posted' && Math.abs(totalDr - totalCr) > 0.001) {
+                showToast('មិនអាចចុះបញ្ជីបានឡើយ ដោយសារ Dr មិនស្មើ Cr', 'error');
+                return;
+            }
+
+            const newJE = {
+                date: document.getElementById('jeDate').value,
+                description: document.getElementById('jeDescription').value.trim(),
+                reference: document.getElementById('jeReference').value.trim(),
+                source: 'Manual Entry',
+                status: status,
+                postedBy: 'ហ៊ន រតនា',
+                postedAt: new Date().toLocaleString(),
+                drTotal: totalDr,
+                crTotal: totalCr,
+                lines: lines
+            };
+
+            const saved = saveJournalEntry(newJE);
+            showToast(`បានកត់ត្រាទិន្នានុប្បវត្ត ${saved.id} ដោយជោគជ័យ!`, 'success');
+
+            setTimeout(() => {
+                window.location.href = `view-journal.html?id=${saved.id}`;
+            }, 800);
+        }
+    </script>
+</body>
+</html>

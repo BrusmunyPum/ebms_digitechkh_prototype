@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ព័ត៌មានអតិថិជន — eBMS v2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a5f',
+                        'primary-dark': '#142842',
+                        accent: '#10b981'
+                    },
+                    fontFamily: {
+                        sans: ['"Kantumruy Pro"', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased" data-portal="sePortal" data-role-root="../" data-active="customers">
+    <div class="flex h-screen overflow-hidden">
+        <div id="sidebarHost"></div>
+
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Header (72px aligned) -->
+            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200/80 flex-shrink-0 z-10 shadow-xs">
+                <div class="flex items-center gap-3">
+                    <a href="customers.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ក្រោយ">
+                        <i class="fas fa-arrow-left text-sm"></i>
+                    </a>
+                    <div>
+                        <div class="flex items-center gap-2.5">
+                            <h2 class="text-xl font-semibold text-slate-800 leading-tight" id="custHeaderName">ក្រុមហ៊ុន រស្មី អភិវឌ្ឍន៍</h2>
+                            <span id="custTierBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">អតិថិជនដុំ</span>
+                        </div>
+                        <p class="text-xs font-normal text-slate-500 mt-0.5" id="custHeaderCode">កូដអតិថិជន៖ CUST-2026-0001</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a href="edit-customer.html" id="editCustBtn" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-2 transition cursor-pointer">
+                        <i class="fas fa-pen-to-square text-slate-400"></i>
+                        <span>កែប្រែព័ត៌មាន</span>
+                    </a>
+                    <a href="../quotes/create-quote.html" id="quoteCustBtn" class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition">
+                        <i class="fas fa-file-plus text-xs"></i>
+                        <span>បង្កើតសម្រង់តម្លៃ</span>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- Customer Hero KPI Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+                        <div class="text-slate-500 text-xs font-medium">បំណុលត្រូវទារ (AR ជំពាក់)</div>
+                        <div class="text-2xl font-bold text-rose-600 mt-1 tabular-nums font-mono" id="custArBalance">$0.00</div>
+                        <div class="mt-2 text-[11px] text-slate-400" id="custArStatus">មិនទាន់មានបំណុលហួសកំណត់</div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+                        <div class="text-slate-500 text-xs font-medium">ទំហំឥណទាន (Credit Limit)</div>
+                        <div class="text-2xl font-bold text-slate-900 mt-1 tabular-nums font-mono" id="custCreditLimit">$10,000.00</div>
+                        <div class="w-full bg-slate-100 rounded-full h-1.5 mt-3 overflow-hidden">
+                            <div id="creditUsageBar" class="bg-emerald-500 h-1.5 rounded-full" style="width: 25%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+                        <div class="text-slate-500 text-xs font-medium">លក្ខខណ្ឌទូទាត់ (Terms)</div>
+                        <div class="text-2xl font-bold text-slate-900 mt-1 tabular-nums" id="custTerms">30 ថ្ងៃ</div>
+                        <div class="mt-2 text-[11px] text-slate-400">ឥណទានពាណិជ្ជកម្មស្តង់ដារ</div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+                        <div class="text-slate-500 text-xs font-medium">កាលបរិច្ឆេទក្លាយជាដៃគូ</div>
+                        <div class="text-2xl font-bold text-slate-900 mt-1" id="custSince">12/03/2024</div>
+                        <div class="mt-2 text-[11px] text-emerald-600 font-semibold">អតិថិជនសកម្ម</div>
+                    </div>
+                </div>
+
+                <!-- Tabs Bar -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                    <div class="border-b border-slate-200 px-6 flex items-center gap-6">
+                        <button onclick="switchCustTab('invoices')" id="tabBtn-invoices" class="h-12 border-b-2 border-slate-800 text-slate-900 text-xs font-bold flex items-center gap-2 transition cursor-pointer">
+                            <i class="fas fa-receipt text-slate-600"></i>
+                            <span>វិក្កយបត្រ & សម្រង់តម្លៃ</span>
+                        </button>
+                        <button onclick="switchCustTab('info')" id="tabBtn-info" class="h-12 border-b-2 border-transparent text-slate-500 hover:text-slate-800 text-xs font-medium flex items-center gap-2 transition cursor-pointer">
+                            <i class="fas fa-address-card text-slate-400"></i>
+                            <span>ព័ត៌មានទំនាក់ទំនង & អាសយដ្ឋាន</span>
+                        </button>
+                    </div>
+
+                    <!-- TAB 1: Documents -->
+                    <div id="tabContent-invoices" class="p-6 space-y-6">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-bold text-slate-900">ប្រវត្តិវិក្កយបត្រ (Invoices)</h3>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                                        <tr>
+                                            <th class="py-2.5 px-3">លេខវិក្កយបត្រ</th>
+                                            <th class="py-2.5 px-3">កាលបរិច្ឆេទចេញ</th>
+                                            <th class="py-2.5 px-3">កាលកំណត់</th>
+                                            <th class="py-2.5 px-3 text-right">ទឹកប្រាក់សរុប</th>
+                                            <th class="py-2.5 px-3 text-right">ប្រាក់នៅសល់</th>
+                                            <th class="py-2.5 px-3 text-center">ស្ថានភាព</th>
+                                            <th class="py-2.5 px-3 text-right">សកម្មភាព</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="custInvoicesBody" class="divide-y divide-slate-100 font-medium text-slate-700">
+                                        <!-- Rendered by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4 pt-4 border-t border-slate-100">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-bold text-slate-900">ប្រវត្តិសម្រង់តម្លៃ (Quotes)</h3>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                                        <tr>
+                                            <th class="py-2.5 px-3">លេខសម្រង់តម្លៃ</th>
+                                            <th class="py-2.5 px-3">កាលបរិច្ឆេទ</th>
+                                            <th class="py-2.5 px-3">សុពលភាពដល់</th>
+                                            <th class="py-2.5 px-3 text-right">បញ្ចុះតម្លៃ</th>
+                                            <th class="py-2.5 px-3 text-right">ទឹកប្រាក់សរុប</th>
+                                            <th class="py-2.5 px-3 text-center">ស្ថានភាព</th>
+                                            <th class="py-2.5 px-3 text-right">សកម្មភាព</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="custQuotesBody" class="divide-y divide-slate-100 font-medium text-slate-700">
+                                        <!-- Rendered by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: Contact Info -->
+                    <div id="tabContent-info" class="p-6 hidden space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-3 text-xs">
+                                <h4 class="font-bold text-slate-900 border-b border-slate-200 pb-2">ព័ត៌មានទំនាក់ទំនងចម្បង</h4>
+                                <div><span class="text-slate-400">បុគ្គលទំនាក់ទំនង៖</span> <span class="font-bold text-slate-800" id="infoContact">-</span></div>
+                                <div><span class="text-slate-400">លេខទូរស័ព្ទ៖</span> <span class="font-mono font-bold text-slate-800" id="infoPhone">-</span></div>
+                                <div><span class="text-slate-400">អ៊ីមែល៖</span> <span class="text-slate-800" id="infoEmail">-</span></div>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-3 text-xs">
+                                <h4 class="font-bold text-slate-900 border-b border-slate-200 pb-2">អាសយដ្ឋានក្រុមហ៊ុន</h4>
+                                <div><span class="text-slate-400">ទីតាំង៖</span> <span class="text-slate-800 leading-relaxed block mt-1" id="infoAddress">-</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        let currentCust = null;
+
+        function switchCustTab(tab) {
+            const btnInv = document.getElementById('tabBtn-invoices');
+            const btnInfo = document.getElementById('tabBtn-info');
+            const cntInv = document.getElementById('tabContent-invoices');
+            const cntInfo = document.getElementById('tabContent-info');
+
+            if (tab === 'invoices') {
+                btnInv.className = 'h-12 border-b-2 border-slate-800 text-slate-900 text-xs font-bold flex items-center gap-2 transition cursor-pointer';
+                btnInfo.className = 'h-12 border-b-2 border-transparent text-slate-500 hover:text-slate-800 text-xs font-medium flex items-center gap-2 transition cursor-pointer';
+                cntInv.classList.remove('hidden');
+                cntInfo.classList.add('hidden');
+            } else {
+                btnInfo.className = 'h-12 border-b-2 border-slate-800 text-slate-900 text-xs font-bold flex items-center gap-2 transition cursor-pointer';
+                btnInv.className = 'h-12 border-b-2 border-transparent text-slate-500 hover:text-slate-800 text-xs font-medium flex items-center gap-2 transition cursor-pointer';
+                cntInfo.classList.remove('hidden');
+                cntInv.classList.add('hidden');
+            }
+        }
+
+        function loadCustomer() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id') || 'c-rasmey';
+            currentCust = CUSTOMERS.find(c => c.id === id) || CUSTOMERS[0];
+
+            if (!currentCust) return;
+
+            document.getElementById('custHeaderName').innerText = currentCust.name;
+            document.getElementById('custHeaderCode').innerText = `កូដអតិថិជន៖ ${currentCust.code}`;
+            document.getElementById('custCreditLimit').innerText = fmtUSD(currentCust.creditLimit);
+            document.getElementById('custTerms').innerText = `${currentCust.paymentTerms} ថ្ងៃ`;
+            document.getElementById('custSince').innerText = currentCust.since;
+
+            document.getElementById('editCustBtn').href = `edit-customer.html?id=${currentCust.id}`;
+            document.getElementById('quoteCustBtn').href = `../quotes/create-quote.html?customer_id=${currentCust.id}`;
+
+            document.getElementById('infoContact').innerText = currentCust.contact;
+            document.getElementById('infoPhone').innerText = currentCust.phone;
+            document.getElementById('infoEmail').innerText = currentCust.email || 'គ្មាន';
+            document.getElementById('infoAddress').innerText = currentCust.address;
+
+            // Invoices for this customer
+            const custInvoices = INVOICES.filter(inv => inv.customerId === currentCust.id);
+            let totalDue = 0;
+
+            const invBody = document.getElementById('custInvoicesBody');
+            if (custInvoices.length === 0) {
+                invBody.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-slate-400">មិនទាន់មានវិក្កយបត្រសម្រាប់អតិថិជននេះឡើយ</td></tr>`;
+            } else {
+                invBody.innerHTML = custInvoices.map(inv => {
+                    const totals = calculateInvoiceTotals(inv);
+                    const balanceDue = totals.total - (inv.paidAmount || 0);
+                    if (inv.status !== 'paid') totalDue += balanceDue;
+
+                    let badge = '';
+                    if (inv.status === 'paid') badge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-700">បានទូទាត់</span>';
+                    else if (inv.status === 'overdue') badge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-rose-100 text-rose-700">ហួសកំណត់</span>';
+                    else if (inv.status === 'partial') badge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">បង់ខ្លះ</span>';
+                    else badge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-700">មិនទាន់បង់</span>';
+
+                    return `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="py-2.5 px-3 font-mono font-bold text-slate-800"><a href="../invoices/view-invoice.html?id=${inv.id}" class="hover:underline">${inv.id}</a></td>
+                            <td class="py-2.5 px-3 text-slate-600">${fmtKhDate(inv.date)}</td>
+                            <td class="py-2.5 px-3 text-slate-600">${fmtKhDate(inv.dueDate)}</td>
+                            <td class="py-2.5 px-3 text-right font-bold text-slate-800 font-mono tabular-nums">${fmtUSD(totals.total)}</td>
+                            <td class="py-2.5 px-3 text-right font-bold text-rose-600 font-mono tabular-nums">${fmtUSD(balanceDue)}</td>
+                            <td class="py-2.5 px-3 text-center">${badge}</td>
+                            <td class="py-2.5 px-3 text-right">
+                                <a href="../invoices/view-invoice.html?id=${inv.id}" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px]">មើល</a>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            document.getElementById('custArBalance').innerText = fmtUSD(totalDue);
+            const usagePercent = Math.min(Math.round((totalDue / currentCust.creditLimit) * 100), 100);
+            document.getElementById('creditUsageBar').style.width = `${usagePercent}%`;
+
+            // Quotes for this customer
+            const custQuotes = QUOTES.filter(q => q.customerId === currentCust.id);
+            const qBody = document.getElementById('custQuotesBody');
+            if (custQuotes.length === 0) {
+                qBody.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-slate-400">មិនទាន់មានសម្រង់តម្លៃសម្រាប់អតិថិជននេះឡើយ</td></tr>`;
+            } else {
+                qBody.innerHTML = custQuotes.map(q => {
+                    const totals = calculateQuoteTotals(q);
+                    let badge = '';
+                    if (q.status === 'approved') badge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-700">បានអនុម័ត</span>';
+                    else if (q.status === 'converted') badge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-blue-100 text-blue-700">បានបម្លែងជាវិក្កយបត្រ</span>';
+                    else if (q.status === 'pending_approval') badge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">រង់ចាំអនុម័ត</span>';
+                    else badge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-700">ព្រាង</span>';
+
+                    return `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="py-2.5 px-3 font-mono font-bold text-slate-800"><a href="../quotes/view-quote.html?id=${q.id}" class="hover:underline">${q.id}</a></td>
+                            <td class="py-2.5 px-3 text-slate-600">${fmtKhDate(q.date)}</td>
+                            <td class="py-2.5 px-3 text-slate-600">${fmtKhDate(q.validUntil)}</td>
+                            <td class="py-2.5 px-3 text-right text-slate-700">${q.discountPercent}%</td>
+                            <td class="py-2.5 px-3 text-right font-bold text-slate-800 font-mono tabular-nums">${fmtUSD(totals.total)}</td>
+                            <td class="py-2.5 px-3 text-center">${badge}</td>
+                            <td class="py-2.5 px-3 text-right">
+                                <a href="../quotes/view-quote.html?id=${q.id}" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px]">មើល</a>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadCustomer);
+    </script>
+</body>
+</html>

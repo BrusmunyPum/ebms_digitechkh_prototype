@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGITECHKH - កែប្រែការបញ្ជាទិញ</title>
+    <link rel="icon" type="image/png" href="../../../shared/assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#d97706",
+                        'primary-dark': "#b45309",
+                        accent: "#f59e0b",
+                    },
+                    fontFamily: {
+                        sans: ["'Kantumruy Pro'", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+</head>
+<body id="pmPortal" data-role-root=".." data-active="purchase-orders" class="bg-slate-50 font-sans text-slate-800 text-[16px] flex h-screen overflow-hidden">
+
+    <!-- Unified Sidebar Runtime -->
+    <div id="sidebarHost"></div>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+
+        <!-- Top Header (Standard 2: h-[72px] px-6) -->
+        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-xs z-10 flex-shrink-0 w-full border-b border-slate-200/70">
+            <div class="flex items-center gap-4">
+                <a href="purchase-orders.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ទៅ...">
+                    <i class="fas fa-arrow-left text-sm"></i>
+                </a>
+                <div>
+                    <h2 class="text-xl font-semibold text-slate-800 leading-tight">កែប្រែលិខិតបញ្ជាទិញ</h2>
+                    <p class="text-xs font-normal text-slate-500 mt-0.5">កែសម្រួលព័ត៌មាន និងបរិមាណមុខទំនិញបញ្ជាទិញ</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <span class="text-xs font-mono font-semibold px-3 py-1 rounded-xl bg-amber-100 text-amber-900 border border-amber-300" id="currentPoIdBadge">
+                    PO-2026-XXXX
+                </span>
+
+                <div class="flex items-center sm:border-l sm:pl-3">
+                    <div class="w-10 h-10 rounded-full bg-amber-600 text-white flex items-center justify-center font-semibold text-sm shadow-sm">
+                        សផ
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
+            
+            <!-- Warning Banner for Sent PO -->
+            <div id="sentWarningBanner" class="hidden mb-4 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-800 flex items-start gap-3">
+                <i class="fas fa-triangle-exclamation text-amber-600 text-base mt-0.5"></i>
+                <div>
+                    <strong class="font-semibold text-amber-900">ការបញ្ជាទិញនេះត្រូវបានផ្ញើចេញរួចហើយ (Sent)៖</strong>
+                    <p class="mt-0.5">រាល់ការកែប្រែព័ត៌មាន ឬបរិមាណទំនិញ នឹងតម្រូវឱ្យបញ្ចូលមូលហេតុកែសម្រួល ដើម្បីកត់ត្រាក្នុងប្រវត្តិកំណត់ហេតុប្រព័ន្ធ។</p>
+                </div>
+            </div>
+
+            <form id="editPoForm" onsubmit="handleSaveEdit(event)" class="w-full">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+                    <!-- Left Column (8 cols): PO Header & Line Items -->
+                    <div class="lg:col-span-8 space-y-5">
+
+                        <!-- Section 1: Header Information Card -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-4">
+                            <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2 pb-3 border-b border-slate-100">
+                                <i class="fas fa-building text-amber-600"></i>
+                                <span>ព័ត៌មានអ្នកផ្គត់ផ្គង់ និងកាលបរិច្ឆេទ</span>
+                            </h3>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Vendor -->
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1.5">អ្នកផ្គត់ផ្គង់</label>
+                                    <input type="text" id="vendorNameDisplay" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-700 font-semibold cursor-not-allowed">
+                                </div>
+
+                                <!-- Currency -->
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1.5">រូបិយប័ណ្ណទូទាត់</label>
+                                    <input type="text" id="currencyDisplay" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-700 font-semibold cursor-not-allowed">
+                                </div>
+
+                                <!-- PO Date -->
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1.5">កាលបរិច្ឆេទចេញបញ្ជាទិញ</label>
+                                    <input type="date" id="poDate" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 outline-none focus:border-amber-600">
+                                </div>
+
+                                <!-- Expected Delivery Date -->
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1.5">ថ្ងៃរំពឹងទទួលទំនិញ</label>
+                                    <input type="date" id="deliveryDate" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 outline-none focus:border-amber-600">
+                                </div>
+
+                                <!-- Payment Terms -->
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1.5">លក្ខខណ្ឌទូទាត់</label>
+                                    <input type="text" id="paymentTerms" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 outline-none focus:border-amber-600">
+                                </div>
+
+                                <!-- Delivery Address -->
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1.5">ទីតាំងទទួលទំនិញ</label>
+                                    <input type="text" id="deliveryAddress" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 outline-none focus:border-amber-600">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Line Items Table -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-4">
+                            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                                <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                                    <i class="fas fa-boxes-stacked text-amber-600"></i>
+                                    <span>តារាងមុខទំនិញបញ្ជាទិញ</span>
+                                </h3>
+                                <button type="button" onclick="addNewLineItem()"
+                                    class="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 text-xs font-semibold rounded-xl border border-amber-200 transition flex items-center gap-1.5 cursor-pointer">
+                                    <i class="fas fa-plus text-[11px]"></i>
+                                    <span>បន្ថែមមុខទំនិញ</span>
+                                </button>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse" id="lineItemsTable">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
+                                            <th class="py-2.5 px-3 w-12 text-center">ល.រ</th>
+                                            <th class="py-2.5 px-3 min-w-[200px]">មុខទំនិញ / SKU</th>
+                                            <th class="py-2.5 px-3 w-20 text-center">ឯកតា</th>
+                                            <th class="py-2.5 px-3 w-24 text-center">ចំនួន</th>
+                                            <th class="py-2.5 px-3 w-28 text-right">ថ្លៃដើមឯកតា ($)</th>
+                                            <th class="py-2.5 px-3 w-28 text-right">សរុប ($)</th>
+                                            <th class="py-2.5 px-3 w-12 text-center">លុប</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 text-xs" id="lineItemsTbody">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Revision Reason (If Sent) & Notes -->
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-4">
+                            <div id="revisionReasonWrapper" class="hidden">
+                                <label class="block text-xs font-semibold text-amber-800 mb-1.5">មូលហេតុនៃការកែសម្រួល (តម្រូវជាកាតព្វកិច្ច) <span class="text-rose-500">*</span></label>
+                                <textarea id="revisionReason" rows="2" placeholder="សូមបញ្ជាក់មូលហេតុនៃការកែសម្រួលបញ្ជាទិញដែលបានផ្ញើចេញរួច..." class="w-full bg-amber-50/50 border border-amber-300 rounded-xl p-3 text-xs text-slate-800 outline-none focus:border-amber-600"></textarea>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">កំណត់សម្គាល់ផ្ទៃក្នុង</label>
+                                    <textarea id="internalNotes" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 outline-none focus:border-amber-600"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">ការណែនាំជូនអ្នកផ្គត់ផ្គង់</label>
+                                    <textarea id="vendorNotes" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 outline-none focus:border-amber-600"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Column (4 cols): Financial Summary & Actions -->
+                    <div class="lg:col-span-4 space-y-5">
+                        
+                        <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs sticky top-5 space-y-5">
+                            <h3 class="text-sm font-semibold text-slate-800 pb-3 border-b border-slate-100 flex items-center justify-between">
+                                <span>សង្ខេបហិរញ្ញវត្ថុ</span>
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold" id="statusBadgeDisplay">---</span>
+                            </h3>
+
+                            <div class="space-y-3 text-xs">
+                                <div class="flex items-center justify-between text-slate-600">
+                                    <span>សរុបរងមុខទំនិញ</span>
+                                    <span class="font-bold text-slate-800 tabular-nums" id="summarySubtotal">$0.00</span>
+                                </div>
+                                <div class="flex items-center justify-between text-slate-600">
+                                    <span>ពន្ធកាត់ទុក (WHT)</span>
+                                    <span class="font-bold text-slate-800 tabular-nums" id="summaryWht">$0.00</span>
+                                </div>
+                                <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-sm">
+                                    <span class="font-bold text-slate-800">ទឹកប្រាក់សរុបចុងក្រោយ</span>
+                                    <span class="font-bold text-amber-600 text-base tabular-nums" id="summaryGrandTotal">$0.00</span>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="pt-3 border-t border-slate-100 space-y-2.5">
+                                <button type="submit"
+                                    class="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-xl shadow-xs transition flex items-center justify-center gap-2 cursor-pointer">
+                                    <i class="fas fa-check"></i>
+                                    <span>រក្សាទុកការកែប្រែ</span>
+                                </button>
+
+                                <a href="purchase-orders.html"
+                                    class="w-full py-2.5 text-center text-xs font-medium text-slate-500 hover:text-slate-700 block transition">
+                                    បោះបង់
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        let currentPo = null;
+        let lineItemCount = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPortalSidebar();
+            loadPOForEditing();
+        });
+
+        function loadPOForEditing() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const poId = urlParams.get('id');
+            currentPo = getPurchaseOrderById(poId);
+
+            if (!currentPo) {
+                showToast('មិនអាចរកឃើញទិន្នន័យបញ្ជាទិញឡើយ', 'error');
+                setTimeout(() => window.location.href = 'purchase-orders.html', 1500);
+                return;
+            }
+
+            document.getElementById('currentPoIdBadge').textContent = currentPo.id;
+            document.getElementById('vendorNameDisplay').value = currentPo.vendorName;
+            document.getElementById('currencyDisplay').value = currentPo.currency;
+            document.getElementById('poDate').value = currentPo.poDate;
+            document.getElementById('deliveryDate').value = currentPo.deliveryDate;
+            document.getElementById('paymentTerms').value = currentPo.paymentTerms;
+            document.getElementById('deliveryAddress').value = currentPo.deliveryAddress || '';
+            document.getElementById('internalNotes').value = currentPo.internalNotes || '';
+            document.getElementById('vendorNotes').value = currentPo.vendorNotes || '';
+
+            const statusBadge = document.getElementById('statusBadgeDisplay');
+            statusBadge.textContent = currentPo.status;
+            statusBadge.className = currentPo.status === 'Sent' ?
+                'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-50 text-sky-700 border border-sky-200' :
+                'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200';
+
+            if (currentPo.status === 'Sent') {
+                document.getElementById('sentWarningBanner').classList.remove('hidden');
+                document.getElementById('revisionReasonWrapper').classList.remove('hidden');
+            }
+
+            // Populate existing lines
+            currentPo.lines.forEach(line => {
+                addNewLineItem({
+                    sku: line.sku,
+                    qty: line.qtyOrdered,
+                    cost: line.unitCost
+                });
+            });
+
+            recalcSummary();
+        }
+
+        function addNewLineItem(prefill = {}) {
+            lineItemCount++;
+            const tbody = document.getElementById('lineItemsTbody');
+            const tr = document.createElement('tr');
+            tr.id = `lineRow_${lineItemCount}`;
+            tr.className = 'hover:bg-slate-50 transition';
+
+            const catalogOptions = PM_CATALOG_ITEMS.map(p =>
+                `<option value="${p.sku}" data-name="${p.nameKh}" data-unit="${p.unit}" data-cost="${p.lastCost}" ${prefill.sku === p.sku ? 'selected' : ''}>${p.sku} - ${p.nameKh}</option>`
+            ).join('');
+
+            tr.innerHTML = `
+                <td class="py-2.5 px-3 text-center text-slate-400 font-semibold">${lineItemCount}</td>
+                <td class="py-2.5 px-3">
+                    <select onchange="onProductSelect(${lineItemCount})" id="prod_${lineItemCount}" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs text-slate-800 outline-none focus:border-amber-600" required>
+                        <option value="">-- ជ្រើសរើសទំនិញ --</option>
+                        ${catalogOptions}
+                    </select>
+                </td>
+                <td class="py-2.5 px-3 text-center text-slate-600" id="unit_${lineItemCount}">---</td>
+                <td class="py-2.5 px-3 text-center">
+                    <input type="number" min="1" value="${prefill.qty || 1}" oninput="recalcLine(${lineItemCount})" id="qty_${lineItemCount}" class="w-20 bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-center text-xs font-bold text-slate-800 outline-none focus:border-amber-600" required>
+                </td>
+                <td class="py-2.5 px-3 text-right">
+                    <input type="number" step="0.01" min="0" value="${prefill.cost || 0}" oninput="recalcLine(${lineItemCount})" id="cost_${lineItemCount}" class="w-24 bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-right text-xs font-bold text-slate-800 outline-none focus:border-amber-600" required>
+                </td>
+                <td class="py-2.5 px-3 text-right font-bold text-slate-800 tabular-nums" id="total_${lineItemCount}">$0.00</td>
+                <td class="py-2.5 px-3 text-center">
+                    <button type="button" onclick="removeLineItem(${lineItemCount})" class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition">
+                        <i class="fas fa-xmark"></i>
+                    </button>
+                </td>
+            `;
+
+            tbody.appendChild(tr);
+
+            if (prefill.sku) {
+                onProductSelect(lineItemCount);
+            }
+            recalcLine(lineItemCount);
+        }
+
+        function onProductSelect(rowId) {
+            const select = document.getElementById(`prod_${rowId}`);
+            const selectedOpt = select.options[select.selectedIndex];
+            const unit = selectedOpt.dataset.unit || '---';
+            const cost = selectedOpt.dataset.cost || 0;
+
+            document.getElementById(`unit_${rowId}`).textContent = unit;
+            if (!document.getElementById(`cost_${rowId}`).value || document.getElementById(`cost_${rowId}`).value === '0') {
+                document.getElementById(`cost_${rowId}`).value = cost;
+            }
+            recalcLine(rowId);
+        }
+
+        function recalcLine(rowId) {
+            const qty = parseFloat(document.getElementById(`qty_${rowId}`)?.value) || 0;
+            const cost = parseFloat(document.getElementById(`cost_${rowId}`)?.value) || 0;
+            const total = qty * cost;
+            const totalEl = document.getElementById(`total_${rowId}`);
+            if (totalEl) totalEl.textContent = `$${total.toFixed(2)}`;
+            recalcSummary();
+        }
+
+        function removeLineItem(rowId) {
+            const row = document.getElementById(`lineRow_${rowId}`);
+            if (row) row.remove();
+            recalcSummary();
+        }
+
+        function recalcSummary() {
+            let subtotal = 0;
+            const rows = document.querySelectorAll('#lineItemsTbody tr');
+            rows.forEach(r => {
+                const totalText = r.querySelector('[id^="total_"]')?.textContent.replace('$', '') || '0';
+                subtotal += parseFloat(totalText) || 0;
+            });
+
+            document.getElementById('summarySubtotal').textContent = `$${subtotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('summaryGrandTotal').textContent = `$${subtotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+
+        function handleSaveEdit(e) {
+            e.preventDefault();
+
+            if (currentPo.status === 'Sent') {
+                const reason = document.getElementById('revisionReason').value.trim();
+                if (!reason) {
+                    showToast('សូមបញ្ចូលមូលហេតុនៃការកែសម្រួលបញ្ជាទិញ', 'error');
+                    return;
+                }
+            }
+
+            const rows = document.querySelectorAll('#lineItemsTbody tr');
+            if (rows.length === 0) {
+                showToast('សូមបន្ថែមមុខទំនិញយ៉ាងហោចណាស់ 1 មុខ', 'error');
+                return;
+            }
+
+            const lines = [];
+            let subtotal = 0;
+
+            rows.forEach(r => {
+                const rowId = r.id.replace('lineRow_', '');
+                const sel = document.getElementById(`prod_${rowId}`);
+                if (!sel.value) return;
+
+                const name = sel.options[sel.selectedIndex].dataset.name;
+                const unit = sel.options[sel.selectedIndex].dataset.unit;
+                const qty = parseFloat(document.getElementById(`qty_${rowId}`).value) || 0;
+                const cost = parseFloat(document.getElementById(`cost_${rowId}`).value) || 0;
+                const total = qty * cost;
+
+                subtotal += total;
+                lines.push({
+                    sku: sel.value,
+                    productNameKh: name,
+                    productNameEn: name,
+                    unit: unit,
+                    qtyOrdered: qty,
+                    unitCost: cost,
+                    whtPct: 0,
+                    lineTotal: total
+                });
+            });
+
+            const updatedPO = {
+                ...currentPo,
+                poDate: document.getElementById('poDate').value,
+                deliveryDate: document.getElementById('deliveryDate').value,
+                paymentTerms: document.getElementById('paymentTerms').value,
+                deliveryAddress: document.getElementById('deliveryAddress').value,
+                lines: lines,
+                subtotal: subtotal,
+                grandTotal: subtotal,
+                internalNotes: document.getElementById('internalNotes').value,
+                vendorNotes: document.getElementById('vendorNotes').value
+            };
+
+            savePurchaseOrder(updatedPO);
+            showToast('ការកែប្រែបញ្ជាទិញត្រូវបានរក្សាទុកដោយជោគជ័យ!', 'success');
+
+            setTimeout(() => {
+                window.location.href = `view-po.html?id=${currentPo.id}`;
+            }, 800);
+        }
+    </script>
+</body>
+</html>

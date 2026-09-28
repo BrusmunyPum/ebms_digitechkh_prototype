@@ -3,312 +3,322 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIGITECHKH - ផ្ទាំងគ្រប់គ្រងអ្នកគ្រប់គ្រងឃ្លាំងស្តុក</title>
-    <link rel="icon" type="image/png" href="../../shared/assets/favicon.png">
+    <title>ផ្ទាំងគ្រប់គ្រងស្តុក — eBMS v2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="../../shared/styles/portal.css">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: "#1e3a5f",
-                        'primary-dark': "#142842",
-                        accent: "#0ea5e9",
+                        primary: '#475569',
+                        'primary-dark': '#334155'
                     },
                     fontFamily: {
-                        sans: ["'Kantumruy Pro'", "sans-serif"],
+                        sans: ['"Kantumruy Pro"', 'sans-serif']
                     }
                 }
             }
-        }
+        };
     </script>
-    <link rel="stylesheet" href="../../shared/styles/custom.css">
-    <link rel="stylesheet" href="../../shared/styles/portal.css">
 </head>
-<body id="wmPortal" data-role-root="." data-active="dashboard" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
+<body class="bg-slate-50 font-sans text-slate-800 antialiased" data-portal="wmPortal" data-role-root="./" data-active="dashboard">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar host -->
+        <div id="sidebarHost"></div>
 
-    <div id="sidebarHost"></div>
-
-    <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
-            <div class="min-w-0">
-                <h2 class="text-xl font-semibold text-gray-800 leading-tight truncate">ផ្ទាំងគ្រប់គ្រងអ្នកគ្រប់គ្រងឃ្លាំងស្តុក</h2>
-                <p class="sm-card-sub text-gray-500 mt-0.5 truncate">តាមដានតុល្យភាពស្តុកឆ្លងឃ្លាំង ចលនាផ្ទេរ និងការកែតម្រូវទំនិញ</p>
-            </div>
-
-            <div class="flex items-center space-x-3 flex-shrink-0">
-                <a href="stock-alerts/alerts.html" class="sm-badge hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 font-semibold transition">
-                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                    <span id="headerAlertPill">ទំនិញខ្វះស្តុក</span>
-                </a>
-                <a href="stock-adjustments/adjustments.html" class="sm-badge hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-semibold transition">
-                    <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                    <span id="headerQueuePill">សំណើរង់ចាំ</span>
-                </a>
-
-                <div class="flex items-center sm:border-l sm:pl-3">
-                    <div class="w-10 h-10 rounded-full bg-[#1e3a5f] text-white flex items-center justify-center font-semibold text-sm shadow-sm">គវ</div>
-                </div>
-            </div>
-        </header>
-
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
-            <div class="w-full space-y-5">
-
-                <!-- Filter Toolbar -->
-                <div class="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-boxes-stacked text-slate-400 text-xs"></i>
-                        <span class="sm-label text-slate-600">ទិន្នន័យប្រតិបត្តិការឃ្លាំងប្រចាំកាលបរិច្ឆេទ</span>
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Header (72px aligned) -->
+            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200/80 flex-shrink-0 z-10 shadow-xs">
+                <div class="flex items-center gap-3">
+                    <div>
+                        <h2 class="text-xl font-semibold text-slate-800 leading-tight">បញ្ជាការដ្ឋានគ្រប់គ្រងស្តុក</h2>
+                        <p class="text-xs font-normal text-slate-500 mt-0.5">ទិដ្ឋភាពប្រតិបត្តិការឃ្លាំងបន្ទាន់ និងសកម្មភាពរង់ចាំការសម្រេច</p>
                     </div>
-                    <div id="dateFilterHost" class="flex items-center"></div>
                 </div>
+                <div class="flex items-center gap-3">
+                    <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-medium">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>ប្រព័ន្ធឃ្លាំងដំណើរការប្រក្រតី</span>
+                    </div>
+                </div>
+            </header>
 
-                <!-- KPI Cards -->
-                <div id="kpiRow" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+            <!-- Scrollable Dashboard Content -->
+            <main class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- 4 KPI Cards Row -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- KPI 1: Total SKUs -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs border-l-4 border-l-slate-600">
+                        <div class="text-slate-500 text-xs font-medium">ផលិតផលសកម្មសរុប</div>
+                        <div class="text-2xl font-bold text-slate-900 mt-1 tabular-nums font-mono" id="kpiTotalSku">10 មុខ</div>
+                        <div class="mt-2 text-[11px] text-slate-400">4 ឃ្លាំងសាខាទូទាំងប្រទេស</div>
+                    </div>
 
-                <!-- Warehouse Capacity Gauges -->
-                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-                        <div>
-                            <h3 class="sm-card-title text-slate-700">ចំណុះផ្ទុកតាមឃ្លាំងនីមួយៗ (Warehouse Capacity)</h3>
-                            <p class="sm-card-sub text-slate-500">តាមដានទំហំផ្ទុកជាក់ស្តែងធៀបនឹងសមត្ថភាពផ្ទុកអតិបរមា</p>
+                    <!-- KPI 2: Low Stock (Clickable) -->
+                    <a href="stock-balance/balance.html" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs border-l-4 border-l-amber-500 hover:shadow-md transition group block cursor-pointer">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-500 text-xs font-medium">ទំនិញស្តុកទាប</span>
+                            <i class="fas fa-arrow-right text-[10px] text-slate-400 group-hover:translate-x-1 transition-transform"></i>
                         </div>
-                        <a href="stock-movements/movements.html" class="sm-badge font-semibold text-sky-700 hover:text-sky-900 inline-flex items-center gap-1">
-                            <span>គ្រប់គ្រងប័ណ្ណផ្ទេរស្តុក</span> <i class="fas fa-arrow-right text-[10px]"></i>
-                        </a>
-                    </div>
-                    <div id="capacityGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
-                </div>
+                        <div class="text-2xl font-bold text-amber-600 mt-1 tabular-nums font-mono" id="kpiLowStock">0 មុខ</div>
+                        <div class="mt-2 text-[11px] text-amber-700 font-medium">ចុចដើម្បីពិនិត្យតុល្យភាពស្តុក</div>
+                    </a>
 
-                <!-- Inventory Movement Trends Chart -->
-                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
-                    <div class="mb-4">
-                        <h3 class="sm-card-title text-slate-700">លំហូរទំនិញ ចូល-ចេញ និងផ្ទេរឆ្លងឃ្លាំង (6 ខែចុងក្រោយ)</h3>
-                        <p class="sm-card-sub text-slate-500">ចំនួនទំនិញទទួលចូល (GRN), ចេញតាមការលក់ (Delivery), និងផ្ទេរឆ្លងសាខា (Transfer)</p>
-                    </div>
-                    <div id="movementChart" class="w-full h-72"></div>
-                </div>
-
-                <!-- Two Column Widgets: Low Stock Alerts & Recent Movements -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                    <!-- Low Stock Alerts Widget -->
-                    <div class="bg-white rounded-2xl border border-amber-200 shadow-sm overflow-hidden">
-                        <div class="p-4 border-b border-amber-100 bg-amber-50/60 flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-triangle-exclamation text-amber-600 text-sm"></i>
-                                <h3 class="sm-card-title text-amber-900">ការដាស់តឿនទំនិញជិតអស់ពីស្តុក</h3>
-                            </div>
-                            <a href="stock-alerts/alerts.html" class="sm-badge text-amber-700 font-semibold hover:underline">មើលទាំងអស់</a>
+                    <!-- KPI 3: Pending Transfers (Clickable) -->
+                    <a href="movements/movements.html#transfers" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs border-l-4 border-l-indigo-500 hover:shadow-md transition group block cursor-pointer">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-500 text-xs font-medium">ប័ណ្ណផ្ទេររង់ចាំ</span>
+                            <i class="fas fa-arrow-right text-[10px] text-slate-400 group-hover:translate-x-1 transition-transform"></i>
                         </div>
-                        <div id="dashboardAlertsList" class="divide-y divide-slate-100"></div>
+                        <div class="text-2xl font-bold text-indigo-600 mt-1 tabular-nums font-mono" id="kpiPendingTransfers">0 ប័ណ្ណ</div>
+                        <div class="mt-2 text-[11px] text-indigo-700 font-medium">ពិនិត្យការដឹកជញ្ជូនឆ្លងឃ្លាំង</div>
+                    </a>
+
+                    <!-- KPI 4: Pending Adjustments (Clickable) -->
+                    <a href="movements/movements.html#adjustments" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs border-l-4 border-l-rose-500 hover:shadow-md transition group block cursor-pointer">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-500 text-xs font-medium">ការកែតម្រូវរង់ចាំអនុម័ត</span>
+                            <i class="fas fa-arrow-right text-[10px] text-slate-400 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-rose-600 mt-1 tabular-nums font-mono" id="kpiPendingAdj">0 ប័ណ្ណ</div>
+                        <div class="mt-2 text-[11px] text-rose-700 font-medium">ទាមទារការសម្រេចរបស់ WM</div>
+                    </a>
+                </div>
+
+                <!-- Quick Action Buttons Strip -->
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center gap-3">
+                    <span class="text-xs font-bold text-slate-600 px-2">សកម្មភាពរហ័ស៖</span>
+                    <a href="movements/create-transfer.html" class="h-9 px-3.5 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-1.5 transition">
+                        <i class="fas fa-plus text-[10px]"></i>
+                        <span>បង្កើតប័ណ្ណផ្ទេរ</span>
+                    </a>
+                    <a href="movements/create-adjustment.html" class="h-9 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium flex items-center gap-1.5 transition">
+                        <i class="fas fa-sliders text-[10px]"></i>
+                        <span>កែតម្រូវស្តុក</span>
+                    </a>
+                    <a href="stock-balance/balance.html" class="h-9 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium flex items-center gap-1.5 transition">
+                        <i class="fas fa-boxes-stacked text-[10px]"></i>
+                        <span>តុល្យភាពស្តុក & កាតាឡុក</span>
+                    </a>
+                    <a href="reports/reports.html" class="h-9 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium flex items-center gap-1.5 transition">
+                        <i class="fas fa-chart-pie text-[10px]"></i>
+                        <span>របាយការណ៍វិភាគស្តុក</span>
+                    </a>
+                </div>
+
+                <!-- Two Column Grid: Low Stock Alerts (55%) vs Pending Actions Queue (45%) -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Left: Low Stock Alerts (~55%) -->
+                    <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fas fa-triangle-exclamation text-amber-500"></i>
+                                <span>ការព្រមាននៃស្តុកទំនិញ (Stock Level Alerts)</span>
+                            </h3>
+                            <a href="movements/movements.html#alerts" class="text-xs font-semibold text-slate-600 hover:text-slate-900 transition">មើលទាំងអស់ →</a>
+                        </div>
+
+                        <div id="alertsContainer" class="space-y-3">
+                            <!-- Alert cards rendered by JS -->
+                        </div>
                     </div>
 
-                    <!-- Recent Transfers Widget -->
-                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-truck-ramp-box text-sky-600 text-sm"></i>
-                                <h3 class="sm-card-title text-slate-700">ប័ណ្ណផ្ទេរស្តុកថ្មីៗ</h3>
-                            </div>
-                            <a href="stock-movements/movements.html" class="sm-badge text-sky-700 font-semibold hover:underline">មើលទាំងអស់</a>
+                    <!-- Right: Pending Actions Queue (~45%) -->
+                    <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fas fa-clock text-indigo-500"></i>
+                                <span>សកម្មភាពរង់ចាំការសម្រេច (Action Queue)</span>
+                            </h3>
+                            <span class="text-xs font-semibold text-slate-500" id="pendingQueueCount">0 សំណើ</span>
                         </div>
-                        <div id="dashboardMovementsList" class="divide-y divide-slate-100"></div>
+
+                        <div id="pendingQueueContainer" class="space-y-3">
+                            <!-- Queue items rendered by JS -->
+                        </div>
                     </div>
                 </div>
 
-            </div>
-        </main>
+                <!-- Bottom: Incoming Deliveries Today -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fas fa-truck-ramp-box text-emerald-600"></i>
+                            <span>ការដឹកជញ្ជូនដែលត្រូវទទួលថ្ងៃនេះ (Incoming Deliveries Today)</span>
+                        </h3>
+                        <span class="text-xs text-slate-500">កាលបរិច្ឆេទ៖ 28 កញ្ញា 2026</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
+                                <tr>
+                                    <th class="py-3 px-4">លេខបញ្ជាទិញ (PO)</th>
+                                    <th class="py-3 px-4">អ្នកផ្គត់ផ្គង់</th>
+                                    <th class="py-3 px-4">ឃ្លាំងទទួល</th>
+                                    <th class="py-3 px-4 text-right">ចំនួនមុខទំនិញ</th>
+                                    <th class="py-3 px-4 text-center">ស្ថានភាព</th>
+                                    <th class="py-3 px-4 text-right">សកម្មភាព</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="py-3.5 px-4 font-mono font-bold text-slate-800">PO-2026-0089</td>
+                                    <td class="py-3.5 px-4 font-bold text-slate-900">Dell Technologies Cambodia</td>
+                                    <td class="py-3.5 px-4 text-slate-800">ឃ្លាំងកណ្តាល (ភ្នំពេញ)</td>
+                                    <td class="py-3.5 px-4 text-right font-bold text-slate-800 tabular-nums">2 មុខទំនិញ (30 គ្រឿង)</td>
+                                    <td class="py-3.5 px-4 text-center">
+                                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-700">រំពឹងថ្ងៃនេះ</span>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-right">
+                                        <button onclick="showToast('បានជូនដំណឹងទៅកាន់បុគ្គលិកជាន់ឃ្លាំងដើម្បីទទួលទំនិញចូល', 'success')" class="px-3 py-1 text-xs rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium transition inline-flex items-center gap-1 cursor-pointer">
+                                            <i class="fas fa-box-open text-[10px]"></i> ទទួលទំនិញចូល
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="py-3.5 px-4 font-mono font-bold text-slate-800">PO-2026-0088</td>
+                                    <td class="py-3.5 px-4 font-bold text-slate-900">Canon Singapore Pte Ltd</td>
+                                    <td class="py-3.5 px-4 text-slate-800">ឃ្លាំងសាខាទួលគោក</td>
+                                    <td class="py-3.5 px-4 text-right font-bold text-slate-800 tabular-nums">1 មុខទំនិញ (20 គ្រឿង)</td>
+                                    <td class="py-3.5 px-4 text-center">
+                                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-100 text-indigo-700">កំពុងដឹកជញ្ជូន</span>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-right">
+                                        <button onclick="showToast('បានជូនដំណឹងទៅកាន់បុគ្គលិកជាន់ឃ្លាំងដើម្បីទទួលទំនិញចូល', 'success')" class="px-3 py-1 text-xs rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition inline-flex items-center gap-1 cursor-pointer">
+                                            <i class="fas fa-eye text-[10px]"></i> មើល PO
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>
 
-    <script src="../../shared/scripts/ui-components.js"></script>
+    <!-- Scripts -->
     <script src="data.js"></script>
     <script src="../../shared/scripts/portal.js"></script>
     <script>
-        function kpiCard(opts) {
-            return `
-                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
-                    <div class="flex items-center justify-between mb-2 gap-2">
-                        <span class="sm-kpi-label text-slate-500">${opts.label}</span>
-                        <div class="w-9 h-9 rounded-xl bg-${opts.tone}-50 text-${opts.tone}-600 flex items-center justify-center flex-shrink-0">
-                            <i class="fas ${opts.icon} text-sm"></i>
-                        </div>
-                    </div>
-                    <h3 class="sm-kpi-value text-slate-700">${opts.value}</h3>
-                    <p class="sm-kpi-sub ${opts.subTone || 'text-slate-500'} mt-1">${opts.sub}</p>
-                </div>`;
-        }
-
-        function renderKpis(m) {
-            document.getElementById('kpiRow').innerHTML =
-                kpiCard({
-                    label: 'មុខទំនិញសរុប (SKU)', icon: 'fa-barcode', tone: 'sky',
-                    value: `${fmtNumber(m.skuCount)} <span class="sm-kpi-unit text-slate-500">មុខ</span>`,
-                    sub: 'ទំនិញសកម្មក្នុងកាតាឡុកសហគ្រាស'
-                }) +
-                kpiCard({
-                    label: 'ចំនួនទំនិញក្នុងស្តុកសរុប', icon: 'fa-boxes-stacked', tone: 'indigo',
-                    value: `${fmtNumber(m.totalUnits)} <span class="sm-kpi-unit text-slate-500">ឯកតា</span>`,
-                    sub: 'ទូទាំង 4 ឃ្លាំងកណ្តាល និងសាខា'
-                }) +
-                kpiCard({
-                    label: 'តម្លៃទ្រព្យសកម្មស្តុក (MAC)', icon: 'fa-vault', tone: 'emerald',
-                    value: fmtUSD(m.totalValuation),
-                    sub: 'គណនាផ្អែកលើថ្លៃដើមមធ្យមនៃស្តុក',
-                    subTone: 'text-emerald-600 font-semibold'
-                }) +
-                `<a href="stock-alerts/alerts.html" class="block bg-white rounded-2xl p-5 border-2 border-amber-200 shadow-sm bg-amber-50/20 hover:border-amber-300 transition">
-                    <div class="flex items-center justify-between mb-2 gap-2">
-                        <span class="sm-kpi-label text-amber-800 font-semibold">ទំនិញក្រោមចំណុចបញ្ជាទិញ</span>
-                        <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-triangle-exclamation text-sm"></i>
-                        </div>
-                    </div>
-                    <h3 class="sm-kpi-value text-amber-800">${m.lowStockCount} <span class="sm-kpi-unit text-amber-600">មុខទំនិញ</span></h3>
-                    <span class="sm-kpi-sub text-amber-700 font-semibold mt-1 inline-flex items-center gap-1">
-                        ក្នុងនោះ ${m.criticalAlertCount} មុខអាសន្នខ្លាំង <i class="fas fa-arrow-right text-[10px]"></i>
-                    </span>
-                </a>`;
-        }
-
-        function renderCapacity() {
-            const host = document.getElementById('capacityGrid');
-            const items = Object.values(WAREHOUSES).map(wh => {
-                const percent = Math.round((wh.used / wh.capacity) * 100);
-                const isHigh = percent >= 80;
-                const barColor = isHigh ? 'bg-amber-500' : 'bg-[#1e3a5f]';
-                const badgeColor = isHigh ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-sky-50 text-sky-700 border-sky-200';
-
-                return `
-                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-2 gap-1">
-                                <h4 class="text-sm font-semibold text-slate-800 truncate">${wh.name}</h4>
-                                <span class="sm-badge px-2 py-0.5 rounded-full ${badgeColor} border font-semibold text-[11px]">${percent}%</span>
-                            </div>
-                            <p class="text-xs text-slate-400 mb-3"><i class="fas fa-location-dot mr-1"></i>${wh.location}</p>
-                            <div class="w-full h-2.5 rounded-full bg-slate-200 overflow-hidden mb-3">
-                                <div class="h-full ${barColor} rounded-full transition-all" style="width: ${percent}%"></div>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-200/60">
-                            <span>ផ្ទុក: <strong class="text-slate-700 font-semibold">${fmtNumber(wh.used)}</strong></span>
-                            <span>ចំណុះ: <strong class="text-slate-700 font-semibold">${fmtNumber(wh.capacity)}</strong></span>
-                        </div>
-                    </div>`;
-            }).join('');
-
-            host.innerHTML = items;
-        }
-
-        function renderDashboardAlerts() {
-            const host = document.getElementById('dashboardAlertsList');
-            const alerts = getLowStockAlerts().slice(0, 4);
-
-            if (!alerts.length) {
-                host.innerHTML = '<div class="p-6 text-center text-slate-400 text-xs">គ្មានទំនិញខ្វះស្តុកទេ</div>';
-                return;
-            }
-
-            host.innerHTML = alerts.map(a => {
-                const isCrit = a.urgency === 'critical';
-                const tagColor = isCrit ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700';
-                return `
-                    <div class="p-3.5 px-4 flex items-center justify-between gap-3 hover:bg-slate-50 transition">
-                        <div class="min-w-0">
-                            <div class="flex items-center gap-2">
-                                <p class="text-xs font-semibold text-slate-800 truncate">${a.name}</p>
-                                <span class="px-2 py-0.5 rounded-full ${tagColor} text-[10px] font-semibold">${a.urgencyLabel}</span>
-                            </div>
-                            <p class="text-[11px] text-slate-400 mt-0.5">${a.sku} · ទីតាំង: ${a.bin}</p>
-                        </div>
-                        <div class="text-right flex-shrink-0">
-                            <span class="text-xs font-bold ${isCrit ? 'text-rose-600' : 'text-amber-700'}">${fmtNumber(a.totalStock)} ${a.unit}</span>
-                            <span class="text-[10px] text-slate-400 block">កម្រិតទាប: ${a.min}</span>
-                        </div>
-                    </div>`;
-            }).join('');
-        }
-
-        function renderDashboardMovements() {
-            const host = document.getElementById('dashboardMovementsList');
-            const movements = getMovements().slice(0, 4);
-
-            if (!movements.length) {
-                host.innerHTML = '<div class="p-6 text-center text-slate-400 text-xs">គ្មានប័ណ្ណផ្ទេរទេ</div>';
-                return;
-            }
-
-            const statusMap = {
-                completed: { label: 'បានបញ្ចប់', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-                in_transit: { label: 'កំពុងដឹកជញ្ជូន', color: 'bg-sky-50 text-sky-700 border-sky-200' },
-                pending_approval: { label: 'រង់ចាំអនុម័ត', color: 'bg-amber-50 text-amber-700 border-amber-200' }
-            };
-
-            host.innerHTML = movements.map(m => {
-                const st = statusMap[m.status] || { label: m.status, color: 'bg-slate-100 text-slate-600 border-slate-200' };
-                const totalUnits = m.items.reduce((s, it) => s + it.qty, 0);
-                return `
-                    <div class="p-3.5 px-4 flex items-center justify-between gap-3 hover:bg-slate-50 transition">
-                        <div class="min-w-0">
-                            <div class="flex items-center gap-2">
-                                <p class="text-xs font-semibold text-slate-800 truncate">${m.id}</p>
-                                <span class="px-2 py-0.5 rounded-full ${st.color} border text-[10px] font-semibold">${st.label}</span>
-                            </div>
-                            <p class="text-[11px] text-slate-500 mt-0.5">${getWarehouse(m.fromWh).name} → ${getWarehouse(m.toWh).name}</p>
-                        </div>
-                        <div class="text-right flex-shrink-0">
-                            <span class="text-xs font-bold text-slate-700">${fmtNumber(totalUnits)} ឯកតា</span>
-                            <span class="text-[10px] text-slate-400 block">${fmtKhDate(m.date)}</span>
-                        </div>
-                    </div>`;
-            }).join('');
-        }
-
         function renderDashboard() {
             const metrics = getDashboardMetrics();
-            renderKpis(metrics);
-            renderCapacity();
-            renderDashboardAlerts();
-            renderDashboardMovements();
+            const alerts = getLowStockAlerts();
+            const movements = getMovements();
+            const adjustments = getAdjustments();
 
-            document.getElementById('headerAlertPill').textContent = `ទំនិញខ្វះស្តុក៖ ${metrics.lowStockCount} មុខ`;
-            document.getElementById('headerQueuePill').textContent = `សំណើរង់ចាំ៖ ${metrics.totalPendingActions} ករណី`;
+            // KPIs
+            document.getElementById('kpiTotalSku').innerText = `${metrics.skuCount} មុខ`;
+            document.getElementById('kpiLowStock').innerText = `${metrics.lowStockCount} មុខ`;
+            document.getElementById('kpiPendingTransfers').innerText = `${metrics.pendingMovCount} ប័ណ្ណ`;
+            document.getElementById('kpiPendingAdj').innerText = `${metrics.pendingAdjCount} ប័ណ្ណ`;
 
-            const badge = document.getElementById('navQueueBadge');
-            if (badge) badge.textContent = metrics.pendingAdjCount;
+            // Low Stock Alerts List
+            const alertsContainer = document.getElementById('alertsContainer');
+            if (alerts.length === 0) {
+                alertsContainer.innerHTML = `
+                    <div class="p-6 text-center text-slate-400">
+                        <i class="fas fa-check-circle text-2xl text-emerald-500 mb-2"></i>
+                        <p class="text-xs">ស្តុកទំនិញទាំងអស់គ្រប់គ្រាន់ គ្មានការព្រមាន</p>
+                    </div>
+                `;
+            } else {
+                alertsContainer.innerHTML = alerts.slice(0, 5).map(a => `
+                    <div class="p-3.5 rounded-xl border ${a.urgency === 'critical' ? 'border-l-4 border-l-rose-500 bg-rose-50/20 border-slate-200' : 'border-l-4 border-l-amber-500 bg-amber-50/20 border-slate-200'} flex items-center justify-between gap-3">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="font-mono font-bold text-xs text-slate-800">${a.sku}</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${a.urgency === 'critical' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'}">${a.urgencyLabel}</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-slate-900 mt-0.5 truncate">${a.name}</h4>
+                            <div class="text-[11px] text-slate-500 mt-0.5">
+                                ស្តុកបច្ចុប្បន្ន៖ <strong class="text-slate-800">${fmtNumber(a.totalStock)} ${a.unit}</strong> · ស្តុកសុវត្ថិភាព៖ ${fmtNumber(a.min)} ${a.unit} (ខ្វះ ${fmtNumber(a.deficit)})
+                            </div>
+                        </div>
+                        <button onclick="handleRequestPR('${a.sku}', '${a.name}', ${a.suggestedOrder})" class="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium flex-shrink-0 transition cursor-pointer">
+                            <i class="fas fa-paper-plane text-[10px] mr-1"></i> ស្នើសុំទិញ
+                        </button>
+                    </div>
+                `).join('');
+            }
 
-            const alertBadge = document.getElementById('navAlertBadge');
-            if (alertBadge) alertBadge.textContent = metrics.lowStockCount;
+            // Pending Action Queue
+            const pendingQueue = [];
+            adjustments.filter(a => a.status === 'pending_approval').forEach(a => {
+                const prod = getProduct(a.sku);
+                pendingQueue.push({
+                    type: 'adj',
+                    id: a.id,
+                    title: `កែតម្រូវ ${prod ? prod.name : a.sku}`,
+                    sub: `${a.reporter} · ${a.reasonLabel}`,
+                    diff: a.physicalQty - a.systemQty,
+                    unit: prod ? prod.unit : 'ឯកតា'
+                });
+            });
+
+            movements.filter(m => m.status === 'pending_approval').forEach(m => {
+                pendingQueue.push({
+                    type: 'trf',
+                    id: m.id,
+                    title: `ផ្ទេរពី ${getWarehouse(m.fromWh).name} → ${getWarehouse(m.toWh).name}`,
+                    sub: `ស្នើសុំដោយ ${m.requester} · ${m.items.length} មុខ`,
+                    diff: m.items.reduce((s, it) => s + it.qty, 0),
+                    unit: 'ឯកតា'
+                });
+            });
+
+            const queueContainer = document.getElementById('pendingQueueContainer');
+            document.getElementById('pendingQueueCount').innerText = `${pendingQueue.length} សំណើ`;
+
+            if (pendingQueue.length === 0) {
+                queueContainer.innerHTML = `
+                    <div class="p-6 text-center text-slate-400">
+                        <i class="fas fa-inbox text-2xl text-slate-300 mb-2"></i>
+                        <p class="text-xs">គ្មានសំណើរង់ចាំការអនុម័តឡើយ</p>
+                    </div>
+                `;
+            } else {
+                queueContainer.innerHTML = pendingQueue.slice(0, 5).map(q => `
+                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-1.5">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${q.type === 'adj' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}">${q.type === 'adj' ? 'កែតម្រូវ' : 'ផ្ទេរស្តុក'}</span>
+                                <span class="font-mono text-xs font-bold text-slate-700">${q.id}</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-slate-900 mt-1 truncate">${q.title}</h4>
+                            <p class="text-[11px] text-slate-500 truncate">${q.sub}</p>
+                        </div>
+                        <div class="flex items-center gap-1 flex-shrink-0">
+                            <button onclick="handleQuickApprove('${q.type}', '${q.id}')" class="px-2.5 py-1 text-xs rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium transition cursor-pointer">អនុម័ត</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderDateRangePicker('dateFilterHost');
-            renderDashboard();
+        function handleRequestPR(sku, name, qty) {
+            showToast(`បានផ្ញើសំណើទិញមុខទំនិញ ${name} ចំនួន ${qty} ទៅកាន់ PM ដោយជោគជ័យ`, 'success');
+        }
 
-            const chartEl = document.getElementById('movementChart');
-            if (chartEl) {
-                const chart = echarts.init(chartEl);
-                chart.setOption({
-                    tooltip: { trigger: 'axis', textStyle: { fontFamily: 'Kantumruy Pro' } },
-                    legend: { data: ['ទទួលចូល (GRN)', 'ចេញតាមការលក់', 'ផ្ទេរឆ្លងឃ្លាំង'], bottom: 0, textStyle: { fontFamily: 'Kantumruy Pro' } },
-                    grid: { top: '10%', left: '3%', right: '4%', bottom: '15%', containLabel: true },
-                    xAxis: { type: 'category', data: ['មេសា', 'ឧសភា', 'មិថុនា', 'កក្កដា', 'សីហា', 'កញ្ញា'], axisLabel: { fontFamily: 'Kantumruy Pro' } },
-                    yAxis: { type: 'value', axisLabel: { fontFamily: 'Kantumruy Pro' } },
-                    series: [
-                        { name: 'ទទួលចូល (GRN)', type: 'bar', data: [1200, 1450, 980, 1600, 1320, 1850], itemStyle: { color: '#1e3a5f', borderRadius: [4, 4, 0, 0] } },
-                        { name: 'ចេញតាមការលក់', type: 'bar', data: [1100, 1300, 1050, 1400, 1280, 1620], itemStyle: { color: '#0ea5e9', borderRadius: [4, 4, 0, 0] } },
-                        { name: 'ផ្ទេរឆ្លងឃ្លាំង', type: 'line', smooth: true, data: [320, 410, 290, 480, 390, 520], itemStyle: { color: '#10b981' }, lineStyle: { width: 3 } }
-                    ]
-                });
-                window.addEventListener('resize', () => chart.resize());
+        function handleQuickApprove(type, id) {
+            if (type === 'adj') {
+                approveAdjustment(id);
+                showToast(`បានអនុម័តប័ណ្ណកែតម្រូវ ${id}`, 'success');
+            } else {
+                approveMovement(id);
+                showToast(`បានអនុម័តប័ណ្ណផ្ទេរ ${id}`, 'success');
             }
-        });
+            renderDashboard();
+        }
+
+        document.addEventListener('DOMContentLoaded', renderDashboard);
     </script>
 </body>
 </html>

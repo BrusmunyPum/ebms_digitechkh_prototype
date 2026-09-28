@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGITECHKH - បញ្ជីអ្នកផ្គត់ផ្គង់</title>
+    <link rel="icon" type="image/png" href="../../../shared/assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#d97706",
+                        'primary-dark': "#b45309",
+                        accent: "#f59e0b",
+                    },
+                    fontFamily: {
+                        sans: ["'Kantumruy Pro'", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+</head>
+<body id="pmPortal" data-role-root=".." data-active="vendors" class="bg-slate-50 font-sans text-slate-800 text-[16px] flex h-screen overflow-hidden">
+
+    <!-- Unified Sidebar Runtime -->
+    <div id="sidebarHost"></div>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+
+        <!-- Top Header (Standard 2: h-[72px] px-6) -->
+        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-xs z-10 flex-shrink-0 w-full border-b border-slate-200/70">
+            <div>
+                <h2 class="text-xl font-semibold text-slate-800 leading-tight">បញ្ជីអ្នកផ្គត់ផ្គង់</h2>
+                <p class="text-xs font-normal text-slate-500 mt-0.5">ការគ្រប់គ្រងដៃគូផ្គត់ផ្គង់ លក្ខខណ្ឌទូទាត់ និងការវាយតម្លៃសមត្ថភាព</p>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <a href="create-vendor.html" class="h-10 px-4 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-xl flex items-center gap-2 shadow-sm transition cursor-pointer">
+                    <i class="fas fa-user-plus"></i>
+                    <span>បន្ថែមអ្នកផ្គត់ផ្គង់ថ្មី</span>
+                </a>
+
+                <div class="flex items-center sm:border-l sm:pl-3">
+                    <div class="w-10 h-10 rounded-full bg-amber-600 text-white flex items-center justify-center font-semibold text-sm shadow-sm">
+                        សផ
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
+            <div class="w-full space-y-4">
+
+                <!-- Filter Toolbar -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-3 flex-1 min-w-[280px]">
+                        <!-- Search Input -->
+                        <div class="relative flex-1 min-w-[220px]">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                <i class="fas fa-search text-xs"></i>
+                            </span>
+                            <input type="text" id="vendorSearchInput" onkeyup="filterVendors()" placeholder="ស្វែងរកតាមឈ្មោះ កូដអ្នកផ្គត់ផ្គង់ ឬលេខទូរស័ព្ទ..."
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-700 outline-none focus:border-amber-600">
+                        </div>
+
+                        <!-- Status Filter -->
+                        <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-medium text-slate-600">
+                            <button type="button" onclick="setVendorStatusFilter('all')" class="vendor-filter-btn px-3 py-1 rounded-lg bg-white shadow-xs text-slate-800 font-semibold" data-status="all">ទាំងអស់</button>
+                            <button type="button" onclick="setVendorStatusFilter('Active')" class="vendor-filter-btn px-3 py-1 rounded-lg hover:text-slate-800" data-status="Active">សកម្ម</button>
+                            <button type="button" onclick="setVendorStatusFilter('Inactive')" class="vendor-filter-btn px-3 py-1 rounded-lg hover:text-slate-800" data-status="Inactive">អសកម្ម</button>
+                        </div>
+                    </div>
+
+                    <span class="text-xs text-slate-500" id="vendorCountDisplay">សរុប: 0</span>
+                </div>
+
+                <!-- Vendors Table -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50/80 border-b border-slate-200 text-xs font-semibold text-slate-600">
+                                    <th class="py-3 px-4">កូដអ្នកផ្គត់ផ្គង់</th>
+                                    <th class="py-3 px-4">ឈ្មោះសហគ្រាស</th>
+                                    <th class="py-3 px-4">លេខទូរស័ព្ទ</th>
+                                    <th class="py-3 px-4">ប្រភេទមុខទំនិញ</th>
+                                    <th class="py-3 px-4 text-center">អត្រាទាន់ពេល</th>
+                                    <th class="py-3 px-4 text-right">បំណុលនៅសល់ (AP)</th>
+                                    <th class="py-3 px-4 text-center">ស្ថានភាព</th>
+                                    <th class="py-3 px-4 text-center">សកម្មភាព</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-xs" id="vendorsTableBody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Row Action Floating Menu Container -->
+    <div id="rowActionDropdown" class="fixed hidden bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-50 min-w-[170px] text-xs font-medium text-slate-700">
+        <!-- Injected dynamically -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        let currentVendorStatus = 'all';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPortalSidebar();
+            loadVendors();
+        });
+
+        function loadVendors() {
+            const vendors = getVendors({ status: currentVendorStatus, search: document.getElementById('vendorSearchInput')?.value });
+            document.getElementById('vendorCountDisplay').textContent = `សរុប: ${vendors.length}`;
+            const tbody = document.getElementById('vendorsTableBody');
+
+            if (vendors.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-400">គ្មានទិន្នន័យអ្នកផ្គត់ផ្គង់ឡើយ</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = vendors.map(v => {
+                const onTimeBadge = v.onTimeRate >= 90 ?
+                    '<span class="font-bold text-emerald-600 tabular-nums">' + v.onTimeRate + '%</span>' :
+                    (v.onTimeRate >= 75 ? '<span class="font-bold text-amber-600 tabular-nums">' + v.onTimeRate + '%</span>' : '<span class="font-bold text-rose-600 tabular-nums">' + v.onTimeRate + '%</span>');
+
+                return `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3 px-4 font-mono font-semibold text-amber-700">
+                            <a href="view-vendor.html?id=${v.id}" class="hover:underline">${v.code}</a>
+                        </td>
+                        <td class="py-3 px-4 font-medium text-slate-800">
+                            <span class="block">${v.nameKh}</span>
+                            <span class="text-slate-400 text-[11px]">${v.nameEn}</span>
+                        </td>
+                        <td class="py-3 px-4 text-slate-600 font-mono">${v.phone}</td>
+                        <td class="py-3 px-4 text-slate-600">${v.category}</td>
+                        <td class="py-3 px-4 text-center">${onTimeBadge}</td>
+                        <td class="py-3 px-4 text-right font-bold text-slate-800 tabular-nums">
+                            ${v.outstandingAp > 0 ? `<span class="text-rose-600">$${v.outstandingAp.toLocaleString()}</span>` : '<span class="text-slate-400">$0.00</span>'}
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${v.status === 'Active' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}">
+                                ${v.status === 'Active' ? 'សកម្ម' : 'អសកម្ម'}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            <button type="button" onclick="showVendorRowAction(event, '${v.id}')" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-500 flex items-center justify-center transition">
+                                <i class="fas fa-ellipsis-vertical"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function setVendorStatusFilter(status) {
+            currentVendorStatus = status;
+            document.querySelectorAll('.vendor-filter-btn').forEach(btn => {
+                if (btn.dataset.status === status) {
+                    btn.className = 'vendor-filter-btn px-3 py-1 rounded-lg bg-white shadow-xs text-slate-800 font-semibold';
+                } else {
+                    btn.className = 'vendor-filter-btn px-3 py-1 rounded-lg hover:text-slate-800';
+                }
+            });
+            loadVendors();
+        }
+
+        function filterVendors() {
+            loadVendors();
+        }
+
+        function showVendorRowAction(e, vendorId) {
+            e.stopPropagation();
+            const menu = document.getElementById('rowActionDropdown');
+            menu.innerHTML = `
+                <a href="view-vendor.html?id=${vendorId}" class="flex items-center gap-2.5 px-3.5 py-2 hover:bg-amber-50 text-slate-700">
+                    <i class="fas fa-eye text-amber-600 w-4"></i>
+                    <span>មើលប្រវត្តិរូប</span>
+                </a>
+                <a href="edit-vendor.html?id=${vendorId}" class="flex items-center gap-2.5 px-3.5 py-2 hover:bg-amber-50 text-slate-700">
+                    <i class="fas fa-edit text-sky-600 w-4"></i>
+                    <span>កែប្រែព័ត៌មាន</span>
+                </a>
+                <a href="../purchase-orders/create-po.html?vendor=${vendorId}" class="flex items-center gap-2.5 px-3.5 py-2 hover:bg-amber-50 text-slate-700">
+                    <i class="fas fa-cart-plus text-emerald-600 w-4"></i>
+                    <span>ចេញបញ្ជាទិញថ្មី</span>
+                </a>
+            `;
+
+            menu.style.top = `${e.clientY + 5}px`;
+            menu.style.left = `${Math.min(e.clientX - 100, window.innerWidth - 180)}px`;
+            menu.classList.remove('hidden');
+
+            document.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            }, { once: true });
+        }
+    </script>
+</body>
+</html>

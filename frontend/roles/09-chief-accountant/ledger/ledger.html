@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGITECHKH - សៀវភៅធំ និងតារាងគណនី</title>
+    <link rel="icon" type="image/png" href="../../../shared/assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#7c3aed",
+                        'primary-dark': "#6d28d9",
+                        accent: "#a78bfa",
+                    },
+                    fontFamily: {
+                        sans: ["'Kantumruy Pro'", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+</head>
+<body id="caPortal" data-role-root=".." data-active="ledger" class="bg-slate-50 font-sans text-slate-800 text-[16px] flex h-screen overflow-hidden">
+
+    <!-- Unified Sidebar Runtime -->
+    <div id="sidebarHost"></div>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+
+        <!-- Top Header (Standard 2: h-[72px] px-6) -->
+        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-xs z-10 flex-shrink-0 w-full border-b border-slate-200/70">
+            <div>
+                <h2 class="text-xl font-semibold text-slate-800 leading-tight">សៀវភៅធំ និងតារាងគណនី (COA)</h2>
+                <p class="text-xs font-normal text-slate-500 mt-0.5">ការគ្រប់គ្រងរចនាសម្ព័ន្ធគណនី ទិន្នានុប្បវត្ត និងតុល្យភាពសៀវភៅធំ</p>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <a href="create-journal.html" class="h-10 px-4 bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold rounded-xl flex items-center gap-2 shadow-sm transition cursor-pointer">
+                    <i class="fas fa-plus"></i>
+                    <span>បង្កើតទិន្នានុប្បវត្តថ្មី</span>
+                </a>
+
+                <div class="flex items-center sm:border-l sm:pl-3">
+                    <div class="w-10 h-10 rounded-full bg-violet-600 text-white flex items-center justify-center font-semibold text-sm shadow-sm">
+                        ហរ
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sub-Navigation Tabs -->
+        <div class="bg-white px-6 border-b border-slate-200 flex items-center justify-between flex-shrink-0">
+            <div class="flex space-x-2">
+                <button type="button" onclick="switchTab('tabCOA')" id="btnTabCOA"
+                    class="py-3.5 px-4 text-xs font-semibold border-b-2 border-violet-600 text-violet-700 flex items-center gap-2 transition cursor-pointer">
+                    <i class="fas fa-sitemap"></i>
+                    <span>តារាងគណនី (Chart of Accounts)</span>
+                </button>
+
+                <button type="button" onclick="switchTab('tabJEs')" id="btnTabJEs"
+                    class="py-3.5 px-4 text-xs font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 transition cursor-pointer">
+                    <i class="fas fa-book-journal-whills"></i>
+                    <span>បញ្ជីទិន្នានុប្បវត្ត (Journal Entries)</span>
+                </button>
+
+                <button type="button" onclick="switchTab('tabTB')" id="btnTabTB"
+                    class="py-3.5 px-4 text-xs font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 transition cursor-pointer">
+                    <i class="fas fa-scale-balanced"></i>
+                    <span>តុល្យភាពសៀវភៅធំ (Trial Balance Detail)</span>
+                </button>
+            </div>
+
+            <div id="dateFilterHost"></div>
+        </div>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
+            <div class="w-full">
+
+                <!-- ================= TAB 1: CHART OF ACCOUNTS (COA) ================= -->
+                <div id="tabCOA" class="space-y-4">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-semibold text-slate-700">រចនាសម្ព័ន្ធគណនីស្ដង់ដារគណនេយ្យកម្ពុជា</span>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full bg-violet-50 text-violet-700 font-semibold border border-violet-200" id="coaCountBadge">
+                                23 គណនី
+                            </span>
+                        </div>
+                        <button type="button" onclick="showToast('មុខងារបន្ថែមគណនីថ្មីបើកចំហរជូនតែអភិបាលជាន់ខ្ពស់', 'info')"
+                            class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition flex items-center gap-1.5">
+                            <i class="fas fa-folder-plus text-violet-600"></i>
+                            <span>បន្ថែមគណនីថ្មី</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
+                                    <th class="py-3 px-4 w-32">លេខកូដ</th>
+                                    <th class="py-3 px-4">ឈ្មោះគណនី</th>
+                                    <th class="py-3 px-4">ប្រភេទគណនី</th>
+                                    <th class="py-3 px-4 text-center w-24">ធម្មជាតិ</th>
+                                    <th class="py-3 px-4 text-right">សមតុល្យបច្ចុប្បន្ន ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-xs" id="coaTableBody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ================= TAB 2: JOURNAL ENTRIES (JEs) ================= -->
+                <div id="tabJEs" class="hidden space-y-4">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex flex-wrap items-center gap-3 flex-1 min-w-[280px]">
+                            <div class="relative flex-1 min-w-[220px]">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fas fa-search text-xs"></i>
+                                </span>
+                                <input type="text" id="jeSearchInput" onkeyup="filterJEs()" placeholder="ស្វែងរកតាមលេខទិន្នានុប្បវត្ត ឬបរិយាយ..."
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-700 outline-none focus:border-violet-600">
+                            </div>
+
+                            <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs font-medium text-slate-600">
+                                <button type="button" onclick="setJeStatusFilter('all')" class="je-filter-btn px-3 py-1 rounded-lg bg-white shadow-xs text-slate-800 font-semibold" data-status="all">ទាំងអស់</button>
+                                <button type="button" onclick="setJeStatusFilter('Posted')" class="je-filter-btn px-3 py-1 rounded-lg hover:text-slate-800" data-status="Posted">បានចុះបញ្ជី</button>
+                                <button type="button" onclick="setJeStatusFilter('Draft')" class="je-filter-btn px-3 py-1 rounded-lg hover:text-slate-800" data-status="Draft">ព្រាងទុក</button>
+                            </div>
+                        </div>
+
+                        <span class="text-xs text-slate-500" id="jeCountDisplay">សរុប: 0</span>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
+                                    <th class="py-3 px-4">លេខកូដ JE</th>
+                                    <th class="py-3 px-4">កាលបរិច្ឆេទ</th>
+                                    <th class="py-3 px-4">បរិយាយប្រតិបត្តិការ</th>
+                                    <th class="py-3 px-4">ប្រភពឯកសារ</th>
+                                    <th class="py-3 px-4 text-right">សរុប Dr ($)</th>
+                                    <th class="py-3 px-4 text-right">សរុប Cr ($)</th>
+                                    <th class="py-3 px-4 text-center">តុល្យភាព</th>
+                                    <th class="py-3 px-4 text-center">ស្ថានភាព</th>
+                                    <th class="py-3 px-4 text-center">សកម្មភាព</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-xs" id="jeTableBody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ================= TAB 3: TRIAL BALANCE DETAIL ================= -->
+                <div id="tabTB" class="hidden space-y-4">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
+                        <div>
+                            <h3 class="text-sm font-semibold text-slate-800">តារាងតុល្យភាពសៀវភៅធំលម្អិត</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">ការិយបរិច្ឆេទ: កញ្ញា 2026</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="window.print()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition flex items-center gap-1.5">
+                                <i class="fas fa-print"></i>
+                                <span>បោះពុម្ព</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
+                                    <th class="py-3 px-4">លេខកូដគណនី</th>
+                                    <th class="py-3 px-4">ឈ្មោះគណនី</th>
+                                    <th class="py-3 px-4">ប្រភេទ</th>
+                                    <th class="py-3 px-4 text-right">ឥណពន្ធ (Dr)</th>
+                                    <th class="py-3 px-4 text-right">ឥណទាន (Cr)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-xs" id="tbDetailTableBody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                            <tfoot>
+                                <tr class="bg-violet-50/70 border-t-2 border-violet-300 font-bold text-xs text-slate-900">
+                                    <td colspan="3" class="py-3 px-4 text-right">សរុបតុល្យភាពរួម (Trial Balance Total):</td>
+                                    <td class="py-3 px-4 text-right font-mono text-violet-700" id="tbFooterDr">$0.00</td>
+                                    <td class="py-3 px-4 text-right font-mono text-violet-700" id="tbFooterCr">$0.00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        let currentJeStatus = 'all';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPortalSidebar();
+            if (typeof renderDateRangePicker === 'function') {
+                renderDateRangePicker('dateFilterHost');
+            }
+            loadCOA();
+            loadJEs();
+            loadTBDetail();
+        });
+
+        function switchTab(tabId) {
+            ['tabCOA', 'tabJEs', 'tabTB'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            ['btnTabCOA', 'btnTabJEs', 'btnTabTB'].forEach(id => {
+                document.getElementById(id).className = 'py-3.5 px-4 text-xs font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 transition cursor-pointer';
+            });
+
+            document.getElementById(tabId).classList.remove('hidden');
+            const btnId = tabId.replace('tab', 'btnTab');
+            document.getElementById(btnId).className = 'py-3.5 px-4 text-xs font-semibold border-b-2 border-violet-600 text-violet-700 flex items-center gap-2 transition cursor-pointer';
+        }
+
+        function loadCOA() {
+            const coa = getStoredCOA();
+            document.getElementById('coaCountBadge').textContent = `${coa.length} គណនី`;
+            const tbody = document.getElementById('coaTableBody');
+
+            const typeBadges = {
+                Asset: '<span class="px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 font-semibold">Asset (ទ្រព្យ)</span>',
+                Liability: '<span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 font-semibold">Liability (បំណុល)</span>',
+                Equity: '<span class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 font-semibold">Equity (មូលធន)</span>',
+                Revenue: '<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold">Revenue (ចំណូល)</span>',
+                Expense: '<span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 font-semibold">Expense (ចំណាយ)</span>'
+            };
+
+            tbody.innerHTML = coa.map(acc => {
+                const isHeader = acc.isGroup;
+                const indent = acc.parent ? 'pl-8' : '';
+                return `
+                    <tr class="${isHeader ? 'bg-slate-50/70 font-bold text-slate-900' : 'hover:bg-slate-50 text-slate-700'} transition">
+                        <td class="py-2.5 px-4 font-mono ${isHeader ? 'font-bold text-violet-800' : 'text-slate-600'}">${acc.code}</td>
+                        <td class="py-2.5 px-4 ${indent}">
+                            <span>${acc.nameKh}</span>
+                            <span class="text-slate-400 text-[11px] block">${acc.nameEn}</span>
+                        </td>
+                        <td class="py-2.5 px-4">${typeBadges[acc.type] || acc.type}</td>
+                        <td class="py-2.5 px-4 text-center font-mono font-semibold text-slate-600">${acc.normal}</td>
+                        <td class="py-2.5 px-4 text-right font-bold tabular-nums ${acc.balance < 0 ? 'text-rose-600' : 'text-slate-800'}">
+                            $${acc.balance.toLocaleString(undefined, {minimumFractionDigits: 2})}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function loadJEs() {
+            let jes = getStoredJEs();
+            if (currentJeStatus !== 'all') {
+                jes = jes.filter(j => j.status === currentJeStatus);
+            }
+            const q = document.getElementById('jeSearchInput')?.value.toLowerCase();
+            if (q) {
+                jes = jes.filter(j => j.id.toLowerCase().includes(q) || j.description.toLowerCase().includes(q));
+            }
+
+            document.getElementById('jeCountDisplay').textContent = `សរុប: ${jes.length}`;
+            const tbody = document.getElementById('jeTableBody');
+
+            tbody.innerHTML = jes.map(j => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="py-3 px-4 font-mono font-semibold text-violet-700">
+                        <a href="view-journal.html?id=${j.id}" class="hover:underline">${j.id}</a>
+                    </td>
+                    <td class="py-3 px-4 text-slate-500 tabular-nums">${j.date}</td>
+                    <td class="py-3 px-4 font-medium text-slate-800">${j.description}</td>
+                    <td class="py-3 px-4 text-slate-500 text-[11px] font-mono">${j.reference || j.source}</td>
+                    <td class="py-3 px-4 text-right font-bold text-slate-800 tabular-nums">$${j.drTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                    <td class="py-3 px-4 text-right font-bold text-slate-800 tabular-nums">$${j.crTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="text-emerald-600 font-bold text-xs"><i class="fas fa-check mr-1"></i>សម</span>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold ${j.status === 'Posted' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-600'}">
+                            ${j.status === 'Posted' ? 'បានចុះបញ្ជី' : 'ព្រាងទុក'}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <a href="view-journal.html?id=${j.id}" class="px-2 py-1 text-xs text-violet-700 hover:bg-violet-50 rounded-lg transition">
+                            <i class="fas fa-eye mr-1"></i> មើល
+                        </a>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function setJeStatusFilter(status) {
+            currentJeStatus = status;
+            document.querySelectorAll('.je-filter-btn').forEach(btn => {
+                if (btn.dataset.status === status) {
+                    btn.className = 'je-filter-btn px-3 py-1 rounded-lg bg-white shadow-xs text-slate-800 font-semibold';
+                } else {
+                    btn.className = 'je-filter-btn px-3 py-1 rounded-lg hover:text-slate-800';
+                }
+            });
+            loadJEs();
+        }
+
+        function filterJEs() {
+            loadJEs();
+        }
+
+        function loadTBDetail() {
+            const coa = getStoredCOA().filter(a => !a.isGroup);
+            const tbody = document.getElementById('tbDetailTableBody');
+
+            let totalDr = 0;
+            let totalCr = 0;
+
+            tbody.innerHTML = coa.map(acc => {
+                const dr = acc.normal === 'Dr' ? acc.balance : 0;
+                const cr = acc.normal === 'Cr' ? acc.balance : 0;
+                totalDr += dr;
+                totalCr += cr;
+
+                return `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-2.5 px-4 font-mono font-semibold text-violet-800">${acc.code}</td>
+                        <td class="py-2.5 px-4 font-medium text-slate-800">${acc.nameKh}</td>
+                        <td class="py-2.5 px-4 text-slate-500">${acc.type}</td>
+                        <td class="py-2.5 px-4 text-right font-mono font-bold text-slate-800 tabular-nums">${dr > 0 ? '$' + dr.toLocaleString(undefined, {minimumFractionDigits: 2}) : '-'}</td>
+                        <td class="py-2.5 px-4 text-right font-mono font-bold text-slate-800 tabular-nums">${cr > 0 ? '$' + cr.toLocaleString(undefined, {minimumFractionDigits: 2}) : '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('tbFooterDr').textContent = `$${totalDr.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            document.getElementById('tbFooterCr').textContent = `$${totalCr.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ព័ត៌មានលម្អិតកញ្ចប់សេវា — eBMS v2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0f172a',
+                        'primary-dark': '#020617'
+                    },
+                    fontFamily: {
+                        sans: ['"Kantumruy Pro"', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased" data-portal="saPortal" data-role-root="../" data-active="subscriptions">
+    <div class="flex h-screen overflow-hidden">
+        <div id="sidebarHost"></div>
+
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Header (72px aligned) -->
+            <header class="bg-white px-6 h-[72px] flex justify-between items-center border-b border-slate-200/80 flex-shrink-0 z-10 shadow-xs">
+                <div class="flex items-center gap-3">
+                    <a href="subscriptions.html" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition border border-slate-200/70" title="ត្រឡប់ក្រោយ">
+                        <i class="fas fa-arrow-left text-sm"></i>
+                    </a>
+                    <div>
+                        <div class="flex items-center gap-2.5">
+                            <h2 class="text-xl font-semibold text-slate-800 leading-tight" id="subViewTitle">ព័ត៌មានកញ្ចប់សេវា</h2>
+                            <span id="subStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">សកម្ម</span>
+                        </div>
+                        <p class="text-xs font-normal text-slate-500 mt-0.5" id="subTenantSubtitle">ក្រុមហ៊ុន អង្គរ អេឡិចត្រូនិច</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a href="create-subscription.html" class="h-10 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition">
+                        <i class="fas fa-rotate text-xs"></i>
+                        <span>បន្តកញ្ចប់សេវា</span>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Main Detail Content -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <div class="max-w-5xl space-y-6">
+                    <!-- Top Summary Card -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 pb-4 border-b border-slate-100">
+                            <div>
+                                <span class="text-xs text-slate-400">កញ្ចប់សេវាបច្ចុប្បន្ន</span>
+                                <h3 class="text-lg font-bold text-indigo-700 mt-0.5" id="subPlanTitle">Enterprise Plan</h3>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-400">តម្លៃប្រចាំខែ</span>
+                                <h3 class="text-lg font-bold text-slate-800 font-mono mt-0.5" id="subPrice">$199.00 / ខែ</h3>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-400">កាលបរិច្ឆេទចាប់ផ្តើម</span>
+                                <h3 class="text-sm font-semibold text-slate-700 mt-1" id="subStart">15/01/2026</h3>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-400">ផុតកំណត់នៅថ្ងៃ</span>
+                                <h3 class="text-sm font-bold text-slate-900 mt-1 font-mono" id="subExpire">15/01/2027</h3>
+                            </div>
+                        </div>
+
+                        <!-- User Quota & Storage Progress -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-5">
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
+                                <div class="flex justify-between text-xs">
+                                    <span class="font-medium text-slate-600">កូតាគណនីបុគ្គលិក (Users)</span>
+                                    <span class="font-bold text-slate-800 font-mono" id="userQuotaDisplay">42 / 50 នាក់</span>
+                                </div>
+                                <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                                    <div class="bg-indigo-600 h-2 rounded-full" id="userQuotaBar" style="width: 84%"></div>
+                                </div>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-2">
+                                <div class="flex justify-between text-xs">
+                                    <span class="font-medium text-slate-600">ទំហំផ្ទុកទិន្នន័យ (Cloud Storage)</span>
+                                    <span class="font-bold text-slate-800 font-mono" id="storageQuotaDisplay">480 MB / 5 GB</span>
+                                </div>
+                                <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                                    <div class="bg-emerald-500 h-2 rounded-full" id="storageQuotaBar" style="width: 10%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enabled Features in Plan -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+                        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <i class="fas fa-list-check text-slate-500"></i>
+                            <span>មុខងារដែលបានបើកដំណើរការ (Active Features)</span>
+                        </h3>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs" id="featuresList">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        function loadSubDetail() {
+            const params = new URLSearchParams(window.location.search);
+            const tenantId = params.get('id') || 'TNT-1001';
+            const t = getTenant(tenantId) || getTenants()[0];
+
+            if (!t) return;
+
+            const plan = SUBSCRIPTION_PLANS[t.plan] || SUBSCRIPTION_PLANS.enterprise;
+
+            document.getElementById('subViewTitle').innerText = `កញ្ចប់សេវា — ${t.nameKh}`;
+            document.getElementById('subTenantSubtitle').innerText = `${t.id} · ${t.contactName} (${t.contactPhone})`;
+            document.getElementById('subPlanTitle').innerText = `${plan.name} (${plan.nameEn})`;
+            document.getElementById('subPrice').innerText = `${fmtUSD(plan.price)} / ខែ`;
+            document.getElementById('subStart').innerText = t.createdAt;
+            document.getElementById('subExpire').innerText = t.expiresAt;
+
+            document.getElementById('userQuotaDisplay').innerText = `${t.usersCount} / ${t.quotaUsers} នាក់`;
+            const userPercent = Math.min(Math.round((t.usersCount / t.quotaUsers) * 100), 100);
+            document.getElementById('userQuotaBar').style.width = `${userPercent}%`;
+
+            document.getElementById('storageQuotaDisplay').innerText = `${t.stats.storageMb} MB / 5 GB`;
+            const storagePercent = Math.min(Math.round((t.stats.storageMb / 5000) * 100), 100);
+            document.getElementById('storageQuotaBar').style.width = `${storagePercent}%`;
+
+            const featContainer = document.getElementById('featuresList');
+            featContainer.innerHTML = plan.features.map(f => `
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 flex items-center gap-2">
+                    <i class="fas fa-check-circle text-emerald-600 text-sm"></i>
+                    <span class="font-medium text-slate-700">${f}</span>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', loadSubDetail);
+    </script>
+</body>
+</html>
