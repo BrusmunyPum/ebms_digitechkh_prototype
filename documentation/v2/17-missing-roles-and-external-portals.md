@@ -139,13 +139,13 @@ const SUPPLIER_DATA = {
 
 ## Part C: Customer Portal — Full Spec
 
-### Status: NOT YET BUILT
+### Status: PARTIALLY BUILT
 
-The customer portal was present in `frontend_old_admin_backup/src/pages/9-portals/customer/` but has not been rebuilt in `frontend/roles/external-portals/`.
+Built today (verified 2026-09-29): `dashboard.html`, `my-invoices.html`, `view-invoice.html`, `order-tracking.html`, `data.js`. Current sidebar has 3 items: ទិដ្ឋភាពរួម / វិក្កយបត្ររបស់ខ្ញុំ / តាមដានការដឹកជញ្ជូន.
 
 ### Decision
 
-**Verdict: Phase 2 — Build after core internal roles complete**
+**Verdict: Phase 2 — complete the missing quotation pages; keep existing file names (`my-invoices.html`, `order-tracking.html`) rather than renaming.**
 
 ### Overview
 
@@ -168,35 +168,39 @@ Customers can NEVER see:
 - Internal approval workflows or notes
 - Other customer's pricing (tier-specific pricing is hidden)
 
-### Pages to Build
+### Pages
 
-| Page | File | Priority | Description |
-|---|---|---|---|
-| Dashboard | `dashboard.html` | High | Outstanding invoices, recent orders |
-| My Quotations | `quotations.html` | High | List of quotations received |
-| View Quotation | `view-quotation.html` | High | Quotation detail with Accept/Decline action |
-| My Invoices | `invoices.html` | High | List of invoices |
-| View Invoice | `view-invoice.html` | High | Invoice detail with KHQR payment option |
-| Order Tracking | `tracking.html` | Medium | Delivery status for confirmed orders |
-| Profile | `profile.html` | Low | Contact info, billing address |
+| Page | File | Status | Priority | Description |
+|---|---|---|---|---|
+| Dashboard | `dashboard.html` | Built | — | Outstanding invoices, recent orders |
+| My Invoices | `my-invoices.html` | Built | — | List of invoices |
+| View Invoice | `view-invoice.html` | Built | — | Invoice detail with KHQR payment option |
+| Order Tracking | `order-tracking.html` | Built | — | Delivery status for confirmed orders |
+| My Quotations | `my-quotes.html` | To build | High | List of quotations received |
+| View Quotation | `view-quote.html` | To build | High | Quotation detail with Accept / Decline action |
+| Profile | `profile.html` | To build | Low | Contact info, billing address |
 
-### Sidebar Navigation (Proposed — 5 items)
+### Sidebar Navigation (Target — 5 items)
 
 ```
-ទិដ្ឋភាពរួម        (dashboard.html)
-ការដោះស្រាយ        (quotations.html)
-វិក្កយបត្ររបស់ខ្ញុំ  (invoices.html)
-តាមដានការបញ្ជាទិញ  (tracking.html)
-ព័ត៌មានគណនី       (profile.html)
+ទិដ្ឋភាពរួម            (dashboard.html)
+សម្រង់តម្លៃរបស់ខ្ញុំ     (my-quotes.html)        ← new
+វិក្កយបត្ររបស់ខ្ញុំ      (my-invoices.html)
+តាមដានការដឹកជញ្ជូន     (order-tracking.html)
+ព័ត៌មានគណនី           (profile.html)          ← new
 ```
 
 ### Dashboard KPIs (Customer)
 
-| KPI | Khmer Label | Description |
-|---|---|---|
-| ការដោះស្រាយថ្មី | ការដោះស្រាយថ្មី | Pending quotations awaiting acceptance |
-| វិក្កយបត្រដែលត្រូវបង់ | ត្រូវបង់ | Outstanding invoice total (USD) |
-| ការបញ្ជាទិញកំពុងដឹក | ដំណើរការ | Active deliveries in transit |
+| KPI (Khmer label) | Description |
+|---|---|
+| សម្រង់តម្លៃរង់ចាំការឆ្លើយតប | Quotations sent to the customer, not yet accepted/declined |
+| ទឹកប្រាក់ត្រូវបង់ | Outstanding invoice total (USD) |
+| ការដឹកជញ្ជូនកំពុងដំណើរការ | Active deliveries in transit |
+
+### Customer Accept / Decline — Workflow Hook
+
+Customer acceptance adds one state to the Quotation machine in `15-approval-state-machine.md`: `APPROVED → SENT_TO_CUSTOMER → ACCEPTED_BY_CUSTOMER | DECLINED_BY_CUSTOMER`. Only `ACCEPTED_BY_CUSTOMER` quotations can be converted to an invoice by the Sales Executive.
 
 ### KHQR Integration (Customer Invoice Payment)
 
@@ -224,21 +228,29 @@ const CUSTOMER_DATA = {
 
 Current login page shows 14 role cards in the demo switcher. After the decisions above, the definitive list for v2 is:
 
+Paths verified against the filesystem on 2026-09-29. Khmer role names must follow the glossary in `19-khmer-glossary.md`.
+
 | # | Role (Khmer) | Portal Path | Built? |
 |---|---|---|---|
-| 01 | ស្ព័ររអ្នកគ្រប់គ្រង | `roles/01-super-admin/dashboard.html` | Yes |
-| 02 | អ្នកគ្រប់គ្រងទូទៅ | `roles/02-admin-general-manager/dashboard.html` | Yes |
-| 03 | អ្នកគ្រប់គ្រងផ្នែកលក់ | `roles/03-sales-manager/dashboard.html` | Yes |
-| 04 | បុគ្គលិកផ្នែកលក់ | `roles/04-sales-executive/dashboard.html` | Yes |
-| 05 | អ្នកទទួលប្រាក់ / POS | `roles/05-cashier-pos/dashboard.html` | Yes |
-| 06 | អ្នកគ្រប់គ្រងការទិញ | `roles/06-procurement-manager/dashboard.html` | Yes |
-| 07 | អ្នកគ្រប់គ្រង倉库 | `roles/07-warehouse-manager/dashboard.html` | Yes |
-| 08 | បុគ្គលិក倉库 | `roles/08-warehouse-staff/dashboard.html` | Yes |
-| 09 | អ្នកគ្រប់គ្រងសវនកម្ម | `roles/09-internal-auditor/dashboard.html` | Yes |
-| 10 | ប្រធានគណនេយ្យករ | `roles/10-chief-accountant/dashboard.html` | Yes (check path — may be 10 vs 09) |
-| 11 | គណនេយ្យករ AP/AR | `roles/11-apar-accountant/dashboard.html` | Yes (check path) |
-| 12 | ជំនួយការអតិថិជន | `roles/12-customer-support/dashboard.html` | Yes |
-| EXT-1 | អ្នកផ្គត់ផ្គង់ | `roles/external-portals/supplier-portal/dashboard.html` | Yes |
-| EXT-2 | អតិថិជន | `roles/external-portals/customer-portal/dashboard.html` | NOT BUILT |
+Names below are the login-page labels as they exist today; the only change is role 01 (the transliteration «ស៊ុបភើរ» violates the pure-Khmer rule).
 
-**Note on path numbering:** The v2 folder structure uses different numbering than this table. Verify actual folder names against the filesystem before linking. The login page `selectDemoRole()` function is dead code — all role cards use direct `<a href>` links.
+| # | Role (Khmer, canonical) | Portal Path | Built? |
+|---|---|---|---|
+| 01 | អភិបាលប្រព័ន្ធកំពូល *(replaces «ស៊ុបភើរ អភិបាលប្រព័ន្ធ»)* | `roles/01-super-admin/dashboard.html` | Yes |
+| 02 | អភិបាលក្រុមហ៊ុន / អ្នកគ្រប់គ្រងទូទៅ | `roles/02-admin-general-manager/dashboard.html` | Yes |
+| 03 | អ្នកគ្រប់គ្រងផ្នែកលក់ | `roles/03-sales-manager/dashboard.html` | Yes |
+| 04 | បុគ្គលិកប្រតិបត្តិផ្នែកលក់ | `roles/04-sales-executive/dashboard.html` | Yes |
+| 05 | អ្នកគិតលុយលក់រាយ | `roles/05-cashier-pos/dashboard.html` | Yes |
+| 06 | អ្នកគ្រប់គ្រងលទ្ធកម្ម | `roles/06-procurement-manager/dashboard.html` | Yes |
+| 07 | អ្នកគ្រប់គ្រងឃ្លាំងស្តុក | `roles/07-warehouse-manager/dashboard.html` | Yes |
+| 08 | បុគ្គលិកជាន់ឃ្លាំង | `roles/08-warehouse-staff/dashboard.html` | Yes |
+| 09 | ប្រធានគណនេយ្យ | `roles/09-chief-accountant/dashboard.html` | Yes |
+| 10 | គណនេយ្យករបំណុល និងការទារប្រាក់ | `roles/10-apar-accountant/dashboard.html` | Yes |
+| 11 | សវនករផ្ទៃក្នុង / នាយកប្រតិបត្តិ | `roles/11-internal-auditor-executive/dashboard.html` | Yes |
+| 12 | ផ្នែកគាំទ្រអតិថិជន | `roles/12-customer-support/dashboard.html` | Yes |
+| EXT-1 | ច្រកអ្នកផ្គត់ផ្គង់ស្វ័យសេវា | `roles/external-portals/supplier-portal/dashboard.html` | Yes |
+| EXT-2 | ច្រកអតិថិជនស្វ័យសេវា | `roles/external-portals/customer-portal/dashboard.html` | Partial (quotation pages missing) |
+
+**Segregation-of-duties note (role 11):** the label combines «auditor» and «executive». An auditor must not approve the transactions they later audit. Decision: role 11 is **read-only on every approval queue**; all "Director"-level sign-offs are made from the GM portal (see `16-authority-and-notification-matrix.md` §A4).
+
+**Note:** The login page `selectDemoRole()` function is dead code — all role cards use direct `<a href>` links.

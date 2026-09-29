@@ -22,7 +22,7 @@ From `00-v2-planning-enhancement.md §4`:
 **What this means for the prototype:**
 - v2 prototype: No PWA/offline implementation. The cashier portal is online-only.
 - The prototype demonstrates the UI and workflow, not offline resilience.
-- A visual badge "ทำงานออนไลน์" (online) can be added to the POS header as a placeholder.
+- A visual badge "កំពុងភ្ជាប់អ៊ីនធឺណិត" (online) can be added to the POS header as a placeholder.
 
 **Phase 3 scope:**
 - Register `frontend/roles/05-cashier-pos/` as a PWA (`manifest.json` + `service-worker.js`)
@@ -172,7 +172,7 @@ The date picker must compute all relative ranges from the **actual current date*
 | ខែមុន | lastmonth | `start = first day of last month, end = last day of last month` |
 | ត្រីមាសនេះ | thisquarter | `start = first day of current quarter, end = today` |
 
-**Implementation note:** When `portal.js` `selectPreset()` is rewritten, it must call `new Date()` at invocation time to get `today`, then compute all ranges relative to that. No static date strings.
+**Implementation note:** When `portal.js` `selectPreset()` is rewritten, it computes all ranges from `BMS_TODAY` (the single shared "today" defined in `20-shared-mock-data-architecture.md` §3). Mock data is seeded relative to the same date, so filters like "last 7 days" always return records. No static date strings.
 
 ---
 
@@ -226,8 +226,8 @@ Since the prototype has no real backend, a "loading error" state is not strictly
 When a user applies a date range or search filter and gets no results, show:
 
 ```
-ការស្វែងរករបស់អ្នកមិនត្រូវបានស្វែងរក
--- ព្យាយាមផ្លាស់ប្ដូរតម្រង --
+រកមិនឃើញលទ្ធផលដែលត្រូវនឹងការស្វែងរករបស់អ្នក
+សូមសាកល្បងប្ដូរតម្រង ឬពាក្យស្វែងរក
 [ជម្រះតម្រង]
 ```
 
@@ -239,16 +239,17 @@ The "Clear filter" button must reset all filter inputs and re-render the full li
 
 ### Phase 1 (Complete — v2.0)
 Internal role portals: SM, SE, CAS, PM, WM, WS, CA, APAR, IA, CS, GM, SA  
-External portals: Supplier Portal  
+External portals: Supplier Portal (complete), Customer Portal (partial — quotation pages missing)  
 Shared: portal.js, ui-components.js, custom.css, portal.css
 
 ### Phase 2 (Next Sprint)
-Priority order:
-1. Fix all code-review bugs from 2026-09-29 review (native selects, script order, date presets, max-width violations)
-2. Customer Portal (`external-portals/customer-portal/`)
-3. Cross-role mock data alignment (ensure `data.js` entities reference each other correctly — e.g., PM `purchaseOrders[].supplierId` matches Supplier portal `supplier.id`)
-4. Notification bell wired up in all portals (currently static in most)
-5. Empty state components on all list pages
+Priority order (superseded in detail by `22-implementation-roadmap.md`):
+1. Fix all code-review bugs from 2026-09-29 review (native selects, script order, date presets, max-width violations) — checklist in `21-page-definition-of-done.md`
+2. Shared mock data store (`20-shared-mock-data-architecture.md`) — replaces the 14 isolated `data.js` stores so cross-role workflows actually connect
+3. Apply the Khmer glossary (`19-khmer-glossary.md`) across all pages
+4. Complete Customer Portal quotation pages (`my-quotes.html`, `view-quote.html`)
+5. Notification bell reading from the shared store in all portals
+6. Empty state components on all list pages
 
 ### Phase 3 (Future)
 1. Driver Portal

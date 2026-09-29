@@ -26,3 +26,11 @@
 - [16-authority-and-notification-matrix.md](16-authority-and-notification-matrix.md) — Approval thresholds table + notification trigger matrix
 - [17-missing-roles-and-external-portals.md](17-missing-roles-and-external-portals.md) — Driver/HR decisions, Supplier Portal spec, Customer Portal spec
 - [18-open-decisions-and-system-config.md](18-open-decisions-and-system-config.md) — 6 open Q&A resolved, multi-currency, VAT/WHT rules, empty states, build phases
+
+## Build Readiness (19–22) — NEW 2026-09-29
+- [19-khmer-glossary.md](19-khmer-glossary.md) — One canonical Khmer term per document, status, money label, action and role
+- [20-shared-mock-data-architecture.md](20-shared-mock-data-architecture.md) — Replace 14 isolated stores with one shared store; ID formats; `BMS_TODAY`; role projections for Zero Data Leakage
+- [21-page-definition-of-done.md](21-page-definition-of-done.md) — Checklist every page must pass + open code-review backlog
+- [22-implementation-roadmap.md](22-implementation-roadmap.md) — 12-minute demo scenario, page gaps, folder clean-up, staged build order, assumptions to confirm
+
+**Start here before modifying the prototype:** 22 → 20 → 21.

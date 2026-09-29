@@ -150,7 +150,7 @@ Four large action buttons displayed in a 2×2 grid or a horizontal row:
 
 | Button | Label | Icon | Action |
 |---|---|---|---|
-| Primary | + ចេញប័ណ្ណទូទាត់ | `mdi:receipt-text-plus` | Opens `ap/create-voucher.html` |
+| Primary | + ចេញប័ណ្ណចំណាយ | `mdi:receipt-text-plus` | Opens `ap/create-voucher.html` |
 | Primary | + ធ្វើការបង្កាន់ដៃ | `mdi:printer-check` | Opens `ar/create-payment.html` |
 | Secondary | + KHQR ស្នើប្រាក់ | `mdi:qrcode-plus` | Opens KHQR generation modal |
 | Secondary | ការផ្ទៀងផ្ទាត់ | `mdi:bank-check` | Navigates to `bank-recon/bank-recon.html` |
@@ -170,7 +170,7 @@ Button style: `h-12 px-6`, teal background for primary, teal-outline for seconda
 - Click aging bucket rows: navigate to filtered AR/AP list
 - [📞 Contact] on AR due today: opens contact panel or link
 - [📄 Create Voucher] on AP due today: pre-fills voucher with that vendor/bill
-- [+ ចេញប័ណ្ណទូទាត់]: create payment voucher
+- [+ ចេញប័ណ្ណចំណាយ]: create payment voucher
 - [+ ធ្វើការបង្កាន់ដៃ]: record incoming payment
 - [+ KHQR ស្នើប្រាក់]: generate KHQR collection QR
 - [ការផ្ទៀងផ្ទាត់]: navigate to bank reconciliation

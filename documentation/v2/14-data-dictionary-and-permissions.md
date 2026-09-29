@@ -78,6 +78,8 @@ Two things in one document:
 
 ## Part B: Data Dictionary
 
+> **ID formats:** the "Format:" notes below are superseded by the canonical ID table in `20-shared-mock-data-architecture.md` §4 (e.g. customers are `CUST-NNNN`, suppliers `SUP-NNN`, products use the SKU code). Field visibility rules in this document remain authoritative and become the whitelists for role projections (doc 20 §5).
+
 ### Entity 1: Customer
 
 | Field | Type | Visible To | Notes |

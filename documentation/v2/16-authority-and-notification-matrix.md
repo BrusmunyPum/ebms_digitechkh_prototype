@@ -11,8 +11,7 @@ Single source of truth for all financial approval limits. All amounts in USD.
 
 | Document | Amount Range | Approver Required | Notes |
 |---|---|---|---|
-| Quotation | < $500 | SE self-approve | Not implemented in prototype — always requires SM |
-| Quotation | $500 – $5,000 | Sales Manager | Default flow |
+| Quotation | ≤ $5,000 | Sales Manager | Default flow — no self-approval at any amount (see `15-approval-state-machine.md` principle 3) |
 | Quotation | $5,001 – $20,000 | Sales Manager + General Manager | SM approves first, then GM |
 | Quotation | > $20,000 | SM + GM + Director | 3-level sign-off |
 | Special Discount | Any amount | Sales Manager | SE cannot grant discount without SM approval |
@@ -23,8 +22,7 @@ Single source of truth for all financial approval limits. All amounts in USD.
 
 | Document | Amount Range | Approver Required | Notes |
 |---|---|---|---|
-| Purchase Request | < $1,000 | Procurement Manager self-approve | Not in prototype — PM always submits to GM |
-| Purchase Request | $1,000 – $10,000 | General Manager | Default flow |
+| Purchase Request | ≤ $10,000 | General Manager | Default flow — no self-approval at any amount |
 | Purchase Request | $10,001 – $50,000 | GM + Director | 2-level |
 | Purchase Request | > $50,000 | GM + Director + Board | Not in prototype scope |
 | Purchase Order | Any amount | Auto after PR approved | No separate PO approval in prototype |
@@ -46,6 +44,8 @@ Single source of truth for all financial approval limits. All amounts in USD.
 
 For the v2 static prototype, the following simplifications apply (to reduce mock data complexity):
 
+- **"Director" is not a separate role.** There is no Director portal among the 12 roles. Any "Director" approval level above is performed from the General Manager portal (`gmPortal`) as a second, separately recorded sign-off with `approvalLevel: "DIRECTOR"` in the audit trail. The 4-signature block's "approving director" line is filled from this sign-off.
+
 - Quotations always route through SM approval regardless of amount.
 - PRs always route through GM approval regardless of amount.
 - PVs always route through CA approval regardless of amount.
@@ -61,9 +61,11 @@ Every event below must generate a notification entry in the receiving role's not
 
 | Event | Sender Role | Receiver Role(s) | Khmer Message Template |
 |---|---|---|---|
-| Quotation submitted for approval | SE | SM | "ការដោះស្រាយ {QT-ID} ត្រូវការការអនុម័ត" |
-| Quotation approved | SM | SE | "ការដោះស្រាយ {QT-ID} ត្រូវបានអនុម័ត" |
-| Quotation rejected | SM | SE | "ការដោះស្រាយ {QT-ID} ត្រូវបានបដិសេធ: {reason}" |
+| Quotation submitted for approval | SE | SM | "សម្រង់តម្លៃ {QT-ID} ត្រូវការការអនុម័ត" |
+| Quotation approved | SM | SE | "សម្រង់តម្លៃ {QT-ID} ត្រូវបានអនុម័ត" |
+| Quotation rejected | SM | SE | "សម្រង់តម្លៃ {QT-ID} ត្រូវបានបដិសេធ: {reason}" |
+| Quotation accepted by customer | Customer | SE, SM | "អតិថិជនបានយល់ព្រមលើសម្រង់តម្លៃ {QT-ID}" |
+| Quotation declined by customer | Customer | SE, SM | "អតិថិជនបានបដិសេធសម្រង់តម្លៃ {QT-ID}" |
 | Invoice created from quotation | SE | SM, CA | "វិក្កយបត្រ {INV-ID} ត្រូវបានបង្កើតពី {QT-ID}" |
 | Invoice overdue | System | SE, SM, CA, APAR | "វិក្កយបត្រ {INV-ID} ហួសកំណត់ +{days} ថ្ងៃ" |
 | Payment received (cash) | CAS | SM, SE, CA | "ការទូទាត់ ${amount} ទទួលបានសម្រាប់ {INV-ID}" |
@@ -83,10 +85,10 @@ Every event below must generate a notification entry in the receiving role's not
 | Delivery received (GRN created) | WM/WS | PM, APAR | "ការទទួលទំនិញ {GRN-ID} ត្រូវបានកត់ត្រា" |
 | Partial delivery received | WM/WS | PM, APAR | "ការទទួលទំនិញ {GRN-ID} មិនគ្រប់ចំនួន" |
 | Vendor invoice (bill) submitted | Supplier | APAR, PM | "វិក្កយបត្ររបស់អ្នកផ្គត់ផ្គង់ {BILL-ID} ត្រូវបានដាក់ស្នើ" |
-| 3-Way Match successful | System/APAR | CA, PM | "ការផ្គូផ្គង 3-ផ្នែក {PO-ID} ជោគជ័យ — គ្រប់ការទូទាត់" |
-| 3-Way Match failed (dispute) | System/APAR | PM, WM | "ការផ្គូផ្គង 3-ផ្នែក {PO-ID} មានបញ្ហា — ទាមទារការដោះស្រាយ" |
-| Payment Voucher submitted | APAR | CA | "ប័ណ្ណទូទាត់ {PV-ID} ត្រូវការការអនុម័ត" |
-| Payment Voucher approved | CA | APAR | "ប័ណ្ណទូទាត់ {PV-ID} ត្រូវបានអនុម័ត — ដំណើរការទូទាត់" |
+| 3-Way Match successful | System/APAR | CA, PM | "ការផ្គូផ្គងឯកសារ 3 {PO-ID} ជោគជ័យ — គ្រប់ការទូទាត់" |
+| 3-Way Match failed (dispute) | System/APAR | PM, WM | "ការផ្គូផ្គងឯកសារ 3 {PO-ID} មានបញ្ហា — ទាមទារការដោះស្រាយ" |
+| Payment Voucher submitted | APAR | CA | "ប័ណ្ណចំណាយ {PV-ID} ត្រូវការការអនុម័ត" |
+| Payment Voucher approved | CA | APAR | "ប័ណ្ណចំណាយ {PV-ID} ត្រូវបានអនុម័ត — ដំណើរការទូទាត់" |
 | Payment sent to supplier | APAR | PM, CA | "ការទូទាត់ ${amount} ផ្ញើជូន {Supplier Name}" |
 
 ### B3. Inventory Notifications
@@ -119,7 +121,7 @@ Each notification stored in mock data:
   type: "APPROVAL_REQUIRED",     // APPROVAL_REQUIRED | APPROVED | REJECTED | INFO | WARNING | ALERT
   entityType: "QUOTATION",       // entity type
   entityId: "QT-2026-0023",      // entity reference
-  message: "ការដោះស្រាយ QT-2026-0023 ត្រូវការការអនុម័ត",
+  message: "សម្រង់តម្លៃ QT-2026-0023 ត្រូវការការអនុម័ត",
   triggeredBy: "se_01",
   triggeredByName: "ស្រីនាថ ចន្ទបូ",
   triggeredAt: "2026-09-20T09:15:00",

@@ -12,7 +12,9 @@ This document maps every workflow that crosses a role boundary, defining the exa
 ## Workflow 1: Quote-to-Cash (Q2C)
 
 ### Roles Involved
-Sales Executive (SE) → Sales Manager (SM) → Cashier/POS (CAS) → Chief Accountant (CA) → AP/AR Accountant (APAR)
+Sales Executive (SE) → Sales Manager (SM) → Customer (portal) → AP/AR Accountant (APAR) → Chief Accountant (CA)
+
+**Who records the payment:** B2B invoices on credit terms are paid by bank transfer or KHQR and recorded by **AP/AR** as a receipt (`10-apar-accountant/receipts/`). The **Cashier** records only walk-in retail sales at the POS terminal (`05-cashier-pos/`), which do not go through quotation approval. Wherever "CAS" appears in the state machine below for B2B invoices, read "APAR".
 
 ### State Machine
 
@@ -24,6 +26,12 @@ Sales Executive (SE) → Sales Manager (SM) → Cashier/POS (CAS) → Chief Acco
   SM receives notification: "New quotation #Q-XXXX requires approval"
   ↓ SM approves
 [APPROVED]
+  SE sends quotation to customer (Customer Portal)
+  ↓
+[SENT_TO_CUSTOMER]
+  Customer accepts in portal (or SE records acceptance for walk-in / phone customers)
+  ↓
+[ACCEPTED_BY_CUSTOMER]
   SE converts quotation → Invoice
   ↓
 [INVOICE_ISSUED]
@@ -48,6 +56,7 @@ Sales Executive (SE) → Sales Manager (SM) → Cashier/POS (CAS) → Chief Acco
 |---|---|---|---|
 | SM rejects quotation | SM | Reject with reason | → [REJECTED], SE notified |
 | SE revises rejected quotation | SE | Edit + resubmit | → [PENDING_APPROVAL] again |
+| Customer declines quotation | Customer | Decline in portal | → [DECLINED_BY_CUSTOMER], SE + SM notified |
 | CA disputes receipt | CA | Flag discrepancy | → [DISPUTED], CAS + SE notified |
 
 ### Data Passed at Each Handoff
@@ -64,8 +73,7 @@ Sales Executive (SE) → Sales Manager (SM) → Cashier/POS (CAS) → Chief Acco
 
 | Quotation Grand Total | Required Approver |
 |---|---|
-| < $500 | Sales Executive self-approve |
-| $500 – $5,000 | Sales Manager |
+| ≤ $5,000 | Sales Manager (no self-approval at any amount) |
 | $5,001 – $20,000 | Sales Manager + General Manager co-sign |
 | > $20,000 | Sales Manager + General Manager + Director |
 
@@ -230,30 +238,18 @@ All Roles → [HR Staff Role — see `17-missing-roles-and-external-portals.md`]
 
 ## Workflow State Glossary
 
-| State Code | Khmer Label | Meaning |
-|---|---|---|
-| DRAFT | ព្រាង | Document created, not yet submitted |
-| PENDING_APPROVAL | រង់ចាំអនុម័ត | Submitted, waiting for approver action |
-| APPROVED | បានអនុម័ត | Approved by authorized role |
-| REJECTED | បានបដិសេធ | Rejected by approver — reason required |
-| IN_PROGRESS | កំពុងដំណើរការ | Active operational state |
-| AWAITING_DELIVERY | រង់ចាំទំនិញ | PO confirmed, goods not yet received |
-| DELIVERED | បានទទួល | Goods physically received at warehouse |
-| MATCHED | បានផ្គូផ្គង | 3-Way Match confirmed |
-| DISPUTED | មានជម្លោះ | Mismatch detected — on hold |
-| PAID | បានទូទាត់ | Payment sent |
-| CLOSED | បានបិទ | Fully completed, no further action needed |
-| CANCELLED | បានលុបចោល | Cancelled — cannot be reopened |
-| OVERDUE | ហួសកំណត | Past due date without completion |
+Khmer labels and badge colours for every state code live in **one place only**: `19-khmer-glossary.md` §2. Do not repeat them here or in any other doc — that is how they drifted before.
 
 ---
 
 ## Notes for UI Implementation
 
-1. **Status badges:** Each state maps to a specific badge color — green (APPROVED, PAID, CLOSED), yellow (PENDING_APPROVAL, IN_PROGRESS), orange (AWAITING_DELIVERY, MATCHED), red (REJECTED, DISPUTED, OVERDUE, CANCELLED). Exact CSS class mapping in `00-MASTER-OVERVIEW.md §3.4`.
+1. **Status badges:** Label and colour come from `19-khmer-glossary.md` §2. In code, this becomes a single shared `STATUS_META` map (see `20-shared-mock-data-architecture.md`), never per-page badge markup.
 
 2. **Notification triggers:** Every state transition triggers a notification. See `16-authority-and-notification-matrix.md` for the full matrix.
 
 3. **No state skipping:** The UI must enforce valid transitions. A DRAFT document cannot jump to PAID. Invalid transitions are blocked in JS, not just hidden.
 
 4. **Audit trail:** Every state change records (changedBy, changedAt, previousState, newState, reason?). This is part of the mock data structure defined in `14-data-dictionary-and-permissions.md`.
+
+5. **Workflows only connect through the shared store.** Today each role reads its own `data.js`, so a hand-off in this document (e.g. SE submits → SM sees it) cannot happen in the prototype. `20-shared-mock-data-architecture.md` is the prerequisite for every workflow above.

@@ -24,11 +24,11 @@ Defines the formal approval workflow for every document type that requires autho
 
 ### States
 ```
-DRAFT → PENDING_APPROVAL → APPROVED → CONVERTED_TO_INVOICE
-                        ↓
-                     REJECTED → (back to DRAFT via revision)
+DRAFT → PENDING_APPROVAL → APPROVED → SENT_TO_CUSTOMER → ACCEPTED_BY_CUSTOMER → CONVERTED_TO_INVOICE
+                        ↓                               ↓
+                     REJECTED → (back to DRAFT)    DECLINED_BY_CUSTOMER
 DRAFT → CANCELLED (SE cancels before submission)
-APPROVED → EXPIRED (validity date passed, not yet converted)
+APPROVED / SENT_TO_CUSTOMER → EXPIRED (validity date passed, not yet accepted)
 ```
 
 ### Transition Table
@@ -41,8 +41,11 @@ APPROVED → EXPIRED (validity date passed, not yet converted)
 | PENDING_APPROVAL | REJECTED | SM | Reject | rejectionReason (required) |
 | REJECTED | DRAFT | SE | Revise | SE edits document (preserves quotationId) |
 | DRAFT | CANCELLED | SE | Cancel | cancellationReason |
-| APPROVED | CONVERTED_TO_INVOICE | SE | Convert to Invoice | Creates new Invoice entity |
-| APPROVED | EXPIRED | System (mock: time check) | Validity date passed | — |
+| APPROVED | SENT_TO_CUSTOMER | SE | Send to customer | Customer must exist in Customer Portal data |
+| SENT_TO_CUSTOMER | ACCEPTED_BY_CUSTOMER | Customer (portal) or SE (on behalf of walk-in / phone customer) | Accept | acceptedAt, acceptedVia (PORTAL / SE_RECORDED) |
+| SENT_TO_CUSTOMER | DECLINED_BY_CUSTOMER | Customer (portal) or SE | Decline | declineReason (optional) |
+| ACCEPTED_BY_CUSTOMER | CONVERTED_TO_INVOICE | SE | Convert to Invoice | Creates new Invoice entity |
+| APPROVED / SENT_TO_CUSTOMER | EXPIRED | System (mock: compare to demo "today") | Validity date passed | — |
 
 ### UI State Rules
 
@@ -51,7 +54,10 @@ APPROVED → EXPIRED (validity date passed, not yet converted)
 | DRAFT | Edit + Submit + Cancel buttons | — | Read-only |
 | PENDING_APPROVAL | View only, no edit | Approve + Reject buttons | Read-only |
 | REJECTED | Edit + Resubmit buttons, rejection reason shown | View reason only | Read-only |
-| APPROVED | "Convert to Invoice" button | View only | Read-only |
+| APPROVED | "Send to customer" button | View only | Read-only |
+| SENT_TO_CUSTOMER | "Record acceptance" / "Record decline" buttons | View only | Customer sees Accept / Decline |
+| ACCEPTED_BY_CUSTOMER | "Convert to Invoice" button | View only | Read-only |
+| DECLINED_BY_CUSTOMER | View only, grey badge, may duplicate as new DRAFT | View only | Read-only |
 | CONVERTED_TO_INVOICE | Link to Invoice | Link to Invoice | Link to Invoice |
 | CANCELLED | View only, red badge | View only | View only |
 | EXPIRED | View only, orange badge | View only | View only |
