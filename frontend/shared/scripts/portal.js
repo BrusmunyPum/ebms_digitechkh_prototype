@@ -215,13 +215,13 @@ const PORTAL_CONFIGS = {
         userInitials: 'ទវ',
         userName: 'ទៀង វណ្ណារ៉ា',
         userRole: 'ប្រធានគណនេយ្យ និងហិរញ្ញវត្ថុ',
-        policyNote: 'សិទ្ធិផ្តាច់មុខលើតារាងគណនី (COA), ចាក់សោរគ្រាហិរញ្ញវត្ថុ, អនុម័តប័ណ្ណចំណាយ > $500, និងរបាយការណ៍ពន្ធដារ GDT ផ្លូវការ។',
+        policyNote: 'សិទ្ធិផ្តាច់មុខលើតារាងគណនី ការចុះបញ្ជីទិនានុប្បវត្តិ ការបិទគ្រាហិរញ្ញវត្ថុ និងរបាយការណ៍ពន្ធដារផ្លូវការ។',
         nav: [
             { id: 'dashboard', label: 'ផ្ទាំងគ្រប់គ្រង', icon: 'mdi:chart-pie', href: 'dashboard.html' },
-            { id: 'ledger', label: 'សៀវភៅធំ & COA', icon: 'mdi:book-open-outline', href: 'ledger/ledger.html' },
-            { id: 'approvals', label: 'មជ្ឈមណ្ឌលអនុម័ត', icon: 'mdi:stamper', href: 'approvals/approvals.html', badge: true },
+            { id: 'ledger', label: 'សៀវភៅធំ និងតារាងគណនី', icon: 'mdi:book-open-outline', href: 'ledger/ledger.html' },
+            { id: 'approvals', label: 'ការងាររង់ចាំសម្រេច', icon: 'mdi:stamper', href: 'approvals/approvals.html', badge: true },
             { id: 'financial-statements', label: 'របាយការណ៍ហិរញ្ញវត្ថុ', icon: 'mdi:finance', href: 'financial-statements/financial-statements.html' },
-            { id: 'tax-reports', label: 'របាយការណ៍ពន្ធដារ GDT', icon: 'mdi:file-percent-outline', href: 'tax-reports/tax-reports.html' }
+            { id: 'tax-reports', label: 'របាយការណ៍ពន្ធដារ', icon: 'mdi:file-percent-outline', href: 'tax-reports/tax-reports.html' }
         ]
     },
     aparPortal: {

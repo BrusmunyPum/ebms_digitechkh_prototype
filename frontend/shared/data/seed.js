@@ -55,21 +55,23 @@ function bmsBuildSeed(today) {
     ];
 
     /* ===== ទំនិញ — តម្លៃលក់តាមកម្រិតអតិថិជន (ស្តង់ដារលេខ 10) ===== */
-    const p = (sku, name, unit, category, stock, retail, wholesale, vip) =>
-        ({ sku, name, unit, category, stock, price: { retail, wholesale, vip } });
+    /* ថ្លៃដើមទិញ (cost) ប្រើសម្រាប់កត់ត្រាថ្លៃដើមទំនិញលក់ក្នុងសៀវភៅធំ។
+       វាលនេះមិនស្ថិតក្នុងបញ្ជីអនុញ្ញាតរបស់ច្រកលក់ និងច្រកឃ្លាំងទេ (ឯកសារ 14) */
+    const p = (sku, name, unit, category, stock, retail, wholesale, vip, cost) =>
+        ({ sku, name, unit, category, stock, cost, price: { retail, wholesale, vip } });
     const products = [
-        p('DEL-OPT-7010', 'កុំព្យូទ័រ Dell OptiPlex 7010', 'ឈុត', 'computer', 24, 720, 650, 610),
-        p('MON-DEL-24', 'អេក្រង់ Dell 24 អ៊ីញ S2421HN', 'គ្រឿង', 'monitor', 58, 165, 140, 132),
-        p('PRN-CAN-2900', 'ម៉ាស៊ីនបោះពុម្ព Canon Laser LBP2900', 'គ្រឿង', 'printer', 17, 185, 160, 152),
-        p('KEY-KEY-K8', 'ក្តារចុចមេកានិច Keychron K8', 'គ្រឿង', 'accessory', 92, 95, 82, 76),
-        p('CHR-ERG-01', 'កៅអីការិយាល័យ Ergonomic', 'គ្រឿង', 'furniture', 36, 240, 210, 198),
-        p('UPS-APC-650', 'ម៉ាស៊ីនបម្រុងថាមពល APC 650VA', 'គ្រឿង', 'accessory', 45, 78, 68, 64),
-        p('NAS-SYN-220', 'ម៉ាស៊ីនរក្សាទុកទិន្នន័យ Synology DS220', 'ឈុត', 'computer', 9, 460, 415, 392),
-        p('RTR-TPL-ER605', 'រ៉ោតទ័រ TP-Link Omada ER605', 'គ្រឿង', 'network', 31, 95, 82, 76),
-        p('SWT-TPL-SG108', 'ស្វីត TP-Link 8 ច្រក SG108', 'គ្រឿង', 'network', 64, 32, 27, 25),
-        p('SSD-SAM-1TB', 'ថាសរឹង Samsung SSD 1TB', 'គ្រឿង', 'accessory', 40, 115, 102, 96),
-        p('CAM-HIK-2MP', 'កាមេរ៉ាសុវត្ថិភាព Hikvision 2MP', 'គ្រឿង', 'network', 27, 58, 50, 46),
-        p('LAP-LEN-T14', 'កុំព្យូទ័រយួរដៃ Lenovo ThinkPad T14', 'ឈុត', 'computer', 12, 980, 900, 860)
+        p('DEL-OPT-7010', 'កុំព្យូទ័រ Dell OptiPlex 7010', 'ឈុត', 'computer', 24, 720, 650, 610, 455),
+        p('MON-DEL-24', 'អេក្រង់ Dell 24 អ៊ីញ S2421HN', 'គ្រឿង', 'monitor', 58, 165, 140, 132, 98),
+        p('PRN-CAN-2900', 'ម៉ាស៊ីនបោះពុម្ព Canon Laser LBP2900', 'គ្រឿង', 'printer', 17, 185, 160, 152, 112),
+        p('KEY-KEY-K8', 'ក្តារចុចមេកានិច Keychron K8', 'គ្រឿង', 'accessory', 92, 95, 82, 76, 56),
+        p('CHR-ERG-01', 'កៅអីការិយាល័យ Ergonomic', 'គ្រឿង', 'furniture', 36, 240, 210, 198, 148),
+        p('UPS-APC-650', 'ម៉ាស៊ីនបម្រុងថាមពល APC 650VA', 'គ្រឿង', 'accessory', 45, 78, 68, 64, 47),
+        p('NAS-SYN-220', 'ម៉ាស៊ីនរក្សាទុកទិន្នន័យ Synology DS220', 'ឈុត', 'computer', 9, 460, 415, 392, 292),
+        p('RTR-TPL-ER605', 'រ៉ោតទ័រ TP-Link Omada ER605', 'គ្រឿង', 'network', 31, 95, 82, 76, 57),
+        p('SWT-TPL-SG108', 'ស្វីត TP-Link 8 ច្រក SG108', 'គ្រឿង', 'network', 64, 32, 27, 25, 18),
+        p('SSD-SAM-1TB', 'ថាសរឹង Samsung SSD 1TB', 'គ្រឿង', 'accessory', 40, 115, 102, 96, 71),
+        p('CAM-HIK-2MP', 'កាមេរ៉ាសុវត្ថិភាព Hikvision 2MP', 'គ្រឿង', 'network', 27, 58, 50, 46, 34),
+        p('LAP-LEN-T14', 'កុំព្យូទ័រយួរដៃ Lenovo ThinkPad T14', 'ឈុត', 'computer', 12, 980, 900, 860, 640)
     ];
 
     /* ===== ជំនួយបង្កើតប្រវត្តិឯកសារ (auditTrail) ===== */
@@ -375,6 +377,19 @@ function bmsBuildSeed(today) {
         if (down > 0) lines.push(line('1121', down, 0, 'ប្រាក់កក់'));
         lines.push(line('4111', 0, taxBase, inv.id), line('2121', 0, vatAmount, inv.id));
         rawJournals.push({ date: inv.date, description: `ចេញវិក្កយបត្រ ${inv.id}`, source: 'INVOICE', reference: inv.id, status: 'POSTED', by: inv.repId, lines });
+
+        // ថ្លៃដើមទំនិញលក់ — ដកស្តុកចេញ បញ្ចូលទៅចំណាយ ដើម្បីឱ្យចំណេញដុលមានន័យពិត
+        const cogs = r2(inv.items.reduce((sum, x) => {
+            const prod = products.find(pr => pr.sku === x.sku);
+            return sum + (prod && prod.cost ? prod.cost * x.qty : 0);
+        }, 0));
+        if (cogs > 0) {
+            rawJournals.push({
+                date: inv.date, description: `ថ្លៃដើមទំនិញលក់ ${inv.id}`, source: 'INVOICE',
+                reference: inv.id, status: 'POSTED', by: inv.repId,
+                lines: [line('5111', cogs, 0, inv.id), line('1211', 0, cogs, inv.id)]
+            });
+        }
     });
 
     /* បង្កាន់ដៃទទួលប្រាក់ — មួយសម្រាប់ការទូទាត់នីមួយៗ */

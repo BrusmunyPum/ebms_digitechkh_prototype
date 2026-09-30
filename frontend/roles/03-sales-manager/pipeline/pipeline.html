@@ -165,13 +165,21 @@
         function cardActionMenu(deal) {
             const menuId = 'dealMenu-' + deal.id;
             const stage = deal.stage;
-            const moves = PIPELINE_STAGES.filter(s => s.id !== stage).map(s => `
+            // ដំណាក់កាលចុងក្រោយ (បិទជោគជ័យ / បាត់បង់) មិនអាចផ្លាស់ទីទៀតបានទេ — លាក់ជម្រើស មិនត្រឹមតែធ្វើឲ្យប្រផេះ
+            const moves = deal.locked ? '' : PIPELINE_STAGES.filter(s => s.id !== stage).map(s => `
                 <button onclick="moveDeal('${deal.id}','${s.id}')" class="sm-row-menu-item w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition text-left">
                     <span class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color:${s.accent}1a;color:${s.accent}">
                         <i class="fas fa-arrow-right text-[11px]"></i>
                     </span>
                     ផ្លាស់ទៅ ${s.label}
                 </button>`).join('');
+
+            const lockedNote = deal.locked
+                ? `<div class="px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-2.5">
+                       <span class="w-7 h-7 rounded-lg bg-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0"><i class="fas fa-lock text-[11px]"></i></span>
+                       <span class="sm-td-sub text-slate-500">ឱកាសលក់បានបិទរួច មិនអាចផ្លាស់ទីទៀតបានទេ</span>
+                   </div>`
+                : '';
 
             const quoteLink = deal.quoteId ? `
                 <a href="../approvals/view-approval.html?type=quote&id=${deal.quoteId}" class="sm-row-menu-item flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition">
@@ -180,7 +188,7 @@
                 </a>` : '';
 
             return `
-                <button onclick="toggleRowActionMenu(event, '${menuId}')" title="សកម្មភាព"
+                <button onclick="toggleRowActionMenu(event, '${menuId}')" aria-label="សកម្មភាព"
                     class="w-8 h-8 rounded-lg bg-white hover:bg-slate-100 text-slate-400 hover:text-slate-700 border border-slate-200/70 inline-flex items-center justify-center transition flex-shrink-0">
                     <i class="fas fa-ellipsis-vertical text-xs"></i>
                 </button>
@@ -191,16 +199,37 @@
                     </div>
                     ${quoteLink}
                     ${moves}
+                    ${lockedNote}
                 </div>`;
+        }
+
+        /* ចំនួនថ្ងៃក្នុងដំណាក់កាល៖ ប្រផេះក្រោម 7 ថ្ងៃ លឿងពី 7 ដល់ 14 ក្រហមលើសពី 14 (ឯកសារ 03 ផ្នែក 3.3 ឃ) */
+        function stageAgeChip(deal) {
+            if (deal.locked) {
+                return `<span class="sm-badge inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                            <i class="fas fa-lock text-[9px]"></i> បានបិទ
+                        </span>`;
+            }
+            const tone = deal.daysInStage > 14 ? 'bg-rose-50 text-rose-700 font-semibold'
+                : deal.daysInStage >= 7 ? 'bg-amber-50 text-amber-700 font-semibold'
+                : 'bg-slate-100 text-slate-500';
+            return `<span class="sm-badge inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${tone}">
+                        <i class="fas fa-clock text-[9px]"></i> ${deal.daysInStage} ថ្ងៃ
+                    </span>`;
         }
 
         function dealCard(deal) {
             const cust = getCustomer(deal.customerId);
             const rep = getRep(deal.repId);
+            const shell = deal.locked
+                ? (deal.stage === 'won' ? 'bg-emerald-50/50 border-emerald-200' : 'bg-rose-50/40 border-rose-200')
+                : deal.stuck ? 'bg-white border-slate-200 border-l-4 border-l-rose-500' : 'bg-white border-slate-200';
+            const drag = deal.locked
+                ? 'data-draggable="false"'
+                : `draggable="true" ondragstart="onDragStart(event,'${deal.id}')" ondragend="onDragEnd(event)"`;
             return `
-                <div class="kanban-card bg-white rounded-xl p-3 border border-slate-200 shadow-sm hover:shadow-md transition cursor-grab active:cursor-grabbing"
-                     draggable="true" data-deal="${deal.id}"
-                     ondragstart="onDragStart(event,'${deal.id}')" ondragend="onDragEnd(event)">
+                <div class="kanban-card ${shell} rounded-xl p-3 border shadow-sm hover:shadow-md transition ${deal.locked ? '' : 'cursor-grab active:cursor-grabbing'}"
+                     data-deal="${deal.id}" ${drag}>
                     <div class="flex items-start justify-between gap-2">
                         <div class="min-w-0">
                             <p class="sm-td text-slate-700 truncate">${cust.name}</p>
@@ -215,7 +244,11 @@
                             <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-[9px] font-semibold">${rep.initials}</span>
                             ${rep.name}
                         </span>
+                        ${stageAgeChip(deal)}
+                    </div>
+                    <div class="flex items-center justify-between gap-2 mt-2">
                         <span class="sm-badge px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">${CATEGORIES[deal.category]}</span>
+                        ${deal.stuck ? '<span class="sm-badge text-rose-600 font-semibold">ជាប់គាំង</span>' : ''}
                     </div>
                 </div>`;
         }

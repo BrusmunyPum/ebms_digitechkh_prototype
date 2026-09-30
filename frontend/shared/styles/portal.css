@@ -107,6 +107,62 @@
     font-weight: 600 !important;
 }
 
+/* ===== ធាតុរចនាបន្ថែម — ប្រើដើម្បីបំបែកជាន់ថ្នាក់ កុំឱ្យគ្រប់ប្លុកមើលទៅដូចគ្នាទាំងអស់ ===== */
+
+/* តួលេខហិរញ្ញវត្ថុ៖ ទទឹងតួអក្សរស្មើគ្នា ដូច្នេះលេខតម្រឹមជាជួរត្រង់ */
+[id$="Portal"] .sm-figure {
+    font-variant-numeric: tabular-nums !important;
+    font-feature-settings: "tnum" 1 !important;
+    letter-spacing: -0.01em !important;
+}
+
+/* ស្លាកផ្នែកតូច — ជំនួសចំណងជើងកាតធម្មតា */
+[id$="Portal"] .sm-eyebrow {
+    font-size: 12.5px !important;
+    line-height: 1.4 !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase;
+}
+
+/* តួលេខធំបំផុតនៅលើផ្ទាំង — ធំជាង sm-kpi-value ដើម្បីបង្កើតចំណុចផ្តោត */
+[id$="Portal"] .sm-hero-value {
+    font-size: 40px !important;
+    line-height: 1.1 !important;
+    font-weight: 700 !important;
+    font-variant-numeric: tabular-nums !important;
+    letter-spacing: -0.02em !important;
+}
+
+@media (max-width: 640px) {
+    [id$="Portal"] .sm-hero-value { font-size: 30px !important; }
+}
+
+/* របារវឌ្ឍនភាពស្តើង — ប្រើក្នុងជួរបញ្ជី មិនមែនជាកាតដាច់ដោយឡែក */
+[id$="Portal"] .sm-rail {
+    height: 4px;
+    border-radius: 999px;
+    background-color: rgb(226 232 240);
+    overflow: hidden;
+}
+
+[id$="Portal"] .sm-rail > span {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    transition: width .35s ease;
+}
+
+/* ជួរបញ្ជីការងារ — បន្ទាត់ពណ៌ខាងឆ្វេងជំនួសផ្ទៃពណ៌ពេញ */
+[id$="Portal"] .sm-worklist-row {
+    border-left: 3px solid transparent;
+    transition: background-color .15s ease, border-color .15s ease;
+}
+
+[id$="Portal"] .sm-worklist-row:hover {
+    background-color: rgb(248 250 252);
+}
+
 [id$="Portal"] .sm-nav-label {
     font-size: 16px !important;
     line-height: 1.5 !important;

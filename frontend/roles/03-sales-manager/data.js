@@ -101,6 +101,80 @@ function totalPending() {
     return pendingQuotes().length + pendingVoids().length + pendingCredits().length;
 }
 
+/* ===== ផ្ទាំងគ្រប់គ្រង — តំបន់សកម្មភាព (ឯកសារ 03 ផ្នែក 3.1) =====
+   ផ្ទាំងគ្រប់គ្រងមិនមានតម្រងកាលបរិច្ឆេទទេ ដូច្នេះលេខទាំងអស់គិតលើខែបច្ចុប្បន្ន
+   រាប់ពីថ្ងៃទី 1 រហូតដល់ថ្ងៃនេះ (ស្តង់ដារឯកសារ 00 ផ្នែក 3.2)។ */
+
+function monthRange(monthsBack) {
+    const back = monthsBack || 0;
+    const start = new Date(BMS_TODAY.getFullYear(), BMS_TODAY.getMonth() - back, 1);
+    const end = back === 0
+        ? new Date(BMS_TODAY)
+        : new Date(BMS_TODAY.getFullYear(), BMS_TODAY.getMonth() - back + 1, 0);
+    return { start, end };
+}
+
+/* សំណើបញ្ចុះតម្លៃបន្ទាន់ — តម្រៀបតាមភាគរយបញ្ចុះតម្លៃធំមុន ព្រោះហានិភ័យខ្ពស់ជាង */
+function urgentApprovals(limit) {
+    return pendingQuotes()
+        .map(q => {
+            const t = docTotals(q);
+            return {
+                id: q.id,
+                quote: q,
+                rep: getRep(q.repId),
+                customer: getCustomer(q.customerId),
+                discountPercent: q.discountPercent,
+                subtotal: t.subtotal,
+                afterDiscount: t.taxBase,
+                discountAmount: t.discountAmount,
+                grandTotal: t.grandTotal,
+                note: q.note || '',
+                submittedAt: q.date,
+                ageHours: Math.max(Math.round((BMS_TODAY - new Date(q.date)) / 3600000), 0),
+                needsGm: requiredApprovalLevels(t.grandTotal).includes('GM')
+            };
+        })
+        .sort((a, b) => b.discountPercent - a.discountPercent)
+        .slice(0, limit || 3);
+}
+
+/* អតិថិជនជិតហួសដែនឥណទាន — បង្ហាញតែពី 80% ឡើងទៅ */
+function creditWatchList(threshold) {
+    const min = threshold == null ? 80 : threshold;
+    return listCustomers()
+        .filter(c => c.creditLimit > 0)
+        .map(c => {
+            const used = customerDebt(c.id);
+            return {
+                ...c,
+                used,
+                percent: (used / c.creditLimit) * 100,
+                rep: getRep(c.repId)
+            };
+        })
+        .filter(c => c.percent >= min)
+        .sort((a, b) => b.percent - a.percent);
+}
+
+/* ចំណាត់ថ្នាក់ក្រុម — ចំណូលខែនេះ ធៀបនឹងខែមុន ដើម្បីបង្ហាញទិសដៅ */
+function repLeaderboard() {
+    const thisMonth = repPerformance(monthRange(0));
+    const lastMonth = repPerformance(monthRange(1));
+    return thisMonth.map((rep, i) => {
+        const prev = lastMonth.find(r => r.id === rep.id);
+        const prevRevenue = prev ? prev.revenue : 0;
+        const diff = rep.revenue - prevRevenue;
+        return {
+            ...rep,
+            rank: i + 1,
+            prevRevenue,
+            trend: Math.abs(diff) < 1 ? 'FLAT' : (diff > 0 ? 'UP' : 'DOWN'),
+            trendPercent: prevRevenue ? (diff / prevRevenue) * 100 : (rep.revenue ? 100 : 0)
+        };
+    });
+}
+
 /* ===== សូចនាករផ្ទាំងគ្រប់គ្រង ===== */
 
 function invoicesInRange(range) {
@@ -226,8 +300,23 @@ function dealValue(deal) {
     return deal.value;
 }
 
+/* ដំណាក់កាលចុងក្រោយ — ឱកាសលក់ក្នុងដំណាក់កាលទាំងនេះមិនអាចផ្លាស់ទីទៀតបានទេ */
+const TERMINAL_STAGES = ['won', 'lost'];
+
+/* ចំនួនថ្ងៃដែលនៅដំណាក់កាលបច្ចុប្បន្ន — រាប់ពីពេលផ្លាស់ចូលចុងក្រោយ (បើគ្មាន យកថ្ងៃបង្កើត) */
 function listDeals() {
-    return BMS_STORE.list('pipelineDeals').map(d => ({ ...d, value: dealValue(d) }));
+    return BMS_STORE.list('pipelineDeals').map(d => {
+        const since = d.stageChangedAt || d.date;
+        const daysInStage = Math.max(daysBetween(since.slice(0, 10)), 0);
+        const locked = TERMINAL_STAGES.includes(d.stage);
+        return {
+            ...d,
+            value: dealValue(d),
+            daysInStage,
+            locked,
+            stuck: !locked && daysInStage > 14
+        };
+    });
 }
 
 function getDeal(id) {
@@ -333,19 +422,15 @@ function commissionRows(range) {
 
 function quoteStatusBreakdown(range) {
     const qs = quotesInRange(range);
-    const count = s => qs.filter(q => q.status === s).length;
-    return [
-        { label: statusLabel('DRAFT'), value: count('DRAFT'), color: 'text-slate-600' },
-        { label: statusLabel('PENDING_APPROVAL'), value: count('PENDING_APPROVAL'), color: 'text-amber-600' },
-        { label: statusLabel('APPROVED'), value: count('APPROVED'), color: 'text-blue-600' },
-        { label: statusLabel('SENT_TO_CUSTOMER'), value: count('SENT_TO_CUSTOMER'), color: 'text-sky-600' },
-        { label: statusLabel('ACCEPTED_BY_CUSTOMER'), value: count('ACCEPTED_BY_CUSTOMER'), color: 'text-emerald-600' },
-        { label: statusLabel('CONVERTED_TO_INVOICE'), value: count('CONVERTED_TO_INVOICE'), color: 'text-indigo-600' },
-        { label: statusLabel('REJECTED'), value: count('REJECTED'), color: 'text-rose-600' },
-        { label: statusLabel('DECLINED_BY_CUSTOMER'), value: count('DECLINED_BY_CUSTOMER'), color: 'text-slate-600' },
-        { label: statusLabel('EXPIRED'), value: count('EXPIRED'), color: 'text-slate-500' },
-        { label: statusLabel('CANCELLED'), value: count('CANCELLED'), color: 'text-slate-500' }
-    ];
+    const codes = ['DRAFT', 'PENDING_APPROVAL', 'APPROVED', 'SENT_TO_CUSTOMER', 'ACCEPTED_BY_CUSTOMER',
+        'CONVERTED_TO_INVOICE', 'REJECTED', 'DECLINED_BY_CUSTOMER', 'EXPIRED', 'CANCELLED'];
+    // ឈ្មោះ និងពណ៌មកពី STATUS_META តែមួយកន្លែង ដូច្នេះវាមិនអាចខុសពីទំព័រផ្សេងបានឡើយ
+    return codes.map(code => ({
+        code,
+        label: statusLabel(code),
+        badge: statusBadge(code),
+        value: qs.filter(q => q.status === code).length
+    }));
 }
 
 /* ចំនួនសម្រេចរបស់អ្នកគ្រប់គ្រងផ្នែកលក់ គណនាពីប្រវត្តិឯកសារ (មិនមាន store ដាច់ដោយឡែក) */

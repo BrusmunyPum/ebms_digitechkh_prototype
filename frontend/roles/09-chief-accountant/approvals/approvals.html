@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIGITECHKH - មជ្ឈមណ្ឌលអនុម័តហិរញ្ញវត្ថុ</title>
+    <title>DIGITECHKH - ការងាររង់ចាំសម្រេច</title>
     <link rel="icon" type="image/png" href="../../../shared/assets/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,63 +36,53 @@
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <!-- Content Top Header -->
-        <div id="headerHost" data-title="មជ្ឈមណ្ឌលអនុម័តហិរញ្ញវត្ថុ"
-             data-subtitle="ត្រួតពិនិត្យប័ណ្ណចំណាយទូទាត់ > $500, ការកែតម្រូវទ្វេបញ្ជី, និងលុបបំណុលខូច"></div>
+        <div id="headerHost" data-title="ការងាររង់ចាំសម្រេច"
+             data-subtitle="ទិនានុប្បវត្តិព្រាង និងការទូទាត់ដែលរង់ចាំការផ្ទៀងផ្ទាត់"></div>
 
-        <!-- Main Content -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
 
             <div class="w-full space-y-4">
 
-                <!-- Filter Bar -->
-                <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
-                    <div class="flex flex-wrap items-center gap-3">
-                        <select id="typeFilter" onchange="renderApprovalsTable()" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 outline-none focus:border-primary font-medium cursor-pointer">
-                            <option value="">ប្រភេទសំណើទាំងអស់</option>
-                            <option value="disbursement">ប័ណ្ណចំណាយទូទាត់ (Disbursement)</option>
-                            <option value="adjustment">ការចុះបញ្ជីកែតម្រូវ (Journal Entry)</option>
-                            <option value="writeoff">លុបបំណុលខូច (Write-Off)</option>
-                        </select>
-
-                        <select id="statusFilter" onchange="renderApprovalsTable()" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 outline-none focus:border-primary font-medium cursor-pointer">
-                            <option value="">ស្ថានភាពទាំងអស់</option>
-                            <option value="pending">រង់ចាំការអនុម័ត (Pending)</option>
-                            <option value="approved">បានអនុម័ត (Approved)</option>
-                            <option value="rejected">បានបដិសេធ (Rejected)</option>
-                        </select>
-                    </div>
-
-                    <div class="flex flex-wrap items-center gap-2">
-                        <span class="text-xs text-slate-500">សរុប: <strong id="totalCount" class="text-slate-800">0</strong> សំណើ</span>
-                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
-                        <div class="flex flex-wrap items-center gap-2 no-print">
-                            <span class="px-3.5 py-1.5 rounded-xl bg-purple-50 text-purple-700 font-semibold text-xs border border-purple-200">
-                                <i class="fas fa-signature mr-1"></i> សិទ្ធិត្រួតពិនិត្យហិរញ្ញវត្ថុ
-                            </span>
+                <!-- របារគោលការណ៍ — បង្ហាញជានិច្ច មិនអាចបិទបាន -->
+                <div class="rounded-2xl border border-amber-200 border-l-4 border-l-amber-500 bg-amber-50/70 p-4">
+                    <div class="flex items-start gap-3">
+                        <span class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-circle-info text-sm"></i>
+                        </span>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="sm-card-title text-amber-900">គោលការណ៍ចុះបញ្ជី</h3>
+                            <p class="sm-td-sub text-amber-800 mt-1.5">
+                                ទិនានុប្បវត្តិដែលបានចុះបញ្ជីមិនអាចលុបចោលបានទេ។ ការកែតម្រូវត្រូវធ្វើតាមទិនានុប្បវត្តិបញ្ច្រាស
+                                ហើយរាល់សកម្មភាពត្រូវកត់ត្រាក្នុងកំណត់ហេតុសវនកម្ម។
+                            </p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Table Card -->
+                <!-- ថេប -->
+                <div class="bg-white rounded-2xl p-2 border border-slate-200/80 shadow-sm flex flex-wrap items-center gap-2">
+                    <button id="tabBtn-drafts" onclick="switchWorkTab('drafts')"
+                        class="sm-badge px-5 py-2.5 rounded-xl bg-[#1e3a5f] text-white font-semibold shadow-sm transition">
+                        ទិនានុប្បវត្តិព្រាង (<span id="tabCount-drafts">0</span>)
+                    </button>
+                    <button id="tabBtn-claims" onclick="switchWorkTab('claims')"
+                        class="sm-badge px-5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-medium transition">
+                        ការទូទាត់រង់ចាំផ្ទៀងផ្ទាត់ (<span id="tabCount-claims">0</span>)
+                    </button>
+                    <span class="ml-auto w-px h-6 bg-slate-200 hidden sm:block"></span>
+                    <div class="flex flex-wrap items-center gap-2 no-print">
+                        <span id="headerQueuePill" class="sm-badge hidden sm:inline-flex font-semibold px-3 py-1.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-200"></span>
+                    </div>
+                </div>
+
                 <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-50/70 border-b border-slate-200/70 text-slate-500 font-semibold uppercase tracking-wider text-[11px]">
-                                <tr>
-                                    <th class="py-3 px-4">លេខកូដសំណើ</th>
-                                    <th class="py-3 px-4">បរិយាយសំណើ</th>
-                                    <th class="py-3 px-4">ប្រភេទ</th>
-                                    <th class="py-3 px-4">អ្នកស្នើសុំ</th>
-                                    <th class="py-3 px-4">កាលបរិច្ឆេទ</th>
-                                    <th class="py-3 px-4 text-right">ទឹកប្រាក់សរុប</th>
-                                    <th class="py-3 px-4 text-center">កម្រិតអនុម័ត</th>
-                                    <th class="py-3 px-4 text-center">ស្ថានភាព</th>
-                                    <th class="py-3 px-4 text-center">សកម្មភាព</th>
-                                </tr>
-                            </thead>
-                            <tbody id="approvalsTableBody" class="divide-y divide-slate-100 text-slate-700 font-medium"></tbody>
-                        </table>
+                    <div id="queueList" class="divide-y divide-slate-100"></div>
+                    <div id="queueEmpty" class="hidden py-14 px-6 text-center">
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-circle-check text-2xl"></i>
+                        </div>
+                        <p class="sm-card-title text-slate-700">គ្មានការងាររង់ចាំទេ</p>
+                        <p id="queueEmptyNote" class="sm-card-sub text-slate-500 mt-1"></p>
                     </div>
                 </div>
 
@@ -100,70 +90,128 @@
         </main>
     </div>
 
-    <!-- Scripts -->
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            renderPortalSidebar();
-            renderApprovalsTable();
-        });
+        let activeTab = 'drafts';
 
-        function renderApprovalsTable() {
-            const store = getCAStore();
-            const typeVal = document.getElementById('typeFilter').value;
-            const statusVal = document.getElementById('statusFilter').value;
+        function draftRow(j) {
+            const t = journalTotals(j);
+            const balanced = Math.abs(t.dr - t.cr) < 0.01;
+            return `
+                <div class="sm-worklist-row px-5 py-4 flex flex-wrap items-center gap-x-5 gap-y-3"
+                     style="border-left-color:${balanced ? '#f59e0b' : '#f43f5e'}">
+                    <div class="min-w-[240px] flex-1">
+                        <a href="../ledger/view-journal.html?id=${j.id}" class="sm-td-strong text-[#1e3a5f] hover:underline sm-figure">${j.id}</a>
+                        <span class="sm-td text-slate-700 block truncate">${j.description}</span>
+                        <span class="sm-td-sub text-slate-500 block sm-figure">${fmtKhDate(j.date)} · ${sourceLabel(j.source)} · ជួរ ${j.lines.length}</span>
+                    </div>
 
-            let filtered = store.approvals.filter(a => {
-                const matchType = !typeVal || a.type === typeVal;
-                const matchStatus = !statusVal || a.status === statusVal;
-                return matchType && matchStatus;
-            });
+                    <div class="flex items-center gap-4 flex-shrink-0">
+                        <span class="text-right">
+                            <span class="sm-td-sub text-slate-400 block">ឥណពន្ធ</span>
+                            <span class="sm-td-strong text-slate-800 sm-figure">${fmtUSD(t.dr)}</span>
+                        </span>
+                        <span class="text-right">
+                            <span class="sm-td-sub text-slate-400 block">ឥណទាន</span>
+                            <span class="sm-td-strong text-slate-800 sm-figure">${fmtUSD(t.cr)}</span>
+                        </span>
+                    </div>
 
-            document.getElementById('totalCount').innerText = filtered.length;
-            const tbody = document.getElementById('approvalsTableBody');
+                    ${balanced
+                        ? '<span class="sm-badge px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 flex-shrink-0">តុល្យភាពត្រូវ</span>'
+                        : `<span class="sm-badge px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 flex-shrink-0">គម្លាត ${fmtUSD(Math.abs(t.dr - t.cr))}</span>`}
 
-            const typeBadges = {
-                disbursement: '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">ប័ណ្ណចំណាយ</span>',
-                adjustment: '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-50 text-purple-700 border border-purple-200">កែតម្រូវទ្វេបញ្ជី</span>',
-                writeoff: '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">លុបបំណុលខូច</span>'
-            };
-
-            const statusBadges = {
-                pending: '<span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">រង់ចាំអនុម័ត</span>',
-                approved: '<span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">បានអនុម័ត</span>',
-                rejected: '<span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">បានបដិសេធ</span>'
-            };
-
-            const levelNames = {
-                chief_accountant: '<span class="text-indigo-600 font-semibold text-[11px]">Chief Acct</span>',
-                general_manager: '<span class="text-purple-600 font-semibold text-[11px]">GM អនុម័ត</span>'
-            };
-
-            tbody.innerHTML = filtered.map(a => `
-                <tr class="hover:bg-slate-50/80 transition-colors">
-                    <td class="py-3 px-4 font-bold text-primary">
-                        <a href="view-approval.html?id=${a.id}" class="hover:underline">${a.refNo}</a>
-                    </td>
-                    <td class="py-3 px-4">
-                        <div class="font-medium text-slate-800">${a.title}</div>
-                        <div class="text-[11px] text-slate-400 truncate max-w-xs">${a.description}</div>
-                    </td>
-                    <td class="py-3 px-4">${typeBadges[a.type] || a.type}</td>
-                    <td class="py-3 px-4 text-slate-600 text-[11px]">${a.requestor}</td>
-                    <td class="py-3 px-4 text-slate-600">${a.date}</td>
-                    <td class="py-3 px-4 text-right font-bold text-slate-900">$${a.amount.toFixed(2)}</td>
-                    <td class="py-3 px-4 text-center">${levelNames[a.level] || a.level}</td>
-                    <td class="py-3 px-4 text-center">${statusBadges[a.status] || a.status}</td>
-                    <td class="py-3 px-4 text-center">
-                        <a href="view-approval.html?id=${a.id}" class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-primary hover:text-white text-slate-700 text-[11px] font-medium transition inline-block">
-                            ពិនិត្យ
+                    <div class="flex items-center gap-2 ml-auto flex-shrink-0 no-print">
+                        <button onclick="postDraft('${j.id}')" ${balanced ? '' : 'disabled'}
+                            class="sm-badge px-3.5 py-1.5 rounded-lg font-semibold transition ${balanced
+                                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                                : 'bg-slate-100 text-slate-400 cursor-not-allowed'}">
+                            ចុះបញ្ជី
+                        </button>
+                        <a href="../ledger/view-journal.html?id=${j.id}" aria-label="មើលលម្អិត"
+                            class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition">
+                            <i class="fas fa-chevron-right text-xs"></i>
                         </a>
-                    </td>
-                </tr>
-            `).join('');
+                    </div>
+                </div>`;
         }
+
+        function claimRow(c) {
+            const inv = BMS_STORE.get('invoices', c.invoiceId);
+            const cust = inv ? BMS_STORE.get('customers', inv.customerId) : null;
+            return `
+                <div class="sm-worklist-row px-5 py-4 flex flex-wrap items-center gap-x-5 gap-y-3" style="border-left-color:#0ea5e9">
+                    <div class="min-w-[240px] flex-1">
+                        <span class="sm-td-strong text-slate-800 sm-figure block">${c.id}</span>
+                        <span class="sm-td text-slate-700 block truncate">${cust ? cust.name : c.customerId}</span>
+                        <span class="sm-td-sub text-slate-500 block sm-figure">${c.invoiceId} · ${PAYMENT_METHOD_LABEL[c.method] || c.method} · យោង ${c.bankRef}</span>
+                    </div>
+                    <span class="sm-td-strong text-slate-800 sm-figure flex-shrink-0">${fmtUSD(c.amount)}</span>
+                    <span class="sm-badge px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 flex-shrink-0">${statusLabel('PENDING_VERIFICATION')}</span>
+                    <p class="sm-td-sub text-slate-400 ml-auto flex-shrink-0">ផ្នែកគណនេយ្យបំណុល និងទារប្រាក់ត្រូវចេញបង្កាន់ដៃ</p>
+                </div>`;
+        }
+
+        function renderQueue() {
+            const drafts = listJournals({ status: 'DRAFT' });
+            const claims = BMS_STORE.list('paymentClaims').filter(c => c.status === 'PENDING_VERIFICATION');
+
+            document.getElementById('tabCount-drafts').textContent = drafts.length;
+            document.getElementById('tabCount-claims').textContent = claims.length;
+            document.getElementById('headerQueuePill').textContent = `${drafts.length + claims.length} ការងាររង់ចាំ`;
+
+            const rows = activeTab === 'drafts' ? drafts : claims;
+            const host = document.getElementById('queueList');
+            const empty = document.getElementById('queueEmpty');
+
+            empty.classList.toggle('hidden', rows.length > 0);
+            document.getElementById('queueEmptyNote').textContent = activeTab === 'drafts'
+                ? 'ទិនានុប្បវត្តិទាំងអស់បានចុះបញ្ជីចូលសៀវភៅធំរួចហើយ'
+                : 'គ្មានការទូទាត់ណារង់ចាំការផ្ទៀងផ្ទាត់ធនាគារទេ';
+
+            host.innerHTML = activeTab === 'drafts'
+                ? drafts.map(draftRow).join('')
+                : claims.map(claimRow).join('');
+
+            updatePortalBadges();
+        }
+
+        async function postDraft(id) {
+            const j = getJournal(id);
+            if (!j) return;
+            const t = journalTotals(j);
+            const ok = await showCustomConfirm({
+                title: 'ចុះបញ្ជីចូលសៀវភៅធំ',
+                message: `ទិនានុប្បវត្តិ ${id} ទឹកប្រាក់ ${fmtUSD(t.dr)} នឹងចូលសៀវភៅធំជាស្ថាពរ។ ការកែតម្រូវក្រោយមកត្រូវធ្វើតាមទិនានុប្បវត្តិបញ្ច្រាស។ តើបន្តមែនទេ?`,
+                confirmText: 'ចុះបញ្ជី',
+                cancelText: 'បោះបង់'
+            });
+            if (!ok) return;
+
+            const res = caActions.postDraft(id);
+            if (!res.ok) return showToast(res.error, 'error');
+            showToast(`បានចុះបញ្ជីទិនានុប្បវត្តិ ${id} ចូលសៀវភៅធំ`, 'success');
+        }
+
+        function switchWorkTab(name) {
+            activeTab = name;
+            closeAllFloatingDropdowns();
+            ['drafts', 'claims'].forEach(t => {
+                document.getElementById('tabBtn-' + t).className = t === name
+                    ? 'sm-badge px-5 py-2.5 rounded-xl bg-[#1e3a5f] text-white font-semibold shadow-sm transition'
+                    : 'sm-badge px-5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-medium transition';
+            });
+            renderQueue();
+        }
+
+        window.onStoreChanged = renderQueue;
+
+        document.addEventListener('DOMContentLoaded', renderQueue);
     </script>
 </body>
 

@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIGITECHKH - ផ្ទាំងគ្រប់គ្រងប្រធានគណនេយ្យ</title>
+    <title>DIGITECHKH - ផ្ទាំងគ្រប់គ្រងហិរញ្ញវត្ថុ</title>
     <link rel="icon" type="image/png" href="../../shared/assets/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <!-- គំនូសតាងទាំងអស់នៅទំព័ររបាយការណ៍ មិនមែននៅផ្ទាំងគ្រប់គ្រង (ស្តង់ដារឯកសារ 00 ផ្នែក 3.2) -->
     <script>
         tailwind.config = {
             theme: {
@@ -37,385 +37,261 @@
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <!-- Content Top Header -->
-        <div id="headerHost" data-title="ផ្ទាំងបញ្ជាការដ្ឋានហិរញ្ញវត្ថុ និងគណនេយ្យ"
-             data-subtitle="អភិបាលកិច្ចហិរញ្ញវត្ថុកំពូល ត្រួតពិនិត្យសៀវភៅធំ និងអនុលោមភាពពន្ធដារកម្ពុជា"></div>
+        <div id="headerHost" data-title="ផ្ទាំងគ្រប់គ្រងហិរញ្ញវត្ថុ"
+             data-subtitle="សាច់ប្រាក់ ចំណេញ-ខាត និងការងារគណនេយ្យដែលត្រូវសម្រេច"></div>
 
-        <!-- Main Content -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
 
-            <div class="w-full space-y-5">
+            <div class="w-full space-y-6">
 
-                <!-- Filter Toolbar -->
-                <div class="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-landmark text-slate-400 text-xs"></i>
-                        <span class="text-xs font-semibold text-slate-700">របាយការណ៍ហិរញ្ញវត្ថុស្របតាមស្តង់ដារ CIFRS for SMEs</span>
+                <!-- តំបន់ទី 1 — សាច់ប្រាក់ជាចំណុចផ្តោត បូកនឹងតួលេខចំណេញ-ខាតក្នុងគ្រា -->
+                <section class="rounded-2xl bg-[#1e3a5f] text-white overflow-hidden shadow-sm">
+                    <div class="px-6 pt-6 pb-5 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+                        <div class="min-w-0">
+                            <p class="sm-eyebrow text-white/50">សាច់ប្រាក់ និងប្រាក់បញ្ញើធនាគារ</p>
+                            <p id="heroCash" class="sm-hero-value text-white mt-1.5"></p>
+                            <p id="heroPeriod" class="sm-card-sub text-white/60 mt-1"></p>
+                        </div>
+                        <div id="heroCashRows" class="flex flex-wrap gap-x-7 gap-y-2"></div>
                     </div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <div id="dateFilterHost" class="flex items-center"></div>
-                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
-                        <div class="flex flex-wrap items-center gap-2 no-print">
-                            <button type="button" onclick="togglePeriodLock()" id="periodLockBtn" class="px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 font-semibold text-xs flex items-center gap-2 transition">
-                                <i class="fas fa-lock-open text-amber-600" id="lockIcon"></i>
-                                <span id="periodLockText">គ្រាហិរញ្ញវត្ថុ: កញ្ញា 2026 (បើក)</span>
-                            </button>
-                            <a href="approvals/approvals.html" class="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-700 font-semibold text-xs transition">
-                                <span class="w-2 h-2 rounded-full bg-purple-600 animate-pulse"></span>
-                                <span>រង់ចាំអនុម័ត: 3</span>
+                    <div id="heroStats" class="grid grid-cols-1 sm:grid-cols-3 border-t border-white/10"></div>
+                </section>
+
+                <!-- តំបន់ទី 2 — ការងារដែលត្រូវសម្រេច -->
+                <section id="workQueue" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden no-print"></section>
+
+                <div class="grid grid-cols-1 xl:grid-cols-5 gap-6">
+
+                    <!-- តំបន់ទី 3 — ចលនាចំណេញ-ខាតក្នុងគ្រា (តារាង មិនមែនគំនូសតាង) -->
+                    <section class="xl:col-span-3 bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                        <div class="px-5 pt-5 pb-3 flex flex-wrap items-baseline justify-between gap-2">
+                            <div>
+                                <p class="sm-eyebrow text-slate-400">ចំណេញ-ខាតក្នុងគ្រា</p>
+                                <p id="pnlSub" class="sm-card-sub text-slate-500 mt-1"></p>
+                            </div>
+                            <a href="financial-statements/financial-statements.html" class="sm-badge font-semibold text-[#1e3a5f] hover:underline inline-flex items-center gap-1 flex-shrink-0">
+                                របាយការណ៍ពេញលេញ <i class="fas fa-arrow-right text-[10px]"></i>
                             </a>
                         </div>
-                    </div>
-                </div>
+                        <div id="pnlRows" class="border-t border-slate-100"></div>
+                    </section>
 
-                <!-- KPI Cards Row -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- KPI 1 -->
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-medium text-slate-500">សមតុល្យសាច់ប្រាក់ & ធនាគារ</span>
-                            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
-                                <i class="fas fa-vault text-sm"></i>
-                            </div>
+                    <!-- តំបន់ទី 4 — ស្ថានភាពពន្ធ និងបំណុល -->
+                    <section class="xl:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                        <div class="px-5 pt-5 pb-3">
+                            <p class="sm-eyebrow text-slate-400">បំណុល និងពន្ធ</p>
+                            <p class="sm-card-sub text-slate-500 mt-1">សមតុល្យតាមសៀវភៅធំ</p>
                         </div>
-                        <div class="mt-3">
-                            <div class="text-2xl font-bold text-slate-800">$42,180.00</div>
-                            <div class="flex items-center justify-between mt-1 text-xs text-slate-500">
-                                <span>3 គណនីធនាគារ + បេឡា</span>
-                                <span class="text-emerald-600 font-medium">សាច់ប្រាក់ងាយស្រួល</span>
-                            </div>
-                        </div>
-                    </div>
+                        <div id="obligationRows" class="divide-y divide-slate-100 border-t border-slate-100"></div>
+                    </section>
 
-                    <!-- KPI 2 -->
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-medium text-slate-500">ចំណូលលក់សរុប (ខែនេះ)</span>
-                            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                                <i class="fas fa-chart-line-up text-sm"></i>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <div class="text-2xl font-bold text-slate-800">$68,450.00</div>
-                            <div class="flex items-center justify-between mt-1 text-xs">
-                                <span class="text-slate-500">កំណើនធៀបខែមុន</span>
-                                <span class="text-emerald-600 font-bold">+14.2%</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- KPI 3 -->
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-medium text-slate-500">ប្រាក់ចំណេញសុទ្ធ (Net Profit)</span>
-                            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
-                                <i class="fas fa-sack-dollar text-sm"></i>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <div class="text-2xl font-bold text-purple-700">$14,370.00</div>
-                            <div class="flex items-center justify-between mt-1 text-xs">
-                                <span class="text-slate-500">អត្រាចំណេញសុទ្ធ</span>
-                                <span class="text-purple-700 font-bold">21.0%</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- KPI 4 -->
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-medium text-slate-500">បំណុល AR vs AP</span>
-                            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                                <i class="fas fa-scale-unbalanced text-sm"></i>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <div class="flex items-baseline justify-between">
-                                <span class="text-sm font-semibold text-emerald-600">AR: $18.2k</span>
-                                <span class="text-sm font-semibold text-rose-600">AP: $12.6k</span>
-                            </div>
-                            <div class="flex items-center justify-between mt-1 text-xs text-slate-500">
-                                <span>ទ្រព្យសកម្មសុទ្ធ AR-AP</span>
-                                <span class="text-emerald-700 font-bold">+$5,640.00</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Financial Performance Chart (9 Months) -->
-                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
-                    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-                        <div>
-                            <h3 class="text-sm font-semibold text-slate-800">លទ្ធផលហិរញ្ញវត្ថុ 9 ខែ (Revenue vs Expense vs Net Profit)</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">ទំហំចំណូល ចំណាយប្រតិបត្តិការ និងប្រាក់ចំណេញសុទ្ធគិតជា USD</p>
-                        </div>
-                        <div class="flex items-center gap-3 text-xs">
-                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-primary"></span> ចំណូល</span>
-                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-rose-500"></span> ចំណាយ</span>
-                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-500"></span> ចំណេញសុទ្ធ</span>
-                        </div>
-                    </div>
-                    <div id="financialTrendChart" class="w-full h-72"></div>
-                </div>
-
-                <!-- Two Column Grid: Bank Liquidity Breakdown & Urgent Approvals -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                    <!-- Bank Balances Card -->
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <h3 class="text-sm font-semibold text-slate-800">សមតុល្យតាមគណនីធនាគារ និងបេឡា</h3>
-                                <p class="text-xs text-slate-500 mt-0.5">ការផ្ទៀងផ្ទាត់សមតុល្យជាក់ស្តែង (Bank Reconciliation)</p>
-                            </div>
-                            <span class="text-xs font-bold text-primary">$42,180.00</span>
-                        </div>
-                        <div id="bankAccountsList" class="space-y-3"></div>
-                    </div>
-
-                    <!-- Pending Approvals Card -->
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-3">
-                                <div>
-                                    <h3 class="text-sm font-semibold text-slate-800">សំណើរង់ចាំការអនុម័ត (> $500.00)</h3>
-                                    <p class="text-xs text-slate-500 mt-0.5">ប័ណ្ណចំណាយទូទាត់ និងការកែតម្រូវទ្វេបញ្ជី</p>
-                                </div>
-                                <a href="approvals/approvals.html" class="text-xs font-semibold text-sky-700 hover:underline">
-                                    មើលទាំងអស់
-                                </a>
-                            </div>
-                            <div id="approvalsList" class="space-y-3"></div>
-                        </div>
-
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                            <span>អនុលោមភាព SoD: ការចំណាយ > $500 ទាមទារ 2 ហត្ថលេខា</span>
-                            <span class="font-semibold text-primary">Chief Acct + GM</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Links Bar: Financial Statements & Tax Returns -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <a href="financial-statements/financial-statements.html" class="p-5 rounded-2xl bg-gradient-to-r from-slate-900 to-[#1e3a5f] text-white shadow-sm hover:shadow-md transition flex items-center justify-between group">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-xl text-sky-300">
-                                <i class="fas fa-file-invoice-dollar"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-bold text-white group-hover:text-sky-200 transition">របាយការណ៍ហិរញ្ញវត្ថុផ្លូវការ CIFRS</h4>
-                                <p class="text-xs text-sky-200 mt-0.5">តារាងលទ្ធផលអាជីវកម្ម P&L, តារាងតុល្យការ និងសមតុល្យសាកល្បង</p>
-                            </div>
-                        </div>
-                        <i class="fas fa-arrow-right text-sm text-sky-300 group-hover:translate-x-1 transition-transform"></i>
-                    </a>
-
-                    <a href="tax-reports/tax-reports.html" class="p-5 rounded-2xl bg-gradient-to-r from-purple-900 to-indigo-900 text-white shadow-sm hover:shadow-md transition flex items-center justify-between group">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-xl text-purple-300">
-                                <i class="fas fa-file-circle-percent"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-bold text-white group-hover:text-purple-200 transition">របាយការណ៍ពន្ធដារកម្ពុជា (GDT Returns)</h4>
-                                <p class="text-xs text-purple-200 mt-0.5">អាករលើតម្លៃបន្ថែម អតប 10%, ពន្ធកាត់ទុក WHT និងពន្ធលើប្រាក់ចំណេញ</p>
-                            </div>
-                        </div>
-                        <i class="fas fa-arrow-right text-sm text-purple-300 group-hover:translate-x-1 transition-transform"></i>
-                    </a>
                 </div>
 
             </div>
         </main>
     </div>
 
-    <!-- Scripts -->
     <script src="../../shared/scripts/ui-components.js"></script>
+    <script src="../../shared/data/seed.js"></script>
+    <script src="../../shared/scripts/status-meta.js"></script>
+    <script src="../../shared/scripts/store.js"></script>
     <script src="data.js"></script>
     <script src="../../shared/scripts/portal.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            renderPortalSidebar();
-            initDateFilter();
-            initFinancialTrendChart();
-            renderBankAccounts();
-            renderApprovals();
-            updateLockStatusUI();
-        });
+        /* ផ្ទាំងគ្រប់គ្រងបែប "សកម្មភាពមុនគេ" — គ្មានគំនូសតាង គ្មានតម្រងកាលបរិច្ឆេទ
+           តួលេខទាំងអស់គណនាចេញពីទិនានុប្បវត្តិដែលបានចុះជាក់ស្តែង។ */
 
-        function initDateFilter() {
-            const host = document.getElementById('dateFilterHost');
-            if (!host) return;
-            host.innerHTML = `
-                <div class="flex items-center gap-2">
-                    <span class="text-xs text-slate-400 hidden sm:inline">កាលបរិច្ឆេទ:</span>
-                    <button type="button" class="h-9 px-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs rounded-xl flex items-center gap-2 shadow-sm transition-all focus:outline-none cursor-pointer">
-                        <i class="fas fa-calendar-days text-primary text-xs"></i>
-                        <span class="font-medium text-slate-800">ខែកញ្ញា 2026 (ត្រីមាសទី 3)</span>
-                    </button>
-                </div>
-            `;
+        function signTone(value) {
+            return value < 0 ? 'text-rose-300' : 'text-white';
         }
 
-        function initFinancialTrendChart() {
-            const chartEl = document.getElementById('financialTrendChart');
-            if (!chartEl) return;
-            const store = getCAStore();
-            const chart = echarts.init(chartEl);
-
-            chart.setOption({
-                tooltip: { trigger: 'axis' },
-                grid: { top: 25, right: 20, bottom: 25, left: 60 },
-                xAxis: {
-                    type: 'category',
-                    data: store.kpis.monthlyTrend.months,
-                    axisLine: { lineStyle: { color: '#cbd5e1' } },
-                    axisLabel: { color: '#64748b', fontSize: 11, fontFamily: 'Kantumruy Pro' }
-                },
-                yAxis: {
-                    type: 'value',
-                    axisLine: { show: false },
-                    splitLine: { lineStyle: { color: '#f1f5f9' } },
-                    axisLabel: {
-                        color: '#64748b',
-                        fontSize: 10,
-                        formatter: v => '$' + (v / 1000) + 'k'
-                    }
-                },
-                series: [
-                    {
-                        name: 'ចំណូល',
-                        type: 'line',
-                        smooth: true,
-                        data: store.kpis.monthlyTrend.revenue,
-                        itemStyle: { color: '#1e3a5f' },
-                        lineStyle: { width: 3 }
-                    },
-                    {
-                        name: 'ចំណាយ',
-                        type: 'line',
-                        smooth: true,
-                        data: store.kpis.monthlyTrend.expense,
-                        itemStyle: { color: '#ef4444' },
-                        lineStyle: { width: 2, type: 'dashed' }
-                    },
-                    {
-                        name: 'ចំណេញសុទ្ធ',
-                        type: 'bar',
-                        data: store.kpis.monthlyTrend.netProfit,
-                        itemStyle: { color: '#10b981', borderRadius: [4, 4, 0, 0] },
-                        barWidth: '35%'
-                    }
-                ]
-            });
-            window.addEventListener('resize', () => chart.resize());
+        function heroStat(label, value, sub, subTone) {
+            return `<div class="px-6 py-4">
+                <p class="sm-eyebrow text-white/45">${label}</p>
+                <p class="sm-kpi-value ${signTone(value.raw)} sm-figure mt-1.5">${value.text}</p>
+                <p class="sm-card-sub ${subTone || 'text-white/55'} mt-0.5">${sub}</p>
+            </div>`;
         }
 
-        function renderBankAccounts() {
-            const container = document.getElementById('bankAccountsList');
-            if (!container) return;
-            const store = getCAStore();
+        function renderHero(m) {
+            document.getElementById('heroCash').textContent = fmtUSD(m.cashTotal);
+            document.getElementById('heroPeriod').textContent = `គ្រា ${m.periodName} · គិតត្រឹមថ្ងៃនេះ`;
 
-            container.innerHTML = store.kpis.bankBalances.map(b => `
-                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl ${b.type === 'សាច់ប្រាក់' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'} flex items-center justify-center font-bold">
-                            <i class="fas ${b.type === 'សាច់ប្រាក់' ? 'fa-money-bill-wave' : 'fa-building-columns'} text-xs"></i>
-                        </div>
-                        <div>
-                            <div class="font-bold text-slate-800">${b.bank}</div>
-                            <div class="text-[11px] text-slate-400">គណនី: ${b.account}</div>
-                        </div>
+            document.getElementById('heroCashRows').innerHTML = m.cashRows.map(c => `
+                <span class="min-w-0">
+                    <span class="sm-eyebrow text-white/40 block truncate">${c.name}</span>
+                    <span class="sm-value text-white sm-figure block mt-0.5">${fmtUSD(c.amount)}</span>
+                </span>`).join('');
+
+            document.getElementById('heroStats').innerHTML =
+                heroStat('ចំណូលក្នុងគ្រា', { raw: m.revenue, text: fmtUSD(m.revenue) },
+                    `ចំណេញដុល ${fmtUSD(m.grossProfit)}`) +
+                `<div class="sm:border-l border-white/10">` +
+                heroStat('ចំណេញសុទ្ធ', { raw: m.netProfit, text: fmtUSD(m.netProfit) },
+                    `រឹមចំណេញ ${fmtPercent(m.netMarginPercent)}`,
+                    m.netProfit >= 0 ? 'text-emerald-300/80' : 'text-rose-200/80') +
+                `</div><div class="sm:border-l border-white/10">` +
+                heroStat('បំណុលត្រូវទារ', { raw: m.receivable, text: fmtUSD(m.receivable) },
+                    m.overdueCount ? `ហួសកាលកំណត់ ${fmtUSD(m.overdueAmount)}` : 'គ្មានបំណុលហួសកាលកំណត់',
+                    m.overdueCount ? 'text-rose-200/80' : 'text-emerald-300/80') +
+                `</div>`;
+        }
+
+        /* ===== តំបន់ទី 2 — ការងារដែលត្រូវសម្រេច ===== */
+
+        function workRow(opts) {
+            return `
+                <a href="${opts.href}" class="sm-worklist-row px-5 py-4 flex items-center gap-4 block"
+                   style="border-left-color:${opts.accent}">
+                    <span class="w-9 h-9 rounded-lg ${opts.iconClass} flex items-center justify-center flex-shrink-0">
+                        <i class="fas ${opts.icon} text-sm"></i>
+                    </span>
+                    <span class="min-w-0 flex-1">
+                        <span class="sm-td text-slate-800 block">${opts.title}</span>
+                        <span class="sm-td-sub text-slate-500 block truncate">${opts.note}</span>
+                    </span>
+                    <span class="sm-kpi-value ${opts.countClass} sm-figure flex-shrink-0">${opts.count}</span>
+                    <i class="fas fa-chevron-right text-xs text-slate-300 flex-shrink-0"></i>
+                </a>`;
+        }
+
+        function renderWorkQueue(m) {
+            const host = document.getElementById('workQueue');
+            const rows = [];
+
+            if (m.draftJournals.length) {
+                rows.push(workRow({
+                    href: 'ledger/ledger.html',
+                    accent: '#f59e0b', icon: 'fa-file-pen',
+                    iconClass: 'bg-amber-50 text-amber-600',
+                    countClass: 'text-amber-600',
+                    title: 'ទិនានុប្បវត្តិព្រាងរង់ចាំការចុះបញ្ជី',
+                    note: m.draftJournals.slice(0, 2).map(j => `${j.id} · ${j.description}`).join(' · '),
+                    count: m.draftJournals.length
+                }));
+            }
+
+            if (m.unverifiedClaims.length) {
+                rows.push(workRow({
+                    href: 'ledger/ledger.html',
+                    accent: '#0ea5e9', icon: 'fa-building-columns',
+                    iconClass: 'bg-sky-50 text-sky-600',
+                    countClass: 'text-sky-600',
+                    title: 'ការទូទាត់រង់ចាំការផ្ទៀងផ្ទាត់ធនាគារ',
+                    note: `សរុប ${fmtUSD(m.unverifiedClaims.reduce((s, c) => s + c.amount, 0))}`,
+                    count: m.unverifiedClaims.length
+                }));
+            }
+
+            if (m.overdueCount) {
+                rows.push(workRow({
+                    href: 'reports/financial-reports.html',
+                    accent: '#f43f5e', icon: 'fa-triangle-exclamation',
+                    iconClass: 'bg-rose-50 text-rose-600',
+                    countClass: 'text-rose-600',
+                    title: 'វិក្កយបត្រហួសកាលកំណត់ទូទាត់',
+                    note: `សរុបត្រូវទារ ${fmtUSD(m.overdueAmount)}`,
+                    count: m.overdueCount
+                }));
+            }
+
+            const head = `
+                <div class="px-5 pt-5 pb-3 flex flex-wrap items-baseline justify-between gap-2">
+                    <div>
+                        <p class="sm-eyebrow text-amber-600">ត្រូវសម្រេចថ្ងៃនេះ</p>
+                        <p class="sm-card-sub text-slate-500 mt-1">
+                            ${rows.length ? `ការងារ ${rows.length} ប្រភេទរង់ចាំការសម្រេចរបស់លោកអ្នក` : 'គ្មានការងារជាប់គាំងទេ'}
+                        </p>
                     </div>
-                    <div class="text-right">
-                        <div class="font-bold text-slate-900 text-sm">$${b.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
-                        <span class="text-[10px] text-emerald-600 font-semibold"><i class="fas fa-check"></i> ផ្ទៀងផ្ទាត់រួច</span>
-                    </div>
-                </div>
-            `).join('');
+                    <a href="ledger/ledger.html" class="sm-badge font-semibold text-[#1e3a5f] hover:underline inline-flex items-center gap-1 flex-shrink-0">
+                        សៀវភៅធំ <i class="fas fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>`;
+
+            host.innerHTML = head + (rows.length
+                ? `<div class="border-t border-slate-100 divide-y divide-slate-100">${rows.join('')}</div>`
+                : `<div class="border-t border-slate-100 px-5 py-10 flex flex-col items-center gap-2 text-center">
+                       <i class="fas fa-circle-check text-2xl text-emerald-400"></i>
+                       <p class="sm-td text-slate-600">សៀវភៅគណនេយ្យស្អាតហើយ</p>
+                       <p class="sm-td-sub text-slate-400">គ្មានទិនានុប្បវត្តិព្រាង ឬការទូទាត់រង់ចាំទេ</p>
+                   </div>`);
         }
 
-        function renderApprovals() {
-            const container = document.getElementById('approvalsList');
-            if (!container) return;
-            const store = getCAStore();
+        /* ===== តំបន់ទី 3 — ចំណេញ-ខាត ===== */
 
-            const pending = store.approvals.filter(a => a.status === 'pending');
-            if (pending.length === 0) {
-                container.innerHTML = `<div class="py-6 text-center text-slate-400 text-xs">គ្មានសំណើរង់ចាំការអនុម័តឡើយ</div>`;
+        function pnlLine(label, value, opts) {
+            const o = opts || {};
+            return `
+                <div class="px-5 py-3 flex items-baseline justify-between gap-4 ${o.strong ? 'bg-slate-50' : ''}">
+                    <span class="${o.strong ? 'sm-td-strong text-slate-800' : 'sm-td text-slate-600'} ${o.indent ? 'pl-4' : ''}">${label}</span>
+                    <span class="${o.strong ? 'sm-td-strong' : 'sm-td'} ${o.tone || 'text-slate-700'} sm-figure flex-shrink-0">${value}</span>
+                </div>`;
+        }
+
+        function renderPnl(m) {
+            const p = incomeStatement(m.range);
+            document.getElementById('pnlSub').textContent =
+                `${m.periodName} · រឹមចំណេញដុល ${fmtPercent(p.grossMarginPercent)}`;
+
+            const host = document.getElementById('pnlRows');
+            if (!p.revenue && !p.cogs && !p.opex) {
+                host.innerHTML = `<div class="px-5 py-10 text-center">
+                    <i class="fas fa-chart-bar text-2xl text-slate-300"></i>
+                    <p class="sm-td-sub text-slate-400 mt-2">គ្មានចលនាគណនេយ្យក្នុងគ្រានេះទេ</p>
+                </div>`;
                 return;
             }
 
-            container.innerHTML = pending.map(a => `
-                <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-3 text-xs">
-                    <div class="min-w-0 flex-1">
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="font-bold text-primary">${a.refNo}</span>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-100 text-purple-700">
-                                ${a.type === 'disbursement' ? 'ប័ណ្ណចំណាយ' : a.type === 'adjustment' ? 'កែតម្រូវ' : 'លុបបំណុល'}
-                            </span>
-                        </div>
-                        <div class="font-medium text-slate-800 truncate">${a.title}</div>
-                        <div class="text-[11px] text-slate-400">${a.requestor} • ${a.date}</div>
-                    </div>
-                    <div class="text-right flex-shrink-0">
-                        <div class="font-bold text-slate-900 text-sm">$${a.amount.toFixed(2)}</div>
-                        <a href="approvals/view-approval.html?id=${a.id}" class="mt-1 px-3 py-1 rounded-lg bg-primary hover:bg-[#142842] text-white text-[11px] font-medium inline-block transition shadow-sm">
-                            ពិនិត្យអនុម័ត
-                        </a>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function updateLockStatusUI() {
-            const store = getCAStore();
-            const btn = document.getElementById('periodLockBtn');
-            const icon = document.getElementById('lockIcon');
-            const txt = document.getElementById('periodLockText');
-            if (!btn || !icon || !txt) return;
-
-            if (store.kpis.periodLockStatus === 'locked') {
-                btn.className = 'px-3.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-800 font-semibold text-xs flex items-center gap-2 transition cursor-pointer';
-                icon.className = 'fas fa-lock text-rose-600';
-                txt.innerText = 'គ្រាហិរញ្ញវត្ថុ: កញ្ញា 2026 (ចាក់សោររួច)';
-            } else {
-                btn.className = 'px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 font-semibold text-xs flex items-center gap-2 transition cursor-pointer';
-                icon.className = 'fas fa-lock-open text-amber-600';
-                txt.innerText = 'គ្រាហិរញ្ញវត្ថុ: កញ្ញា 2026 (បើក)';
-            }
-        }
-
-        function togglePeriodLock() {
-            const store = getCAStore();
-            const isCurrentlyLocked = store.kpis.periodLockStatus === 'locked';
-
-            if (isCurrentlyLocked) {
-                showToast('គ្រាហិរញ្ញវត្ថុត្រូវបានចាក់សោររួចហើយ! ទាមទារការយល់ព្រមពី General Manager ដើម្បីដោះសោរ', 'warning');
-                return;
-            }
-
-            if (typeof showCustomConfirm === 'function') {
-                showCustomConfirm({
-                    title: 'ចាក់សោរគ្រាហិរញ្ញវត្ថុ (Period Lock)',
-                    message: 'តើលោកអ្នកពិតជាចង់ចាក់សោរគ្រា «កញ្ញា 2026» មែនទេ? ក្រោយពេលចាក់សោរ គ្មានបុគ្គលិកណាអាចកែប្រែទិន្នន័យអតីតកាលបានឡើយ។',
-                    confirmText: 'ចាក់សោរឥឡូវនេះ',
-                    cancelText: 'បោះបង់',
-                    confirmColor: 'danger',
-                    onConfirm: () => {
-                        store.kpis.periodLockStatus = 'locked';
-                        saveCAStore(store);
-                        updateLockStatusUI();
-                        showToast('គ្រាហិរញ្ញវត្ថុ កញ្ញា 2026 ត្រូវបានចាក់សោរជាផ្លូវការ 100%!', 'success');
-                    }
+            host.innerHTML =
+                pnlLine('ចំណូលពីការលក់', fmtUSD(p.revenue), { strong: true }) +
+                p.cogsRows.map(r => pnlLine(r.name, '−' + fmtUSD(r.amount), { indent: true, tone: 'text-rose-600' })).join('') +
+                pnlLine('ចំណេញដុល', fmtUSD(p.grossProfit), { strong: true, tone: 'text-emerald-700' }) +
+                p.opexRows.map(r => pnlLine(r.name, '−' + fmtUSD(r.amount), { indent: true, tone: 'text-rose-600' })).join('') +
+                pnlLine('ចំណេញសុទ្ធក្នុងគ្រា', fmtUSD(p.netProfit), {
+                    strong: true, tone: p.netProfit >= 0 ? 'text-emerald-700' : 'text-rose-600'
                 });
-            } else {
-                if (confirm('តើលោកអ្នកពិតជាចង់ចាក់សោរគ្រា កញ្ញា 2026 មែនទេ?')) {
-                    store.kpis.periodLockStatus = 'locked';
-                    saveCAStore(store);
-                    updateLockStatusUI();
-                    showToast('គ្រាហិរញ្ញវត្ថុ កញ្ញា 2026 ត្រូវបានចាក់សោរជាផ្លូវការ 100%!', 'success');
-                }
-            }
         }
+
+        /* ===== តំបន់ទី 4 — បំណុល និងពន្ធ ===== */
+
+        function obligationRow(label, amount, note, tone) {
+            return `
+                <div class="px-5 py-4">
+                    <div class="flex items-baseline justify-between gap-3">
+                        <span class="sm-td text-slate-700">${label}</span>
+                        <span class="sm-td-strong ${tone || 'text-slate-800'} sm-figure flex-shrink-0">${fmtUSD(amount)}</span>
+                    </div>
+                    <p class="sm-td-sub text-slate-400 mt-0.5">${note}</p>
+                </div>`;
+        }
+
+        function renderObligations(m) {
+            const vat = vatReturn();
+            document.getElementById('obligationRows').innerHTML =
+                obligationRow('បំណុលត្រូវសងអ្នកផ្គត់ផ្គង់', m.payable, 'សមតុល្យគណនី ' + accountName('2111'), 'text-amber-700') +
+                obligationRow('អាករលើតម្លៃបន្ថែមត្រូវបង់', m.vatPayable,
+                    `គ្រា ${vat.period} · ការលក់ជាប់អាករ ${fmtUSD(vat.taxableSales)}`, 'text-slate-800') +
+                obligationRow('ពន្ធកាត់ទុកត្រូវបង់', m.whtPayable,
+                    `អត្រាទំនិញ ${fmtPercent(BMS_STORE.settings().whtGoods * 100)} · សេវា ${fmtPercent(BMS_STORE.settings().whtServices * 100)}`, 'text-slate-800') +
+                obligationRow('បំណុលត្រូវទារហួសកាលកំណត់', m.overdueAmount,
+                    m.overdueCount ? `វិក្កយបត្រ ${m.overdueCount} ច្បាប់` : 'គ្មានវិក្កយបត្រហួសកាលកំណត់',
+                    m.overdueCount ? 'text-rose-600' : 'text-emerald-700');
+        }
+
+        /* ===== ដំណើរការ ===== */
+
+        function renderDashboard() {
+            const m = dashboardMetrics();
+            renderHero(m);
+            renderWorkQueue(m);
+            renderPnl(m);
+            renderObligations(m);
+            updatePortalBadges();
+        }
+
+        window.onStoreChanged = renderDashboard;
+
+        document.addEventListener('DOMContentLoaded', renderDashboard);
     </script>
 </body>
 

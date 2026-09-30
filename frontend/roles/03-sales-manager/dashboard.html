@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIGITECHKH - ផ្ទាំងគ្រប់គ្រងអ្នកគ្រប់គ្រងផ្នែកលក់</title>
+    <title>DIGITECHKH - ផ្ទាំងគ្រប់គ្រងលក់</title>
     <link rel="icon" type="image/png" href="../../shared/assets/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <!-- ផ្ទាំងគ្រប់គ្រងមិនផ្ទុកបណ្ណាល័យគំនូសតាងទេ — គំនូសតាងទាំងអស់នៅទំព័ររបាយការណ៍ (ស្តង់ដារឯកសារ 00 ផ្នែក 3.2) -->
     <script>
         tailwind.config = {
             theme: {
@@ -35,115 +35,66 @@
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <div id="headerHost" data-title="ផ្ទាំងគ្រប់គ្រងអ្នកគ្រប់គ្រងផ្នែកលក់"
-             data-subtitle="ល្បឿនលក់ សមិទ្ធផលក្រុមការងារ និងការតាមដានកម្រៃជើងសារ"></div>
+        <div id="headerHost" data-title="ផ្ទាំងគ្រប់គ្រងលក់"
+             data-subtitle="អ្វីដែលត្រូវសម្រេចថ្ងៃនេះ សមិទ្ធផលក្រុម និងហានិភ័យឥណទាន"></div>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
 
-            <div class="w-full space-y-5">
+            <div class="w-full space-y-6">
 
-                <!-- Filter Toolbar -->
-                <div class="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-filter text-slate-400 text-xs"></i>
-                        <span class="sm-label text-slate-600">ទិន្នន័យក្នុងកំឡុងពេល</span>
+                <!-- តំបន់ទី 1 — ចំណុចផ្តោតតែមួយ៖ ចំណូលក្រុមធៀបគោលដៅ
+                     បន្ទះងងឹតមួយដាច់ដោយឡែក មិនមែនកាតស្មើគ្នា 3 ព្រោះលេខនេះសំខាន់ជាងគេ -->
+                <section class="rounded-2xl bg-[#1e3a5f] text-white overflow-hidden shadow-sm">
+                    <div class="px-6 pt-6 pb-5">
+                        <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+                            <div class="min-w-0">
+                                <p class="sm-eyebrow text-white/50">ចំណូលក្រុម · ខែនេះ</p>
+                                <p id="heroRevenue" class="sm-hero-value text-white mt-1.5"></p>
+                                <p id="heroTarget" class="sm-card-sub text-white/60 mt-1"></p>
+                            </div>
+                            <div class="text-right flex-shrink-0">
+                                <p id="heroPercent" class="sm-hero-value"></p>
+                                <p class="sm-card-sub text-white/60 mt-1">នៃគោលដៅ</p>
+                            </div>
+                        </div>
+                        <div class="sm-rail bg-white/15 mt-5"><span id="heroRail" style="width:0%"></span></div>
                     </div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <div id="dateFilterHost" class="flex items-center"></div>
-                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
-                        <div class="flex flex-wrap items-center gap-2 no-print">
-                            <a href="approvals/approvals.html" class="sm-badge hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-semibold transition">
-                                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                                <span id="headerQueuePill">សំណើរង់ចាំអនុម័ត</span>
+
+                    <!-- តួលេខរងបែងចែកដោយបន្ទាត់ — មិនមែនកាតដាច់ដោយឡែក -->
+                    <div id="heroStats" class="grid grid-cols-1 sm:grid-cols-3 border-t border-white/10"></div>
+                </section>
+
+                <!-- តំបន់ទី 2 — បញ្ជីការងារបន្ទាន់ (ជួរតឹង មិនមែនកាត) -->
+                <section id="urgentStrip" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden"></section>
+
+                <div class="grid grid-cols-1 xl:grid-cols-5 gap-6">
+
+                    <!-- តំបន់ទី 3 — ចំណាត់ថ្នាក់ក្រុម (ទទឹងធំជាង) -->
+                    <section class="xl:col-span-3 bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                        <div class="px-5 pt-5 pb-3 flex flex-wrap items-baseline justify-between gap-2">
+                            <div>
+                                <p class="sm-eyebrow text-slate-400">ចំណាត់ថ្នាក់ក្រុម · ខែនេះ</p>
+                                <p id="leaderboardSub" class="sm-card-sub text-slate-500 mt-1"></p>
+                            </div>
+                            <a href="reports/reports.html" class="sm-badge font-semibold text-[#1e3a5f] hover:underline inline-flex items-center gap-1 flex-shrink-0">
+                                របាយការណ៍ពេញលេញ <i class="fas fa-arrow-right text-[10px]"></i>
                             </a>
                         </div>
-                    </div>
-                </div>
+                        <div id="leaderboardRow" class="divide-y divide-slate-100 border-t border-slate-100"></div>
+                    </section>
 
-                <!-- KPI Cards -->
-                <div id="kpiRow" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
-
-                <!-- Sales Velocity -->
-                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
-                    <div class="mb-4">
-                        <h3 class="sm-card-title text-slate-700">ល្បឿននៃការលក់ប្រចាំខែ</h3>
-                        <p class="sm-card-sub text-slate-500">វាស់វែងល្បឿនបិទការលក់ និងទំហំជាមធ្យមនៃប្រតិបត្តិការនីមួយៗ</p>
-                    </div>
-                    <div id="velocityRow" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
-                </div>
-
-                <!-- Quota Progress -->
-                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-                        <div>
-                            <h3 class="sm-card-title text-slate-700">ការសម្រេចកូតាលក់</h3>
-                            <p id="quotaSubtitle" class="sm-card-sub text-slate-500"></p>
+                    <!-- តំបន់ទី 4 — ដែនឥណទាន (ជួរតូច) -->
+                    <section class="xl:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                        <div class="px-5 pt-5 pb-3 flex flex-wrap items-baseline justify-between gap-2">
+                            <div>
+                                <p class="sm-eyebrow text-slate-400">ហានិភ័យឥណទាន</p>
+                                <p class="sm-card-sub text-slate-500 mt-1">ប្រើឥណទានពី 80% ឡើងទៅ</p>
+                            </div>
+                            <span id="creditCountPill" class="sm-badge font-semibold flex-shrink-0"></span>
                         </div>
-                        <span id="quotaBadge" class="sm-badge px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200"></span>
-                    </div>
-                    <div class="w-full h-3 rounded-full bg-slate-100 overflow-hidden">
-                        <div id="quotaBar" class="h-full bg-[#1e3a5f] rounded-full transition-all" style="width: 0%"></div>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
-                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                            <span class="sm-kpi-sub text-slate-500 block">នៅខ្វះដើម្បីសម្រេចគោលដៅ</span>
-                            <span id="quotaRemain" class="sm-value text-slate-700"></span>
-                        </div>
-                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                            <span class="sm-kpi-sub text-slate-500 block">វិក្កយបត្រក្នុងកំឡុងពេល</span>
-                            <span id="quotaInvoices" class="sm-value text-slate-700"></span>
-                        </div>
-                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                            <span class="sm-kpi-sub text-slate-500 block">ប្រាក់បានប្រមូលរួច</span>
-                            <span id="quotaCollected" class="sm-value text-slate-700"></span>
-                        </div>
-                    </div>
-                </div>
+                        <div id="creditRow" class="divide-y divide-slate-100 border-t border-slate-100"></div>
+                    </section>
 
-                <!-- Revenue Chart -->
-                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
-                    <div class="mb-4">
-                        <h3 class="sm-card-title text-slate-700">ចំណូលលក់ ធៀបនឹងគោលដៅ (6 ខែចុងក្រោយ)</h3>
-                        <p class="sm-card-sub text-slate-500">តាមដាននិន្នាការលក់ជាក់ស្តែងធៀបនឹងកូតាដែលបានកំណត់</p>
-                    </div>
-                    <div id="revenueTargetChart" class="w-full h-72"></div>
-                </div>
-
-                <!-- Leaderboard + Commission -->
-                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-                    <div class="p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2">
-                        <div>
-                            <h3 class="sm-card-title text-slate-700">ចំណាត់ថ្នាក់បុគ្គលិកលក់ និងកម្រៃជើងសារ</h3>
-                            <p class="sm-card-sub text-slate-500">កម្រៃជើងសារបើកជូនលើទឹកប្រាក់ដែលប្រមូលបានជាក់ស្តែងប៉ុណ្ណោះ</p>
-                        </div>
-                        <a href="reports/reports.html" class="sm-badge font-semibold text-[#1e3a5f] hover:underline">មើលរបាយការណ៍ពេញលេញ</a>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead class="bg-slate-50 text-slate-500 border-b border-slate-100">
-                                <tr>
-                                    <th class="sm-th py-3 px-4">ចំណាត់ថ្នាក់</th>
-                                    <th class="sm-th py-3 px-4">បុគ្គលិកលក់</th>
-                                    <th class="sm-th py-3 px-4">វិក្កយបត្រ</th>
-                                    <th class="sm-th py-3 px-4">ចំណូលសម្រេចបាន</th>
-                                    <th class="sm-th py-3 px-4">កូតា</th>
-                                    <th class="sm-th py-3 px-4">អត្រាកម្រៃ</th>
-                                    <th class="sm-th py-3 px-4 text-right">កម្រៃត្រូវបើក</th>
-                                </tr>
-                            </thead>
-                            <tbody id="leaderboardBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
-                            <tfoot id="leaderboardFoot" class="bg-slate-50 border-t border-slate-200"></tfoot>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Overdue Debt -->
-                <div class="bg-white rounded-2xl border border-rose-200 shadow-sm overflow-hidden">
-                    <div class="p-4 border-b border-rose-100 bg-rose-50/60 flex items-center gap-2">
-                        <i class="fas fa-triangle-exclamation text-rose-600 text-sm"></i>
-                        <h3 class="sm-card-title text-rose-800">បំណុលហួសកាលកំណត់ 30 ថ្ងៃ</h3>
-                    </div>
-                    <div id="overdueList" class="divide-y divide-slate-100"></div>
                 </div>
 
             </div>
@@ -157,165 +108,291 @@
     <script src="data.js"></script>
     <script src="../../shared/scripts/portal.js"></script>
     <script>
-        function kpiCard(opts) {
+        /* ផ្ទាំងគ្រប់គ្រងបែប "សកម្មភាពមុនគេ" — គ្មានគំនូសតាង គ្មានតម្រងកាលបរិច្ឆេទ
+           លេខទាំងអស់គិតលើខែបច្ចុប្បន្ន (ថ្ងៃទី 1 ដល់ថ្ងៃនេះ)។ */
+
+        function railColor(percent) {
+            if (percent >= 100) return '#10b981';
+            if (percent >= 80) return '#f59e0b';
+            return '#f43f5e';
+        }
+
+        function textTone(percent) {
+            if (percent >= 100) return 'text-emerald-600';
+            if (percent >= 80) return 'text-amber-600';
+            return 'text-rose-600';
+        }
+
+        /* ===== តំបន់ទី 1 — បន្ទះចំណុចផ្តោត ===== */
+
+        function heroStat(opts) {
+            const tag = opts.href ? 'a' : 'div';
+            const attrs = opts.href
+                ? `href="${opts.href}" class="block px-6 py-4 hover:bg-white/5 transition group"`
+                : 'class="px-6 py-4"';
+            return `<${tag} ${attrs}>
+                <p class="sm-eyebrow text-white/45">${opts.label}</p>
+                <p class="sm-value text-white sm-figure mt-1.5 flex items-baseline gap-1.5">
+                    <span class="sm-kpi-value ${opts.tone || 'text-white'}">${opts.value}</span>
+                    <span class="sm-kpi-unit text-white/50">${opts.unit || ''}</span>
+                </p>
+                <p class="sm-card-sub ${opts.subTone || 'text-white/55'} mt-0.5">
+                    ${opts.sub}${opts.href ? ' <i class="fas fa-arrow-right text-[10px] ml-0.5 opacity-0 group-hover:opacity-100 transition"></i>' : ''}
+                </p>
+            </${tag}>`;
+        }
+
+        function renderHero(m) {
+            const pending = totalPending();
+            document.getElementById('heroRevenue').textContent = fmtUSD(m.revenue);
+            document.getElementById('heroTarget').textContent = `គោលដៅ ${fmtUSD(m.totalTarget)} · នៅខ្វះ ${fmtUSD(Math.max(m.totalTarget - m.revenue, 0))}`;
+
+            const pctEl = document.getElementById('heroPercent');
+            pctEl.textContent = fmtPercent(m.quotaPercent, 0);
+            pctEl.style.color = railColor(m.quotaPercent);
+
+            const rail = document.getElementById('heroRail');
+            rail.style.width = Math.min(m.quotaPercent, 100) + '%';
+            rail.style.backgroundColor = railColor(m.quotaPercent);
+
+            document.getElementById('heroStats').innerHTML =
+                heroStat({
+                    label: 'រង់ចាំការសម្រេចរបស់អ្នក',
+                    value: pending, unit: 'សំណើ',
+                    tone: pending ? 'text-amber-300' : 'text-white',
+                    sub: pending ? 'ពិនិត្យជួរអនុម័ត' : 'ជួរអនុម័តទទេ',
+                    subTone: pending ? 'text-amber-200/80' : 'text-emerald-300/80',
+                    href: 'approvals/approvals.html'
+                }) +
+                `<div class="sm:border-l border-white/10">` + heroStat({
+                    label: 'បំណុលហួសកាលកំណត់',
+                    value: m.overdueList.length, unit: 'វិក្កយបត្រ',
+                    tone: m.overdueList.length ? 'text-rose-300' : 'text-white',
+                    sub: m.overdueList.length ? `${fmtUSD(m.overdueAmount)} ត្រូវទារ` : 'គ្មានបំណុលហួសកាលកំណត់',
+                    subTone: m.overdueList.length ? 'text-rose-200/80' : 'text-emerald-300/80'
+                }) + `</div>` +
+                `<div class="sm:border-l border-white/10">` + heroStat({
+                    label: 'អត្រាបិទការលក់',
+                    value: fmtPercent(m.winRate, 0), unit: '',
+                    sub: `${m.convertedCount} ក្នុងចំណោម ${m.quoteCount} សម្រង់តម្លៃ`
+                }) + `</div>`;
+        }
+
+        /* ===== តំបន់ទី 2 — បញ្ជីការងារបន្ទាន់ ===== */
+
+        function discountPill(percent) {
+            const tone = percent > 15 ? 'bg-rose-100 text-rose-700'
+                : percent > 10 ? 'bg-orange-100 text-orange-700'
+                : 'bg-amber-100 text-amber-800';
+            return `<span class="sm-badge sm-figure px-2 py-0.5 rounded-md font-semibold flex-shrink-0 ${tone}">−${fmtPercent(percent, 0)}</span>`;
+        }
+
+        function urgentRow(a) {
+            const rep = a.rep || { name: 'មិនស្គាល់', initials: '—' };
+            const cust = a.customer || { name: 'មិនស្គាល់' };
+            const stale = a.ageHours >= 24;
             return `
-                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
-                    <div class="flex items-center justify-between mb-2 gap-2">
-                        <span class="sm-kpi-label text-slate-500">${opts.label}</span>
-                        <div class="w-9 h-9 rounded-xl bg-${opts.tone}-50 text-${opts.tone}-600 flex items-center justify-center flex-shrink-0">
-                            <i class="fas ${opts.icon} text-sm"></i>
-                        </div>
+                <div class="sm-worklist-row px-5 py-4 flex flex-wrap items-center gap-x-5 gap-y-3"
+                     style="border-left-color:${stale ? '#f43f5e' : '#f59e0b'}">
+
+                    <div class="flex items-center gap-3 min-w-[220px] flex-1">
+                        <span class="w-9 h-9 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center font-semibold text-xs flex-shrink-0">${rep.initials || '—'}</span>
+                        <span class="min-w-0">
+                            <span class="sm-td text-slate-800 block truncate">${cust.name}</span>
+                            <span class="sm-td-sub text-slate-500 block truncate">${a.id} · ${rep.name} · ${a.ageHours} ម៉ោងមុន</span>
+                        </span>
                     </div>
-                    <h3 class="sm-kpi-value text-slate-700">${opts.value}</h3>
-                    <p class="sm-kpi-sub ${opts.subTone || 'text-slate-500'} mt-1">${opts.sub}</p>
+
+                    <div class="flex items-center gap-2.5 flex-shrink-0">
+                        ${discountPill(a.discountPercent)}
+                        <span class="sm-td-sub text-slate-400 line-through sm-figure">${fmtUSD(a.subtotal)}</span>
+                        <i class="fas fa-arrow-right text-[9px] text-slate-300"></i>
+                        <span class="sm-td-strong text-slate-800 sm-figure">${fmtUSD(a.afterDiscount)}</span>
+                        <span class="sm-td-sub text-rose-600 font-semibold sm-figure">−${fmtUSD(a.discountAmount)}</span>
+                    </div>
+
+                    ${a.needsGm ? '<span class="sm-badge px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 flex-shrink-0">បន្តទៅអភិបាលទូទៅ</span>' : ''}
+
+                    <div class="flex items-center gap-2 ml-auto flex-shrink-0 no-print">
+                        <button onclick="decideFromDashboard('${a.id}', 'approve')"
+                            class="sm-badge px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition">
+                            អនុម័ត
+                        </button>
+                        <button onclick="decideFromDashboard('${a.id}', 'reject')"
+                            class="sm-badge px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-rose-700 hover:bg-rose-50 font-medium transition">
+                            បដិសេធ
+                        </button>
+                        <a href="approvals/view-approval.html?type=quote&id=${a.id}" aria-label="មើលលម្អិត"
+                            class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition">
+                            <i class="fas fa-chevron-right text-xs"></i>
+                        </a>
+                    </div>
                 </div>`;
         }
 
-        function miniStat(label, value, sub) {
-            return `<div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                <span class="sm-kpi-sub text-slate-500 block">${label}</span>
-                <span class="sm-kpi-value text-slate-700">${value}</span>
-                <span class="sm-kpi-sub text-slate-400 block mt-0.5">${sub}</span>
-            </div>`;
-        }
+        function renderUrgentStrip() {
+            const list = urgentApprovals(4);
+            const otherPending = pendingVoids().length + pendingCredits().length;
+            const host = document.getElementById('urgentStrip');
 
-        function renderKpis(m) {
-            document.getElementById('kpiRow').innerHTML =
-                kpiCard({
-                    label: 'ចំណូលលក់សរុប', icon: 'fa-chart-line', tone: 'emerald',
-                    value: fmtUSD(m.revenue),
-                    sub: `${m.invoiceCount} វិក្កយបត្រ · សម្រេច ${fmtPercent(m.quotaPercent)} នៃគោលដៅ`,
-                    subTone: 'text-emerald-600 font-semibold'
-                }) +
-                `<a href="approvals/approvals.html" class="block bg-white rounded-2xl p-5 border-2 border-amber-200 shadow-sm bg-amber-50/20 hover:border-amber-300 transition">
-                    <div class="flex items-center justify-between mb-2 gap-2">
-                        <span class="sm-kpi-label text-amber-700 font-semibold">សម្រង់តម្លៃរង់ចាំការអនុម័ត</span>
-                        <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-clock text-sm"></i>
-                        </div>
+            const head = `
+                <div class="px-5 pt-5 pb-3 flex flex-wrap items-baseline justify-between gap-2">
+                    <div>
+                        <p class="sm-eyebrow text-amber-600">ត្រូវសម្រេចថ្ងៃនេះ</p>
+                        <p class="sm-card-sub text-slate-500 mt-1">
+                            ${list.length ? `សម្រង់តម្លៃ ${list.length} តម្រៀបតាមការបញ្ចុះតម្លៃធំមុន` : 'គ្មានសម្រង់តម្លៃរង់ចាំការអនុម័ត'}${otherPending ? ` · សំណើផ្សេងទៀត ${otherPending}` : ''}
+                        </p>
                     </div>
-                    <h3 class="sm-kpi-value text-amber-700">${m.pendingCount} <span class="sm-kpi-unit text-amber-600">សំណើ</span></h3>
-                    <span class="sm-kpi-sub text-amber-700 font-semibold mt-1 inline-flex items-center gap-1">
-                        ${m.pendingCount ? 'ពិនិត្យឥឡូវនេះ' : 'គ្មានសំណើរង់ចាំ'} <i class="fas fa-arrow-right text-[10px]"></i>
-                    </span>
-                </a>` +
-                kpiCard({
-                    label: 'បំណុលអតិថិជនត្រូវប្រមូល', icon: 'fa-file-invoice-dollar', tone: 'blue',
-                    value: fmtUSD(m.receivable),
-                    sub: `ក្នុងនោះ ${fmtUSD(m.overdueAmount)} ហួសកាលកំណត់`,
-                    subTone: 'text-rose-600 font-semibold'
-                }) +
-                kpiCard({
-                    label: 'អត្រាជោគជ័យនៃការលក់', icon: 'fa-bullseye', tone: 'purple',
-                    value: fmtPercent(m.winRate),
-                    sub: `${m.convertedCount} ក្នុងចំណោម ${m.quoteCount} សម្រង់តម្លៃ`
-                });
-        }
+                    <a href="approvals/approvals.html" class="sm-badge font-semibold text-[#1e3a5f] hover:underline inline-flex items-center gap-1 flex-shrink-0">
+                        ជួរអនុម័តពេញលេញ <i class="fas fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>`;
 
-        function renderVelocity(range) {
-            const v = salesVelocity(range);
-            document.getElementById('velocityRow').innerHTML =
-                miniStat('ទំហំជាមធ្យមក្នុងមួយប្រតិបត្តិការ', fmtUSD(v.avgDealSize), 'ទឹកប្រាក់ក្នុងមួយវិក្កយបត្រ') +
-                miniStat('វដ្តបិទការលក់ជាមធ្យម', `${v.cycleDays.toFixed(1)} <span class="sm-kpi-unit text-slate-500">ថ្ងៃ</span>`, 'ពីសម្រង់តម្លៃដល់ការបិទ') +
-                miniStat('ប្រតិបត្តិការក្នុងមួយសប្តាហ៍', v.dealsPerWeek.toFixed(1), 'ល្បឿនបិទការលក់') +
-                miniStat('ចំណូលជាមធ្យមក្នុងមួយថ្ងៃ', fmtUSD(v.revenuePerDay), 'គិតលើកំឡុងពេលដែលបានជ្រើស');
-        }
-
-        function renderQuota(m) {
-            document.getElementById('quotaSubtitle').textContent =
-                `គោលដៅរួម ${fmtUSD(m.totalTarget)} · សម្រេចបាន ${fmtUSD(m.revenue)}`;
-            document.getElementById('quotaBadge').textContent = `សម្រេច ${fmtPercent(m.quotaPercent)}`;
-            document.getElementById('quotaBar').style.width = Math.min(m.quotaPercent, 100) + '%';
-            document.getElementById('quotaRemain').textContent = fmtUSD(Math.max(m.totalTarget - m.revenue, 0));
-            document.getElementById('quotaInvoices').textContent = `${m.invoiceCount} វិក្កយបត្រ`;
-            document.getElementById('quotaCollected').textContent = fmtUSD(m.collected);
-        }
-
-        function renderLeaderboard(range) {
-            const rows = commissionRows(range);
-            document.getElementById('leaderboardBody').innerHTML = rows.map((rep, i) => {
-                const rankTone = i === 0 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600';
-                const quotaTone = rep.quotaPercent >= 100 ? 'bg-emerald-50 text-emerald-700'
-                    : rep.quotaPercent >= 90 ? 'bg-blue-50 text-blue-700'
-                    : 'bg-slate-100 text-slate-600';
-                return `<tr class="hover:bg-slate-50 transition">
-                    <td class="py-3.5 px-4">
-                        <span class="w-6 h-6 rounded-full ${rankTone} sm-badge font-semibold flex items-center justify-center">${i + 1}</span>
-                    </td>
-                    <td class="sm-td py-3.5 px-4">${rep.name}</td>
-                    <td class="sm-td py-3.5 px-4">${rep.invoiceCount}</td>
-                    <td class="sm-td-strong py-3.5 px-4">${fmtUSD(rep.revenue)}</td>
-                    <td class="py-3.5 px-4"><span class="sm-badge px-2 py-0.5 rounded-full ${quotaTone} font-semibold">${fmtPercent(rep.quotaPercent, 0)}</span></td>
-                    <td class="sm-td py-3.5 px-4">${fmtPercent(rep.commission)}</td>
-                    <td class="sm-td-strong py-3.5 px-4 text-right text-emerald-700">${fmtUSD(rep.payableNow)}</td>
-                </tr>`;
-            }).join('');
-
-            const totalPayable = rows.reduce((s, r) => s + r.payableNow, 0);
-            const totalAccrued = rows.reduce((s, r) => s + r.commissionAmount, 0);
-            document.getElementById('leaderboardFoot').innerHTML = `
-                <tr>
-                    <td colspan="5" class="sm-td py-3 px-4 text-slate-500">កម្រៃបង្គរសរុប ${fmtUSD(totalAccrued)} · បើកជូនតាមប្រាក់ប្រមូលបាន</td>
-                    <td class="sm-td py-3 px-4 text-slate-600 font-semibold">សរុប</td>
-                    <td class="sm-td-strong py-3 px-4 text-right text-emerald-700">${fmtUSD(totalPayable)}</td>
-                </tr>`;
-        }
-
-        function renderOverdue(m) {
-            const host = document.getElementById('overdueList');
-            if (!m.overdueList.length) {
-                host.innerHTML = '<div class="p-6 text-center"><p class="sm-card-sub text-slate-500">គ្មានបំណុលហួសកាលកំណត់ទេ</p></div>';
+            if (!list.length) {
+                host.innerHTML = head + `
+                    <div class="border-t border-slate-100 px-5 py-10 flex flex-col items-center gap-2 text-center">
+                        <i class="fas fa-circle-check text-2xl text-emerald-400"></i>
+                        <p class="sm-td text-slate-600">ជួរអនុម័តស្អាតហើយ</p>
+                        <p class="sm-td-sub text-slate-400">សំណើថ្មីនឹងបង្ហាញនៅទីនេះភ្លាមៗ</p>
+                    </div>`;
                 return;
             }
-            host.innerHTML = m.overdueList.map(inv => {
-                const cust = getCustomer(inv.customerId);
-                return `<div class="p-4 flex items-center justify-between gap-3">
-                    <div class="min-w-0">
-                        <p class="sm-td text-slate-700 truncate">${cust.name}</p>
-                        <p class="sm-td-sub text-slate-400">${inv.id} · ហួស ${daysBetween(inv.dueDate)} ថ្ងៃ</p>
-                    </div>
-                    <span class="sm-td-strong text-rose-600 flex-shrink-0">${fmtUSD(invoiceState(inv).due)}</span>
-                </div>`;
-            }).join('');
+
+            host.innerHTML = head + `<div class="border-t border-slate-100 divide-y divide-slate-100">${list.map(urgentRow).join('')}</div>`;
         }
+
+        async function decideFromDashboard(id, action) {
+            const item = urgentApprovals(99).find(a => a.id === id);
+            if (!item) return;
+
+            if (action === 'reject') {
+                const reason = await showReasonPrompt({
+                    title: 'បញ្ជាក់ការបដិសេធ',
+                    message: `សូមបញ្ចូលមូលហេតុនៃការបដិសេធសម្រង់តម្លៃ ${id}។ បុគ្គលិកលក់នឹងទទួលបានដំណឹងនេះ។`,
+                    placeholder: 'មូលហេតុនៃការបដិសេធ...',
+                    confirmText: 'បដិសេធ',
+                    danger: true
+                });
+                if (!reason) return;
+                const res = smActions.rejectQuote(id, reason);
+                if (!res.ok) return showToast(res.error, 'error');
+                return showToast(`បានបដិសេធសម្រង់តម្លៃ ${id} រួចរាល់`, 'warning');
+            }
+
+            const ok = await showCustomConfirm({
+                title: `អនុម័តការបញ្ចុះតម្លៃ ${fmtPercent(item.discountPercent)}`,
+                message: item.needsGm
+                    ? `សម្រង់តម្លៃ ${id} សម្រាប់ ${item.customer ? item.customer.name : ''} មានទឹកប្រាក់លើសពីដែនសិទ្ធិរបស់លោកអ្នក។ បន្ទាប់ពីអនុម័ត វានឹងត្រូវបញ្ជូនទៅអភិបាលទូទៅដើម្បីអនុម័តបន្ត។ តើបន្តមែនទេ?`
+                    : `តើលោកអ្នកពិតជាអនុម័តការបញ្ចុះតម្លៃ ${fmtPercent(item.discountPercent)} ជូន ${item.customer ? item.customer.name : ''} មែនទេ? ដែនសិទ្ធិរបស់អ្នកគ្រប់គ្រងផ្នែកលក់គឺរហូតដល់ ${fmtUSD(BMS_STORE.settings().quotationLimits.SM)} ក្នុងមួយសម្រង់តម្លៃ។`,
+                confirmText: item.needsGm ? 'អនុម័ត និងបញ្ជូនបន្ត' : 'យល់ព្រមអនុម័ត',
+                cancelText: 'បោះបង់'
+            });
+            if (!ok) return;
+
+            const res = smActions.approveQuote(id);
+            if (!res.ok) return showToast(res.error, 'error');
+            showToast(res.finalApproved === false
+                ? `បានអនុម័តសម្រង់តម្លៃ ${id} ហើយបានបញ្ជូនទៅអភិបាលទូទៅ`
+                : `បានអនុម័តសម្រង់តម្លៃ ${id} ដោយជោគជ័យ`, 'success');
+        }
+
+        /* ===== តំបន់ទី 3 — ចំណាត់ថ្នាក់ក្រុម ===== */
+
+        function trendMark(rep) {
+            if (!rep.prevRevenue) return '<span class="sm-td-sub text-slate-400">ខែដំបូង</span>';
+            if (rep.trend === 'FLAT') return '<span class="sm-td-sub text-slate-400">ស្មើខែមុន</span>';
+            const up = rep.trend === 'UP';
+            return `<span class="sm-td-sub ${up ? 'text-emerald-600' : 'text-rose-600'} font-semibold sm-figure">
+                        <i class="fas fa-caret-${up ? 'up' : 'down'}"></i> ${fmtPercent(Math.abs(rep.trendPercent), 0)}
+                    </span>`;
+        }
+
+        function renderLeaderboard() {
+            const rows = repLeaderboard();
+            const host = document.getElementById('leaderboardRow');
+            const totalRevenue = rows.reduce((s, r) => s + r.revenue, 0);
+            document.getElementById('leaderboardSub').textContent =
+                `បុគ្គលិកលក់ ${rows.length} នាក់ · ចំណូលរួម ${fmtUSD(totalRevenue)}`;
+
+            if (!rows.length) {
+                host.innerHTML = '<div class="px-5 py-10 text-center"><p class="sm-td-sub text-slate-400">គ្មានបុគ្គលិកលក់ក្នុងក្រុមទេ</p></div>';
+                return;
+            }
+
+            host.innerHTML = rows.map(rep => `
+                <div class="px-5 py-4 hover:bg-slate-50/70 transition">
+                    <div class="flex items-center gap-3">
+                        <span class="sm-card-title ${rep.rank === 1 ? 'text-amber-500' : 'text-slate-300'} w-6 flex-shrink-0 sm-figure">${rep.rank}</span>
+                        <span class="min-w-0 flex-1">
+                            <span class="sm-td text-slate-800 block truncate">${rep.name}</span>
+                            <span class="sm-td-sub text-slate-500 block">${rep.invoiceCount} វិក្កយបត្រ · បម្លែង ${fmtPercent(rep.conversion, 0)}</span>
+                        </span>
+                        <span class="text-right flex-shrink-0">
+                            <span class="sm-td-strong text-slate-800 block sm-figure">${fmtUSD(rep.revenue)}</span>
+                            ${trendMark(rep)}
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-3 mt-2.5 pl-9">
+                        <span class="sm-rail flex-1"><span style="width:${Math.min(rep.quotaPercent, 100)}%;background-color:${railColor(rep.quotaPercent)}"></span></span>
+                        <span class="sm-td-sub ${textTone(rep.quotaPercent)} font-semibold w-14 text-right flex-shrink-0 sm-figure">${fmtPercent(rep.quotaPercent, 0)}</span>
+                    </div>
+                </div>`).join('');
+        }
+
+        /* ===== តំបន់ទី 4 — ហានិភ័យឥណទាន ===== */
+
+        function renderCreditWatch() {
+            const rows = creditWatchList();
+            const host = document.getElementById('creditRow');
+            const pill = document.getElementById('creditCountPill');
+
+            if (!rows.length) {
+                pill.className = 'sm-badge font-semibold flex-shrink-0 text-emerald-600';
+                pill.textContent = 'ធម្មតាទាំងអស់';
+                host.innerHTML = `<div class="px-5 py-10 flex flex-col items-center gap-2 text-center">
+                    <i class="fas fa-shield-halved text-2xl text-emerald-300"></i>
+                    <p class="sm-td-sub text-slate-500">អតិថិជនទាំងអស់នៅក្នុងដែនឥណទានធម្មតា</p>
+                </div>`;
+                return;
+            }
+
+            const exceeded = rows.filter(c => c.percent >= 100).length;
+            pill.className = 'sm-badge font-semibold flex-shrink-0 text-rose-600 sm-figure';
+            pill.textContent = exceeded ? `លើសដែន ${exceeded} / ${rows.length}` : `${rows.length} អតិថិជន`;
+
+            host.innerHTML = rows.slice(0, 6).map(c => {
+                const over = c.percent >= 100;
+                return `
+                <div class="px-5 py-3.5 hover:bg-slate-50/70 transition">
+                    <div class="flex items-baseline justify-between gap-3">
+                        <span class="min-w-0">
+                            <span class="sm-td text-slate-800 block truncate">${c.name}</span>
+                            <span class="sm-td-sub text-slate-500 block truncate">${c.rep ? c.rep.name : 'គ្មានបុគ្គលិកទទួលបន្ទុក'}</span>
+                        </span>
+                        <span class="sm-td-strong ${over ? 'text-rose-600' : 'text-amber-600'} flex-shrink-0 sm-figure">${fmtPercent(c.percent, 0)}</span>
+                    </div>
+                    <div class="sm-rail mt-2"><span style="width:${Math.min(c.percent, 100)}%;background-color:${over ? '#f43f5e' : '#f59e0b'}"></span></div>
+                    <p class="sm-td-sub text-slate-400 mt-1.5 sm-figure">${fmtUSD(c.used)} លើដែន ${fmtUSD(c.creditLimit)}</p>
+                </div>`;
+            }).join('') + (rows.length > 6
+                ? `<div class="px-5 py-3 text-center"><span class="sm-td-sub text-slate-400">និងអតិថិជនផ្សេងទៀត ${rows.length - 6} នាក់</span></div>`
+                : '');
+        }
+
+        /* ===== ដំណើរការ ===== */
 
         function renderDashboard() {
-            const range = getSelectedRange();
-            const metrics = dashboardMetrics(range);
-            renderKpis(metrics);
-            renderVelocity(range);
-            renderQuota(metrics);
-            renderLeaderboard(range);
-            renderOverdue(metrics);
-            document.getElementById('headerQueuePill').textContent = `សំណើរង់ចាំអនុម័ត៖ ${totalPending()} ករណី`;
-            const badge = document.getElementById('navQueueBadge');
-            if (badge) badge.textContent = totalPending();
+            const metrics = dashboardMetrics(monthRange(0));
+            renderHero(metrics);
+            renderUrgentStrip();
+            renderLeaderboard();
+            renderCreditWatch();
+            updatePortalBadges();
         }
 
-        window.onDateRangeApplied = renderDashboard;
         window.onStoreChanged = renderDashboard;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderDateRangePicker('dateFilterHost');
-            renderDashboard();
-
-            const revEl = document.getElementById('revenueTargetChart');
-            if (revEl) {
-                const chart = echarts.init(revEl);
-                chart.setOption({
-                    tooltip: { trigger: 'axis', textStyle: { fontFamily: 'Kantumruy Pro' } },
-                    legend: { data: ['ចំណូលជាក់ស្តែង', 'គោលដៅ'], bottom: 0, textStyle: { fontFamily: 'Kantumruy Pro' } },
-                    grid: { top: '10%', left: '3%', right: '4%', bottom: '15%', containLabel: true },
-                    xAxis: { type: 'category', data: monthlyRevenueSeries().map(m => m.month), axisLabel: { fontFamily: 'Kantumruy Pro' } },
-                    yAxis: { type: 'value', axisLabel: { fontFamily: 'Kantumruy Pro' } },
-                    series: [
-                        { name: 'ចំណូលជាក់ស្តែង', type: 'bar', data: monthlyRevenueSeries().map(m => m.actual), itemStyle: { color: '#1e3a5f', borderRadius: [6, 6, 0, 0] } },
-                        { name: 'គោលដៅ', type: 'line', smooth: true, data: monthlyRevenueSeries().map(m => m.target), itemStyle: { color: '#0ea5e9' }, lineStyle: { width: 3, type: 'dashed' } }
-                    ]
-                });
-                window.addEventListener('resize', () => chart.resize());
-            }
-        });
+        document.addEventListener('DOMContentLoaded', renderDashboard);
     </script>
 </body>
 </html>

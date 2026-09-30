@@ -306,7 +306,24 @@ const BMS_STORE = (() => {
         const lines = [{ accountCode: '1131', dr: grand, description: inv.id }];
         if (down > 0) lines.push({ accountCode: '1121', dr: down, description: 'ប្រាក់កក់' });
         lines.push({ accountCode: '4111', cr: taxBase, description: inv.id }, { accountCode: '2121', cr: vatAmount, description: inv.id });
-        return postJournal({ date: inv.date, description: `ចេញវិក្កយបត្រ ${inv.id}`, source: 'INVOICE', reference: inv.id, status: 'POSTED', lines }, byId);
+        const res = postJournal({ date: inv.date, description: `ចេញវិក្កយបត្រ ${inv.id}`, source: 'INVOICE', reference: inv.id, status: 'POSTED', lines }, byId);
+
+        // ថ្លៃដើមទំនិញលក់ — ចុះជាទិន្នានុប្បវត្តិដាច់ដោយឡែក ដើម្បីឱ្យរបាយការណ៍ចំណេញ-ខាតមានថ្លៃដើមពិត
+        const cogs = r2(inv.items.reduce((sum, it) => {
+            const prod = db.products.find(x => x.sku === it.sku);
+            return sum + (prod && prod.cost ? prod.cost * it.qty : 0);
+        }, 0));
+        if (cogs > 0) {
+            postJournal({
+                date: inv.date, description: `ថ្លៃដើមទំនិញលក់ ${inv.id}`, source: 'INVOICE',
+                reference: inv.id, status: 'POSTED',
+                lines: [
+                    { accountCode: '5111', dr: cogs, description: inv.id },
+                    { accountCode: '1211', cr: cogs, description: inv.id }
+                ]
+            }, byId);
+        }
+        return res;
     }
 
     /* ត្រឡប់ទិន្នានុប្បវត្តិដើម (ជំនួសការលុបចោល — គ្មានអ្វីត្រូវបានលុបជាអចិន្ត្រៃយ៍) */
@@ -780,6 +797,23 @@ const BMS_STORE = (() => {
             return { ok: true, record: je };
         },
 
+        /* ចុះបញ្ជីទិនានុប្បវត្តិព្រាងចូលសៀវភៅធំ — ធ្វើបានតែពេលឥណពន្ធស្មើឥណទាន */
+        postDraftJournal(id, actorId) {
+            if (roleOf(actorId) !== 'CA') return fail('មានតែប្រធានគណនេយ្យទេដែលអាចចុះបញ្ជីបាន');
+            ensure();
+            const je = db.journalEntries.find(j => j.id === id);
+            if (!je) return fail('រកមិនឃើញទិនានុប្បវត្តិ');
+            if (je.status !== 'DRAFT') return fail('ទិនានុប្បវត្តិនេះបានចុះបញ្ជីរួចហើយ');
+            const sums = journalSums(je.lines);
+            if (Math.abs(sums.dr - sums.cr) > 0.005) return fail('មិនអាចចុះបញ្ជីបានឡើយ ដោយសារឥណពន្ធមិនស្មើឥណទាន');
+            je.status = 'POSTED';
+            je.postedBy = actorId;
+            je.postedAt = nowIso();
+            audit(actorId, 'POST_JOURNAL', 'journalEntry', id, je.description);
+            commit({ collection: 'journalEntries', id });
+            return { ok: true, record: je };
+        },
+
         /* ---- បំពង់លំហូរការលក់ ---- */
         moveDeal(dealId, stage, actorId) {
             ensure();
@@ -788,6 +822,8 @@ const BMS_STORE = (() => {
             if (deal.stage === stage) return { ok: true, unchanged: true };
             const from = deal.stage;
             deal.stage = stage;
+            // ចាំបាច់ដើម្បីរាប់ចំនួនថ្ងៃដែលឱកាសលក់ស្ថិតក្នុងដំណាក់កាលបច្ចុប្បន្ន
+            deal.stageChangedAt = nowIso();
             audit(actorId, 'MOVE_DEAL', 'pipelineDeal', dealId, `${from} → ${stage}`);
             commit({ collection: 'pipelineDeals', id: dealId });
             return { ok: true, record: deal };

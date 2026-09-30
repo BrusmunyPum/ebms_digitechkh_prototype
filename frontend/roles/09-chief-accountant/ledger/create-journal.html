@@ -1,23 +1,24 @@
 <!DOCTYPE html>
 <html lang="km">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIGITECHKH - បង្កើតទិន្នានុប្បវត្តថ្មី</title>
+    <title>DIGITECHKH - បង្កើតទិនានុប្បវត្តិ</title>
     <link rel="icon" type="image/png" href="../../../shared/assets/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: "#7c3aed",
-                        'primary-dark': "#6d28d9",
-                        accent: "#a78bfa",
+                        primary: "#1e3a5f",
+                        'primary-dark': "#142842",
+                        accent: "#0ea5e9",
                     },
                     fontFamily: {
                         sans: ["'Kantumruy Pro'", "sans-serif"],
@@ -29,309 +30,242 @@
     <link rel="stylesheet" href="../../../shared/styles/custom.css">
     <link rel="stylesheet" href="../../../shared/styles/portal.css">
 </head>
-<body id="caPortal" data-role-root=".." data-active="ledger" class="bg-slate-50 font-sans text-slate-800 text-[16px] flex h-screen overflow-hidden">
 
-    <!-- Unified Sidebar Runtime -->
+<body id="caPortal" data-role-root=".." data-active="ledger" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
+
     <div id="sidebarHost"></div>
 
-    <!-- Main Content Wrapper -->
-    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-
-        <!-- Top Header (Standard 2: h-[72px] px-6) -->
-        <div id="headerHost" data-title="បង្កើតទិន្នានុប្បវត្តថ្មី (Manual Journal Entry)"
-             data-subtitle="ការកត់ត្រាប្រតិបត្តិការគណនេយ្យទ្វេភាគ (Double-Entry Enforcement)"
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <div id="headerHost" data-title="បង្កើតទិនានុប្បវត្តិថ្មី"
+             data-subtitle="កត់ត្រាដោយដៃ — ឥណពន្ធត្រូវស្មើឥណទានមុននឹងចុះបញ្ជី"
              data-back="ledger.html"></div>
 
-        <!-- Main Content Area -->
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
-            <form id="createJeForm" onsubmit="handleSubmitJE(event, 'Posted')" class="w-full max-w-6xl mx-auto space-y-6">
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
 
-                <!-- Section 1: Entry Metadata Card -->
-                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-4">
-                    <h3 class="text-sm font-semibold text-slate-800 pb-3 border-b border-slate-100 flex items-center gap-2">
-                        <i class="fas fa-file-invoice text-violet-600"></i>
-                        <span>ព័ត៌មានក្បាលទិន្នានុប្បវត្ត</span>
-                    </h3>
+            <div class="w-full space-y-4">
 
-                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1.5">កាលបរិច្ឆេទ <span class="text-rose-500">*</span></label>
-                            <input type="date" id="jeDate" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 outline-none focus:border-violet-600">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1.5">ឯកសារយោង (Reference)</label>
-                            <input type="text" id="jeReference" placeholder="ឧ. ADJ-2026-009" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 outline-none focus:border-violet-600 font-mono">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1.5">ការិយបរិច្ឆេទ</label>
-                            <input type="text" value="កញ្ញា 2026 (បើក)" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-600 outline-none font-semibold cursor-not-allowed">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1.5">ស្ថានភាពបញ្ចូល</label>
-                            <input type="text" value="ទិន្នានុប្បវត្តទូទៅ" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-600 outline-none cursor-not-allowed">
-                        </div>
-
-                        <div class="sm:col-span-4">
-                            <label class="block text-xs font-medium text-slate-700 mb-1.5">បរិយាយសង្ខេបអំពីប្រតិបត្តិការ <span class="text-rose-500">*</span></label>
-                            <input type="text" id="jeDescription" required placeholder="ឧ. កត់ត្រាការទិញសម្ភារៈការិយាល័យ និងចំណាយផ្សេងៗ..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 outline-none focus:border-violet-600">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section 2: Double-Entry Grid Card -->
-                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-4">
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                        <div>
-                            <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2">
-                                <i class="fas fa-scale-balanced text-violet-600"></i>
-                                <span>តារាងគណនេយ្យទ្វេភាគ (Dr & Cr Grid)</span>
-                            </h3>
-                            <p class="text-xs text-slate-400 mt-0.5">ផលបូក Dr ត្រូវតែស្មើគ្នានឹង Cr ដើម្បីអាចចុះបញ្ជីបាន</p>
-                        </div>
-
-                        <button type="button" onclick="addNewEntryRow()"
-                            class="px-3.5 py-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 text-xs font-semibold rounded-xl border border-violet-200 transition flex items-center gap-1.5 cursor-pointer">
-                            <i class="fas fa-plus text-[11px]"></i>
-                            <span>បន្ថែមជួរគណនី</span>
-                        </button>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse" id="entryGridTable">
-                            <thead>
-                                <tr class="bg-slate-50 text-xs font-semibold text-slate-600 border-b border-slate-200">
-                                    <th class="py-2.5 px-3 min-w-[280px]">គណនី (Account)</th>
-                                    <th class="py-2.5 px-3 min-w-[200px]">បរិយាយជួរ (Line Memo)</th>
-                                    <th class="py-2.5 px-3 w-32 text-right">ឥណពន្ធ (Dr) $</th>
-                                    <th class="py-2.5 px-3 w-32 text-right">ឥណទាន (Cr) $</th>
-                                    <th class="py-2.5 px-3 w-12 text-center">លុប</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100 text-xs" id="entryGridTbody">
-                                <!-- Dynamic rows -->
-                            </tbody>
-                            <tfoot>
-                                <tr class="bg-slate-50/80 border-t-2 border-slate-300 font-bold text-xs text-slate-900">
-                                    <td colspan="2" class="py-3 px-3 text-right">ផលបូកសរុប (Total):</td>
-                                    <td class="py-3 px-3 text-right font-mono text-violet-700" id="gridTotalDr">$0.00</td>
-                                    <td class="py-3 px-3 text-right font-mono text-violet-700" id="gridTotalCr">$0.00</td>
-                                    <td></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-
-                    <!-- Balance Status Indicator -->
-                    <div id="balanceAlertBox" class="p-3.5 rounded-xl border flex items-center justify-between text-xs bg-slate-50 border-slate-200 text-slate-600">
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-info-circle text-slate-400"></i>
-                            <span id="balanceAlertText">សូមបញ្ចូលទិន្នន័យដើម្បីផ្ទៀងផ្ទាត់តុល្យភាព</span>
-                        </div>
-                        <span class="font-mono font-bold" id="balanceDiffText">$0.00</span>
-                    </div>
-                </div>
-
-                <!-- Form Action Buttons -->
-                <div class="flex items-center justify-end gap-3 pt-2">
-                    <a href="ledger.html" class="px-5 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">
+                <div class="w-full flex flex-wrap items-center justify-end gap-2 no-print">
+                    <a href="ledger.html"
+                        class="sm-badge px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition">
                         បោះបង់
                     </a>
-
-                    <button type="button" onclick="handleSubmitJE(event, 'Draft')"
-                        class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition cursor-pointer">
-                        <i class="fas fa-floppy-disk mr-1.5 text-slate-500"></i>
-                        <span>រក្សាទុកជាព្រាង (Draft)</span>
+                    <button type="button" onclick="submitJournal('DRAFT')"
+                        class="sm-badge px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold transition">
+                        រក្សាទុកជាព្រាង
                     </button>
-
-                    <button type="submit" id="btnPostEntry" disabled
-                        class="px-6 py-2.5 bg-violet-600 hover:bg-violet-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-semibold rounded-xl shadow-xs transition cursor-pointer flex items-center gap-2">
-                        <i class="fas fa-check"></i>
-                        <span>ចុះបញ្ជីទិន្នានុប្បវត្ត (Post)</span>
+                    <button type="button" onclick="submitJournal('POSTED')"
+                        class="sm-badge px-4 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white font-semibold shadow-sm transition inline-flex items-center gap-2">
+                        <i class="fas fa-check text-[11px]"></i> ចុះបញ្ជីចូលសៀវភៅធំ
                     </button>
                 </div>
 
-            </form>
+                <!-- ព័ត៌មានទូទៅ -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm">
+                    <p class="sm-eyebrow text-slate-400">ព័ត៌មានទូទៅ</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <div>
+                            <span class="sm-label text-slate-600 block mb-1.5">កាលបរិច្ឆេទ</span>
+                            <!-- ប្រើកម្មវិធីជ្រើសកាលបរិច្ឆេទផ្ទាល់ខ្លួន មិនមែន input type=date របស់កម្មវិធីរុករក -->
+                            <div class="relative bms-date-picker">
+                                <input type="hidden" id="fDate">
+                                <button type="button" onclick="toggleSingleDatePicker('fDate')"
+                                    class="w-full h-10 px-3.5 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl sm-td text-slate-800 flex items-center justify-between focus:outline-none focus:bg-white focus:border-primary transition group cursor-pointer">
+                                    <span id="fDate-display" class="bms-date-label font-medium text-slate-800 sm-figure"></span>
+                                    <i class="fas fa-calendar-days text-primary text-xs opacity-75 group-hover:opacity-100 transition"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="fDescription" class="sm-label text-slate-600 block mb-1.5">ការពិពណ៌នា</label>
+                            <input type="text" id="fDescription" placeholder="ឧទាហរណ៍ បង់ថ្លៃជួលការិយាល័យប្រចាំខែ"
+                                class="w-full h-10 px-3.5 bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/10 rounded-xl sm-td text-slate-800 transition outline-none placeholder:text-slate-400">
+                        </div>
+                        <div>
+                            <label for="fReference" class="sm-label text-slate-600 block mb-1.5">ឯកសារយោង</label>
+                            <input type="text" id="fReference" placeholder="ឧទាហរណ៍ RENT-M"
+                                class="w-full h-10 px-3.5 bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/10 rounded-xl sm-td text-slate-800 transition outline-none placeholder:text-slate-400">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ជួរគណនី -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                    <div class="px-6 pt-5 pb-3 flex flex-wrap items-baseline justify-between gap-2">
+                        <div>
+                            <p class="sm-eyebrow text-slate-400">ជួរគណនី</p>
+                            <p class="sm-card-sub text-slate-500 mt-1">ត្រូវមានយ៉ាងហោចណាស់ 2 ជួរ</p>
+                        </div>
+                        <button type="button" onclick="addLine()"
+                            class="sm-badge px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition inline-flex items-center gap-1.5 no-print">
+                            <i class="fas fa-plus text-[11px]"></i> បន្ថែមជួរ
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto border-t border-slate-100">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-50 text-slate-500 border-b border-slate-100">
+                                <tr>
+                                    <th class="sm-th py-3 px-4">គណនី</th>
+                                    <th class="sm-th py-3 px-4">ការពិពណ៌នា</th>
+                                    <th class="sm-th py-3 px-4 text-right w-40">ឥណពន្ធ</th>
+                                    <th class="sm-th py-3 px-4 text-right w-40">ឥណទាន</th>
+                                    <th class="sm-th py-3 px-4 w-12"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="lineBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                            <tfoot id="lineFoot" class="bg-slate-50 border-t-2 border-slate-200"></tfoot>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
         </main>
     </div>
 
-    <!-- Scripts -->
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
-        let rowCount = 0;
+        let lines = [];
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderPortalSidebar();
-            initDate();
-            // Default 2 rows for double entry
-            addNewEntryRow();
-            addNewEntryRow();
-        });
-
-        function initDate() {
-            const today = new Date();
-            const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0');
-            const dd = String(today.getDate()).padStart(2, '0');
-            document.getElementById('jeDate').value = `${yyyy}-${mm}-${dd}`;
+        function entryDate() {
+            const el = document.getElementById('fDate');
+            return (el && el.value) ? el.value : toIsoDate(BMS_TODAY);
         }
 
-        function addNewEntryRow() {
-            rowCount++;
-            const tbody = document.getElementById('entryGridTbody');
-            const tr = document.createElement('tr');
-            tr.id = `row_${rowCount}`;
-            tr.className = 'hover:bg-slate-50 transition';
-
-            const coa = getStoredCOA().filter(a => !a.isGroup);
-            const coaOptions = coa.map(a => `<option value="${a.code}" data-name="${a.nameKh}">[${a.code}] ${a.nameKh}</option>`).join('');
-
-            tr.innerHTML = `
-                <td class="py-2.5 px-3">
-                    <select id="acc_${rowCount}" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs text-slate-800 outline-none focus:border-violet-600" required>
-                        <option value="">-- ជ្រើសរើសគណនី --</option>
-                        ${coaOptions}
-                    </select>
-                </td>
-                <td class="py-2.5 px-3">
-                    <input type="text" id="memo_${rowCount}" placeholder="បរិយាយជួរ..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs text-slate-800 outline-none focus:border-violet-600">
-                </td>
-                <td class="py-2.5 px-3 text-right">
-                    <input type="number" step="0.01" min="0" oninput="onAmountInput(${rowCount}, 'dr')" id="dr_${rowCount}" placeholder="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-right text-xs font-mono font-bold text-slate-800 outline-none focus:border-violet-600">
-                </td>
-                <td class="py-2.5 px-3 text-right">
-                    <input type="number" step="0.01" min="0" oninput="onAmountInput(${rowCount}, 'cr')" id="cr_${rowCount}" placeholder="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-right text-xs font-mono font-bold text-slate-800 outline-none focus:border-violet-600">
-                </td>
-                <td class="py-2.5 px-3 text-center">
-                    <button type="button" onclick="removeEntryRow(${rowCount})" class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition">
-                        <i class="fas fa-xmark"></i>
-                    </button>
-                </td>
-            `;
-
-            tbody.appendChild(tr);
+        function blankLine() {
+            return { accountCode: '', description: '', dr: '', cr: '' };
         }
 
-        function onAmountInput(rowId, type) {
-            if (type === 'dr') {
-                const drVal = document.getElementById(`dr_${rowId}`).value;
-                if (drVal && parseFloat(drVal) > 0) {
-                    document.getElementById(`cr_${rowId}`).value = '';
-                }
-            } else {
-                const crVal = document.getElementById(`cr_${rowId}`).value;
-                if (crVal && parseFloat(crVal) > 0) {
-                    document.getElementById(`dr_${rowId}`).value = '';
-                }
-            }
-            recalcGrid();
+        function accountOptions(selected, index) {
+            const menuId = 'acctMenu-' + index;
+            const acct = selected ? getAccount(selected) : null;
+            return `
+                <button type="button" onclick="toggleRowActionMenu(event, '${menuId}')"
+                    class="w-full h-10 px-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-xl inline-flex items-center justify-between gap-2 transition cursor-pointer">
+                    <span class="sm-td truncate ${acct ? 'text-slate-800' : 'text-slate-400'}">${acct ? acct.code + ' · ' + acct.nameKh : 'ជ្រើសរើសគណនី'}</span>
+                    <i class="fas fa-chevron-down text-[10px] text-slate-400 flex-shrink-0"></i>
+                </button>
+                <div id="${menuId}" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 text-left max-h-80 overflow-y-auto scrollbar-hide">
+                    <div class="px-3 py-2 mb-1 rounded-xl bg-slate-50 border border-slate-100">
+                        <p class="sm-td-sub text-slate-400">ជ្រើសរើសគណនី</p>
+                    </div>
+                    ${postableAccounts().map(a => `
+                        <button type="button" onclick="pickAccount(${index}, '${a.code}')"
+                            class="sm-row-menu-item w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition text-left">
+                            <span><span class="sm-figure text-slate-400">${a.code}</span> · ${a.nameKh}</span>
+                            ${a.code === selected ? '<i class="fas fa-check text-[11px] text-emerald-600"></i>' : ''}
+                        </button>`).join('')}
+                </div>`;
         }
 
-        function removeEntryRow(rowId) {
-            const tr = document.getElementById(`row_${rowId}`);
-            if (tr) tr.remove();
-            recalcGrid();
-        }
-
-        function recalcGrid() {
-            let totalDr = 0;
-            let totalCr = 0;
-
-            const rows = document.querySelectorAll('#entryGridTbody tr');
-            rows.forEach(r => {
-                const id = r.id.replace('row_', '');
-                const dr = parseFloat(document.getElementById(`dr_${id}`)?.value) || 0;
-                const cr = parseFloat(document.getElementById(`cr_${id}`)?.value) || 0;
-                totalDr += dr;
-                totalCr += cr;
-            });
-
-            document.getElementById('gridTotalDr').textContent = `$${totalDr.toFixed(2)}`;
-            document.getElementById('gridTotalCr').textContent = `$${totalCr.toFixed(2)}`;
-
-            const diff = Math.abs(totalDr - totalCr);
-            const box = document.getElementById('balanceAlertBox');
-            const alertText = document.getElementById('balanceAlertText');
-            const diffText = document.getElementById('balanceDiffText');
-            const postBtn = document.getElementById('btnPostEntry');
-
-            if (totalDr > 0 && totalCr > 0 && diff < 0.001) {
-                box.className = 'p-3.5 rounded-xl border flex items-center justify-between text-xs bg-emerald-50 border-emerald-300 text-emerald-800';
-                alertText.innerHTML = '<i class="fas fa-check-circle text-emerald-600 mr-1.5"></i> តុល្យភាពសមគ្នាល្អឥតខ្ចោះ (Balanced) អាចចុះបញ្ជីបាន!';
-                diffText.textContent = 'ខុសគ្នា $0.00';
-                postBtn.disabled = false;
-            } else {
-                box.className = 'p-3.5 rounded-xl border flex items-center justify-between text-xs bg-rose-50 border-rose-300 text-rose-800';
-                alertText.innerHTML = '<i class="fas fa-triangle-exclamation text-rose-600 mr-1.5"></i> មិនទាន់សមគ្នាទេ! ឥណពន្ធ (Dr) ត្រូវតែស្មើគ្នានឹង ឥណទាន (Cr)';
-                diffText.textContent = `ខុសគ្នា $${diff.toFixed(2)}`;
-                postBtn.disabled = true;
-            }
-        }
-
-        function handleSubmitJE(e, status) {
-            if (e) e.preventDefault();
-
-            const rows = document.querySelectorAll('#entryGridTbody tr');
-            if (rows.length < 2) {
-                showToast('ត្រូវមានជួរគណនីយ៉ាងហោចណាស់ 2 ជួរ', 'error');
+        function renderLines() {
+            if (!lines.length) {
+                document.getElementById('lineBody').innerHTML = `
+                    <tr><td colspan="5" class="py-12 text-center">
+                        <i class="fas fa-list-ul text-2xl text-slate-300"></i>
+                        <p class="sm-card-sub text-slate-500 mt-2">គ្មានជួរគណនីទេ — សូមបន្ថែមជួរយ៉ាងហោចណាស់ 2</p>
+                    </td></tr>`;
+                document.getElementById('lineFoot').innerHTML = '';
                 return;
             }
+            document.getElementById('lineBody').innerHTML = lines.map((l, i) => `
+                <tr>
+                    <td class="py-2.5 px-4 min-w-[240px]"><div class="relative">${accountOptions(l.accountCode, i)}</div></td>
+                    <td class="py-2.5 px-4">
+                        <input type="text" value="${l.description}" oninput="updateLine(${i}, 'description', this.value)"
+                            placeholder="ការពិពណ៌នាជួរ"
+                            class="w-full h-10 px-3 bg-slate-50 focus:bg-white border border-slate-200 focus:border-primary rounded-xl sm-td text-slate-800 outline-none transition placeholder:text-slate-400">
+                    </td>
+                    <td class="py-2.5 px-4">
+                        <input type="number" min="0" step="0.01" value="${l.dr}" oninput="updateLine(${i}, 'dr', this.value)"
+                            class="w-full h-10 px-3 bg-slate-50 focus:bg-white border border-slate-200 focus:border-primary rounded-xl sm-td text-slate-800 text-right sm-figure outline-none transition">
+                    </td>
+                    <td class="py-2.5 px-4">
+                        <input type="number" min="0" step="0.01" value="${l.cr}" oninput="updateLine(${i}, 'cr', this.value)"
+                            class="w-full h-10 px-3 bg-slate-50 focus:bg-white border border-slate-200 focus:border-primary rounded-xl sm-td text-slate-800 text-right sm-figure outline-none transition">
+                    </td>
+                    <td class="py-2.5 px-4 text-right">
+                        <button type="button" onclick="removeLine(${i})" aria-label="លុបជួរ"
+                            class="w-8 h-8 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 inline-flex items-center justify-center transition no-print">
+                            <i class="fas fa-xmark text-xs"></i>
+                        </button>
+                    </td>
+                </tr>`).join('');
 
-            const lines = [];
-            let totalDr = 0;
-            let totalCr = 0;
+            const dr = lines.reduce((s, l) => s + (Number(l.dr) || 0), 0);
+            const cr = lines.reduce((s, l) => s + (Number(l.cr) || 0), 0);
+            const diff = dr - cr;
+            const balanced = Math.abs(diff) < 0.005;
 
-            for (let r of rows) {
-                const id = r.id.replace('row_', '');
-                const sel = document.getElementById(`acc_${id}`);
-                if (!sel.value) continue;
+            document.getElementById('lineFoot').innerHTML = `
+                <tr>
+                    <td colspan="2" class="sm-td-strong py-3 px-4 text-slate-700">សរុប</td>
+                    <td class="sm-td-strong py-3 px-4 text-right sm-figure text-slate-800">${fmtUSD(dr)}</td>
+                    <td class="sm-td-strong py-3 px-4 text-right sm-figure text-slate-800">${fmtUSD(cr)}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="py-2.5 px-4">
+                        <span class="sm-td-sub ${balanced ? 'text-emerald-700' : 'text-rose-700'} font-semibold">
+                            <i class="fas ${balanced ? 'fa-circle-check' : 'fa-triangle-exclamation'} mr-1"></i>
+                            ${balanced ? 'ឥណពន្ធ និងឥណទានស្មើគ្នា' : `គម្លាត ${fmtUSD(Math.abs(diff))} — មិនទាន់អាចចុះបញ្ជីបានទេ`}
+                        </span>
+                    </td>
+                </tr>`;
+        }
 
-                const dr = parseFloat(document.getElementById(`dr_${id}`).value) || 0;
-                const cr = parseFloat(document.getElementById(`cr_${id}`).value) || 0;
-                const memo = document.getElementById(`memo_${id}`).value.trim();
-                const accName = sel.options[sel.selectedIndex].dataset.name;
+        function addLine() { lines.push(blankLine()); renderLines(); }
+        function removeLine(i) { lines.splice(i, 1); if (!lines.length) lines = [blankLine(), blankLine()]; renderLines(); }
+        function updateLine(i, field, value) { lines[i][field] = value; if (field !== 'description') renderLines(); }
+        function pickAccount(i, code) { lines[i].accountCode = code; closeAllFloatingDropdowns(); renderLines(); }
 
-                totalDr += dr;
-                totalCr += cr;
+        async function submitJournal(status) {
+            const description = document.getElementById('fDescription').value.trim();
+            if (!description) return showToast('សូមបញ្ចូលការពិពណ៌នា', 'error');
 
-                lines.push({
-                    accountCode: sel.value,
-                    accountName: accName,
-                    description: memo || document.getElementById('jeDescription').value.trim(),
-                    dr: dr,
-                    cr: cr
-                });
-            }
-
-            if (status === 'Posted' && Math.abs(totalDr - totalCr) > 0.001) {
-                showToast('មិនអាចចុះបញ្ជីបានឡើយ ដោយសារ Dr មិនស្មើ Cr', 'error');
-                return;
-            }
-
-            const newJE = {
-                date: document.getElementById('jeDate').value,
-                description: document.getElementById('jeDescription').value.trim(),
-                reference: document.getElementById('jeReference').value.trim(),
-                source: 'Manual Entry',
-                status: status,
-                postedBy: 'ហ៊ន រតនា',
-                postedAt: new Date().toLocaleString(),
-                drTotal: totalDr,
-                crTotal: totalCr,
-                lines: lines
+            const payload = {
+                date: entryDate(),
+                description,
+                reference: document.getElementById('fReference').value.trim(),
+                status,
+                lines: lines.map(l => ({
+                    accountCode: l.accountCode,
+                    description: l.description,
+                    dr: Number(l.dr) || 0,
+                    cr: Number(l.cr) || 0
+                }))
             };
 
-            const saved = saveJournalEntry(newJE);
-            showToast(`បានកត់ត្រាទិន្នានុប្បវត្ត ${saved.id} ដោយជោគជ័យ!`, 'success');
+            if (status === 'POSTED') {
+                const ok = await showCustomConfirm({
+                    title: 'ចុះបញ្ជីចូលសៀវភៅធំ',
+                    message: 'ទិនានុប្បវត្តិដែលបានចុះបញ្ជី មិនអាចលុបចោលបានទេ។ ការកែតម្រូវត្រូវធ្វើតាមទិនានុប្បវត្តិបញ្ច្រាស។ តើបន្តមែនទេ?',
+                    confirmText: 'ចុះបញ្ជី',
+                    cancelText: 'បោះបង់'
+                });
+                if (!ok) return;
+            }
 
-            setTimeout(() => {
-                window.location.href = `view-journal.html?id=${saved.id}`;
-            }, 800);
+            const res = caActions.createJournal(payload);
+            if (!res.ok) return showToast(res.error, 'error');
+
+            showToast(status === 'POSTED'
+                ? `បានចុះបញ្ជីទិនានុប្បវត្តិ ${res.record.id} ចូលសៀវភៅធំ`
+                : `បានរក្សាទុកទិនានុប្បវត្តិ ${res.record.id} ជាព្រាង`, 'success');
+            setTimeout(() => { window.location.href = `view-journal.html?id=${res.record.id}`; }, 700);
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lines = [blankLine(), blankLine()];
+            renderLines();
+            document.getElementById('fDate').value = toIsoDate(BMS_TODAY);
+            initSingleDatePicker('fDate');
+            updatePortalBadges();
+        });
     </script>
 </body>
+
 </html>

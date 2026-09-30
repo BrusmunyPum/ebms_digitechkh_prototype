@@ -1,292 +1,400 @@
-/**
- * DIGITECHKH BMS - ច្រកប្រធានគណនេយ្យ (Chief Accountant Store)
- * គ្រប់គ្រងអភិបាលកិច្ចហិរញ្ញវត្ថុ, ការចាក់សោរគ្រាហិរញ្ញវត្ថុ (Period Lock),
- * មជ្ឈមណ្ឌលអនុម័ត (> $500), របាយការណ៍ហិរញ្ញវត្ថុផ្លូវការ CIFRS, និងពន្ធដារ GDT។
- */
+/* ច្រកប្រធានគណនេយ្យ — ការបង្ហាញទិន្នន័យ (projection) ពីឃ្លាំងទិន្នន័យរួម
+   គ្រប់តួលេខលើរបាយការណ៍ហិរញ្ញវត្ថុ គណនាចេញពីទិនានុប្បវត្តិដែលបានចុះជាក់ស្តែង
+   ក្នុង bms_store_v2 ដូច្នេះវាស៊ីសង្វាក់ជាមួយវិក្កយបត្រ និងបង្កាន់ដៃរបស់ច្រកផ្សេង។
+   មិនមានលេខសរសេរដៃនៅទីនេះ ឬក្នុងទំព័រណាមួយឡើយ។ */
 
-const BMS_CA_STORAGE_KEY = 'bms_ca_store_v1';
+const CURRENT_USER_ID = 'U-CA-01';
 
-const INITIAL_CA_STORE = {
-    kpis: {
-        totalCashBank: 42180.00,
-        revenueMTD: 68450.00,
-        revenueGrowthPct: 14.2,
-        grossProfit: 26350.00,
-        grossMarginPct: 38.5,
-        netProfit: 14370.00,
-        netProfitMarginPct: 21.0,
-        totalAR: 18240.00,
-        totalAP: 12600.00,
-        pendingApprovalsCount: 3,
-        periodLockStatus: 'unlocked', // 'locked' or 'unlocked'
-        currentPeriod: 'កញ្ញា 2026',
-        monthlyTrend: {
-            months: ['មករា', 'កុម្ភៈ', 'មីនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្កដា', 'សីហា', 'កញ្ញា'],
-            revenue: [45000, 48000, 52000, 49500, 56000, 59000, 61000, 64500, 68450],
-            expense: [36000, 38000, 41000, 39000, 44000, 46000, 48000, 51000, 54080],
-            netProfit: [9000, 10000, 11000, 10500, 12000, 13000, 13000, 13500, 14370]
-        },
-        bankBalances: [
-            { bank: 'ធនាគារ អេប៊ីអេ (ABA USD)', account: '001 888 234', balance: 24500.00, type: 'ធនាគារ' },
-            { bank: 'ធនាគារ កាណាឌីយ៉ា (Canadia USD)', account: '100 223 998', balance: 11200.00, type: 'ធនាគារ' },
-            { bank: 'ធនាគារ អេស៊ីលីដា (ACLEDA KHR)', account: '010 998 776', balance: 4880.00, type: 'ធនាគារ' },
-            { bank: 'បេឡាសាច់ប្រាក់ក្នុងដៃ (Petty Cash)', account: 'PC-MAIN', balance: 1600.00, type: 'សាច់ប្រាក់' }
-        ]
-    },
+/* ===== ប្លង់គណនី ===== */
 
-    approvals: [
-        {
-            id: 'APV-2026-0089',
-            type: 'disbursement', // disbursement, adjustment, writeoff
-            title: 'ប័ណ្ណចំណាយទូទាត់អ្នកផ្គត់ផ្គង់ (ហ៊ុន ត្រេឌីង Co., Ltd.)',
-            refNo: 'DIS-2026-0089',
-            requestor: 'អ៊ុំ ម៉ានី (AP/AR Accountant)',
-            date: '2026-09-24',
-            amount: 3377.00,
-            status: 'pending', // pending, approved, rejected
-            level: 'chief_accountant',
-            description: 'ទូទាត់វិក្កយបត្រ BILL-2026-0044 តាមការបញ្ជាទិញ PO-2026-0044។ ផ្ទៀងផ្ទាត់ 3-Way Match ត្រូវគ្នា 100%។',
-            glEntries: [
-                { accountCode: '2111', accountName: 'បំណុលត្រូវសងអ្នកផ្គត់ផ្គង់ (AP)', debit: 3377.00, credit: 0.00 },
-                { accountCode: '1121', accountName: 'ធនាគារ អេប៊ីអេ (ABA USD)', debit: 0.00, credit: 3377.00 }
-            ]
-        },
-        {
-            id: 'APV-2026-0088',
-            type: 'disbursement',
-            title: 'ប័ណ្ណចំណាយទូទាត់ (ស៊ីងហ្គាពួរ អេឡិចត្រូនិច ត្រេឌីង)',
-            refNo: 'DIS-2026-0088',
-            requestor: 'អ៊ុំ ម៉ានី (AP/AR Accountant)',
-            date: '2026-09-21',
-            amount: 6820.00,
-            status: 'approved',
-            level: 'general_manager',
-            description: 'ទូទាត់វិក្កយបត្រ BILL-2026-0043 (Dell XPS 15 ចំនួន 4 គ្រឿង)។ Chief Accountant បានត្រួតពិនិត្យរួច។',
-            glEntries: [
-                { accountCode: '2111', accountName: 'បំណុលត្រូវសងអ្នកផ្គត់ផ្គង់ (AP)', debit: 6820.00, credit: 0.00 },
-                { accountCode: '1121', accountName: 'ធនាគារ អេប៊ីអេ (ABA USD)', debit: 0.00, credit: 6820.00 }
-            ]
-        },
-        {
-            id: 'APV-2026-0087',
-            type: 'adjustment',
-            title: 'ប័ណ្ណចុះបញ្ជីកែតម្រូវ៖ រំលស់ទ្រព្យសកម្មប្រចាំត្រីមាសទី 3',
-            refNo: 'JV-2026-0034',
-            requestor: 'ទៀង វណ្ណារ៉ា (Chief Accountant)',
-            date: '2026-09-25',
-            amount: 1200.00,
-            status: 'pending',
-            level: 'chief_accountant',
-            description: 'កត់ត្រារំលស់កុំព្យូទ័រ និងសម្ភារៈការិយាល័យ ត្រីមាសទី 3 ឆ្នាំ 2026 ស្របតាម CIFRS for SMEs។',
-            glEntries: [
-                { accountCode: '6112', accountName: 'ចំណាយរំលស់ទ្រព្យសកម្ម (Depreciation Expense)', debit: 1200.00, credit: 0.00 },
-                { accountCode: '1520', accountName: 'រំលស់បង្គរលើបរិក្ខារការិយាល័យ (Accumulated Dep.)', debit: 0.00, credit: 1200.00 }
-            ]
-        },
-        {
-            id: 'APV-2026-0086',
-            type: 'writeoff',
-            title: 'សំណើសុំលុបបំណុលខូច (Bad Debt Write-off): អតិថិជន សុវណ្ណ ត្រេឌីង',
-            refNo: 'WO-2026-0002',
-            requestor: 'អ៊ុំ ម៉ានី (AP/AR Accountant)',
-            date: '2026-09-20',
-            amount: 450.00,
-            status: 'pending',
-            level: 'general_manager',
-            description: 'បំណុលហួសកំណត់ជាង 380 ថ្ងៃ។ ក្រុមហ៊ុនក្ស័យធន មិនអាចទាក់ទងបាន។ ភ្ជាប់លិខិតទារបំណុល 3 លើក។',
-            glEntries: [
-                { accountCode: '1139', accountName: 'ប្រាក់បម្រុងសម្រាប់បំណុលសង្ស័យ (Allowance for Bad Debts)', debit: 450.00, credit: 0.00 },
-                { accountCode: '1131', accountName: 'បំណុលត្រូវទារពីអតិថិជន (Accounts Receivable)', debit: 0.00, credit: 450.00 }
-            ]
-        }
-    ],
-
-    financialStatements: {
-        pnl: {
-            period: '1 មករា 2026 ដល់ 30 កញ្ញា 2026 (9 ខែ)',
-            revenue: {
-                salesRevenue: 504000.00,
-                serviceRevenue: 15450.00,
-                discountsGiven: -8500.00,
-                totalRevenue: 510950.00
-            },
-            cogs: {
-                openingStock: 62000.00,
-                purchases: 345000.00,
-                closingStock: -84500.00,
-                totalCogs: 322500.00
-            },
-            grossProfit: 188450.00,
-            opex: {
-                salaries: 68000.00,
-                rent: 13500.00,
-                utilities: 4800.00,
-                marketing: 7200.00,
-                depreciation: 3600.00,
-                otherAdmin: 5120.00,
-                totalOpex: 102220.00
-            },
-            netProfitBeforeTax: 86230.00,
-            taxOnIncome: 17246.00, // 20%
-            netProfitAfterTax: 68984.00
-        },
-        balanceSheet: {
-            asOfDate: '30 កញ្ញា 2026',
-            currentAssets: {
-                cashAndBank: 42180.00,
-                accountsReceivable: 18240.00,
-                inventoryValuation: 84500.00,
-                prepaidExpenses: 3200.00,
-                totalCurrentAssets: 148120.00
-            },
-            nonCurrentAssets: {
-                officeEquipment: 24000.00,
-                accumulatedDepreciation: -7200.00,
-                netFixedAssets: 16800.00
-            },
-            totalAssets: 164920.00,
-            currentLiabilities: {
-                accountsPayable: 12600.00,
-                taxPayable: 4520.00,
-                accruedExpenses: 3800.00,
-                totalCurrentLiabilities: 20920.00
-            },
-            equity: {
-                shareCapital: 75000.00,
-                retainedEarnings: 69000.00,
-                totalEquity: 144000.00
-            },
-            totalLiabilitiesAndEquity: 164920.00
-        },
-        trialBalance: [
-            { code: '1111', name: 'សាច់ប្រាក់ក្នុងដៃ (Cash on Hand)', debit: 1600.00, credit: 0.00 },
-            { code: '1121', name: 'ធនាគារ អេប៊ីអេ USD (ABA Bank USD)', debit: 24500.00, credit: 0.00 },
-            { code: '1122', name: 'ធនាគារ កាណាឌីយ៉ា USD (Canadia USD)', debit: 11200.00, credit: 0.00 },
-            { code: '1123', name: 'ធនាគារ អេស៊ីលីដា KHR (ACLEDA KHR)', debit: 4880.00, credit: 0.00 },
-            { code: '1131', name: 'បំណុលត្រូវទារពីអតិថិជន (Accounts Receivable)', debit: 18240.00, credit: 0.00 },
-            { code: '1211', name: 'ស្តុកទំនិញក្នុងឃ្លាំង (Merchandise Inventory)', debit: 84500.00, credit: 0.00 },
-            { code: '1511', name: 'បរិក្ខារការិយាល័យ និងកុំព្យូទ័រ (Fixed Assets)', debit: 24000.00, credit: 0.00 },
-            { code: '1521', name: 'រំលស់បង្គរ (Accumulated Depreciation)', debit: 0.00, credit: 7200.00 },
-            { code: '2111', name: 'បំណុលត្រូវសងអ្នកផ្គត់ផ្គង់ (Accounts Payable)', debit: 0.00, credit: 12600.00 },
-            { code: '2121', name: 'អាករលើតម្លៃបន្ថែមត្រូវបង់ (VAT Output Payable)', debit: 0.00, credit: 4000.00 },
-            { code: '2122', name: 'ពន្ធកាត់ទុកត្រូវបង់ (WHT Payable)', debit: 0.00, credit: 520.00 },
-            { code: '3111', name: 'ដើមទុនចុះបញ្ជី (Share Capital)', debit: 0.00, credit: 75000.00 },
-            { code: '3211', name: 'ប្រាក់ចំណេញរក្សាទុក (Retained Earnings)', debit: 0.00, credit: 69000.00 },
-            { code: '4111', name: 'ចំណូលពីការលក់ទំនិញ (Sales Revenue)', debit: 0.00, credit: 510950.00 },
-            { code: '5111', name: 'ថ្លៃដើមទំនិញលក់ (Cost of Goods Sold)', debit: 322500.00, credit: 0.00 },
-            { code: '6111', name: 'ចំណាយរដ្ឋបាល និងប្រាក់បៀវត្ស (Admin & OPEX)', debit: 102220.00, credit: 0.00 },
-            { code: '8111', name: 'បន្ទុកពន្ធលើប្រាក់ចំណេញ (TOI Expense)', debit: 5530.00, credit: 0.00 }
-        ]
-    },
-
-    taxReturns: {
-        vat: {
-            month: 'កញ្ញា 2026',
-            dueDate: '20 តុលា 2026',
-            outputTaxableSales: 68450.00,
-            outputVat10: 6845.00,
-            inputTaxablePurchases: 28450.00,
-            inputVat10: 2845.00,
-            netVatPayable: 4000.00,
-            status: 'draft'
-        },
-        wht: {
-            month: 'កញ្ញា 2026',
-            dueDate: '20 តុលា 2026',
-            services15Amount: 2000.00,
-            services15Tax: 300.00,
-            rent10Amount: 1500.00,
-            rent10Tax: 150.00,
-            interestWht: 70.00,
-            totalWhtPayable: 520.00,
-            status: 'draft'
-        }
-    }
-};
-
-function getCAStore() {
-    try {
-        const raw = localStorage.getItem(BMS_CA_STORAGE_KEY);
-        if (raw) return JSON.parse(raw);
-    } catch (e) {
-        console.warn('Failed to parse CA store from localStorage:', e);
-    }
-    localStorage.setItem(BMS_CA_STORAGE_KEY, JSON.stringify(INITIAL_CA_STORE));
-    return JSON.parse(JSON.stringify(INITIAL_CA_STORE));
+function listAccounts() {
+    return BMS_STORE.list('accounts');
 }
 
-function saveCAStore(store) {
-    try {
-        localStorage.setItem(BMS_CA_STORAGE_KEY, JSON.stringify(store));
-    } catch (e) {
-        console.error('Failed to save CA store to localStorage:', e);
+function getAccount(code) {
+    return listAccounts().find(a => a.code === code);
+}
+
+function accountName(code) {
+    const a = getAccount(code);
+    return a ? a.nameKh : code;
+}
+
+/* គណនីដែលកត់ត្រាបាន (មិនមែនក្រុមចំណងជើង) */
+function postableAccounts() {
+    return listAccounts().filter(a => !a.isGroup);
+}
+
+/* ===== ទិនានុប្បវត្តិ ===== */
+
+const JOURNAL_SOURCE_LABEL = {
+    OPENING: 'សមតុល្យដើមគ្រា',
+    INVOICE: 'ចេញវិក្កយបត្រ',
+    RECEIPT: 'ទទួលប្រាក់',
+    MANUAL: 'កត់ត្រាដោយដៃ',
+    REVERSAL: 'ការបញ្ច្រាស'
+};
+
+function sourceLabel(code) {
+    return JOURNAL_SOURCE_LABEL[code] || code;
+}
+
+function listJournals(filters) {
+    const f = filters || {};
+    return BMS_STORE.list('journalEntries')
+        .filter(j => !f.status || j.status === f.status)
+        .filter(j => !f.source || j.source === f.source)
+        .filter(j => inRange(j.date, f.range))
+        .filter(j => {
+            if (!f.search) return true;
+            const q = f.search.toLowerCase();
+            return j.id.toLowerCase().includes(q)
+                || (j.description || '').toLowerCase().includes(q)
+                || (j.reference || '').toLowerCase().includes(q);
+        })
+        .slice()
+        .sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+}
+
+function getJournal(id) {
+    return BMS_STORE.get('journalEntries', id);
+}
+
+function journalTotals(entry) {
+    return BMS_STORE.journalSums(entry.lines);
+}
+
+/* ===== សៀវភៅធំ និងតុល្យភាពសាកល្បង ===== */
+
+/* ចលនាគណនីនីមួយៗក្នុងកំឡុងពេល — គិតតែទិនានុប្បវត្តិដែលបានចុះរួច */
+function accountMovements(range) {
+    const map = {};
+    postableAccounts().forEach(a => { map[a.code] = { dr: 0, cr: 0 }; });
+    BMS_STORE.list('journalEntries')
+        .filter(j => j.status === 'POSTED' && inRange(j.date, range))
+        .forEach(j => j.lines.forEach(l => {
+            if (!map[l.accountCode]) map[l.accountCode] = { dr: 0, cr: 0 };
+            map[l.accountCode].dr += l.dr || 0;
+            map[l.accountCode].cr += l.cr || 0;
+        }));
+    return map;
+}
+
+/* តារាងតុល្យភាពសាកល្បង — សមតុល្យតាមទិសធម្មតារបស់គណនីនីមួយៗ */
+function trialBalance(range) {
+    const mv = accountMovements(range);
+    const rows = postableAccounts().map(a => {
+        const m = mv[a.code] || { dr: 0, cr: 0 };
+        const net = a.normal === 'Dr' ? m.dr - m.cr : m.cr - m.dr;
+        return {
+            code: a.code,
+            name: a.nameKh,
+            type: a.type,
+            normal: a.normal,
+            dr: m.dr,
+            cr: m.cr,
+            balance: net,
+            debitColumn: a.normal === 'Dr' ? Math.max(net, 0) : Math.max(-net, 0),
+            creditColumn: a.normal === 'Cr' ? Math.max(net, 0) : Math.max(-net, 0)
+        };
+    }).filter(r => r.dr || r.cr);
+
+    return {
+        rows,
+        totalDebit: rows.reduce((s, r) => s + r.debitColumn, 0),
+        totalCredit: rows.reduce((s, r) => s + r.creditColumn, 0)
+    };
+}
+
+/* សមតុល្យគណនីមួយ (សរុបតាំងពីដើម) */
+function balanceOf(code) {
+    return BMS_STORE.accountBalances()[code] || 0;
+}
+
+/* សមតុល្យក្រុមគណនី — បូកកូនគណនីទាំងអស់ */
+function groupBalance(parentCode) {
+    const codes = listAccounts().filter(a => a.parent === parentCode).map(a => a.code);
+    return codes.reduce((sum, c) => {
+        const a = getAccount(c);
+        return sum + (a && a.isGroup ? groupBalance(c) : balanceOf(c));
+    }, 0);
+}
+
+/* ===== របាយការណ៍ចំណេញ-ខាត ===== */
+
+function incomeStatement(range) {
+    const mv = accountMovements(range);
+    const net = (code, normal) => {
+        const m = mv[code] || { dr: 0, cr: 0 };
+        return normal === 'Cr' ? m.cr - m.dr : m.dr - m.cr;
+    };
+
+    const revenueRows = listAccounts()
+        .filter(a => a.type === 'Revenue' && !a.isGroup)
+        .map(a => ({ code: a.code, name: a.nameKh, amount: net(a.code, 'Cr') }))
+        .filter(r => r.amount);
+
+    const cogsRows = listAccounts()
+        .filter(a => a.type === 'Expense' && !a.isGroup && a.parent === '5000')
+        .map(a => ({ code: a.code, name: a.nameKh, amount: net(a.code, 'Dr') }))
+        .filter(r => r.amount);
+
+    const opexRows = listAccounts()
+        .filter(a => a.type === 'Expense' && !a.isGroup && a.parent === '6000')
+        .map(a => ({ code: a.code, name: a.nameKh, amount: net(a.code, 'Dr') }))
+        .filter(r => r.amount);
+
+    const revenue = revenueRows.reduce((s, r) => s + r.amount, 0);
+    const cogs = cogsRows.reduce((s, r) => s + r.amount, 0);
+    const opex = opexRows.reduce((s, r) => s + r.amount, 0);
+    const grossProfit = revenue - cogs;
+    const netProfit = grossProfit - opex;
+
+    return {
+        revenueRows, cogsRows, opexRows,
+        revenue, cogs, opex, grossProfit, netProfit,
+        grossMarginPercent: revenue ? (grossProfit / revenue) * 100 : 0,
+        netMarginPercent: revenue ? (netProfit / revenue) * 100 : 0
+    };
+}
+
+/* ===== តារាងតុល្យការ ===== */
+
+function balanceSheet() {
+    const byType = type => listAccounts()
+        .filter(a => a.type === type && !a.isGroup)
+        .map(a => ({ code: a.code, name: a.nameKh, amount: balanceOf(a.code) }))
+        .filter(r => Math.abs(r.amount) > 0.005);
+
+    const assets = byType('Asset');
+    const liabilities = byType('Liability');
+    const equity = byType('Equity');
+
+    const totalAssets = assets.reduce((s, r) => s + r.amount, 0);
+    const totalLiabilities = liabilities.reduce((s, r) => s + r.amount, 0);
+    const totalEquityBooked = equity.reduce((s, r) => s + r.amount, 0);
+
+    // ចំណេញក្នុងគ្រាដែលមិនទាន់បិទបញ្ជី ត្រូវបង្ហាញក្នុងមូលធន ដើម្បីឱ្យតុល្យការស្មើគ្នា
+    const periodProfit = totalAssets - totalLiabilities - totalEquityBooked;
+
+    return {
+        assets, liabilities, equity,
+        totalAssets, totalLiabilities,
+        totalEquityBooked,
+        periodProfit,
+        totalEquity: totalEquityBooked + periodProfit,
+        balanced: Math.abs(totalAssets - (totalLiabilities + totalEquityBooked + periodProfit)) < 0.01
+    };
+}
+
+/* ===== សូចនាករផ្ទាំងគ្រប់គ្រង ===== */
+
+function currentPeriodRange() {
+    return { start: new Date(BMS_TODAY.getFullYear(), BMS_TODAY.getMonth(), 1), end: new Date(BMS_TODAY) };
+}
+
+/* តម្រងកាលបរិច្ឆេទអាចត្រឡប់ជួរទទេ (មានន័យថា គ្រប់កំឡុងពេល) ដូច្នេះត្រូវការពារ */
+function safeRange(range) {
+    return (range && range.start && range.end) ? range : currentPeriodRange();
+}
+
+function periodName(range) {
+    const r = safeRange(range);
+    return `${MONTHS_KH[r.start.getMonth()]} ${r.start.getFullYear()}`;
+}
+
+function cashAndBank() {
+    return ['1111', '1121', '1122', '1123'].map(code => ({
+        code, name: accountName(code), amount: balanceOf(code)
+    }));
+}
+
+function invoiceDue(inv) {
+    return invoiceState(inv).due;
+}
+
+function dashboardMetrics() {
+    const range = currentPeriodRange();
+    const pnl = incomeStatement(range);
+    const cash = cashAndBank();
+    const invoices = BMS_STORE.list('invoices').filter(i => i.status !== 'CANCELLED');
+
+    const receivable = invoices.reduce((s, i) => s + invoiceDue(i), 0);
+    const overdue = invoices.filter(i => invoiceState(i).key === 'OVERDUE');
+
+    return {
+        range,
+        periodName: periodName(range),
+        cashTotal: cash.reduce((s, c) => s + c.amount, 0),
+        cashRows: cash,
+        revenue: pnl.revenue,
+        grossProfit: pnl.grossProfit,
+        grossMarginPercent: pnl.grossMarginPercent,
+        netProfit: pnl.netProfit,
+        netMarginPercent: pnl.netMarginPercent,
+        receivable,
+        overdueCount: overdue.length,
+        overdueAmount: overdue.reduce((s, i) => s + invoiceDue(i), 0),
+        overdueList: overdue,
+        payable: balanceOf('2111'),
+        vatPayable: balanceOf('2121'),
+        whtPayable: balanceOf('2122'),
+        draftJournals: listJournals({ status: 'DRAFT' }),
+        unverifiedClaims: BMS_STORE.list('paymentClaims').filter(c => c.status === 'PENDING_VERIFICATION')
+    };
+}
+
+/* ចំណូល និងចំណេញ 6 ខែចុងក្រោយ — សម្រាប់គំនូសតាងទំព័ររបាយការណ៍ */
+function monthlyProfitSeries(months) {
+    const n = months || 6;
+    const out = [];
+    for (let back = n - 1; back >= 0; back--) {
+        const start = new Date(BMS_TODAY.getFullYear(), BMS_TODAY.getMonth() - back, 1);
+        const end = back === 0
+            ? new Date(BMS_TODAY)
+            : new Date(BMS_TODAY.getFullYear(), BMS_TODAY.getMonth() - back + 1, 0);
+        const p = incomeStatement({ start, end });
+        out.push({
+            month: MONTHS_KH[start.getMonth()],
+            revenue: Math.round(p.revenue),
+            grossProfit: Math.round(p.grossProfit),
+            netProfit: Math.round(p.netProfit)
+        });
     }
+    return out;
+}
+
+/* ===== ពន្ធ ===== */
+
+/* អាករលើតម្លៃបន្ថែម — ចេញពីវិក្កយបត្រលក់ក្នុងគ្រា */
+function vatReturn(range) {
+    const r = range || currentPeriodRange();
+    const invoices = BMS_STORE.list('invoices')
+        .filter(i => i.status !== 'CANCELLED' && inRange(i.date, r));
+
+    let taxableSales = 0, outputVat = 0;
+    invoices.forEach(i => {
+        const t = docTotals(i);
+        taxableSales += t.taxBase;
+        outputVat += t.vatAmount;
+    });
+
+    // ពន្ធចូល (ការទិញចូល) មិនទាន់មានឯកសារទិញក្នុងគំរូនេះទេ
+    const inputVat = 0;
+
+    return {
+        period: periodName(r),
+        rate: BMS_STORE.settings().vatRate,
+        invoiceCount: invoices.length,
+        taxableSales,
+        outputVat,
+        inputVat,
+        netPayable: outputVat - inputVat,
+        bookBalance: balanceOf('2121')
+    };
+}
+
+function whtReturn(range) {
+    const r = range || currentPeriodRange();
+    return {
+        period: periodName(r),
+        goodsRate: BMS_STORE.settings().whtGoods,
+        servicesRate: BMS_STORE.settings().whtServices,
+        bookBalance: balanceOf('2122'),
+        // ពន្ធកាត់ទុកកើតឡើងពេលទូទាត់អ្នកផ្គត់ផ្គង់ ដែលជាផ្នែកនៃវដ្តទិញ (មិនទាន់មានក្នុងគំរូ)
+        pending: true
+    };
+}
+
+/* ===== សកម្មភាព ===== */
+
+const caActions = {
+    createJournal: data => BMS_STORE.actions.createJournalEntry(data, CURRENT_USER_ID),
+    postDraft: id => BMS_STORE.actions.postDraftJournal(id, CURRENT_USER_ID)
+};
+
+/* ===== ផ្លាកលេខក្នុងម៉ឺនុយចំហៀង (ហៅដោយ portal.js) ===== */
+
+function totalPending() {
+    return listJournals({ status: 'DRAFT' }).length
+        + BMS_STORE.list('paymentClaims').filter(c => c.status === 'PENDING_VERIFICATION').length;
+}
+
+function totalAlerts() {
+    return BMS_STORE.list('invoices')
+        .filter(i => i.status !== 'CANCELLED' && invoiceState(i).key === 'OVERDUE').length;
 }
 
 /* ===== ការជូនដំណឹងក្នុងក្បាលទំព័រ (អានដោយ portal.js) ===== */
 
-const CA_APPROVAL_LABEL = {
-    disbursement: 'ប័ណ្ណចំណាយទូទាត់',
-    adjustment: 'ទិន្នានុប្បវត្តកែតម្រូវ',
-    writeoff: 'ការលុបបំណុលជាបាត់បង់'
+const CA_NOTE_STYLE = {
+    INVOICE_CREATED: { icon: 'mdi:receipt-text-outline', tone: 'info' },
+    RECEIPT_POSTED: { icon: 'mdi:cash-check', tone: 'success' },
+    KHQR_CLAIM: { icon: 'mdi:qrcode-scan', tone: 'warning' }
 };
 
-function caFmtUSD(val) {
-    const n = Number(val) || 0;
-    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+function caNoteHref(n) {
+    const root = getRoleRoot();
+    if (n.entityType === 'journalEntry') return `${root}/ledger/view-journal.html?id=${n.entityId}`;
+    if (n.entityType === 'invoice') return `${root}/ledger/ledger.html`;
+    return '';
 }
 
 function portalNotifications() {
     const list = [];
-    const store = getCAStore();
-    const kpis = store.kpis;
 
-    // សំណើរង់ចាំការអនុម័តរបស់ប្រធានគណនេយ្យ
-    const pending = store.approvals
-        .filter(a => a.status === 'pending')
-        .sort((a, b) => (b.amount || 0) - (a.amount || 0));
-
-    pending.slice(0, 3).forEach(a => {
-        list.push({
-            icon: 'mdi:file-check-outline',
-            tone: (a.amount || 0) >= 1000 ? 'danger' : 'warning',
-            title: `${CA_APPROVAL_LABEL[a.type] || 'សំណើ'} ${a.refNo} រង់ចាំអនុម័ត`,
-            note: `${a.requestor} · ${caFmtUSD(a.amount)}`,
-            time: a.date
-        });
+    BMS_STORE.notificationsFor('CA').slice(0, 5).forEach(n => {
+        const style = CA_NOTE_STYLE[n.type] || { icon: 'mdi:bell-outline', tone: 'info' };
+        list.push({ ...style, title: n.message, time: fmtKhDateTime(n.at), href: caNoteHref(n), unread: !n.isRead });
     });
 
-    // ការប្រកាសពន្ធអាករលើតម្លៃបន្ថែម និងពន្ធកាត់ទុក
-    ['vat', 'wht'].forEach(key => {
-        const t = store.taxReturns[key];
-        if (!t || t.status !== 'draft') return;
+    const drafts = listJournals({ status: 'DRAFT' });
+    if (drafts.length) {
         list.push({
-            icon: key === 'vat' ? 'mdi:percent-outline' : 'mdi:cash-minus',
+            icon: 'mdi:file-document-edit-outline',
             tone: 'warning',
-            title: key === 'vat'
-                ? `ពន្ធអាករលើតម្លៃបន្ថែម ${t.month} មិនទាន់ដាក់លិខិតប្រកាស`
-                : `ពន្ធកាត់ទុក ${t.month} មិនទាន់ដាក់លិខិតប្រកាស`,
-            note: `ត្រូវបង់ ${caFmtUSD(key === 'vat' ? t.netVatPayable : t.totalWhtPayable)} · ផុតកំណត់ ${t.dueDate}`
-        });
-    });
-
-    // ស្ថានភាពបិទគ្រាហិរញ្ញវត្ថុ
-    if (kpis.periodLockStatus !== 'locked') {
-        list.push({
-            icon: 'mdi:lock-open-variant-outline',
-            tone: 'info',
-            title: `គ្រាហិរញ្ញវត្ថុ ${kpis.currentPeriod} នៅបើកចំហ`,
-            note: 'ទិន្នានុប្បវត្តនៅតែអាចកែប្រែបាន រហូតដល់បិទគ្រា'
+            title: `ទិនានុប្បវត្តិព្រាង ${drafts.length} ច្បាប់មិនទាន់ចុះបញ្ជី`,
+            note: drafts.slice(0, 2).map(j => `${j.id} · ${j.description}`).join(' · ')
         });
     }
 
-    // តុល្យភាពបំណុលត្រូវទារ និងត្រូវសង
-    list.push({
-        icon: 'mdi:scale-balance',
-        tone: kpis.totalAR > kpis.totalAP ? 'info' : 'warning',
-        title: `បំណុលត្រូវទារ ${caFmtUSD(kpis.totalAR)} · ត្រូវសង ${caFmtUSD(kpis.totalAP)}`,
-        note: `សាច់ប្រាក់ និងប្រាក់បញ្ញើធនាគារសរុប ${caFmtUSD(kpis.totalCashBank)}`
-    });
+    const claims = BMS_STORE.list('paymentClaims').filter(c => c.status === 'PENDING_VERIFICATION');
+    if (claims.length) {
+        list.push({
+            icon: 'mdi:bank-check',
+            tone: 'warning',
+            title: `ការទូទាត់រង់ចាំការផ្ទៀងផ្ទាត់ ${claims.length}`,
+            note: `សរុប ${fmtUSD(claims.reduce((s, c) => s + c.amount, 0))} · ផ្នែកគណនេយ្យបំណុលត្រូវចុះបង្កាន់ដៃ`
+        });
+    }
+
+    const m = dashboardMetrics();
+    if (m.overdueCount) {
+        list.push({
+            icon: 'mdi:cash-clock',
+            tone: 'danger',
+            title: `បំណុលត្រូវទារហួសកាលកំណត់ ${m.overdueCount} វិក្កយបត្រ`,
+            note: `សរុប ${fmtUSD(m.overdueAmount)} ក្នុងបំណុលត្រូវទារ ${fmtUSD(m.receivable)}`
+        });
+    }
+
+    const vat = vatReturn();
+    if (vat.netPayable > 0) {
+        list.push({
+            icon: 'mdi:percent-outline',
+            tone: 'info',
+            title: `អាករលើតម្លៃបន្ថែម ${vat.period} ត្រូវបង់ ${fmtUSD(vat.netPayable)}`,
+            note: `គិតលើការលក់ជាប់អាករ ${fmtUSD(vat.taxableSales)} ក្នុងវិក្កយបត្រ ${vat.invoiceCount} ច្បាប់`
+        });
+    }
 
     return list;
+}
+
+function unreadNotificationCount() {
+    return BMS_STORE.notificationsFor('CA').filter(n => !n.isRead).length;
+}
+
+function markNotificationsRead() {
+    BMS_STORE.markAllRead('CA');
 }

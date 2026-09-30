@@ -33,7 +33,10 @@ const STATUS_META = {
     PARTIAL_DELIVERY: { label: 'ទទួលទំនិញមិនគ្រប់', tone: 'amber' },
     MATCHED: { label: 'បានផ្គូផ្គង', tone: 'purple' },
     DISPUTED: { label: 'មានវិសមភាព', tone: 'rose' },
-    CLOSED: { label: 'បានបិទ', tone: 'slate' }
+    CLOSED: { label: 'បានបិទ', tone: 'slate' },
+    POSTED: { label: 'បានចុះបញ្ជី', tone: 'emerald' },
+    VERIFIED: { label: 'បានផ្ទៀងផ្ទាត់', tone: 'emerald' },
+    PENDING_VERIFICATION: { label: 'រង់ចាំការផ្ទៀងផ្ទាត់', tone: 'amber' }
 };
 
 function statusMeta(code) {
