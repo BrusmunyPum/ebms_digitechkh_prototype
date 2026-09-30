@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="km">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
@@ -29,30 +31,35 @@
     <link rel="stylesheet" href="../../../shared/styles/custom.css">
     <link rel="stylesheet" href="../../../shared/styles/portal.css">
 </head>
-<body id="saPortal" data-role-root=".." data-active="companies" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
+
+<body id="saPortal" data-role-root=".." data-active="companies"
+    class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
 
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <div id="headerHost" data-title="ចុះឈ្មោះក្រុមហ៊ុនថ្មី"
-             data-subtitle="បង្កើតគណនីក្រុមហ៊ុន កំណត់កញ្ចប់សេវាជាវ និងជ្រើសរើសមុខងារប្រើប្រាស់"
-             data-back="companies.html"></div>
+            data-subtitle="បង្កើតគណនីក្រុមហ៊ុន កំណត់កញ្ចប់សេវាជាវ និងជ្រើសរើសមុខងារប្រើប្រាស់"
+            data-back="companies.html"></div>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
             <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
             <div class="w-full flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
                 <div class="flex flex-wrap items-center gap-2">
-                    <a href="companies.html" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition cursor-pointer">
+                    <a href="companies.html"
+                        class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition cursor-pointer">
                         បោះបង់
                     </a>
-                    <button type="button" onclick="submitCreateCompany()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs font-medium shadow-sm transition cursor-pointer">
+                    <button type="button" onclick="submitCreateCompany()"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs font-medium shadow-sm transition cursor-pointer">
                         <i class="fas fa-check text-xs"></i>
                         <span>ចុះឈ្មោះក្រុមហ៊ុន</span>
                     </button>
                 </div>
             </div>
 
-            <form id="createCompanyForm" onsubmit="event.preventDefault(); submitCreateCompany();" class="w-full space-y-5">
+            <form id="createCompanyForm" onsubmit="event.preventDefault(); submitCreateCompany();"
+                class="w-full space-y-5">
 
                 <!-- 2-Column Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -60,12 +67,14 @@
                     <!-- Section 1: ព័ត៌មានទូទៅរបស់ក្រុមហ៊ុន -->
                     <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
                         <div class="border-b border-slate-100 pb-3 flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-xl bg-[#1e3a5f]/10 text-primary flex items-center justify-center text-sm">
+                            <div
+                                class="w-8 h-8 rounded-xl bg-[#1e3a5f]/10 text-primary flex items-center justify-center text-sm">
                                 <i class="fas fa-building"></i>
                             </div>
                             <div>
                                 <h3 class="text-sm font-semibold text-slate-800">ព័ត៌មានទូទៅរបស់ក្រុមហ៊ុន</h3>
-                                <p class="text-[11px] text-slate-400">ព័ត៌មានចុះបញ្ជីអាជីវកម្មផ្លូវការ និងអ្នកទទួលខុសត្រូវ</p>
+                                <p class="text-[11px] text-slate-400">ព័ត៌មានចុះបញ្ជីអាជីវកម្មផ្លូវការ
+                                    និងអ្នកទទួលខុសត្រូវ</p>
                             </div>
                         </div>
 
@@ -116,7 +125,8 @@
                             </label>
                             <input type="email" id="contactEmail" required placeholder="ឧ. admin@pntrading.com"
                                 class="w-full bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/10 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 transition outline-none font-medium placeholder:text-slate-400">
-                            <span class="text-[11px] text-slate-400 mt-1 block">ប្រព័ន្ធនឹងផ្ញើពាក្យសម្ងាត់បណ្តោះអាសន្នទៅកាន់អ៊ីមែលនេះ</span>
+                            <span
+                                class="text-[11px] text-slate-400 mt-1 block">ប្រព័ន្ធនឹងផ្ញើពាក្យសម្ងាត់បណ្តោះអាសន្នទៅកាន់អ៊ីមែលនេះ</span>
                         </div>
 
                         <div>
@@ -131,12 +141,15 @@
                     <!-- Section 2: ការកំណត់កញ្ចប់សេវាជាវ -->
                     <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
                         <div class="border-b border-slate-100 pb-3 flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-sm">
+                            <div
+                                class="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-sm">
                                 <i class="fas fa-boxes-packing"></i>
                             </div>
                             <div>
-                                <h3 class="text-sm font-semibold text-slate-800">ការកំណត់កញ្ចប់សេវាជាវ (Subscription)</h3>
-                                <p class="text-[11px] text-slate-400">ជ្រើសរើសកម្រិតកញ្ចប់សេវា កូតាអ្នកប្រើប្រាស់ និងរយៈពេល</p>
+                                <h3 class="text-sm font-semibold text-slate-800">ការកំណត់កញ្ចប់សេវាជាវ (Subscription)
+                                </h3>
+                                <p class="text-[11px] text-slate-400">ជ្រើសរើសកម្រិតកញ្ចប់សេវា កូតាអ្នកប្រើប្រាស់
+                                    និងរយៈពេល</p>
                             </div>
                         </div>
 
@@ -146,32 +159,42 @@
                                 ជ្រើសរើសកញ្ចប់សេវា <span class="text-rose-500">*</span>
                             </label>
                             <div class="grid grid-cols-3 gap-3">
-                                <label class="border-2 border-slate-200 hover:border-sky-400 rounded-xl p-3 flex flex-col justify-between cursor-pointer transition has-[:checked]:border-sky-600 has-[:checked]:bg-sky-50/30">
-                                    <input type="radio" name="planChoice" value="starter" onchange="onPlanChange('starter')" class="sr-only">
+                                <label
+                                    class="border-2 border-slate-200 hover:border-sky-400 rounded-xl p-3 flex flex-col justify-between cursor-pointer transition has-[:checked]:border-sky-600 has-[:checked]:bg-sky-50/30">
+                                    <input type="radio" name="planChoice" value="starter"
+                                        onchange="onPlanChange('starter')" class="sr-only">
                                     <div>
                                         <span class="text-xs font-bold text-slate-800 block">កញ្ចប់ចាប់ផ្តើម</span>
-                                        <span class="text-sm font-bold text-sky-700 mt-1 block">$29<span class="text-[10px] text-slate-400 font-normal">/ខែ</span></span>
+                                        <span class="text-sm font-bold text-sky-700 mt-1 block">$29<span
+                                                class="text-[10px] text-slate-400 font-normal">/ខែ</span></span>
                                     </div>
                                     <span class="text-[10px] text-slate-500 mt-2 block">5 អ្នកប្រើប្រាស់</span>
                                 </label>
 
-                                <label class="border-2 border-indigo-500 bg-indigo-50/30 rounded-xl p-3 flex flex-col justify-between cursor-pointer transition has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50/50">
-                                    <input type="radio" name="planChoice" value="pro" checked onchange="onPlanChange('pro')" class="sr-only">
+                                <label
+                                    class="border-2 border-indigo-500 bg-indigo-50/30 rounded-xl p-3 flex flex-col justify-between cursor-pointer transition has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50/50">
+                                    <input type="radio" name="planChoice" value="pro" checked
+                                        onchange="onPlanChange('pro')" class="sr-only">
                                     <div>
                                         <div class="flex items-center justify-between">
                                             <span class="text-xs font-bold text-slate-800">កញ្ចប់អាជីព</span>
-                                            <span class="text-[9px] bg-indigo-100 text-indigo-700 px-1 rounded font-semibold">ពេញនិយម</span>
+                                            <span
+                                                class="text-[9px] bg-indigo-100 text-indigo-700 px-1 rounded font-semibold">ពេញនិយម</span>
                                         </div>
-                                        <span class="text-sm font-bold text-indigo-700 mt-1 block">$69<span class="text-[10px] text-slate-400 font-normal">/ខែ</span></span>
+                                        <span class="text-sm font-bold text-indigo-700 mt-1 block">$69<span
+                                                class="text-[10px] text-slate-400 font-normal">/ខែ</span></span>
                                     </div>
                                     <span class="text-[10px] text-slate-500 mt-2 block">15 អ្នកប្រើប្រាស់</span>
                                 </label>
 
-                                <label class="border-2 border-slate-200 hover:border-purple-400 rounded-xl p-3 flex flex-col justify-between cursor-pointer transition has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50/30">
-                                    <input type="radio" name="planChoice" value="enterprise" onchange="onPlanChange('enterprise')" class="sr-only">
+                                <label
+                                    class="border-2 border-slate-200 hover:border-purple-400 rounded-xl p-3 flex flex-col justify-between cursor-pointer transition has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50/30">
+                                    <input type="radio" name="planChoice" value="enterprise"
+                                        onchange="onPlanChange('enterprise')" class="sr-only">
                                     <div>
                                         <span class="text-xs font-bold text-slate-800 block">កញ្ចប់សហគ្រាស</span>
-                                        <span class="text-sm font-bold text-purple-700 mt-1 block">$199<span class="text-[10px] text-slate-400 font-normal">/ខែ</span></span>
+                                        <span class="text-sm font-bold text-purple-700 mt-1 block">$199<span
+                                                class="text-[10px] text-slate-400 font-normal">/ខែ</span></span>
                                     </div>
                                     <span class="text-[10px] text-slate-500 mt-2 block">50 អ្នកប្រើប្រាស់</span>
                                 </label>
@@ -191,11 +214,13 @@
                                     រូបិយប័ណ្ណគោល <span class="text-rose-500">*</span>
                                 </label>
                                 <div class="grid grid-cols-2 gap-2">
-                                    <label class="border border-slate-200 rounded-xl p-2.5 flex items-center justify-center gap-2 cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+                                    <label
+                                        class="border border-slate-200 rounded-xl p-2.5 flex items-center justify-center gap-2 cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary/5">
                                         <input type="radio" name="currencyChoice" value="USD" checked class="sr-only">
                                         <span class="text-xs font-semibold text-slate-700">ដុល្លារ ($)</span>
                                     </label>
-                                    <label class="border border-slate-200 rounded-xl p-2.5 flex items-center justify-center gap-2 cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+                                    <label
+                                        class="border border-slate-200 rounded-xl p-2.5 flex items-center justify-center gap-2 cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary/5">
                                         <input type="radio" name="currencyChoice" value="KHR" class="sr-only">
                                         <span class="text-xs font-semibold text-slate-700">រៀល (៛)</span>
                                     </label>
@@ -208,7 +233,8 @@
                                 <label class="block text-xs font-semibold text-slate-700 mb-1.5">
                                     ថ្ងៃចាប់ផ្តើមជាវ <span class="text-rose-500">*</span>
                                 </label>
-                                <input type="date" id="startDate" value="2026-09-23" onchange="calcExpiryDate()" required
+                                <input type="date" id="startDate" value="2026-09-23" onchange="calcExpiryDate()"
+                                    required
                                     class="w-full bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/10 rounded-xl px-3.5 py-2 text-xs text-slate-800 transition outline-none font-medium">
                             </div>
                             <div>
@@ -216,20 +242,28 @@
                                     រយៈពេលជាវ <span class="text-rose-500">*</span>
                                 </label>
                                 <div class="grid grid-cols-4 gap-1.5">
-                                    <label class="border border-slate-200 rounded-xl py-2 flex items-center justify-center cursor-pointer text-xs font-medium has-[:checked]:border-primary has-[:checked]:bg-primary/5">
-                                        <input type="radio" name="durationMonths" value="1" onchange="calcExpiryDate()" class="sr-only">
+                                    <label
+                                        class="border border-slate-200 rounded-xl py-2 flex items-center justify-center cursor-pointer text-xs font-medium has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+                                        <input type="radio" name="durationMonths" value="1" onchange="calcExpiryDate()"
+                                            class="sr-only">
                                         1 ខែ
                                     </label>
-                                    <label class="border border-slate-200 rounded-xl py-2 flex items-center justify-center cursor-pointer text-xs font-medium has-[:checked]:border-primary has-[:checked]:bg-primary/5">
-                                        <input type="radio" name="durationMonths" value="3" onchange="calcExpiryDate()" class="sr-only">
+                                    <label
+                                        class="border border-slate-200 rounded-xl py-2 flex items-center justify-center cursor-pointer text-xs font-medium has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+                                        <input type="radio" name="durationMonths" value="3" onchange="calcExpiryDate()"
+                                            class="sr-only">
                                         3 ខែ
                                     </label>
-                                    <label class="border border-slate-200 rounded-xl py-2 flex items-center justify-center cursor-pointer text-xs font-medium has-[:checked]:border-primary has-[:checked]:bg-primary/5">
-                                        <input type="radio" name="durationMonths" value="6" onchange="calcExpiryDate()" class="sr-only">
+                                    <label
+                                        class="border border-slate-200 rounded-xl py-2 flex items-center justify-center cursor-pointer text-xs font-medium has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+                                        <input type="radio" name="durationMonths" value="6" onchange="calcExpiryDate()"
+                                            class="sr-only">
                                         6 ខែ
                                     </label>
-                                    <label class="border border-primary bg-primary/5 rounded-xl py-2 flex items-center justify-center cursor-pointer text-xs font-medium has-[:checked]:border-primary has-[:checked]:bg-primary/5">
-                                        <input type="radio" name="durationMonths" value="12" checked onchange="calcExpiryDate()" class="sr-only">
+                                    <label
+                                        class="border border-primary bg-primary/5 rounded-xl py-2 flex items-center justify-center cursor-pointer text-xs font-medium has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+                                        <input type="radio" name="durationMonths" value="12" checked
+                                            onchange="calcExpiryDate()" class="sr-only">
                                         12 ខែ
                                     </label>
                                 </div>
@@ -237,7 +271,8 @@
                         </div>
 
                         <!-- Auto Calculated Expiry Box -->
-                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                        <div
+                            class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
                             <span class="text-xs text-slate-600 font-medium">ថ្ងៃផុតកំណត់នៃការជាវ៖</span>
                             <span id="expiryDateDisplay" class="text-xs font-bold text-slate-800">23 កញ្ញា 2027</span>
                         </div>
@@ -257,11 +292,13 @@
                 <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
                     <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
                         <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+                            <div
+                                class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
                                 <i class="fas fa-toggle-on"></i>
                             </div>
                             <div>
-                                <h3 class="text-sm font-semibold text-slate-800">ការកំណត់មុខងារប្រើប្រាស់ (Feature Flags)</h3>
+                                <h3 class="text-sm font-semibold text-slate-800">ការកំណត់មុខងារប្រើប្រាស់ (Feature
+                                    Flags)</h3>
                                 <p class="text-[11px] text-slate-400">បើក ឬបិទម៉ូឌុលជាក់លាក់សម្រាប់ក្រុមហ៊ុននេះ</p>
                             </div>
                         </div>
@@ -270,72 +307,94 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <!-- Flag 1: POS -->
-                        <label class="p-4 rounded-xl border border-slate-200 hover:border-slate-300 flex items-start justify-between cursor-pointer transition">
+                        <label
+                            class="p-4 rounded-xl border border-slate-200 hover:border-slate-300 flex items-start justify-between cursor-pointer transition">
                             <div class="min-w-0 pr-3">
-                                <span class="text-xs font-bold text-slate-800 block">ម៉ូឌុលគិតប្រាក់លក់រហ័ស (Touch POS)</span>
-                                <span class="text-[11px] text-slate-400 mt-0.5 block">ចំណុចប្រទាក់អេក្រង់ប៉ះ ស្កេនបាកូដ និងបោះពុម្ពវិក្កយបត្រ</span>
+                                <span class="text-xs font-bold text-slate-800 block">ម៉ូឌុលគិតប្រាក់លក់រហ័ស (Touch
+                                    POS)</span>
+                                <span class="text-[11px] text-slate-400 mt-0.5 block">ចំណុចប្រទាក់អេក្រង់ប៉ះ ស្កេនបាកូដ
+                                    និងបោះពុម្ពវិក្កយបត្រ</span>
                             </div>
-                            <input type="checkbox" id="featPos" checked class="w-4 h-4 text-primary rounded accent-primary mt-1 flex-shrink-0 cursor-pointer">
+                            <input type="checkbox" id="featPos" checked
+                                class="w-4 h-4 text-primary rounded accent-primary mt-1 flex-shrink-0 cursor-pointer">
                         </label>
 
                         <!-- Flag 2: Showroom -->
-                        <label class="p-4 rounded-xl border border-slate-200 hover:border-slate-300 flex items-start justify-between cursor-pointer transition">
+                        <label
+                            class="p-4 rounded-xl border border-slate-200 hover:border-slate-300 flex items-start justify-between cursor-pointer transition">
                             <div class="min-w-0 pr-3">
                                 <span class="text-xs font-bold text-slate-800 block">គេហទំព័រ Digital Showroom</span>
-                                <span class="text-[11px] text-slate-400 mt-0.5 block">ដាក់តាំងផលិតផលលើអនឡាញ និងទទួលសម្រង់តម្លៃ</span>
+                                <span class="text-[11px] text-slate-400 mt-0.5 block">ដាក់តាំងផលិតផលលើអនឡាញ
+                                    និងទទួលសម្រង់តម្លៃ</span>
                             </div>
-                            <input type="checkbox" id="featShowroom" class="w-4 h-4 text-primary rounded accent-primary mt-1 flex-shrink-0 cursor-pointer">
+                            <input type="checkbox" id="featShowroom"
+                                class="w-4 h-4 text-primary rounded accent-primary mt-1 flex-shrink-0 cursor-pointer">
                         </label>
 
                         <!-- Flag 3: HR & Payroll -->
-                        <label class="p-4 rounded-xl border border-slate-200 hover:border-slate-300 flex items-start justify-between cursor-pointer transition">
+                        <label
+                            class="p-4 rounded-xl border border-slate-200 hover:border-slate-300 flex items-start justify-between cursor-pointer transition">
                             <div class="min-w-0 pr-3">
                                 <span class="text-xs font-bold text-slate-800 block">ម៉ូឌុលធនធានមនុស្ស & បៀវត្សរ៍</span>
-                                <span class="text-[11px] text-slate-400 mt-0.5 block">គ្រប់គ្រងបុគ្គលិក វត្តមាន និងបើកប្រាក់ខែជាមួយ ប.ស.ស</span>
+                                <span class="text-[11px] text-slate-400 mt-0.5 block">គ្រប់គ្រងបុគ្គលិក វត្តមាន
+                                    និងបើកប្រាក់ខែជាមួយ ប.ស.ស</span>
                             </div>
-                            <input type="checkbox" id="featHr" checked class="w-4 h-4 text-primary rounded accent-primary mt-1 flex-shrink-0 cursor-pointer">
+                            <input type="checkbox" id="featHr" checked
+                                class="w-4 h-4 text-primary rounded accent-primary mt-1 flex-shrink-0 cursor-pointer">
                         </label>
 
                         <!-- Flag 4: Telegram Bot -->
-                        <label class="p-4 rounded-xl border border-slate-200 hover:border-slate-300 flex items-start justify-between cursor-pointer transition">
+                        <label
+                            class="p-4 rounded-xl border border-slate-200 hover:border-slate-300 flex items-start justify-between cursor-pointer transition">
                             <div class="min-w-0 pr-3">
                                 <span class="text-xs font-bold text-slate-800 block">ការដាស់តឿនតាម Telegram</span>
-                                <span class="text-[11px] text-slate-400 mt-0.5 block">ជូនដំណឹងពេលមានការលក់ថ្មី ស្តុកទាប ឬសំណើអនុម័ត</span>
+                                <span class="text-[11px] text-slate-400 mt-0.5 block">ជូនដំណឹងពេលមានការលក់ថ្មី ស្តុកទាប
+                                    ឬសំណើអនុម័ត</span>
                             </div>
-                            <input type="checkbox" id="featTelegram" checked class="w-4 h-4 text-primary rounded accent-primary mt-1 flex-shrink-0 cursor-pointer">
+                            <input type="checkbox" id="featTelegram" checked
+                                class="w-4 h-4 text-primary rounded accent-primary mt-1 flex-shrink-0 cursor-pointer">
                         </label>
 
                         <!-- Flag 5: Multi-Warehouse -->
-                        <label class="p-4 rounded-xl border border-slate-200 hover:border-slate-300 flex items-start justify-between cursor-pointer transition">
+                        <label
+                            class="p-4 rounded-xl border border-slate-200 hover:border-slate-300 flex items-start justify-between cursor-pointer transition">
                             <div class="min-w-0 pr-3">
                                 <span class="text-xs font-bold text-slate-800 block">គ្រប់គ្រងពហុឃ្លាំងស្តុក</span>
-                                <span class="text-[11px] text-slate-400 mt-0.5 block">ផ្ទេរស្តុកឆ្លងឃ្លាំង និងបែងចែកស្តុកតាមសាខា</span>
+                                <span class="text-[11px] text-slate-400 mt-0.5 block">ផ្ទេរស្តុកឆ្លងឃ្លាំង
+                                    និងបែងចែកស្តុកតាមសាខា</span>
                             </div>
-                            <input type="checkbox" id="featMultiWarehouse" checked class="w-4 h-4 text-primary rounded accent-primary mt-1 flex-shrink-0 cursor-pointer">
+                            <input type="checkbox" id="featMultiWarehouse" checked
+                                class="w-4 h-4 text-primary rounded accent-primary mt-1 flex-shrink-0 cursor-pointer">
                         </label>
 
                         <!-- Flag 6: Lot & Expiry -->
-                        <label class="p-4 rounded-xl border border-slate-200 hover:border-slate-300 flex items-start justify-between cursor-pointer transition">
+                        <label
+                            class="p-4 rounded-xl border border-slate-200 hover:border-slate-300 flex items-start justify-between cursor-pointer transition">
                             <div class="min-w-0 pr-3">
                                 <span class="text-xs font-bold text-slate-800 block">តាមដានឡូត៍ & ផុតកំណត់</span>
-                                <span class="text-[11px] text-slate-400 mt-0.5 block">គ្រប់គ្រង Batch Number និងកាលបរិច្ឆេទផុតកំណត់ទំនិញ</span>
+                                <span class="text-[11px] text-slate-400 mt-0.5 block">គ្រប់គ្រង Batch Number
+                                    និងកាលបរិច្ឆេទផុតកំណត់ទំនិញ</span>
                             </div>
-                            <input type="checkbox" id="featLotTracking" class="w-4 h-4 text-primary rounded accent-primary mt-1 flex-shrink-0 cursor-pointer">
+                            <input type="checkbox" id="featLotTracking"
+                                class="w-4 h-4 text-primary rounded accent-primary mt-1 flex-shrink-0 cursor-pointer">
                         </label>
                     </div>
                 </div>
 
                 <!-- Bottom Actions Bar -->
-                <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex items-center justify-between">
+                <div
+                    class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex items-center justify-between">
                     <span class="text-xs text-slate-500">
                         <i class="fas fa-shield-halved text-emerald-600 mr-1"></i>
                         ទិន្នន័យក្រុមហ៊ុននឹងត្រូវបានបង្កើតដាច់ដោយឡែកពីគ្នា 100% (Multi-Tenant Isolation)
                     </span>
                     <div class="flex items-center gap-3">
-                        <a href="companies.html" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition cursor-pointer">
+                        <a href="companies.html"
+                            class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition cursor-pointer">
                             បោះបង់
                         </a>
-                        <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs font-medium shadow-md transition cursor-pointer">
+                        <button type="submit"
+                            class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs font-medium shadow-md transition cursor-pointer">
                             <i class="fas fa-check text-xs"></i>
                             <span>ចុះឈ្មោះក្រុមហ៊ុន</span>
                         </button>
@@ -459,4 +518,5 @@
         }
     </script>
 </body>
+
 </html>

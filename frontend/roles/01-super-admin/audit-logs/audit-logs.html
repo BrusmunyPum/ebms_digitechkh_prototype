@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.iconify.design/iconify-icon/1.0.8/iconify-icon.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -59,62 +60,100 @@
 
                 <!-- Filter Toolbar -->
                 <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
-                    <!-- Search Input -->
-                    <div class="relative flex-1 min-w-[220px]">
+                    <!-- Search Input with Embedded Sliders Filter Icon -->
+                    <div class="relative w-full sm:w-72 md:w-80">
                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                             <i class="fas fa-search text-xs"></i>
                         </span>
                         <input type="text" id="searchInput" oninput="applyFilters()"
-                            placeholder="ស្វែងរកតាមឈ្មោះក្រុមហ៊ុន អ្នកប្រើប្រាស់ ឬ IP..."
-                            class="w-full bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/10 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-800 transition outline-none font-medium placeholder:text-slate-400">
-                    </div>
+                            placeholder="ស្វែងរក..."
+                            class="w-full bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/10 rounded-xl pl-9 pr-10 py-2 text-xs text-slate-800 transition outline-none font-medium placeholder:text-slate-400">
 
-                    <!-- Custom Dropdown: Action Filter -->
-                    <div class="relative bms-custom-select min-w-[150px]">
-                        <button type="button" id="actionFilterBtn" onclick="toggleFilterMenu('action')"
-                            class="w-full h-9 px-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs rounded-xl flex items-center justify-between shadow-sm transition cursor-pointer">
-                            <span id="actionFilterLabel" class="truncate font-medium">សកម្មភាព៖ ទាំងអស់</span>
-                            <i class="fas fa-chevron-down text-[10px] text-slate-400 ml-2 transition-transform duration-200"></i>
-                        </button>
-                        <div id="actionFilterMenu" class="hidden absolute top-full left-0 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-xl py-1 z-50">
-                            <div onclick="selectActionFilter('')" class="px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 cursor-pointer font-medium">ទាំងអស់</div>
-                            <div onclick="selectActionFilter('LOGIN')" class="px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 cursor-pointer font-medium">LOGIN (ចូលប្រព័ន្ធ)</div>
-                            <div onclick="selectActionFilter('CREATE')" class="px-3 py-2 text-xs text-emerald-700 hover:bg-emerald-50 cursor-pointer font-medium">CREATE (បង្កើតថ្មី)</div>
-                            <div onclick="selectActionFilter('SUSPEND')" class="px-3 py-2 text-xs text-rose-700 hover:bg-rose-50 cursor-pointer font-medium">SUSPEND (ផ្អាកដំណើរការ)</div>
-                            <div onclick="selectActionFilter('RESET_PASSWORD')" class="px-3 py-2 text-xs text-amber-700 hover:bg-amber-50 cursor-pointer font-medium">RESET_PASSWORD</div>
-                            <div onclick="selectActionFilter('EXPORT')" class="px-3 py-2 text-xs text-sky-700 hover:bg-sky-50 cursor-pointer font-medium">EXPORT (ទាញយកទិន្នន័យ)</div>
-                        </div>
-                    </div>
-
-                    <!-- Custom Dropdown: Result Filter -->
-                    <div class="relative bms-custom-select min-w-[140px]">
-                        <button type="button" id="resultFilterBtn" onclick="toggleFilterMenu('result')"
-                            class="w-full h-9 px-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs rounded-xl flex items-center justify-between shadow-sm transition cursor-pointer">
-                            <span id="resultFilterLabel" class="truncate font-medium">លទ្ធផល៖ ទាំងអស់</span>
-                            <i class="fas fa-chevron-down text-[10px] text-slate-400 ml-2 transition-transform duration-200"></i>
-                        </button>
-                        <div id="resultFilterMenu" class="hidden absolute top-full left-0 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-xl py-1 z-50">
-                            <div onclick="selectResultFilter('')" class="px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 cursor-pointer font-medium">ទាំងអស់</div>
-                            <div onclick="selectResultFilter('SUCCESS')" class="px-3 py-2 text-xs text-emerald-700 hover:bg-emerald-50 cursor-pointer font-medium">ជោគជ័យ (SUCCESS)</div>
-                            <div onclick="selectResultFilter('FAILED')" class="px-3 py-2 text-xs text-rose-700 hover:bg-rose-50 cursor-pointer font-medium">បរាជ័យ (FAILED)</div>
-                        </div>
-                    </div>
-
-                    <!-- Date Filter Host -->
-                    <div id="dateFilterHost" class="flex items-center"></div>
-
-                    <!-- Reset Button -->
-                    <div class="flex flex-wrap items-center gap-2">
-                        <button type="button" onclick="resetFilters()" class="h-9 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium transition cursor-pointer" title="សម្អាតតម្រង">
-                            <i class="fas fa-rotate-left mr-1"></i> សម្អាត
-                        </button>
-                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
-                        <div class="flex flex-wrap items-center gap-2 no-print">
-                            <button type="button" onclick="exportAuditLogsCSV()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200 transition shadow-sm cursor-pointer">
-                                <i class="fas fa-file-csv text-emerald-600"></i>
-                                <span>ទាញយក Audit CSV</span>
+                        <!-- Embedded Sliders Filter Icon Button -->
+                        <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center filter-popover-container">
+                            <button type="button" id="filterToggleBtn" onclick="toggleFilterMenu()"
+                                class="relative p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-lg transition cursor-pointer flex items-center justify-center"
+                                title="កំណត់តម្រង">
+                                <iconify-icon icon="lucide:sliders-horizontal" class="text-sm" id="filterMainIcon"></iconify-icon>
+                                <span id="activeFilterBadge" class="hidden absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-[#1e3a5f] ring-2 ring-white"></span>
                             </button>
+
+                            <!-- Filter Popover Menu -->
+                            <div id="filterPopoverMenu"
+                                class="hidden absolute top-full right-0 mt-2 w-72 bg-white border border-slate-200 rounded-2xl shadow-xl p-4 z-50 space-y-4">
+                                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                                    <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                        <i class="fas fa-sliders text-slate-500 text-xs"></i> កំណត់លក្ខខណ្ឌតម្រង
+                                    </span>
+                                    <button type="button" onclick="resetFilters()" class="text-[11px] text-slate-500 hover:text-slate-800 font-medium cursor-pointer">
+                                        កំណត់ឡើងវិញ
+                                    </button>
+                                </div>
+
+                                <!-- Action Filter Section -->
+                                <div class="space-y-1.5">
+                                    <label class="text-[11px] font-semibold text-slate-600">សកម្មភាព (Action)</label>
+                                    <div class="grid grid-cols-2 gap-1.5" id="actionFilterOptions">
+                                        <button type="button" onclick="selectActionFilter('')" data-action=""
+                                            class="action-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border bg-[#1e3a5f] text-white border-[#1e3a5f] cursor-pointer">
+                                            ទាំងអស់
+                                        </button>
+                                        <button type="button" onclick="selectActionFilter('LOGIN')" data-action="LOGIN"
+                                            class="action-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer">
+                                            LOGIN
+                                        </button>
+                                        <button type="button" onclick="selectActionFilter('CREATE')" data-action="CREATE"
+                                            class="action-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-emerald-50 text-slate-700 cursor-pointer">
+                                            CREATE
+                                        </button>
+                                        <button type="button" onclick="selectActionFilter('SUSPEND')" data-action="SUSPEND"
+                                            class="action-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-rose-50 text-slate-700 cursor-pointer">
+                                            SUSPEND
+                                        </button>
+                                        <button type="button" onclick="selectActionFilter('RESET_PASSWORD')" data-action="RESET_PASSWORD"
+                                            class="action-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-amber-50 text-slate-700 cursor-pointer">
+                                            RESET_PW
+                                        </button>
+                                        <button type="button" onclick="selectActionFilter('EXPORT')" data-action="EXPORT"
+                                            class="action-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-sky-50 text-slate-700 cursor-pointer">
+                                            EXPORT
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Result Filter Section -->
+                                <div class="space-y-1.5">
+                                    <label class="text-[11px] font-semibold text-slate-600">លទ្ធផល (Result)</label>
+                                    <div class="grid grid-cols-1 gap-1" id="resultFilterOptions">
+                                        <button type="button" onclick="selectResultFilter('')" data-result=""
+                                            class="result-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border bg-[#1e3a5f] text-white border-[#1e3a5f] cursor-pointer">
+                                            ទាំងអស់
+                                        </button>
+                                        <button type="button" onclick="selectResultFilter('SUCCESS')" data-result="SUCCESS"
+                                            class="result-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-emerald-50 text-slate-700 cursor-pointer">
+                                            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span> ជោគជ័យ (SUCCESS)
+                                        </button>
+                                        <button type="button" onclick="selectResultFilter('FAILED')" data-result="FAILED"
+                                            class="result-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-rose-50 text-slate-700 cursor-pointer">
+                                            <span class="inline-block w-1.5 h-1.5 rounded-full bg-rose-500 mr-1"></span> បរាជ័យ (FAILED)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- Actions & Date Toolbar -->
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <!-- Date Filter Host (Calendar) -->
+                        <div id="dateFilterHost" class="flex items-center"></div>
+
+                        <!-- Export Button (el:download-alt) -->
+                        <button type="button" onclick="exportAuditLogsCSV()"
+                            class="w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200 transition shadow-sm flex items-center justify-center cursor-pointer no-print"
+                            title="ទាញយកកំណត់ហេតុសវនកម្ម (CSV)">
+                            <iconify-icon icon="el:download-alt" class="text-sm text-slate-600"></iconify-icon>
+                        </button>
                     </div>
                 </div>
 
@@ -162,43 +201,70 @@
         let currentFilterAction = '';
         let currentFilterResult = '';
 
-        function toggleFilterMenu(type) {
-            const aMenu = document.getElementById('actionFilterMenu');
-            const rMenu = document.getElementById('resultFilterMenu');
+        function toggleFilterMenu() {
+            const menu = document.getElementById('filterPopoverMenu');
+            if (menu) {
+                menu.classList.toggle('hidden');
+            }
+        }
 
-            if (type === 'action') {
-                rMenu.classList.add('hidden');
-                aMenu.classList.toggle('hidden');
+        function closeFilterMenu() {
+            const menu = document.getElementById('filterPopoverMenu');
+            if (menu && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+            }
+        }
+
+        function updateFilterButtonState() {
+            let activeCount = 0;
+            if (currentFilterAction) activeCount++;
+            if (currentFilterResult) activeCount++;
+
+            const badge = document.getElementById('activeFilterBadge');
+            const icon = document.getElementById('filterMainIcon');
+
+            if (activeCount > 0) {
+                if (icon) {
+                    icon.classList.remove('text-slate-400');
+                    icon.classList.add('text-[#1e3a5f]');
+                }
+                if (badge) {
+                    badge.classList.remove('hidden');
+                }
             } else {
-                aMenu.classList.add('hidden');
-                rMenu.classList.toggle('hidden');
+                if (icon) {
+                    icon.classList.add('text-slate-400');
+                    icon.classList.remove('text-[#1e3a5f]');
+                }
+                if (badge) {
+                    badge.classList.add('hidden');
+                }
             }
         }
 
         function selectActionFilter(val) {
             currentFilterAction = val;
-            const labels = {
-                '': 'សកម្មភាព៖ ទាំងអស់',
-                'LOGIN': 'សកម្មភាព៖ LOGIN',
-                'CREATE': 'សកម្មភាព៖ CREATE',
-                'SUSPEND': 'សកម្មភាព៖ SUSPEND',
-                'RESET_PASSWORD': 'សកម្មភាព៖ RESET_PW',
-                'EXPORT': 'សកម្មភាព៖ EXPORT'
-            };
-            document.getElementById('actionFilterLabel').textContent = labels[val] || 'សកម្មភាព';
-            document.getElementById('actionFilterMenu').classList.add('hidden');
+            document.querySelectorAll('.action-opt-btn').forEach(btn => {
+                if (btn.getAttribute('data-action') === val) {
+                    btn.className = 'action-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border bg-[#1e3a5f] text-white border-[#1e3a5f] cursor-pointer';
+                } else {
+                    btn.className = 'action-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer';
+                }
+            });
+            updateFilterButtonState();
             applyFilters();
         }
 
         function selectResultFilter(val) {
             currentFilterResult = val;
-            const labels = {
-                '': 'លទ្ធផល៖ ទាំងអស់',
-                'SUCCESS': 'លទ្ធផល៖ ជោគជ័យ',
-                'FAILED': 'លទ្ធផល៖ បរាជ័យ'
-            };
-            document.getElementById('resultFilterLabel').textContent = labels[val] || 'លទ្ធផល';
-            document.getElementById('resultFilterMenu').classList.add('hidden');
+            document.querySelectorAll('.result-opt-btn').forEach(btn => {
+                if (btn.getAttribute('data-result') === val) {
+                    btn.className = 'result-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border bg-[#1e3a5f] text-white border-[#1e3a5f] cursor-pointer';
+                } else {
+                    btn.className = 'result-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer';
+                }
+            });
+            updateFilterButtonState();
             applyFilters();
         }
 
@@ -313,11 +379,8 @@
 
         // Global click handler to close dropdowns
         document.addEventListener('click', (e) => {
-            if (!e.target.closest('.bms-custom-select')) {
-                const aMenu = document.getElementById('actionFilterMenu');
-                const rMenu = document.getElementById('resultFilterMenu');
-                if (aMenu) aMenu.classList.add('hidden');
-                if (rMenu) rMenu.classList.add('hidden');
+            if (!e.target.closest('.filter-popover-container')) {
+                closeFilterMenu();
             }
         });
 

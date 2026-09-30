@@ -307,8 +307,8 @@ function renderPortalSidebarV2(host, cfg, roleRoot, activeId, sharedRoot) {
         return `
             <a href="${roleRoot}/${item.href}" ${isActive ? 'aria-current="page"' : ''}
                class="sb-nav-item relative flex items-center justify-between gap-2 p-3 rounded-xl transition-all whitespace-nowrap ${isActive
-                   ? 'bg-white/15 text-white border border-white/10 shadow-sm'
-                   : 'text-sky-100 hover:bg-white/10 hover:text-white border border-transparent'}">
+                ? 'bg-white/15 text-white border border-white/10 shadow-sm'
+                : 'text-sky-100 hover:bg-white/10 hover:text-white border border-transparent'}">
                 <span class="flex items-center min-w-0">
                     <span class="w-6 flex items-center justify-center text-sky-300 flex-shrink-0">
                         ${getIconHtml(item.icon)}
@@ -323,7 +323,7 @@ function renderPortalSidebarV2(host, cfg, roleRoot, activeId, sharedRoot) {
     host.outerHTML = `
         <aside id="portalSidebar" class="w-64 bg-[#1e3a5f] text-white flex flex-col flex-shrink-0 select-none z-20 border-r border-slate-700${collapsed ? ' is-collapsed' : ''}">
             <div class="sb-brand h-[72px] px-6 flex items-center gap-3 border-b border-white/10 flex-shrink-0">
-                <div class="sb-expand-only w-9 h-9 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center p-1 shadow-sm overflow-hidden flex-shrink-0">
+                <div class="sb-expand-only w-8 h-8 flex items-center justify-center flex-shrink-0">
                     <img src="${sharedRoot}/assets/logo-mark-transparent.png" alt="DIGITECHKH" class="w-full h-full object-contain">
                 </div>
                 <div class="min-w-0 flex-1 sb-expand-only">
@@ -413,6 +413,58 @@ function setPortalBackHref(href) {
     if (el) el.href = href;
 }
 
+function isDarkMode() {
+    try {
+        return localStorage.getItem('bms_theme') === 'dark';
+    } catch (e) {
+        return false;
+    }
+}
+
+function updateDarkModeUI(isDark) {
+    const icon = document.getElementById('darkModeIcon');
+    if (icon) {
+        icon.setAttribute('icon', isDark ? 'mdi:weather-sunny' : 'mdi:weather-night');
+        icon.className = isDark ? 'text-xl text-amber-400' : 'text-xl text-slate-500';
+    }
+    if (isDark) {
+        document.documentElement.classList.add('dark');
+        document.body.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+        document.body.classList.remove('dark');
+    }
+
+    // Dispatch custom event for pages with specialized widgets
+    window.dispatchEvent(new CustomEvent('bms-theme-change', { detail: { isDark } }));
+
+    // Trigger chart resize / update if chart exists
+    if (window.echarts) {
+        const charts = document.querySelectorAll('[_echarts_instance_]');
+        charts.forEach(el => {
+            const chart = echarts.getInstanceByDom(el);
+            if (chart) {
+                chart.resize();
+            }
+        });
+    }
+}
+
+function toggleDarkMode() {
+    const nextDark = !isDarkMode();
+    try {
+        localStorage.setItem('bms_theme', nextDark ? 'dark' : 'light');
+    } catch (e) {}
+    updateDarkModeUI(nextDark);
+    if (typeof showToast === 'function') {
+        showToast(nextDark ? 'បានប្តូរទៅ Dark Mode' : 'បានប្តូរទៅ Light Mode', 'info');
+    }
+}
+
+function initDarkMode() {
+    updateDarkModeUI(isDarkMode());
+}
+
 function renderPortalHeader() {
     const host = document.getElementById('headerHost');
     if (!host) return;
@@ -422,8 +474,6 @@ function renderPortalHeader() {
     const title = host.dataset.title || '';
     const subtitle = host.dataset.subtitle || '';
     const backHref = host.dataset.back || '';
-    // ក្បាលទំព័រមានតែចំណងជើង ចំណងជើងរង ការជូនដំណឹង និងគណនី។
-    // ប៊ូតុងសកម្មភាពរបស់ទំព័រត្រូវដាក់ក្នុងតួទំព័រ (របារសកម្មភាពនៅដើម <main>) ជំនួសវិញ។
     const avatarSrc = `${getRoleRoot()}/../../shared/assets/avatars/${portalId}.jpg`;
 
     const notes = portalNotificationList();
@@ -436,18 +486,19 @@ function renderPortalHeader() {
 
     const notifRows = notes.length
         ? notes.map(n => `
-            <div class="flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition">
-                <span class="w-8 h-8 rounded-lg ${toneMap[n.tone] || toneMap.info} flex items-center justify-center flex-shrink-0">
+            <div class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition">
+                <span class="w-8 h-8 rounded-lg ${toneMap[n.tone] || toneMap.info} flex items-center justify-center flex-shrink-0 mt-0.5">
                     <iconify-icon icon="${n.icon || 'mdi:bell-outline'}" class="text-base"></iconify-icon>
                 </span>
-                <span class="min-w-0 flex-1">
-                    <span class="sm-td text-slate-700 block">${n.title}</span>
-                    <span class="sm-td-sub text-slate-500 block">${n.note || ''}</span>
-                    ${n.time ? `<span class="sm-td-sub text-slate-400 block mt-0.5">${n.time}</span>` : ''}
-                </span>
+                <div class="min-w-0 flex-1">
+                    <p class="text-xs font-semibold text-slate-800 leading-snug">${n.title}</p>
+                    ${n.note ? `<p class="text-[11px] text-slate-500 mt-1 leading-relaxed">${n.note}</p>` : ''}
+                    ${n.time ? `<span class="inline-block text-[10px] text-slate-400 font-medium mt-1">${n.time}</span>` : ''}
+                </div>
             </div>`).join('')
-        : `<div class="py-10 text-center">
-               <p class="sm-card-sub text-slate-500">គ្មានដំណឹងថ្មីទេ</p>
+        : `<div class="py-8 text-center text-slate-400">
+               <iconify-icon icon="mdi:bell-check-outline" class="text-3xl text-slate-300 mb-1"></iconify-icon>
+               <p class="text-xs">គ្មានដំណឹងថ្មីទេ</p>
            </div>`;
 
     const backBtn = backHref
@@ -458,70 +509,44 @@ function renderPortalHeader() {
         : '';
 
     host.outerHTML = `
-        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full">
+        <header class="bg-white px-6 h-[72px] flex justify-between items-center shadow-sm z-10 flex-shrink-0 w-full transition-colors duration-200">
             <div class="flex items-center gap-4 min-w-0">
                 ${backBtn}
                 <div class="min-w-0">
                     <h2 id="portalTitle" class="text-xl font-semibold text-gray-800 leading-tight truncate">${title}</h2>
-                    <p id="portalSubtitle" class="sm-card-sub text-gray-500 mt-0.5 truncate">${subtitle}</p>
+                    <p id="portalSubtitle" class="text-xs text-gray-400 mt-0.5 truncate">${subtitle}</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-1 flex-shrink-0">
+            <div class="flex items-center gap-1.5 flex-shrink-0">
+                <!-- Dark Mode Toggle Button -->
+                <button onclick="toggleDarkMode()" type="button" aria-label="ប្តូរទម្រង់ពណ៌ (Dark/Light Mode)" id="darkModeToggleBtn"
+                    class="w-10 h-10 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition cursor-pointer"
+                    title="ប្តូរ Dark / Light Mode">
+                    <iconify-icon id="darkModeIcon" icon="mdi:weather-night" class="text-xl"></iconify-icon>
+                </button>
+
+                <!-- Notification Menu -->
                 <div class="relative">
                     <button onclick="toggleRowActionMenu(event, 'portalNotifMenu')" type="button" aria-label="ការជូនដំណឹង"
-                        class="relative w-10 h-10 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition">
+                        class="relative w-10 h-10 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition cursor-pointer">
                         <iconify-icon icon="mdi:bell-outline" class="text-xl"></iconify-icon>
                         ${notes.length
-                            ? '<span class="absolute top-2 right-2.5 w-2.5 h-2.5 rounded-full bg-rose-500 border-2 border-white"></span>'
-                            : ''}
+            ? '<span class="absolute top-2 right-2.5 w-2.5 h-2.5 rounded-full bg-rose-500 border-2 border-white"></span>'
+            : ''}
                     </button>
-                    <div id="portalNotifMenu" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 text-left">
-                        <div class="px-3 py-2 mb-1 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-2">
-                            <p class="sm-value text-slate-700">ការជូនដំណឹង</p>
-                            <span class="sm-badge px-2 py-0.5 rounded-full bg-white border border-slate-200 text-slate-600">${notes.length}</span>
+                    <div id="portalNotifMenu" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2.5 text-left z-50">
+                        <div class="px-3 py-2 mb-1.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-2">
+                            <span class="text-xs font-semibold text-slate-700">ការជូនដំណឹង</span>
+                            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-white border border-slate-200 text-slate-600">${notes.length}</span>
                         </div>
-                        <div class="max-h-[320px] overflow-y-auto scrollbar-hide space-y-0.5">${notifRows}</div>
-                    </div>
-                </div>
-
-                <span class="w-px h-7 bg-slate-200 mx-1.5"></span>
-
-                <div class="relative">
-                    <button onclick="toggleRowActionMenu(event, 'portalProfileMenu')" type="button" aria-label="គណនីរបស់ខ្ញុំ"
-                        class="relative block w-9 h-9 rounded-full transition hover:ring-2 hover:ring-slate-200">
-                        <img src="${avatarSrc}" alt="${cfg.userName}"
-                             class="w-9 h-9 rounded-full object-cover bg-slate-100"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <!-- ប្រើ style ផ្ទាល់ មិនមែនថ្នាក់ hidden ព្រោះ custom.css កំណត់
-                             .hidden { display: none !important } ដែលឈ្នះលើ style ពី onerror -->
-                        <span style="display:none"
-                              class="w-9 h-9 rounded-full bg-[#1e3a5f] text-white items-center justify-center font-semibold text-xs">
-                            ${cfg.userInitials}
-                        </span>
-                        <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"></span>
-                    </button>
-                    <div id="portalProfileMenu" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 text-left">
-                        <div class="px-3 py-2.5 mb-1 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-3">
-                            <span class="w-10 h-10 rounded-full bg-[#1e3a5f] text-white flex items-center justify-center font-semibold text-xs flex-shrink-0">
-                                ${cfg.userInitials}
-                            </span>
-                            <span class="min-w-0">
-                                <span class="sm-value text-slate-700 block truncate">${cfg.userName}</span>
-                                <span class="sm-td-sub text-slate-500 block truncate">${cfg.userRole}</span>
-                            </span>
-                        </div>
-                        <button onclick="handleLogout()" type="button"
-                            class="sm-row-menu-item w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-rose-700 hover:bg-rose-50 transition text-left">
-                            <span class="w-7 h-7 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center flex-shrink-0">
-                                <iconify-icon icon="mdi:logout" class="text-sm"></iconify-icon>
-                            </span>
-                            ចាកចេញពីប្រព័ន្ធ
-                        </button>
+                        <div class="max-h-[360px] overflow-y-auto scrollbar-hide space-y-1">${notifRows}</div>
                     </div>
                 </div>
             </div>
         </header>`;
+
+    initDarkMode();
 }
 
 function renderPortalSidebar() {
@@ -563,7 +588,7 @@ function renderPortalSidebar() {
     host.outerHTML = `
         <aside class="w-64 bg-[#1e3a5f] text-white flex flex-col flex-shrink-0 select-none z-20 border-r border-slate-700">
             <div class="h-[72px] px-6 flex items-center gap-3 border-b border-white/10 flex-shrink-0">
-                <div class="w-9 h-9 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center p-1 shadow-sm overflow-hidden flex-shrink-0">
+                <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
                     <img src="${sharedRoot}/assets/logo-mark-transparent.png" alt="DIGITECHKH" class="w-full h-full object-contain">
                 </div>
                 <div class="min-w-0">
@@ -885,16 +910,16 @@ function selectPreset(name) {
     selectingRangeStart = false;
 
     const seed = {
-        'ថ្ងៃនេះ':          [9, new Date(2026, 8, 3),  new Date(2026, 8, 3),  '3 កញ្ញា'],
-        'ម្សិលមិញ':          [9, new Date(2026, 8, 2),  new Date(2026, 8, 2),  '2 កញ្ញា'],
-        'សប្តាហ៍នេះ':        [9, new Date(2026, 8, 1),  new Date(2026, 8, 7),  '1 កញ្ញា - 7 កញ្ញា'],
-        'សប្តាហ៍មុន':        [8, new Date(2026, 7, 24), new Date(2026, 7, 30), '24 សីហា - 30 សីហា'],
-        'ខែនេះ':            [9, new Date(2026, 8, 1),  new Date(2026, 8, 30), '1 កញ្ញា - 30 កញ្ញា'],
-        'ខែមុន':            [8, new Date(2026, 7, 1),  new Date(2026, 7, 31), '1 សីហា - 31 សីហា'],
-        'ឆ្នាំនេះ':          [9, new Date(2026, 0, 1),  new Date(2026, 11, 31), 'ឆ្នាំ 2026'],
-        '7 ថ្ងៃចុងក្រោយ':    [9, new Date(2026, 7, 28), new Date(2026, 8, 3),  '28 សីហា - 3 កញ្ញា'],
-        '14 ថ្ងៃចុងក្រោយ':   [9, new Date(2026, 7, 21), new Date(2026, 8, 3),  '21 សីហា - 3 កញ្ញា'],
-        '30 ថ្ងៃចុងក្រោយ':   [9, new Date(2026, 7, 5),  new Date(2026, 8, 3),  '5 សីហា - 3 កញ្ញា']
+        'ថ្ងៃនេះ': [9, new Date(2026, 8, 3), new Date(2026, 8, 3), '3 កញ្ញា'],
+        'ម្សិលមិញ': [9, new Date(2026, 8, 2), new Date(2026, 8, 2), '2 កញ្ញា'],
+        'សប្តាហ៍នេះ': [9, new Date(2026, 8, 1), new Date(2026, 8, 7), '1 កញ្ញា - 7 កញ្ញា'],
+        'សប្តាហ៍មុន': [8, new Date(2026, 7, 24), new Date(2026, 7, 30), '24 សីហា - 30 សីហា'],
+        'ខែនេះ': [9, new Date(2026, 8, 1), new Date(2026, 8, 30), '1 កញ្ញា - 30 កញ្ញា'],
+        'ខែមុន': [8, new Date(2026, 7, 1), new Date(2026, 7, 31), '1 សីហា - 31 សីហា'],
+        'ឆ្នាំនេះ': [9, new Date(2026, 0, 1), new Date(2026, 11, 31), 'ឆ្នាំ 2026'],
+        '7 ថ្ងៃចុងក្រោយ': [9, new Date(2026, 7, 28), new Date(2026, 8, 3), '28 សីហា - 3 កញ្ញា'],
+        '14 ថ្ងៃចុងក្រោយ': [9, new Date(2026, 7, 21), new Date(2026, 8, 3), '21 សីហា - 3 កញ្ញា'],
+        '30 ថ្ងៃចុងក្រោយ': [9, new Date(2026, 7, 5), new Date(2026, 8, 3), '5 សីហា - 3 កញ្ញា']
     }[name];
 
     if (seed) {

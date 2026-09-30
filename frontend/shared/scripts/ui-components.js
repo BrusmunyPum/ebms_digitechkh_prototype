@@ -165,45 +165,63 @@ function openFloatingDropdown(btn, menu) {
     const spaceBelow = vHeight - rect.bottom;
     const spaceAbove = rect.top;
 
-    // Minimum width 280px or match trigger button, capped at screen width
-    const minWidth = 280;
+    const isHeaderMenu = menu.id === 'portalNotifMenu' || menu.id === 'portalProfileMenu' || !!btn.closest('header');
+    const isNotif = menu.id === 'portalNotifMenu';
+    const isProfile = menu.id === 'portalProfileMenu';
+
+    // Width calculation
+    let minWidth = 280;
+    if (isNotif) minWidth = 380;
+    else if (isProfile) minWidth = 260;
+
     const targetWidth = Math.min(Math.max(rect.width, minWidth), vWidth - 32);
-
-    // Keep horizontal coordinates within viewport
-    let left = rect.left;
-    if (left + targetWidth > vWidth - 16) {
-        left = Math.max(16, vWidth - targetWidth - 16);
-    }
-    if (left < 16) {
-        left = 16;
-    }
-
-    // Determine direction: Pop UP if space below is too tight (< 200px) and there's more space above
-    const popUp = (spaceBelow < 200 && spaceAbove > spaceBelow);
 
     // Apply fixed viewport styles to escape all parent containers, overflows & tables
     menu.style.setProperty('position', 'fixed', 'important');
-    menu.style.setProperty('z-index', '99999', 'important');
-    menu.style.setProperty('left', `${left}px`, 'important');
-    menu.style.setProperty('right', 'auto', 'important');
+    menu.style.setProperty('z-index', '999999', 'important');
     menu.style.setProperty('width', `${targetWidth}px`, 'important');
+    menu.style.setProperty('background-color', '#ffffff', 'important');
     menu.style.setProperty('margin-top', '0px', 'important');
     menu.style.setProperty('margin-bottom', '0px', 'important');
 
+    // Horizontal positioning: align right if on right side of screen or header menu
+    const shouldAlignRight = isHeaderMenu || (rect.right > vWidth / 2);
+
+    if (shouldAlignRight) {
+        let right = vWidth - rect.right;
+        if (right < 16) right = 16;
+        if (right + targetWidth > vWidth - 16) {
+            right = Math.max(16, vWidth - targetWidth - 16);
+        }
+        menu.style.setProperty('right', `${right}px`, 'important');
+        menu.style.setProperty('left', 'auto', 'important');
+    } else {
+        let left = rect.left;
+        if (left + targetWidth > vWidth - 16) {
+            left = Math.max(16, vWidth - targetWidth - 16);
+        }
+        if (left < 16) left = 16;
+        menu.style.setProperty('left', `${left}px`, 'important');
+        menu.style.setProperty('right', 'auto', 'important');
+    }
+
+    // Determine direction: Pop UP if space below is too tight (< 200px) and there's more space above
+    const popUp = !isHeaderMenu && (spaceBelow < 200 && spaceAbove > spaceBelow);
+
     if (popUp) {
-        const maxH = Math.max(120, Math.min(spaceAbove - 20, 280));
+        const maxH = Math.max(160, Math.min(spaceAbove - 20, 420));
         menu.style.setProperty('top', 'auto', 'important');
         menu.style.setProperty('bottom', `${vHeight - rect.top + 6}px`, 'important');
         menu.style.setProperty('max-height', `${maxH}px`, 'important');
-        menu.style.setProperty('transform-origin', 'bottom left', 'important');
+        menu.style.setProperty('transform-origin', shouldAlignRight ? 'bottom right' : 'bottom left', 'important');
         menu.classList.remove('top-full', 'mt-1');
         menu.classList.add('bottom-full', 'mb-1');
     } else {
-        const maxH = Math.max(120, Math.min(spaceBelow - 20, 280));
+        const maxH = Math.max(160, Math.min(spaceBelow - 20, isNotif ? 460 : 380));
         menu.style.setProperty('bottom', 'auto', 'important');
-        menu.style.setProperty('top', `${rect.bottom + 6}px`, 'important');
+        menu.style.setProperty('top', `${rect.bottom + 8}px`, 'important');
         menu.style.setProperty('max-height', `${maxH}px`, 'important');
-        menu.style.setProperty('transform-origin', 'top left', 'important');
+        menu.style.setProperty('transform-origin', shouldAlignRight ? 'top right' : 'top left', 'important');
         menu.classList.remove('bottom-full', 'mb-1');
         menu.classList.add('top-full', 'mt-1');
     }

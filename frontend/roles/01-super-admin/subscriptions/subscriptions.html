@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="km">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
@@ -29,73 +31,136 @@
     <link rel="stylesheet" href="../../../shared/styles/custom.css">
     <link rel="stylesheet" href="../../../shared/styles/portal.css">
 </head>
-<body id="saPortal" data-role-root=".." data-active="subscriptions" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
+
+<body id="saPortal" data-role-root=".." data-active="subscriptions"
+    class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
 
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <div id="headerHost" data-title="គ្រប់គ្រងកញ្ចប់សេវា & ការជាវ"
-             data-subtitle="តាមដានកញ្ចប់សេវាជាវ ស្ថានភាពបន្តសុពលភាព និងចំណូលប្រចាំខែ (MRR)"></div>
+            data-subtitle="តាមដានកញ្ចប់សេវាជាវ ស្ថានភាពបន្តសុពលភាព និងចំណូលប្រចាំខែ (MRR)"></div>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
-            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
-            <div class="w-full flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
-                <div class="flex flex-wrap items-center gap-2">
-                    <a href="../companies/create-company.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs font-medium shadow-sm transition">
-                        <i class="fas fa-plus text-xs"></i>
-                        <span>ចុះឈ្មោះក្រុមហ៊ុនថ្មី</span>
-                    </a>
-                </div>
-            </div>
-
             <div class="w-full space-y-6">
 
-                <!-- Financial & Subscription KPIs -->
+                <!-- Financial & Subscription KPIs (Sparkline Style) -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-medium text-slate-500">ចំណូលប្រចាំខែ (MRR)</span>
-                            <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-sm">
+                    <!-- Card 1: MRR -->
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3.5 min-w-0">
+                            <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl flex-shrink-0">
                                 <i class="fas fa-sack-dollar"></i>
                             </div>
+                            <div class="min-w-0">
+                                <span class="text-xs font-medium text-slate-500 block truncate">ចំណូលប្រចាំខែ (MRR)</span>
+                                <h3 id="kpiMrr" class="text-2xl font-bold text-slate-800 tracking-tight mt-0.5 leading-tight">$0.00</h3>
+                                <p class="text-xs font-semibold text-emerald-600 flex items-center gap-1 mt-1 truncate">
+                                    <iconify-icon icon="mdi:arrow-up"></iconify-icon>
+                                    <span>កើនឡើង 12% ធៀបខែមុន</span>
+                                </p>
+                            </div>
                         </div>
-                        <h3 id="kpiMrr" class="text-2xl font-bold text-slate-800">$0.00</h3>
-                        <p class="text-xs text-emerald-600 font-medium mt-1">
-                            <i class="fas fa-arrow-trend-up mr-1"></i> កើនឡើង 12% ធៀបខែមុន
-                        </p>
+                        <div class="w-20 h-10 flex-shrink-0 flex items-center justify-end">
+                            <svg class="w-full h-full overflow-visible" viewBox="0 0 80 36" fill="none">
+                                <defs>
+                                    <linearGradient id="sub-spark-sky" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="#0284c7" stop-opacity="0.35"/>
+                                        <stop offset="100%" stop-color="#0284c7" stop-opacity="0.0"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M0 30 Q 20 28, 38 18 T 62 12 T 80 4 L 80 36 L 0 36 Z" fill="url(#sub-spark-sky)"/>
+                                <path d="M0 30 Q 20 28, 38 18 T 62 12 T 80 4" stroke="#0284c7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
                     </div>
 
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-medium text-slate-500">ក្រុមហ៊ុនកំពុងជាវសកម្ម</span>
-                            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+                    <!-- Card 2: Active Tenants -->
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3.5 min-w-0">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl flex-shrink-0">
                                 <i class="fas fa-building-circle-check"></i>
                             </div>
+                            <div class="min-w-0">
+                                <span class="text-xs font-medium text-slate-500 block truncate">ក្រុមហ៊ុនកំពុងជាវសកម្ម</span>
+                                <h3 class="text-2xl font-bold text-slate-800 tracking-tight mt-0.5 leading-tight">
+                                    <span id="kpiActiveTenants">0</span> <span class="text-sm font-normal text-slate-500">ក្រុមហ៊ុន</span>
+                                </h3>
+                                <p id="kpiActiveTenantsSub" class="text-xs text-slate-400 font-medium mt-1 truncate">ក្នុងចំណោម 8 ក្រុមហ៊ុនសរុប</p>
+                            </div>
                         </div>
-                        <h3 id="kpiActiveTenants" class="text-2xl font-bold text-slate-800">0</h3>
-                        <p id="kpiActiveTenantsSub" class="text-xs text-slate-500 mt-1"></p>
+                        <div class="w-20 h-10 flex-shrink-0 flex items-center justify-end">
+                            <svg class="w-full h-full overflow-visible" viewBox="0 0 80 36" fill="none">
+                                <defs>
+                                    <linearGradient id="sub-spark-emerald" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="#10b981" stop-opacity="0.35"/>
+                                        <stop offset="100%" stop-color="#10b981" stop-opacity="0.0"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M0 26 Q 20 24, 40 18 T 65 14 T 80 6 L 80 36 L 0 36 Z" fill="url(#sub-spark-emerald)"/>
+                                <path d="M0 26 Q 20 24, 40 18 T 65 14 T 80 6" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
                     </div>
 
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-medium text-slate-500">ការជាវជិតផុតកំណត់ (7 ថ្ងៃ)</span>
-                            <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-sm">
+                    <!-- Card 3: Expiring -->
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3.5 min-w-0">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl flex-shrink-0">
                                 <i class="fas fa-clock-rotate-left"></i>
                             </div>
-                        </div>
-                        <h3 id="kpiExpiring" class="text-2xl font-bold text-amber-700">0</h3>
-                        <p class="text-xs text-amber-600 font-medium mt-1">រង់ចាំការបង់ប្រាក់បន្ត</p>
-                    </div>
-
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-medium text-slate-500">អត្រាឈប់ជាវ (Churn Rate)</span>
-                            <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-sm">
-                                <i class="fas fa-chart-line-down"></i>
+                            <div class="min-w-0">
+                                <span class="text-xs font-medium text-slate-500 block truncate">ការជាវជិតផុតកំណត់ (7 ថ្ងៃ)</span>
+                                <h3 class="text-2xl font-bold text-amber-700 tracking-tight mt-0.5 leading-tight">
+                                    <span id="kpiExpiring">0</span> <span class="text-sm font-normal text-slate-500">ក្រុមហ៊ុន</span>
+                                </h3>
+                                <p class="text-xs text-amber-600 font-semibold flex items-center gap-1 mt-1 truncate">
+                                    <iconify-icon icon="mdi:clock-alert-outline"></iconify-icon>
+                                    <span>រង់ចាំការបង់ប្រាក់បន្ត</span>
+                                </p>
                             </div>
                         </div>
-                        <h3 class="text-2xl font-bold text-slate-800">1.2%</h3>
-                        <p class="text-xs text-emerald-600 font-medium mt-1">កម្រិតទាបបំផុតក្នុងស្តង់ដារ SaaS</p>
+                        <div class="w-20 h-10 flex-shrink-0 flex items-center justify-end">
+                            <svg class="w-full h-full overflow-visible" viewBox="0 0 80 36" fill="none">
+                                <defs>
+                                    <linearGradient id="sub-spark-amber" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.35"/>
+                                        <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.0"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M0 24 Q 25 32, 45 16 T 65 26 T 80 10 L 80 36 L 0 36 Z" fill="url(#sub-spark-amber)"/>
+                                <path d="M0 24 Q 25 32, 45 16 T 65 26 T 80 10" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Churn Rate (Red Tone) -->
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3.5 min-w-0">
+                            <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl flex-shrink-0">
+                                <iconify-icon icon="mdi:trending-down"></iconify-icon>
+                            </div>
+                            <div class="min-w-0">
+                                <span class="text-xs font-medium text-slate-500 block">អត្រាឈប់ជាវ (Churn)</span>
+                                <h3 class="text-2xl font-bold text-rose-700 tracking-tight mt-0.5 leading-tight">1.2%</h3>
+                                <p class="text-[11px] text-rose-600 font-semibold flex items-center gap-1 mt-1 whitespace-nowrap">
+                                    <iconify-icon icon="mdi:trending-down"></iconify-icon>
+                                    <span>កម្រិតទាបក្នុង SaaS</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="w-20 h-10 flex-shrink-0 flex items-center justify-end">
+                            <svg class="w-full h-full overflow-visible" viewBox="0 0 80 36" fill="none">
+                                <defs>
+                                    <linearGradient id="sub-spark-rose" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="#ef4444" stop-opacity="0.35"/>
+                                        <stop offset="100%" stop-color="#ef4444" stop-opacity="0.0"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M0 10 Q 20 12, 40 22 T 65 26 T 80 30 L 80 36 L 0 36 Z" fill="url(#sub-spark-rose)"/>
+                                <path d="M0 10 Q 20 12, 40 22 T 65 26 T 80 30" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
                     </div>
                 </div>
 
@@ -103,7 +168,8 @@
                 <div class="space-y-3">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h3 class="text-base font-semibold text-slate-800">កញ្ចប់សេវាផ្លូវការរបស់ប្រព័ន្ធ (Subscription Plans)</h3>
+                            <h3 class="text-base font-semibold text-slate-800">កញ្ចប់សេវាផ្លូវការរបស់ប្រព័ន្ធ
+                                (Subscription Plans)</h3>
                             <p class="text-xs text-slate-500">កម្រិតកញ្ចប់សេវា តម្លៃ និងចំនួនអ្នកជាវបច្ចុប្បន្ន</p>
                         </div>
                         <span class="text-xs font-medium text-slate-400">ប្រព័ន្ធពហុក្រុមហ៊ុន (Multi-Tenant)</span>
@@ -120,20 +186,32 @@
                             <p class="text-xs text-slate-500">តាមដានសុពលភាព រយៈពេលនៅសល់ និងការបន្តការជាវ</p>
                         </div>
 
-                        <!-- Filter Status -->
-                        <div class="flex items-center gap-2">
-                            <button type="button" onclick="filterSubTable('')" id="btnFilterAll" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#1e3a5f] text-white transition cursor-pointer">
-                                ទាំងអស់
-                            </button>
-                            <button type="button" onclick="filterSubTable('active')" id="btnFilterActive" class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                                សកម្ម
-                            </button>
-                            <button type="button" onclick="filterSubTable('expiring')" id="btnFilterExpiring" class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                                ជិតផុត
-                            </button>
-                            <button type="button" onclick="filterSubTable('suspended')" id="btnFilterSuspended" class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                                ផ្អាក
-                            </button>
+                        <!-- Filter Status & Actions -->
+                        <div class="flex flex-wrap items-center gap-3">
+                            <div class="flex items-center gap-1.5">
+                                <button type="button" onclick="filterSubTable('')" id="btnFilterAll"
+                                    class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#1e3a5f] text-white transition cursor-pointer">
+                                    ទាំងអស់
+                                </button>
+                                <button type="button" onclick="filterSubTable('active')" id="btnFilterActive"
+                                    class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
+                                    សកម្ម
+                                </button>
+                                <button type="button" onclick="filterSubTable('expiring')" id="btnFilterExpiring"
+                                    class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
+                                    ជិតផុត
+                                </button>
+                                <button type="button" onclick="filterSubTable('suspended')" id="btnFilterSuspended"
+                                    class="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
+                                    ផ្អាក
+                                </button>
+                            </div>
+
+                            <a href="../companies/create-company.html"
+                                class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs font-medium shadow-sm transition">
+                                <i class="fas fa-plus text-xs"></i>
+                                <span>ចុះឈ្មោះក្រុមហ៊ុនថ្មី</span>
+                            </a>
                         </div>
                     </div>
 
@@ -151,7 +229,8 @@
                                     <th class="py-3 px-4 font-semibold text-right">សកម្មភាព</th>
                                 </tr>
                             </thead>
-                            <tbody id="subscriptionsTableBody" class="divide-y divide-slate-100 text-xs text-slate-700"></tbody>
+                            <tbody id="subscriptionsTableBody" class="divide-y divide-slate-100 text-xs text-slate-700">
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -265,7 +344,7 @@
                         <td class="py-3.5 px-4 text-center font-medium text-slate-400">${idx + 1}</td>
                         <td class="py-3.5 px-4 font-medium text-slate-800">
                             <div class="flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-lg bg-[#1e3a5f]/10 text-primary font-semibold flex items-center justify-center text-xs flex-shrink-0">
+                                <div class="w-8 h-8 rounded-full bg-[#1e3a5f]/10 text-primary font-semibold flex items-center justify-center text-xs flex-shrink-0">
                                     ${t.logoInitial}
                                 </div>
                                 <div>
@@ -372,4 +451,5 @@
         }
     </script>
 </body>
+
 </html>

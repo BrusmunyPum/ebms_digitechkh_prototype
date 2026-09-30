@@ -2705,3 +2705,289 @@ main .toolbar-actions a {
         transition: none !important;
     }
 }
+
+/* =========================================================
+   Sleek & Polished Dark Theme (High Contrast & Modern Glow)
+   ========================================================= */
+html.dark,
+html.dark body {
+    background-color: #0b1120 !important;
+    color: #e2e8f0 !important;
+}
+
+html.dark header {
+    background-color: #0f172a !important;
+    border-bottom: 1px solid #1e293b !important;
+}
+
+html.dark #portalTitle {
+    color: #f8fafc !important;
+}
+
+html.dark #portalSubtitle {
+    color: #94a3b8 !important;
+}
+
+html.dark #portalBackBtn,
+html.dark #darkModeToggleBtn,
+html.dark [aria-label="ការជូនដំណឹង"] {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+}
+
+html.dark #portalBackBtn:hover,
+html.dark #darkModeToggleBtn:hover,
+html.dark [aria-label="ការជូនដំណឹង"]:hover {
+    background-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+html.dark main {
+    background-color: #0b1120 !important;
+}
+
+/* Surfaces & Cards */
+html.dark .bg-white,
+html.dark .bg-slate-50 {
+    background-color: #0f172a !important;
+    border-color: #1e293b !important;
+}
+
+html.dark .border-slate-200,
+html.dark .border-slate-200\/80,
+html.dark .border-slate-200\/70,
+html.dark .border-slate-100 {
+    border-color: #1e293b !important;
+}
+
+/* Typography in Dark Mode */
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark .text-slate-800,
+html.dark .text-slate-700,
+html.dark .text-gray-800 {
+    color: #f8fafc !important;
+}
+
+html.dark .text-slate-500,
+html.dark .text-slate-400,
+html.dark .text-gray-500,
+html.dark .text-gray-400 {
+    color: #94a3b8 !important;
+}
+
+html.dark .text-slate-600 {
+    color: #cbd5e1 !important;
+}
+
+/* Inputs & Form Controls */
+html.dark input,
+html.dark select,
+html.dark textarea {
+    background-color: #0b1120 !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+html.dark input::placeholder {
+    color: #64748b !important;
+}
+
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus {
+    border-color: #38bdf8 !important;
+}
+
+/* Tables */
+html.dark table {
+    background-color: #0f172a !important;
+}
+
+html.dark table thead th,
+html.dark .table-header th {
+    background-color: #1e293b !important;
+    color: #94a3b8 !important;
+    border-bottom: 1px solid #334155 !important;
+}
+
+html.dark table tbody tr,
+html.dark .table-row-item {
+    border-bottom-color: #1e293b !important;
+    color: #e2e8f0 !important;
+}
+
+html.dark table tbody tr:hover,
+html.dark .hover\:bg-slate-50:hover,
+html.dark .hover\:bg-slate-50\/80:hover {
+    background-color: #1e293b !important;
+}
+
+html.dark table td,
+html.dark table td p,
+html.dark table td span {
+    color: #e2e8f0 !important;
+}
+
+/* Popovers, Dropdowns, & Modals */
+html.dark #filterPopover,
+html.dark #portalNotifMenu,
+html.dark #datePickerPopover,
+html.dark [id$="Menu"],
+html.dark [id$="Modal"] .bg-white {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
+}
+
+html.dark .preset-btn:hover {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+}
+
+/* Badges in Dark Mode */
+html.dark .bg-emerald-50,
+html.dark [class*="bg-emerald-50"] {
+    background-color: rgba(16, 185, 129, 0.2) !important;
+    color: #6ee7b7 !important;
+    border-color: rgba(52, 211, 153, 0.4) !important;
+}
+html.dark .text-emerald-700,
+html.dark [class*="text-emerald-700"] {
+    color: #6ee7b7 !important;
+}
+
+html.dark .bg-amber-50,
+html.dark .bg-amber-50\/60,
+html.dark [class*="bg-amber-50"] {
+    background-color: rgba(245, 158, 11, 0.2) !important;
+    color: #fcd34d !important;
+    border-color: rgba(251, 191, 36, 0.4) !important;
+}
+html.dark .text-amber-700,
+html.dark [class*="text-amber-700"] {
+    color: #fcd34d !important;
+}
+
+html.dark .bg-rose-50,
+html.dark [class*="bg-rose-50"] {
+    background-color: rgba(244, 63, 94, 0.2) !important;
+    color: #fda4af !important;
+    border-color: rgba(251, 113, 133, 0.4) !important;
+}
+html.dark .text-rose-700,
+html.dark [class*="text-rose-700"] {
+    color: #fda4af !important;
+}
+
+html.dark .bg-sky-50,
+html.dark .bg-blue-50,
+html.dark [class*="bg-sky-50"],
+html.dark [class*="bg-blue-50"] {
+    background-color: rgba(14, 165, 233, 0.2) !important;
+    color: #7dd3fc !important;
+    border-color: rgba(56, 189, 248, 0.4) !important;
+}
+html.dark .text-sky-700,
+html.dark .text-blue-700,
+html.dark [class*="text-sky-700"],
+html.dark [class*="text-blue-700"] {
+    color: #7dd3fc !important;
+}
+
+html.dark .bg-indigo-50,
+html.dark [class*="bg-indigo-50"] {
+    background-color: rgba(99, 102, 241, 0.22) !important;
+    color: #a5b4fc !important;
+    border-color: rgba(129, 140, 248, 0.45) !important;
+}
+html.dark .text-indigo-700,
+html.dark [class*="text-indigo-700"] {
+    color: #a5b4fc !important;
+}
+
+html.dark .bg-purple-50,
+html.dark [class*="bg-purple-50"] {
+    background-color: rgba(168, 85, 247, 0.22) !important;
+    color: #d8b4fe !important;
+    border-color: rgba(192, 132, 252, 0.45) !important;
+}
+html.dark .text-purple-700,
+html.dark [class*="text-purple-700"] {
+    color: #d8b4fe !important;
+}
+
+html.dark .bg-slate-50,
+html.dark .bg-slate-100,
+html.dark .bg-gray-50,
+html.dark [class*="bg-slate-50"],
+html.dark [class*="bg-slate-100"] {
+    background-color: rgba(51, 65, 85, 0.45) !important;
+    color: #cbd5e1 !important;
+    border-color: rgba(71, 85, 105, 0.5) !important;
+}
+html.dark .text-slate-700,
+html.dark .text-slate-600 {
+    color: #cbd5e1 !important;
+}
+
+html.dark .font-mono {
+    color: #93c5fd !important;
+}
+
+/* Company logo avatar chips in dark mode */
+html.dark .bg-\[\#1e3a5f\]\/10 {
+    background-color: rgba(56, 189, 248, 0.15) !important;
+    color: #38bdf8 !important;
+}
+
+/* Sidebar refined dark tone */
+html.dark #portalSidebar,
+html.dark aside {
+    background-color: #0b1329 !important;
+    border-right-color: #1e2d4d !important;
+}
+
+/* Filter popover & option buttons in dark mode */
+html.dark #filterPopoverMenu,
+html.dark #filterPopover {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+html.dark .status-opt-btn,
+html.dark .plan-opt-btn {
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+}
+
+html.dark .status-opt-btn:hover,
+html.dark .plan-opt-btn:hover {
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+}
+
+html.dark .status-opt-btn.bg-\[\#1e3a5f\],
+html.dark .plan-opt-btn.bg-\[\#1e3a5f\] {
+    background-color: #0284c7 !important;
+    border-color: #38bdf8 !important;
+    color: #ffffff !important;
+}
+
+/* Date range picker in dark mode */
+html.dark #calMonthYearLabel {
+    color: #f8fafc !important;
+}
+
+html.dark #calendarDaysGrid button {
+    color: #cbd5e1 !important;
+}
+
+html.dark #calendarDaysGrid button:hover {
+    background-color: #1e293b !important;
+}
+
+

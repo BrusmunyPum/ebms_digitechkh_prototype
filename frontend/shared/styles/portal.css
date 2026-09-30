@@ -226,6 +226,7 @@
 }
 
 @media print {
+
     aside,
     header,
     .no-print,
@@ -243,7 +244,7 @@
         overflow: visible !important;
     }
 
-    body > div.flex-1,
+    body>div.flex-1,
     main {
         display: block !important;
         height: auto !important;
