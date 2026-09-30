@@ -49,16 +49,47 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
                     <!-- Growth Chart (2 cols) -->
                     <div class="lg:col-span-2 bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between">
-                        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-                            <div>
-                                <h3 class="text-base font-semibold text-slate-700">កំណើនការជាវ និងចំណូលប្រចាំខែ</h3>
-                                <p class="text-xs text-slate-500">ការវិវត្តនៃចំនួនក្រុមហ៊ុនជាវ និងចំណូលប្រចាំខែ (MRR)</p>
+                        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                            <!-- Left: Title -->
+                            <div class="min-w-0">
+                                <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100">កំណើនការជាវ និងចំណូល (MRR)</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" id="saChartPeriodSubtitle">ការវិវត្តនៃចំនួនក្រុមហ៊ុនជាវ និងចំណូលប្រចាំខែ</p>
                             </div>
-                            <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                <i class="fas fa-arrow-trend-up mr-1"></i> កំណើន 18.5%
-                            </span>
+
+                            <!-- Center: Segmented Period Switcher -->
+                            <div class="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700" id="saChartPeriodSegment">
+                                <button type="button" onclick="setSAChartPeriod('W')" id="saPeriodBtnW"
+                                    class="px-3 py-1 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+                                    W
+                                </button>
+                                <button type="button" onclick="setSAChartPeriod('M')" id="saPeriodBtnM"
+                                    class="px-3 py-1 text-xs font-semibold rounded-lg bg-[#1e3a5f] dark:bg-sky-600 text-white shadow-sm transition cursor-pointer">
+                                    M
+                                </button>
+                                <button type="button" onclick="setSAChartPeriod('Y')" id="saPeriodBtnY"
+                                    class="px-3 py-1 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+                                    Y
+                                </button>
+                            </div>
+
+                            <!-- Right: Legend & Growth Badge -->
+                            <div class="flex items-center gap-3.5 flex-shrink-0">
+                                <div class="flex items-center gap-3 text-xs font-medium">
+                                    <span class="inline-flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500 ring-2 ring-amber-500/20"></span>
+                                        ចំណូល MRR
+                                    </span>
+                                    <span class="inline-flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20"></span>
+                                        ក្រុមហ៊ុនជាវ
+                                    </span>
+                                </div>
+                                <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    <i class="fas fa-arrow-trend-up mr-1"></i> +18.5%
+                                </span>
+                            </div>
                         </div>
-                        <div id="growthChart" class="w-full h-72"></div>
+                        <div id="growthChart" class="w-full flex-1 min-h-[300px]"></div>
                     </div>
 
                     <!-- Expiry Alerts Box (1 col) -->
@@ -337,70 +368,184 @@
             `).join('');
         }
 
+        let currentSAChartPeriod = 'M';
+
+        const SA_GROWTH_DATA = {
+            W: {
+                subtitle: 'ការវិភាគ 7 ថ្ងៃចុងក្រោយ (ក្រុមហ៊ុនជាវ & ចំណូល)',
+                categories: ['ច័ន្ទ', 'អង្គារ', 'ពុធ', 'ព្រហស្បតិ៍', 'សុក្រ', 'សៅរ៍', 'អាទិត្យ'],
+                revenue: [180, 20, 240, 80, 30, 520, 0],
+                tenants: [4, 1, 5, 2, 1, 8, 0]
+            },
+            M: {
+                subtitle: 'ការវិវត្តនៃចំនួនក្រុមហ៊ុនជាវ និងចំណូលប្រចាំខែ (MRR)',
+                categories: ['មករា', 'កុម្ភៈ', 'មីនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្កដា', 'សីហា', 'កញ្ញា'],
+                revenue: [180, 240, 310, 390, 480, 520, 610, 680, 712],
+                tenants: [3, 4, 5, 6, 7, 7, 8, 8, 8]
+            },
+            Y: {
+                subtitle: 'ការវិវត្តប្រចាំឆ្នាំ 4 ឆ្នាំចុងក្រោយ (2023 - 2026)',
+                categories: ['2023', '2024', '2025', '2026'],
+                revenue: [2400, 4800, 7200, 8540],
+                tenants: [2, 4, 6, 8]
+            }
+        };
+
+        function setSAChartPeriod(period) {
+            currentSAChartPeriod = period;
+            ['W', 'M', 'Y'].forEach(p => {
+                const btn = document.getElementById(`saPeriodBtn${p}`);
+                if (btn) {
+                    if (p === period) {
+                        btn.className = 'px-3 py-1 text-xs font-semibold rounded-lg bg-[#1e3a5f] dark:bg-sky-600 text-white shadow-sm transition cursor-pointer';
+                    } else {
+                        btn.className = 'px-3 py-1 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer';
+                    }
+                }
+            });
+            const subEl = document.getElementById('saChartPeriodSubtitle');
+            if (subEl && SA_GROWTH_DATA[period]) {
+                subEl.textContent = SA_GROWTH_DATA[period].subtitle;
+            }
+            renderGrowthChart();
+        }
+
         function renderGrowthChart() {
             const chartDom = document.getElementById('growthChart');
             if (!chartDom) return;
             const isDark = document.documentElement.classList.contains('dark');
             const myChart = echarts.getInstanceByDom(chartDom) || echarts.init(chartDom);
+            const dataset = SA_GROWTH_DATA[currentSAChartPeriod] || SA_GROWTH_DATA.M;
+
             const option = {
                 tooltip: {
                     trigger: 'axis',
                     backgroundColor: isDark ? '#0f172a' : '#ffffff',
                     borderColor: isDark ? '#334155' : '#e2e8f0',
-                    textStyle: { fontFamily: 'Kantumruy Pro', color: isDark ? '#f8fafc' : '#1e293b' }
+                    borderWidth: 1,
+                    textStyle: { fontFamily: 'Kantumruy Pro', color: isDark ? '#f8fafc' : '#1e293b' },
+                    formatter: function(params) {
+                        let res = `<div class="font-semibold mb-1 text-xs">${params[0].axisValue}</div>`;
+                        params.forEach(p => {
+                            let valFormatted = p.value;
+                            if (p.seriesName.includes('ចំណូល')) {
+                                valFormatted = '$' + Number(p.value).toLocaleString('en-US');
+                            } else {
+                                valFormatted = p.value + ' ក្រុមហ៊ុន';
+                            }
+                            res += `<div class="flex items-center justify-between gap-4 text-xs py-0.5">
+                                <span class="flex items-center gap-1.5">${p.marker} ${p.seriesName}:</span>
+                                <span class="font-bold">${valFormatted}</span>
+                            </div>`;
+                        });
+                        return res;
+                    }
                 },
-                legend: {
-                    data: ['ចំនួនក្រុមហ៊ុន', 'ចំណូលប្រចាំខែ (USD)'],
-                    bottom: 0,
-                    textStyle: { fontFamily: 'Kantumruy Pro', fontSize: 11, color: isDark ? '#cbd5e1' : '#64748b' }
-                },
-                grid: { top: '12%', left: '3%', right: '4%', bottom: '15%', containLabel: true },
+                grid: { top: 20, left: '2%', right: '3%', bottom: 25, containLabel: true },
                 xAxis: {
                     type: 'category',
-                    data: ['មករា', 'កុម្ភៈ', 'មីនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្កដា', 'សីហា', 'កញ្ញា'],
-                    axisLabel: { fontFamily: 'Kantumruy Pro', fontSize: 11, color: isDark ? '#94a3b8' : '#64748b' },
-                    axisLine: { lineStyle: { color: isDark ? '#334155' : '#e2e8f0' } }
+                    boundaryGap: false,
+                    data: dataset.categories,
+                    axisLabel: {
+                        fontFamily: 'Kantumruy Pro',
+                        fontSize: 11,
+                        color: isDark ? '#94a3b8' : '#64748b'
+                    },
+                    axisLine: { lineStyle: { color: isDark ? 'rgba(255,255,255,0.15)' : '#cbd5e1' } },
+                    axisTick: { show: false }
                 },
                 yAxis: [
                     {
                         type: 'value',
-                        name: 'ក្រុមហ៊ុន',
-                        nameTextStyle: { fontFamily: 'Kantumruy Pro', fontSize: 10, color: isDark ? '#94a3b8' : '#64748b' },
-                        axisLabel: { fontFamily: 'Kantumruy Pro', color: isDark ? '#94a3b8' : '#64748b' },
-                        splitLine: { lineStyle: { color: isDark ? 'rgba(51, 65, 85, 0.4)' : '#f1f5f9' } }
-                    },
-                    {
-                        type: 'value',
-                        name: 'USD',
+                        name: 'ចំណូល',
                         nameTextStyle: { fontFamily: 'Kantumruy Pro', fontSize: 10, color: isDark ? '#94a3b8' : '#64748b' },
                         axisLabel: {
                             fontFamily: 'Kantumruy Pro',
+                            fontSize: 11,
                             color: isDark ? '#94a3b8' : '#64748b',
-                            formatter: '${value}'
+                            formatter: function(val) {
+                                if (val >= 1000) return '$' + (val / 1000) + 'k';
+                                return '$' + val;
+                            }
+                        },
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                type: 'dashed',
+                                color: isDark ? 'rgba(255,255,255,0.12)' : '#e2e8f0'
+                            }
+                        }
+                    },
+                    {
+                        type: 'value',
+                        name: 'ក្រុមហ៊ុន',
+                        nameTextStyle: { fontFamily: 'Kantumruy Pro', fontSize: 10, color: isDark ? '#94a3b8' : '#64748b' },
+                        axisLabel: {
+                            fontFamily: 'Kantumruy Pro',
+                            fontSize: 11,
+                            color: isDark ? '#94a3b8' : '#64748b'
                         },
                         splitLine: { show: false }
                     }
                 ],
                 series: [
                     {
-                        name: 'ចំនួនក្រុមហ៊ុន',
-                        type: 'bar',
-                        data: [3, 4, 5, 6, 7, 7, 8, 8, 8],
-                        itemStyle: { color: isDark ? '#38bdf8' : '#1e3a5f', borderRadius: [6, 6, 0, 0] }
+                        name: 'ចំណូល MRR',
+                        type: 'line',
+                        smooth: 0.35,
+                        symbol: 'circle',
+                        symbolSize: 8,
+                        showSymbol: true,
+                        data: dataset.revenue,
+                        itemStyle: {
+                            color: '#ffffff',
+                            borderColor: '#f59e0b',
+                            borderWidth: 2.5
+                        },
+                        lineStyle: {
+                            width: 3,
+                            color: '#f59e0b'
+                        },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: 'rgba(245, 158, 11, 0.35)' },
+                                { offset: 1, color: 'rgba(245, 158, 11, 0.00)' }
+                            ])
+                        }
                     },
                     {
-                        name: 'ចំណូលប្រចាំខែ (USD)',
+                        name: 'ក្រុមហ៊ុនជាវ',
                         type: 'line',
                         yAxisIndex: 1,
-                        smooth: true,
-                        data: [180, 240, 310, 390, 480, 520, 610, 680, 712],
-                        itemStyle: { color: '#10b981' },
-                        lineStyle: { width: 3, color: '#10b981' }
+                        smooth: 0.35,
+                        symbol: 'circle',
+                        symbolSize: 8,
+                        showSymbol: true,
+                        data: dataset.tenants,
+                        itemStyle: {
+                            color: '#ffffff',
+                            borderColor: '#10b981',
+                            borderWidth: 2.5
+                        },
+                        lineStyle: {
+                            width: 3,
+                            color: '#10b981'
+                        },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: 'rgba(16, 185, 129, 0.32)' },
+                                { offset: 1, color: 'rgba(16, 185, 129, 0.00)' }
+                            ])
+                        }
                     }
                 ]
             };
-            myChart.setOption(option);
+            myChart.setOption(option, true);
             window.addEventListener('resize', () => myChart.resize());
+            if (window.ResizeObserver) {
+                const ro = new ResizeObserver(() => myChart.resize());
+                ro.observe(chartDom);
+            }
         }
 
         function initDashboard() {

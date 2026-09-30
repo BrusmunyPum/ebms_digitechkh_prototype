@@ -90,70 +90,183 @@
                     </div>
                 </div>
 
-                <!-- Search & Filters Toolbar -->
+                <!-- Super Admin Style Unified Filter Toolbar -->
                 <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
                     <div class="flex flex-wrap items-center gap-3 flex-1 min-w-[280px]">
-                        <!-- Search Input -->
-                        <div class="relative flex-1 min-w-[200px] max-w-sm">
+                        <!-- Search Input with Embedded Sliders Filter Icon -->
+                        <div class="relative w-full sm:w-72 md:w-80">
                             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                                 <i class="fas fa-search text-xs"></i>
                             </span>
                             <input type="text" id="searchInput" oninput="handleSearch()"
                                 placeholder="ស្វែងរកតាមឈ្មោះ អ៊ីមែល ឬលេខទូរស័ព្ទ..."
-                                class="w-full bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-800 transition outline-none font-medium placeholder:text-slate-400 placeholder:font-normal">
-                        </div>
+                                class="w-full bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/10 rounded-xl pl-9 pr-10 py-2 text-xs text-slate-800 transition outline-none font-medium placeholder:text-slate-400">
 
-                        <!-- Role Filter Dropdown -->
-                        <div class="relative">
-                            <button id="roleFilterBtn" onclick="toggleDropdown('roleDropdown')" class="h-9 px-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs rounded-xl flex items-center gap-2 font-medium transition cursor-pointer">
-                                <i class="fas fa-user-tag text-slate-400"></i>
-                                <span id="roleFilterLabel">តួនាទី: ទាំងអស់</span>
-                                <i class="fas fa-chevron-down text-[10px] text-slate-400"></i>
-                            </button>
-                            <div id="roleDropdown" class="hidden absolute left-0 mt-1.5 w-52 bg-white rounded-2xl shadow-xl border border-slate-200 py-1.5 z-50 text-xs">
-                                <div onclick="selectRole('all', 'តួនាទី: ទាំងអស់')" class="px-3.5 py-2 hover:bg-slate-50 cursor-pointer font-medium text-slate-700">ទាំងអស់</div>
-                                <div onclick="selectRole('sales_manager', 'អ្នកគ្រប់គ្រងផ្នែកលក់')" class="px-3.5 py-2 hover:bg-slate-50 cursor-pointer text-slate-600">អ្នកគ្រប់គ្រងផ្នែកលក់</div>
-                                <div onclick="selectRole('sales_exec', 'បុគ្គលិកផ្នែកលក់')" class="px-3.5 py-2 hover:bg-slate-50 cursor-pointer text-slate-600">បុគ្គលិកផ្នែកលក់</div>
-                                <div onclick="selectRole('warehouse_manager', 'អ្នកគ្រប់គ្រងឃ្លាំង')" class="px-3.5 py-2 hover:bg-slate-50 cursor-pointer text-slate-600">អ្នកគ្រប់គ្រងឃ្លាំង</div>
-                                <div onclick="selectRole('procurement_manager', 'អ្នកគ្រប់គ្រងលទ្ធកម្ម')" class="px-3.5 py-2 hover:bg-slate-50 cursor-pointer text-slate-600">អ្នកគ្រប់គ្រងលទ្ធកម្ម</div>
-                                <div onclick="selectRole('chief_accountant', 'ប្រធានគណនេយ្យ')" class="px-3.5 py-2 hover:bg-slate-50 cursor-pointer text-slate-600">ប្រធានគណនេយ្យ</div>
-                                <div onclick="selectRole('apar_accountant', 'គណនេយ្យករទូទាត់ និងទារបំណុល')" class="px-3.5 py-2 hover:bg-slate-50 cursor-pointer text-slate-600">គណនេយ្យករទូទាត់ និងទារបំណុល</div>
-                                <div onclick="selectRole('customer_support', 'ផ្នែកគាំទ្រអតិថិជន')" class="px-3.5 py-2 hover:bg-slate-50 cursor-pointer text-slate-600">ផ្នែកគាំទ្រអតិថិជន</div>
-                                <div onclick="selectRole('cashier_pos', 'អ្នកគិតលុយលក់រាយ')" class="px-3.5 py-2 hover:bg-slate-50 cursor-pointer text-slate-600">អ្នកគិតលុយលក់រាយ</div>
+                            <!-- Embedded Sliders Filter Icon Button -->
+                            <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center filter-popover-container">
+                                <button type="button" id="filterToggleBtn" onclick="toggleFilterMenu(event)"
+                                    class="relative p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-lg transition cursor-pointer flex items-center justify-center"
+                                    title="កំណត់តម្រងកម្រិតខ្ពស់">
+                                    <iconify-icon icon="lucide:sliders-horizontal" class="text-sm" id="filterMainIcon"></iconify-icon>
+                                    <span id="activeFilterBadge" class="hidden absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-[#1e3a5f] ring-2 ring-white"></span>
+                                </button>
+
+                                <!-- Filter Popover Menu -->
+                                <div id="filterPopoverMenu"
+                                    class="hidden absolute top-full left-0 sm:left-auto sm:right-0 mt-2 w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-4 z-50 space-y-4 text-left max-h-[480px] overflow-y-auto">
+                                    <div class="flex items-center justify-between pb-2 border-b border-slate-100 sticky top-0 bg-white z-10">
+                                        <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                            <i class="fas fa-sliders text-slate-500 text-xs"></i> កំណត់លក្ខខណ្ឌតម្រង
+                                        </span>
+                                        <button type="button" onclick="resetFilters()" class="text-[11px] text-slate-500 hover:text-slate-800 font-medium cursor-pointer">
+                                            កំណត់ឡើងវិញ
+                                        </button>
+                                    </div>
+
+                                    <!-- Role Filter Section -->
+                                    <div class="space-y-1.5">
+                                        <label class="text-[11px] font-semibold text-slate-600">តួនាទី និងផ្នែក (Role / Department)</label>
+                                        <div class="grid grid-cols-1 gap-1" id="roleFilterOptions">
+                                            <button type="button" onclick="selectRoleFilter('all')" data-role="all"
+                                                class="role-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border bg-[#1e3a5f] text-white border-[#1e3a5f] cursor-pointer">
+                                                ទាំងអស់ (All Roles)
+                                            </button>
+                                            <button type="button" onclick="selectRoleFilter('sales_manager')" data-role="sales_manager"
+                                                class="role-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer">
+                                                អ្នកគ្រប់គ្រងផ្នែកលក់
+                                            </button>
+                                            <button type="button" onclick="selectRoleFilter('sales_exec')" data-role="sales_exec"
+                                                class="role-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer">
+                                                បុគ្គលិកផ្នែកលក់
+                                            </button>
+                                            <button type="button" onclick="selectRoleFilter('warehouse_manager')" data-role="warehouse_manager"
+                                                class="role-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer">
+                                                អ្នកគ្រប់គ្រងឃ្លាំង
+                                            </button>
+                                            <button type="button" onclick="selectRoleFilter('procurement_manager')" data-role="procurement_manager"
+                                                class="role-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer">
+                                                អ្នកគ្រប់គ្រងលទ្ធកម្ម
+                                            </button>
+                                            <button type="button" onclick="selectRoleFilter('chief_accountant')" data-role="chief_accountant"
+                                                class="role-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer">
+                                                ប្រធានគណនេយ្យ
+                                            </button>
+                                            <button type="button" onclick="selectRoleFilter('apar_accountant')" data-role="apar_accountant"
+                                                class="role-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer">
+                                                គណនេយ្យករទូទាត់ និងទារបំណុល
+                                            </button>
+                                            <button type="button" onclick="selectRoleFilter('customer_support')" data-role="customer_support"
+                                                class="role-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer">
+                                                ផ្នែកគាំទ្រអតិថិជន
+                                            </button>
+                                            <button type="button" onclick="selectRoleFilter('cashier_pos')" data-role="cashier_pos"
+                                                class="role-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer">
+                                                អ្នកគិតលុយលក់រាយ
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Branch Filter Section -->
+                                    <div class="space-y-1.5 pt-2 border-t border-slate-100">
+                                        <label class="text-[11px] font-semibold text-slate-600">សាខាប្រតិបត្តិការ (Branch)</label>
+                                        <div class="grid grid-cols-1 gap-1" id="branchFilterOptions">
+                                            <button type="button" onclick="selectBranchFilter('all')" data-branch="all"
+                                                class="branch-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border bg-[#1e3a5f] text-white border-[#1e3a5f] cursor-pointer">
+                                                ទាំងអស់ (All Branches)
+                                            </button>
+                                            <button type="button" onclick="selectBranchFilter('BR-01')" data-branch="BR-01"
+                                                class="branch-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer">
+                                                ទីស្នាក់ការកណ្តាល (ភ្នំពេញ)
+                                            </button>
+                                            <button type="button" onclick="selectBranchFilter('BR-02')" data-branch="BR-02"
+                                                class="branch-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer">
+                                                សាខាខេត្តសៀមរាប
+                                            </button>
+                                            <button type="button" onclick="selectBranchFilter('BR-03')" data-branch="BR-03"
+                                                class="branch-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer">
+                                                ឃ្លាំងកណ្តាលឫស្សីកែវ
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Status Filter Section inside Popover -->
+                                    <div class="space-y-1.5 pt-2 border-t border-slate-100">
+                                        <label class="text-[11px] font-semibold text-slate-600">ស្ថានភាពគណនី (Status)</label>
+                                        <div class="grid grid-cols-3 gap-1.5" id="popoverStatusOptions">
+                                            <button type="button" onclick="selectStatusFilter('all')" data-status="all"
+                                                class="pop-status-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border bg-[#1e3a5f] text-white border-[#1e3a5f] cursor-pointer">
+                                                ទាំងអស់
+                                            </button>
+                                            <button type="button" onclick="selectStatusFilter('active')" data-status="active"
+                                                class="pop-status-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-emerald-50 text-slate-700 cursor-pointer">
+                                                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span> សកម្ម
+                                            </button>
+                                            <button type="button" onclick="selectStatusFilter('suspended')" data-status="suspended"
+                                                class="pop-status-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-rose-50 text-slate-700 cursor-pointer">
+                                                <span class="inline-block w-1.5 h-1.5 rounded-full bg-rose-500 mr-1"></span> ផ្អាក
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Branch Filter Dropdown -->
-                        <div class="relative">
-                            <button id="branchFilterBtn" onclick="toggleDropdown('branchDropdown')" class="h-9 px-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs rounded-xl flex items-center gap-2 font-medium transition cursor-pointer">
-                                <i class="fas fa-building text-slate-400"></i>
-                                <span id="branchFilterLabel">សាខា: ទាំងអស់</span>
-                                <i class="fas fa-chevron-down text-[10px] text-slate-400"></i>
+                        <!-- Status Quick Segment Buttons -->
+                        <div class="flex items-center gap-1.5 overflow-x-auto">
+                            <button type="button" onclick="selectStatusFilter('all')" data-status-bar="all"
+                                class="status-bar-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#1e3a5f] text-white transition cursor-pointer">
+                                ទាំងអស់
                             </button>
-                            <div id="branchDropdown" class="hidden absolute left-0 mt-1.5 w-52 bg-white rounded-2xl shadow-xl border border-slate-200 py-1.5 z-50 text-xs">
-                                <div onclick="selectBranch('all', 'សាខា: ទាំងអស់')" class="px-3.5 py-2 hover:bg-slate-50 cursor-pointer font-medium text-slate-700">ទាំងអស់</div>
-                                <div onclick="selectBranch('BR-01', 'ទីស្នាក់ការកណ្តាល (ភ្នំពេញ)')" class="px-3.5 py-2 hover:bg-slate-50 cursor-pointer text-slate-600">ទីស្នាក់ការកណ្តាល (ភ្នំពេញ)</div>
-                                <div onclick="selectBranch('BR-02', 'សាខាខេត្តសៀមរាប')" class="px-3.5 py-2 hover:bg-slate-50 cursor-pointer text-slate-600">សាខាខេត្តសៀមរាប</div>
-                                <div onclick="selectBranch('BR-03', 'ឃ្លាំងកណ្តាលឫស្សីកែវ')" class="px-3.5 py-2 hover:bg-slate-50 cursor-pointer text-slate-600">ឃ្លាំងកណ្តាលឫស្សីកែវ</div>
-                            </div>
+                            <button type="button" onclick="selectStatusFilter('active')" data-status-bar="active"
+                                class="status-bar-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
+                                <span>សកម្ម</span>
+                                <span id="statusBarCountActive" class="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 font-bold">0</span>
+                            </button>
+                            <button type="button" onclick="selectStatusFilter('suspended')" data-status-bar="suspended"
+                                class="status-bar-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-rose-500 inline-block"></span>
+                                <span>បានផ្អាក</span>
+                            </button>
                         </div>
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-2">
-                        <div class="flex items-center gap-2">
-                            <button onclick="exportUsersCSV()" class="h-9 px-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs rounded-xl flex items-center gap-2 font-medium transition shadow-xs cursor-pointer">
-                                <i class="fas fa-file-csv text-slate-500"></i>
-                                <span>នាំចេញ CSV</span>
-                            </button>
-                        </div>
-                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
-                        <div class="flex flex-wrap items-center gap-2 no-print">
-                            <a href="create-user.html" class="px-4 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs font-medium transition shadow-sm flex items-center gap-2 cursor-pointer">
-                                <i class="fas fa-user-plus text-xs"></i>
-                                <span>+ បង្កើតគណនីបុគ្គលិកថ្មី</span>
-                            </a>
-                        </div>
+                    <!-- Actions Toolbar -->
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <a href="create-user.html"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs font-medium shadow-sm transition">
+                            <i class="fas fa-plus text-xs"></i>
+                            <span>ចុះឈ្មោះបុគ្គលិកថ្មី</span>
+                        </a>
+
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 text-slate-700 text-xs font-medium border border-slate-200">
+                            <iconify-icon icon="lucide:users" class="text-slate-400 text-sm"></iconify-icon>
+                            <span>សរុប <b id="totalUsersCountBadge" class="text-slate-800 font-bold">0</b> គណនី</span>
+                        </span>
+
+                        <button type="button" onclick="exportUsersCSV()"
+                            class="w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-medium transition shadow-xs flex items-center justify-center cursor-pointer no-print"
+                            title="ទាញយកបញ្ជីបុគ្គលិក (CSV)">
+                            <iconify-icon icon="el:download-alt" class="text-sm text-slate-600"></iconify-icon>
+                        </button>
                     </div>
+                </div>
+
+                <!-- Active Filter Chips Banner -->
+                <div id="activeFiltersBanner" class="hidden flex flex-wrap items-center gap-2 px-1">
+                    <span class="text-xs text-slate-500 font-medium">តម្រងសកម្ម:</span>
+                    <span id="roleChip" class="hidden inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-50 text-sky-800 border border-sky-200 text-xs font-medium">
+                        <span id="roleChipLabel">តួនាទី</span>
+                        <button type="button" onclick="selectRoleFilter('all')" class="text-sky-600 hover:text-sky-900 ml-1 cursor-pointer">
+                            <i class="fas fa-xmark text-xs"></i>
+                        </button>
+                    </span>
+                    <span id="branchChip" class="hidden inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-800 border border-indigo-200 text-xs font-medium">
+                        <span id="branchChipLabel">សាខា</span>
+                        <button type="button" onclick="selectBranchFilter('all')" class="text-indigo-600 hover:text-indigo-900 ml-1 cursor-pointer">
+                            <i class="fas fa-xmark text-xs"></i>
+                        </button>
+                    </span>
                 </div>
 
                 <!-- Users Table Container -->
@@ -228,32 +341,159 @@
     <script>
         let currentRole = 'all';
         let currentBranch = 'all';
+        let currentStatus = 'all';
         let searchQuery = '';
         let activeUserId = null;
 
-        function toggleDropdown(id) {
-            const el = document.getElementById(id);
-            const isHidden = el.classList.contains('hidden');
-            closeAllFilterDropdowns();
-            if (isHidden) el.classList.remove('hidden');
+        const ROLE_NAMES = {
+            all: 'ទាំងអស់',
+            sales_manager: 'អ្នកគ្រប់គ្រងផ្នែកលក់',
+            sales_exec: 'បុគ្គលិកផ្នែកលក់',
+            warehouse_manager: 'អ្នកគ្រប់គ្រងឃ្លាំង',
+            procurement_manager: 'អ្នកគ្រប់គ្រងលទ្ធកម្ម',
+            chief_accountant: 'ប្រធានគណនេយ្យ',
+            apar_accountant: 'គណនេយ្យករទូទាត់ និងទារបំណុល',
+            customer_support: 'ផ្នែកគាំទ្រអតិថិជន',
+            cashier_pos: 'អ្នកគិតលុយលក់រាយ'
+        };
+
+        const BRANCH_NAMES = {
+            all: 'ទាំងអស់',
+            'BR-01': 'ទីស្នាក់ការកណ្តាល (ភ្នំពេញ)',
+            'BR-02': 'សាខាខេត្តសៀមរាប',
+            'BR-03': 'ឃ្លាំងកណ្តាលឫស្សីកែវ'
+        };
+
+        function toggleFilterMenu(event) {
+            if (event) event.stopPropagation();
+            const menu = document.getElementById('filterPopoverMenu');
+            if (menu) {
+                menu.classList.toggle('hidden');
+            }
         }
 
-        function closeAllFilterDropdowns() {
-            document.querySelectorAll('#roleDropdown, #branchDropdown').forEach(d => d.classList.add('hidden'));
+        function closeFilterMenu() {
+            const menu = document.getElementById('filterPopoverMenu');
+            if (menu && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+            }
         }
 
-        function selectRole(role, label) {
+        function updateFilterButtonState() {
+            let activeCount = 0;
+            if (currentRole && currentRole !== 'all') activeCount++;
+            if (currentBranch && currentBranch !== 'all') activeCount++;
+            if (currentStatus && currentStatus !== 'all') activeCount++;
+
+            const badge = document.getElementById('activeFilterBadge');
+            const icon = document.getElementById('filterMainIcon');
+
+            if (activeCount > 0) {
+                if (icon) {
+                    icon.classList.remove('text-slate-400');
+                    icon.classList.add('text-[#1e3a5f]');
+                }
+                if (badge) badge.classList.remove('hidden');
+            } else {
+                if (icon) {
+                    icon.classList.add('text-slate-400');
+                    icon.classList.remove('text-[#1e3a5f]');
+                }
+                if (badge) badge.classList.add('hidden');
+            }
+
+            // Update Active Chips Banner
+            const banner = document.getElementById('activeFiltersBanner');
+            const roleChip = document.getElementById('roleChip');
+            const roleChipLabel = document.getElementById('roleChipLabel');
+            const branchChip = document.getElementById('branchChip');
+            const branchChipLabel = document.getElementById('branchChipLabel');
+
+            let hasChips = false;
+            if (currentRole && currentRole !== 'all') {
+                if (roleChipLabel) roleChipLabel.textContent = `តួនាទី: ${ROLE_NAMES[currentRole] || currentRole}`;
+                if (roleChip) roleChip.classList.remove('hidden');
+                hasChips = true;
+            } else if (roleChip) {
+                roleChip.classList.add('hidden');
+            }
+
+            if (currentBranch && currentBranch !== 'all') {
+                if (branchChipLabel) branchChipLabel.textContent = `សាខា: ${BRANCH_NAMES[currentBranch] || currentBranch}`;
+                if (branchChip) branchChip.classList.remove('hidden');
+                hasChips = true;
+            } else if (branchChip) {
+                branchChip.classList.add('hidden');
+            }
+
+            if (banner) {
+                if (hasChips) banner.classList.remove('hidden');
+                else banner.classList.add('hidden');
+            }
+        }
+
+        function selectRoleFilter(role) {
             currentRole = role;
-            document.getElementById('roleFilterLabel').textContent = label;
-            closeAllFilterDropdowns();
+            document.querySelectorAll('.role-opt-btn').forEach(btn => {
+                const r = btn.getAttribute('data-role');
+                if (r === role) {
+                    btn.className = 'role-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border bg-[#1e3a5f] text-white border-[#1e3a5f] cursor-pointer';
+                } else {
+                    btn.className = 'role-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer';
+                }
+            });
+            updateFilterButtonState();
             renderUsers();
         }
 
-        function selectBranch(branch, label) {
+        function selectBranchFilter(branch) {
             currentBranch = branch;
-            document.getElementById('branchFilterLabel').textContent = label;
-            closeAllFilterDropdowns();
+            document.querySelectorAll('.branch-opt-btn').forEach(btn => {
+                const b = btn.getAttribute('data-branch');
+                if (b === branch) {
+                    btn.className = 'branch-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border bg-[#1e3a5f] text-white border-[#1e3a5f] cursor-pointer';
+                } else {
+                    btn.className = 'branch-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer';
+                }
+            });
+            updateFilterButtonState();
             renderUsers();
+        }
+
+        function selectStatusFilter(status) {
+            currentStatus = status;
+            // Popover status buttons
+            document.querySelectorAll('.pop-status-btn').forEach(btn => {
+                const s = btn.getAttribute('data-status');
+                if (s === status) {
+                    btn.className = 'pop-status-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border bg-[#1e3a5f] text-white border-[#1e3a5f] cursor-pointer';
+                } else {
+                    btn.className = 'pop-status-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer';
+                }
+            });
+
+            // Quick Status bar buttons
+            document.querySelectorAll('.status-bar-btn').forEach(btn => {
+                const s = btn.getAttribute('data-status-bar');
+                if (s === status) {
+                    btn.classList.add('bg-[#1e3a5f]', 'text-white', 'font-semibold');
+                    btn.classList.remove('bg-slate-100', 'text-slate-700', 'font-medium');
+                } else {
+                    btn.classList.remove('bg-[#1e3a5f]', 'text-white', 'font-semibold');
+                    btn.classList.add('bg-slate-100', 'text-slate-700', 'font-medium');
+                }
+            });
+
+            updateFilterButtonState();
+            renderUsers();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            searchQuery = '';
+            selectRoleFilter('all');
+            selectBranchFilter('all');
+            selectStatusFilter('all');
         }
 
         function handleSearch() {
@@ -266,10 +506,17 @@
 
             // Update stats
             document.getElementById('statTotalUsers').textContent = allUsers.length;
-            document.getElementById('statActiveUsers').textContent = allUsers.filter(u => u.status === 'active').length;
+            const totalBadge = document.getElementById('totalUsersCountBadge');
+            if (totalBadge) totalBadge.textContent = allUsers.length;
+
+            const activeCount = allUsers.filter(u => u.status === 'active').length;
+            document.getElementById('statActiveUsers').textContent = activeCount;
+            const activeStatusBadge = document.getElementById('statusBarCountActive');
+            if (activeStatusBadge) activeStatusBadge.textContent = activeCount;
+
             document.getElementById('statSuspendedUsers').textContent = allUsers.filter(u => u.status === 'suspended').length;
 
-            let filtered = BMS_GM.getUsers(currentRole, currentBranch, 'all');
+            let filtered = BMS_GM.getUsers(currentRole, currentBranch, currentStatus);
 
             if (searchQuery) {
                 filtered = filtered.filter(u =>
@@ -412,10 +659,14 @@
         function closeDropdown() {
             const dropdown = document.getElementById('rowActionDropdown');
             if (dropdown) dropdown.classList.add('hidden');
-            closeAllFilterDropdowns();
         }
 
-        document.addEventListener('click', closeDropdown);
+        document.addEventListener('click', (e) => {
+            closeDropdown();
+            if (!e.target.closest('.filter-popover-container')) {
+                closeFilterMenu();
+            }
+        });
 
         function exportUsersCSV() {
             const users = BMS_GM.getUsers();

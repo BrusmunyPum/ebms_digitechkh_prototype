@@ -44,24 +44,6 @@
 
             <div class="w-full space-y-5">
 
-                <!-- Filter Toolbar with Unified Date Range Picker -->
-                <div class="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-filter text-slate-400 text-xs"></i>
-                        <span class="text-xs font-medium text-slate-600">កាលបរិច្ឆេទវិភាគប្រតិបត្តិការ</span>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <div id="dateFilterHost" class="flex items-center"></div>
-                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
-                        <div class="flex flex-wrap items-center gap-2 no-print">
-                            <a href="approvals/approvals.html" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-semibold transition">
-                                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                                <span id="headerPendingPill">សំណើរង់ចាំអនុម័ត: 0</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Top 5 Executive KPI Cards -->
                 <div id="kpiRow" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"></div>
 
@@ -91,17 +73,52 @@
                 <!-- Middle Section: Revenue/Expense Chart & Pending Approvals Box -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
                     <!-- 12-Month Financial Chart (2 cols) -->
-                    <div class="lg:col-span-2 bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm flex flex-col">
-                        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-                            <div>
-                                <h3 class="text-base font-semibold text-slate-700">និន្នាការហិរញ្ញវត្ថុ 12 ខែ</h3>
-                                <p class="text-xs text-slate-500">ការប្រៀបធៀបចំណូលសរុប ចំណាយប្រតិបត្តិការ និងប្រាក់ចំណេញសុទ្ធ</p>
+                    <div class="lg:col-span-2 bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                            <!-- Left: Title -->
+                            <div class="min-w-0">
+                                <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100">និន្នាការហិរញ្ញវត្ថុ</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" id="chartPeriodSubtitle">ការប្រៀបធៀបចំណូលសរុប ចំណាយប្រតិបត្តិការ និងចំណេញសុទ្ធ</p>
                             </div>
-                            <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                <i class="fas fa-arrow-trend-up mr-1"></i> កំណើនចំណូល 14.2%
-                            </span>
+
+                            <!-- Center: Segmented Period Switcher -->
+                            <div class="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700" id="chartPeriodSegment">
+                                <button type="button" onclick="setChartPeriod('W')" id="periodBtnW"
+                                    class="px-3 py-1 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+                                    W
+                                </button>
+                                <button type="button" onclick="setChartPeriod('M')" id="periodBtnM"
+                                    class="px-3 py-1 text-xs font-semibold rounded-lg bg-[#1e3a5f] dark:bg-sky-600 text-white shadow-sm transition cursor-pointer">
+                                    M
+                                </button>
+                                <button type="button" onclick="setChartPeriod('Y')" id="periodBtnY"
+                                    class="px-3 py-1 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+                                    Y
+                                </button>
+                            </div>
+
+                            <!-- Right: Legend & Growth Badge -->
+                            <div class="flex items-center gap-3.5 flex-shrink-0">
+                                <div class="flex items-center gap-3 text-xs font-medium">
+                                    <span class="inline-flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
+                                        <span class="w-2.5 h-2.5 rounded-sm bg-[#1e3a5f] dark:bg-sky-400"></span>
+                                        ចំណូលសរុប
+                                    </span>
+                                    <span class="inline-flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
+                                        <span class="w-2.5 h-2.5 rounded-sm bg-amber-500"></span>
+                                        ចំណាយ
+                                    </span>
+                                    <span class="inline-flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20"></span>
+                                        ចំណេញសុទ្ធ
+                                    </span>
+                                </div>
+                                <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    <i class="fas fa-arrow-trend-up mr-1"></i> +14.2%
+                                </span>
+                            </div>
                         </div>
-                        <div id="financialChart" class="w-full flex-1 min-h-[340px]"></div>
+                        <div id="financialChart" class="w-full flex-1 min-h-[320px]"></div>
                     </div>
 
                     <!-- Pending Approvals Queue (1 col) -->
@@ -132,17 +149,39 @@
                 <!-- Bottom Section: Departmental Health & System Governance -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
                     <!-- Cross-Department Operations Health (2 cols) -->
-                    <div class="lg:col-span-2 bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <h3 class="text-base font-semibold text-slate-700">ស្ថានភាពប្រតិបត្តិការឆ្លងផ្នែក</h3>
-                                <p class="text-xs text-slate-500">ការត្រួតពិនិត្យដំណើរការរួមរវាងផ្នែកលក់ លទ្ធកម្ម ឃ្លាំង និងគណនេយ្យ</p>
+                    <div class="lg:col-span-2 bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    <h3 class="text-base font-semibold text-slate-800 dark:text-slate-100">ស្ថានភាពប្រតិបត្តិការឆ្លងផ្នែក</h3>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">ការត្រួតពិនិត្យដំណើរការរួមរវាងផ្នែកលក់ លទ្ធកម្ម ឃ្លាំង និងគណនេយ្យ</p>
+                                </div>
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 font-medium">
+                                    <i class="fas fa-circle-check mr-1"></i> សុខភាពរួម 80.8%
+                                </span>
                             </div>
-                            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-medium">
-                                ធ្វើបច្ចុប្បន្នភាពជាក់ស្តែង
-                            </span>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-center py-1">
+                                <!-- Donut Pie Chart Container (5 cols) -->
+                                <div class="md:col-span-5 flex items-center justify-center relative">
+                                    <div id="deptHealthPieChart" class="w-full h-48"></div>
+                                </div>
+
+                                <!-- 4 Department Tiles (7 cols) -->
+                                <div id="deptHealthGrid" class="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4"></div>
+                            </div>
                         </div>
-                        <div id="deptHealthGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5"></div>
+
+                        <div class="pt-3 border-t border-slate-100 dark:border-slate-800 mt-3 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                            <span class="inline-flex items-center gap-1.5">
+                                <i class="fas fa-arrows-rotate text-emerald-500 text-xs"></i>
+                                <span>ធ្វើសមកាលកម្មទិន្នន័យចុងក្រោយ: <b>ថ្ងៃនេះ 10:45 ព្រឹក</b></span>
+                            </span>
+                            <a href="reports/department-performance.html" class="text-primary hover:underline font-medium inline-flex items-center gap-1">
+                                <span>របាយការណ៍លម្អិត</span>
+                                <i class="fas fa-arrow-right text-[10px]"></i>
+                            </a>
+                        </div>
                     </div>
 
                     <!-- System Governance & Financial Period Lock Card (1 col) -->
@@ -317,98 +356,295 @@
                 }
             }
 
-            // Departmental Health Grid
+            // Departmental Health (No color box / clean minimal layout) & Pie Chart
             const deptGrid = document.getElementById('deptHealthGrid');
             if (deptGrid && k.deptHealth) {
-                const depts = [k.deptHealth.sales, k.deptHealth.procure, k.deptHealth.warehouse, k.deptHealth.finance];
-                deptGrid.innerHTML = depts.map(d => {
-                    const statusColor = d.status === 'good' ? 'emerald' : 'amber';
-                    return `
-                        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex flex-col justify-between">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs font-semibold text-slate-800">${d.label}</span>
-                                <span class="text-xs font-semibold text-${statusColor}-600">${d.progressPct}%</span>
+                const depts = [
+                    { ...k.deptHealth.sales, icon: 'fa-cart-shopping', iconColor: 'text-emerald-500', barColor: 'bg-emerald-500' },
+                    { ...k.deptHealth.procure, icon: 'fa-truck-fast', iconColor: 'text-sky-500', barColor: 'bg-sky-500' },
+                    { ...k.deptHealth.warehouse, icon: 'fa-warehouse', iconColor: 'text-amber-500', barColor: 'bg-amber-500' },
+                    { ...k.deptHealth.finance, icon: 'fa-file-invoice-dollar', iconColor: 'text-indigo-500', barColor: 'bg-indigo-500' }
+                ];
+                deptGrid.innerHTML = depts.map(d => `
+                    <div class="flex flex-col justify-between py-1">
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="inline-flex items-center gap-2 text-xs font-semibold text-slate-800 dark:text-slate-100">
+                                    <span class="w-2 h-2 rounded-full ${d.barColor}"></span>
+                                    <i class="fas ${d.icon} ${d.iconColor} text-xs"></i>
+                                    <span>${d.label}</span>
+                                </span>
+                                <span class="text-xs font-bold text-slate-800 dark:text-slate-100">${d.progressPct}%</span>
                             </div>
-                            <div class="w-full bg-slate-200 rounded-full h-1.5 mb-2 overflow-hidden">
-                                <div class="bg-${statusColor}-500 h-1.5 rounded-full" style="width: ${d.progressPct}%"></div>
-                            </div>
-                            <p class="text-[11px] text-slate-500 leading-snug">${d.note}</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug pl-4">${d.note}</p>
                         </div>
-                    `;
-                }).join('');
+                        <div class="w-full bg-slate-100 dark:bg-slate-700/60 rounded-full h-1.5 mt-2.5 overflow-hidden">
+                            <div class="${d.barColor} h-1.5 rounded-full transition-all duration-500" style="width: ${d.progressPct}%"></div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            renderDeptHealthPie();
+        }
+
+        function renderDeptHealthPie() {
+            const chartDom = document.getElementById('deptHealthPieChart');
+            if (!chartDom) return;
+            const isDark = document.documentElement.classList.contains('dark');
+            const myChart = echarts.getInstanceByDom(chartDom) || echarts.init(chartDom);
+            
+            const store = BMS_GM.getGMStore();
+            const k = store.kpis.deptHealth || {};
+
+            const option = {
+                tooltip: {
+                    trigger: 'item',
+                    backgroundColor: isDark ? '#0f172a' : '#ffffff',
+                    borderColor: isDark ? '#334155' : '#e2e8f0',
+                    borderWidth: 1,
+                    textStyle: { fontFamily: 'Kantumruy Pro', color: isDark ? '#f8fafc' : '#1e293b', fontSize: 12 },
+                    formatter: function(p) {
+                        return `<div class="font-semibold text-xs">${p.marker} ${p.name}</div>
+                                <div class="text-xs mt-0.5">វឌ្ឍនភាព: <b>${p.value}%</b></div>`;
+                    }
+                },
+                legend: { show: false },
+                series: [
+                    {
+                        name: 'ស្ថានភាពប្រតិបត្តិការ',
+                        type: 'pie',
+                        radius: ['58%', '82%'],
+                        center: ['50%', '50%'],
+                        avoidLabelOverlap: false,
+                        padAngle: 3,
+                        itemStyle: {
+                            borderRadius: 6,
+                            borderColor: isDark ? '#0f172a' : '#ffffff',
+                            borderWidth: 2
+                        },
+                        label: {
+                            show: true,
+                            position: 'center',
+                            formatter: '{val|80.8%}\n{name|សុខភាពរួម}',
+                            rich: {
+                                val: {
+                                    fontSize: 17,
+                                    fontWeight: 'bold',
+                                    fontFamily: 'Kantumruy Pro',
+                                    color: isDark ? '#f8fafc' : '#1e293b',
+                                    lineHeight: 22
+                                },
+                                name: {
+                                    fontSize: 11,
+                                    fontFamily: 'Kantumruy Pro',
+                                    color: isDark ? '#94a3b8' : '#64748b',
+                                    lineHeight: 14
+                                }
+                            }
+                        },
+                        emphasis: {
+                            scale: true,
+                            scaleSize: 5,
+                            label: {
+                                show: true,
+                                formatter: '{val|{c}%}\n{name|{b}}',
+                                rich: {
+                                    val: {
+                                        fontSize: 17,
+                                        fontWeight: 'bold',
+                                        fontFamily: 'Kantumruy Pro',
+                                        color: isDark ? '#f8fafc' : '#1e293b',
+                                        lineHeight: 22
+                                    },
+                                    name: {
+                                        fontSize: 11,
+                                        fontFamily: 'Kantumruy Pro',
+                                        color: isDark ? '#94a3b8' : '#64748b',
+                                        lineHeight: 14
+                                    }
+                                }
+                            }
+                        },
+                        labelLine: { show: false },
+                        data: [
+                            { value: k.sales ? k.sales.progressPct : 78, name: 'ផ្នែកលក់', itemStyle: { color: '#10b981' } },
+                            { value: k.procure ? k.procure.progressPct : 92, name: 'ផ្នែកលទ្ធកម្ម', itemStyle: { color: '#0ea5e9' } },
+                            { value: k.warehouse ? k.warehouse.progressPct : 65, name: 'ផ្នែកឃ្លាំងស្តុក', itemStyle: { color: '#f59e0b' } },
+                            { value: k.finance ? k.finance.progressPct : 88, name: 'ផ្នែកគណនេយ្យ', itemStyle: { color: '#6366f1' } }
+                        ]
+                    }
+                ]
+            };
+            myChart.setOption(option, true);
+            window.addEventListener('resize', () => myChart.resize());
+            if (window.ResizeObserver) {
+                const ro = new ResizeObserver(() => myChart.resize());
+                ro.observe(chartDom);
             }
         }
 
-        window.onDateRangeApplied = renderDashboard;
+        let currentChartPeriod = 'M';
+
+        const FINANCIAL_CHART_DATA = {
+            W: {
+                subtitle: 'ការវិភាគប្រតិបត្តិការ 7 ថ្ងៃចុងក្រោយ',
+                categories: ['ច័ន្ទ', 'អង្គារ', 'ពុធ', 'ព្រហស្បតិ៍', 'សុក្រ', 'សៅរ៍', 'អាទិត្យ'],
+                revenue: [12400, 11500, 15800, 9200, 14800, 23400, 8500],
+                expense: [8600, 8950, 11200, 6800, 10200, 15500, 5800],
+                netProfit: [3800, 2550, 4600, 2400, 4600, 7900, 2700]
+            },
+            M: {
+                subtitle: 'ការប្រៀបធៀបចំណូលសរុប ចំណាយប្រតិបត្តិការ និងចំណេញសុទ្ធ 9 ខែដើមឆ្នាំ 2026',
+                categories: ['មករា', 'កុម្ភៈ', 'មីនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្កដា', 'សីហា', 'កញ្ញា'],
+                revenue: [45000, 48200, 52100, 49800, 56300, 58900, 61200, 64500, 68450],
+                expense: [36000, 38100, 41000, 39200, 44000, 46100, 48000, 50800, 54080],
+                netProfit: [9000, 10100, 11100, 10600, 12300, 12800, 13200, 13700, 14370]
+            },
+            Y: {
+                subtitle: 'ការវិវត្តប្រចាំឆ្នាំ 4 ឆ្នាំចុងក្រោយ (2023 - 2026)',
+                categories: ['2023', '2024', '2025', '2026'],
+                revenue: [380000, 520000, 680000, 820000],
+                expense: [304000, 406000, 524000, 628000],
+                netProfit: [76000, 114000, 156000, 192000]
+            }
+        };
+
+        function setChartPeriod(period) {
+            currentChartPeriod = period;
+            ['W', 'M', 'Y'].forEach(p => {
+                const btn = document.getElementById(`periodBtn${p}`);
+                if (btn) {
+                    if (p === period) {
+                        btn.className = 'px-3 py-1 text-xs font-semibold rounded-lg bg-[#1e3a5f] dark:bg-sky-600 text-white shadow-sm transition cursor-pointer';
+                    } else {
+                        btn.className = 'px-3 py-1 text-xs font-semibold rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer';
+                    }
+                }
+            });
+            const subEl = document.getElementById('chartPeriodSubtitle');
+            if (subEl && FINANCIAL_CHART_DATA[period]) {
+                subEl.textContent = FINANCIAL_CHART_DATA[period].subtitle;
+            }
+            renderFinancialChart();
+        }
+
+        function renderFinancialChart() {
+            const chartDom = document.getElementById('financialChart');
+            if (!chartDom) return;
+            const isDark = document.documentElement.classList.contains('dark');
+            const myChart = echarts.getInstanceByDom(chartDom) || echarts.init(chartDom);
+            const dataset = FINANCIAL_CHART_DATA[currentChartPeriod] || FINANCIAL_CHART_DATA.M;
+
+            const option = {
+                tooltip: {
+                    trigger: 'axis',
+                    backgroundColor: isDark ? '#0f172a' : '#ffffff',
+                    borderColor: isDark ? '#334155' : '#e2e8f0',
+                    borderWidth: 1,
+                    textStyle: { fontFamily: 'Kantumruy Pro', color: isDark ? '#f8fafc' : '#1e293b' },
+                    formatter: function(params) {
+                        let res = `<div class="font-semibold mb-1.5 text-xs">${params[0].axisValue}</div>`;
+                        params.forEach(p => {
+                            const valFormatted = '$' + Number(p.value).toLocaleString('en-US');
+                            res += `<div class="flex items-center justify-between gap-4 text-xs py-0.5">
+                                <span class="flex items-center gap-1.5">${p.marker} ${p.seriesName}:</span>
+                                <span class="font-bold">${valFormatted}</span>
+                            </div>`;
+                        });
+                        return res;
+                    }
+                },
+                grid: { top: 20, left: '2%', right: '3%', bottom: 25, containLabel: true },
+                xAxis: {
+                    type: 'category',
+                    data: dataset.categories,
+                    axisLabel: {
+                        fontFamily: 'Kantumruy Pro',
+                        fontSize: 11,
+                        color: isDark ? '#94a3b8' : '#64748b'
+                    },
+                    axisLine: { lineStyle: { color: isDark ? 'rgba(255,255,255,0.15)' : '#cbd5e1' } },
+                    axisTick: { show: false }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        fontFamily: 'Kantumruy Pro',
+                        fontSize: 11,
+                        color: isDark ? '#94a3b8' : '#64748b',
+                        formatter: function(val) {
+                            if (val >= 1000) return '$' + (val / 1000) + 'k';
+                            return '$' + val;
+                        }
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            type: 'dashed',
+                            color: isDark ? 'rgba(255,255,255,0.12)' : '#e2e8f0'
+                        }
+                    }
+                },
+                series: [
+                    {
+                        name: 'ចំណូលសរុប',
+                        type: 'bar',
+                        barGap: '0%',
+                        barWidth: '22%',
+                        data: dataset.revenue,
+                        itemStyle: {
+                            color: isDark ? '#38bdf8' : '#1e3a5f'
+                        }
+                    },
+                    {
+                        name: 'ចំណាយ',
+                        type: 'bar',
+                        barGap: '0%',
+                        barWidth: '22%',
+                        data: dataset.expense,
+                        itemStyle: {
+                            color: '#f59e0b'
+                        }
+                    },
+                    {
+                        name: 'ចំណេញសុទ្ធ',
+                        type: 'line',
+                        smooth: 0.35,
+                        symbol: 'circle',
+                        symbolSize: 8,
+                        showSymbol: true,
+                        data: dataset.netProfit,
+                        itemStyle: {
+                            color: '#ffffff',
+                            borderColor: '#10b981',
+                            borderWidth: 2.5
+                        },
+                        lineStyle: {
+                            width: 3,
+                            color: '#10b981'
+                        }
+                    }
+                ]
+            };
+            myChart.setOption(option, true);
+            window.addEventListener('resize', () => myChart.resize());
+            if (window.ResizeObserver) {
+                const ro = new ResizeObserver(() => myChart.resize());
+                ro.observe(chartDom);
+            }
+        }
 
         function initDashboard() {
             renderPortalSidebar();
-            if (typeof renderDateRangePicker === 'function') {
-                renderDateRangePicker('dateFilterHost');
-            }
             renderDashboard();
-
-            // Setup ECharts (Revenue vs Expense vs Net Profit)
-            const chartDom = document.getElementById('financialChart');
-            if (chartDom) {
-                const myChart = echarts.init(chartDom);
-                const store = BMS_GM.getGMStore();
-                const m = store.kpis.monthlyChart;
-
-                const option = {
-                    tooltip: {
-                        trigger: 'axis',
-                        textStyle: { fontFamily: 'Kantumruy Pro' }
-                    },
-                    legend: {
-                        data: ['ចំណូលសរុប', 'ចំណាយប្រតិបត្តិការ', 'ចំណេញសុទ្ធ'],
-                        bottom: 0,
-                        textStyle: { fontFamily: 'Kantumruy Pro', fontSize: 11 }
-                    },
-                    grid: { top: 25, left: '2%', right: '3%', bottom: 40, containLabel: true },
-                    xAxis: {
-                        type: 'category',
-                        data: m.months.slice(0, 9),
-                        axisLabel: { fontFamily: 'Kantumruy Pro', fontSize: 11 }
-                    },
-                    yAxis: {
-                        type: 'value',
-                        axisLabel: {
-                            fontFamily: 'Kantumruy Pro',
-                            formatter: '${value}'
-                        }
-                    },
-                    series: [
-                        {
-                            name: 'ចំណូលសរុប',
-                            type: 'bar',
-                            data: m.revenue.slice(0, 9),
-                            itemStyle: { color: '#1e3a5f', borderRadius: [4, 4, 0, 0] }
-                        },
-                        {
-                            name: 'ចំណាយប្រតិបត្តិការ',
-                            type: 'bar',
-                            data: m.expense.slice(0, 9),
-                            itemStyle: { color: '#f59e0b', borderRadius: [4, 4, 0, 0] }
-                        },
-                        {
-                            name: 'ចំណេញសុទ្ធ',
-                            type: 'line',
-                            smooth: true,
-                            data: m.netProfit.slice(0, 9),
-                            itemStyle: { color: '#10b981' },
-                            lineStyle: { width: 3 }
-                        }
-                    ]
-                };
-                myChart.setOption(option);
-                window.addEventListener('resize', () => myChart.resize());
-                if (window.ResizeObserver) {
-                    const ro = new ResizeObserver(() => myChart.resize());
-                    ro.observe(chartDom);
-                }
-            }
+            renderFinancialChart();
         }
+
+        // Re-render chart on theme changes
+        window.addEventListener('bms-theme-change', () => {
+            renderFinancialChart();
+            renderDeptHealthPie();
+        });
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initDashboard);

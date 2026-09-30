@@ -2920,15 +2920,14 @@ html.dark [class*="text-purple-700"] {
     color: #d8b4fe !important;
 }
 
-html.dark .bg-slate-50,
-html.dark .bg-slate-100,
-html.dark .bg-gray-50,
-html.dark [class*="bg-slate-50"],
-html.dark [class*="bg-slate-100"] {
-    background-color: rgba(51, 65, 85, 0.45) !important;
-    color: #cbd5e1 !important;
-    border-color: rgba(71, 85, 105, 0.5) !important;
+html.dark .bg-slate-50 {
+    background-color: #0f172a !important;
 }
+
+html.dark .bg-slate-100 {
+    background-color: #1e293b !important;
+}
+
 html.dark .text-slate-700,
 html.dark .text-slate-600 {
     color: #cbd5e1 !important;

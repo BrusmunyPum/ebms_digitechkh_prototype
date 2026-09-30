@@ -43,88 +43,158 @@
 
             <div class="w-full space-y-4">
 
-                <!-- Category Tabs (Filter by Request Type) -->
-                <div class="bg-white rounded-2xl p-2 border border-slate-200/80 shadow-sm flex flex-wrap items-center gap-1.5 overflow-x-auto">
-                    <button onclick="setCategoryTab('all', this)" class="category-tab active px-3.5 py-2 rounded-xl text-xs font-medium transition flex items-center gap-2 bg-[#1e3a5f] text-white shadow-sm cursor-pointer">
-                        <i class="fas fa-list-check"></i>
-                        <span>ទាំងអស់</span>
-                        <span id="tabCountAll" class="px-1.5 py-0.5 rounded-full bg-white/20 text-[10px]">0</span>
-                    </button>
-                    <button onclick="setCategoryTab('disbursement', this)" class="category-tab px-3.5 py-2 rounded-xl text-xs font-medium transition flex items-center gap-2 text-slate-600 hover:bg-slate-100 cursor-pointer">
-                        <i class="fas fa-receipt text-blue-500"></i>
-                        <span>ប័ណ្ណចំណាយទូទាត់</span>
-                        <span id="tabCountDisb" class="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px]">0</span>
-                    </button>
-                    <button onclick="setCategoryTab('purchase_order', this)" class="category-tab px-3.5 py-2 rounded-xl text-xs font-medium transition flex items-center gap-2 text-slate-600 hover:bg-slate-100 cursor-pointer">
-                        <i class="fas fa-cart-shopping text-emerald-500"></i>
-                        <span>បញ្ជាទិញទំនិញ</span>
-                        <span id="tabCountPO" class="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px]">0</span>
-                    </button>
-                    <button onclick="setCategoryTab('high_discount', this)" class="category-tab px-3.5 py-2 rounded-xl text-xs font-medium transition flex items-center gap-2 text-slate-600 hover:bg-slate-100 cursor-pointer">
-                        <i class="fas fa-tag text-purple-500"></i>
-                        <span>បញ្ចុះតម្លៃពិសេស</span>
-                        <span id="tabCountDisc" class="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px]">0</span>
-                    </button>
-                    <button onclick="setCategoryTab('credit_override', this)" class="category-tab px-3.5 py-2 rounded-xl text-xs font-medium transition flex items-center gap-2 text-slate-600 hover:bg-slate-100 cursor-pointer">
-                        <i class="fas fa-credit-card text-amber-500"></i>
-                        <span>លើកលែងពិដានឥណទាន</span>
-                        <span id="tabCountCredit" class="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px]">0</span>
-                    </button>
-                    <button onclick="setCategoryTab('stock_writeoff', this)" class="category-tab px-3.5 py-2 rounded-xl text-xs font-medium transition flex items-center gap-2 text-slate-600 hover:bg-slate-100 cursor-pointer">
-                        <i class="fas fa-box-open text-rose-500"></i>
-                        <span>កាត់កងស្តុកខូចខាត</span>
-                        <span id="tabCountWriteoff" class="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px]">0</span>
-                    </button>
-                    <button onclick="setCategoryTab('void_invoice', this)" class="category-tab px-3.5 py-2 rounded-xl text-xs font-medium transition flex items-center gap-2 text-slate-600 hover:bg-slate-100 cursor-pointer">
-                        <i class="fas fa-ban text-slate-500"></i>
-                        <span>លុបវិក្កយបត្រ</span>
-                        <span id="tabCountVoid" class="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px]">0</span>
-                    </button>
-                    <span class="ml-auto w-px h-6 bg-slate-200 hidden sm:block"></span>
-                    <div class="flex flex-wrap items-center gap-2 no-print">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-medium">
-                            <i class="fas fa-layer-group text-slate-400"></i>
-                            <span>សរុប <span id="totalApprovalsCount" class="font-bold text-slate-800">0</span> សំណើ</span>
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Search & Filters Toolbar -->
+                <!-- Super Admin Style Unified Filter Toolbar -->
                 <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
                     <div class="flex flex-wrap items-center gap-3 flex-1 min-w-[280px]">
-                        <!-- Search Input -->
-                        <div class="relative flex-1 min-w-[200px] max-w-md">
+                        <!-- Search Input with Embedded Sliders Filter Icon -->
+                        <div class="relative w-full sm:w-72 md:w-80">
                             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                                 <i class="fas fa-search text-xs"></i>
                             </span>
                             <input type="text" id="searchInput" oninput="handleSearch()"
-                                placeholder="ស្វែងរកតាមលេខកូដសំណើ អ្នកស្នើសុំ ឬបរិយាយ..."
-                                class="w-full bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-800 transition outline-none font-medium placeholder:text-slate-400 placeholder:font-normal">
+                                placeholder="ស្វែងរកតាមលេខកូដ អ្នកស្នើសុំ ឬបរិយាយ..."
+                                class="w-full bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/10 rounded-xl pl-9 pr-10 py-2 text-xs text-slate-800 transition outline-none font-medium placeholder:text-slate-400">
+
+                            <!-- Embedded Sliders Filter Icon Button -->
+                            <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center filter-popover-container">
+                                <button type="button" id="filterToggleBtn" onclick="toggleFilterMenu(event)"
+                                    class="relative p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-lg transition cursor-pointer flex items-center justify-center"
+                                    title="កំណត់តម្រងកម្រិតខ្ពស់">
+                                    <iconify-icon icon="lucide:sliders-horizontal" class="text-sm" id="filterMainIcon"></iconify-icon>
+                                    <span id="activeFilterBadge" class="hidden absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-[#1e3a5f] ring-2 ring-white"></span>
+                                </button>
+
+                                <!-- Filter Popover Menu -->
+                                <div id="filterPopoverMenu"
+                                    class="hidden absolute top-full left-0 sm:left-auto sm:right-0 mt-2 w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-4 z-50 space-y-4 text-left">
+                                    <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                                        <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                            <i class="fas fa-sliders text-slate-500 text-xs"></i> កំណត់លក្ខខណ្ឌតម្រង
+                                        </span>
+                                        <button type="button" onclick="resetFilters()" class="text-[11px] text-slate-500 hover:text-slate-800 font-medium cursor-pointer">
+                                            កំណត់ឡើងវិញ
+                                        </button>
+                                    </div>
+
+                                    <!-- Category Filter Section -->
+                                    <div class="space-y-1.5">
+                                        <label class="text-[11px] font-semibold text-slate-600">ប្រភេទសំណើ (Request Type)</label>
+                                        <div class="grid grid-cols-1 gap-1" id="categoryFilterOptions">
+                                            <button type="button" onclick="selectCategoryFilter('all')" data-cat="all"
+                                                class="cat-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border bg-[#1e3a5f] text-white border-[#1e3a5f] cursor-pointer flex items-center justify-between">
+                                                <span><i class="fas fa-list-check mr-1.5 text-[11px]"></i>ទាំងអស់</span>
+                                                <span id="popCountAll" class="text-[10px] px-1.5 py-0.2 rounded-full bg-white/20">0</span>
+                                            </button>
+                                            <button type="button" onclick="selectCategoryFilter('disbursement')" data-cat="disbursement"
+                                                class="cat-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center justify-between">
+                                                <span><i class="fas fa-receipt mr-1.5 text-blue-500 text-[11px]"></i>ប័ណ្ណចំណាយទូទាត់</span>
+                                                <span id="popCountDisb" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600">0</span>
+                                            </button>
+                                            <button type="button" onclick="selectCategoryFilter('purchase_order')" data-cat="purchase_order"
+                                                class="cat-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center justify-between">
+                                                <span><i class="fas fa-cart-shopping mr-1.5 text-emerald-500 text-[11px]"></i>បញ្ជាទិញទំនិញ</span>
+                                                <span id="popCountPO" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600">0</span>
+                                            </button>
+                                            <button type="button" onclick="selectCategoryFilter('high_discount')" data-cat="high_discount"
+                                                class="cat-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center justify-between">
+                                                <span><i class="fas fa-tag mr-1.5 text-purple-500 text-[11px]"></i>បញ្ចុះតម្លៃពិសេស</span>
+                                                <span id="popCountDisc" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600">0</span>
+                                            </button>
+                                            <button type="button" onclick="selectCategoryFilter('credit_override')" data-cat="credit_override"
+                                                class="cat-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center justify-between">
+                                                <span><i class="fas fa-credit-card mr-1.5 text-amber-500 text-[11px]"></i>លើកលែងពិដានឥណទាន</span>
+                                                <span id="popCountCredit" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600">0</span>
+                                            </button>
+                                            <button type="button" onclick="selectCategoryFilter('stock_writeoff')" data-cat="stock_writeoff"
+                                                class="cat-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center justify-between">
+                                                <span><i class="fas fa-box-open mr-1.5 text-rose-500 text-[11px]"></i>កាត់កងស្តុកខូចខាត</span>
+                                                <span id="popCountWriteoff" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600">0</span>
+                                            </button>
+                                            <button type="button" onclick="selectCategoryFilter('void_invoice')" data-cat="void_invoice"
+                                                class="cat-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center justify-between">
+                                                <span><i class="fas fa-ban mr-1.5 text-slate-500 text-[11px]"></i>លុបវិក្កយបត្រ</span>
+                                                <span id="popCountVoid" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-600">0</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Status Filter Section inside Popover -->
+                                    <div class="space-y-1.5 pt-2 border-t border-slate-100">
+                                        <label class="text-[11px] font-semibold text-slate-600">ស្ថានភាពសំណើ (Status)</label>
+                                        <div class="grid grid-cols-2 gap-1.5" id="popoverStatusOptions">
+                                            <button type="button" onclick="selectStatusFilter('all')" data-status="all"
+                                                class="pop-status-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border bg-[#1e3a5f] text-white border-[#1e3a5f] cursor-pointer">
+                                                ទាំងអស់
+                                            </button>
+                                            <button type="button" onclick="selectStatusFilter('pending')" data-status="pending"
+                                                class="pop-status-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-amber-50 text-slate-700 cursor-pointer">
+                                                <span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 mr-1"></span> រង់ចាំអនុម័ត
+                                            </button>
+                                            <button type="button" onclick="selectStatusFilter('approved')" data-status="approved"
+                                                class="pop-status-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-emerald-50 text-slate-700 cursor-pointer">
+                                                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span> បានអនុម័ត
+                                            </button>
+                                            <button type="button" onclick="selectStatusFilter('rejected')" data-status="rejected"
+                                                class="pop-status-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-rose-50 text-slate-700 cursor-pointer">
+                                                <span class="inline-block w-1.5 h-1.5 rounded-full bg-rose-500 mr-1"></span> បានបដិសេធ
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Status Filter Buttons -->
-                        <div class="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
-                            <button onclick="setStatusFilter('all', this)" class="status-btn active px-3 py-1.5 rounded-lg text-xs font-medium transition bg-white text-slate-800 shadow-xs cursor-pointer">
+                        <!-- Status Quick Segment Buttons -->
+                        <div class="flex items-center gap-1.5 overflow-x-auto">
+                            <button type="button" onclick="selectStatusFilter('all')" data-status-bar="all"
+                                class="status-bar-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#1e3a5f] text-white transition cursor-pointer">
                                 ទាំងអស់
                             </button>
-                            <button onclick="setStatusFilter('pending', this)" class="status-btn px-3 py-1.5 rounded-lg text-xs font-medium transition text-slate-600 hover:text-slate-900 cursor-pointer">
-                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block mr-1"></span>រង់ចាំអនុម័ត
+                            <button type="button" onclick="selectStatusFilter('pending')" data-status-bar="pending"
+                                class="status-bar-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block"></span>
+                                <span>រង់ចាំអនុម័ត</span>
+                                <span id="statusBarCountPending" class="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-800 font-bold">0</span>
                             </button>
-                            <button onclick="setStatusFilter('approved', this)" class="status-btn px-3 py-1.5 rounded-lg text-xs font-medium transition text-slate-600 hover:text-slate-900 cursor-pointer">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1"></span>បានអនុម័ត
+                            <button type="button" onclick="selectStatusFilter('approved')" data-status-bar="approved"
+                                class="status-bar-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
+                                <span>បានអនុម័ត</span>
                             </button>
-                            <button onclick="setStatusFilter('rejected', this)" class="status-btn px-3 py-1.5 rounded-lg text-xs font-medium transition text-slate-600 hover:text-slate-900 cursor-pointer">
-                                <span class="w-1.5 h-1.5 rounded-full bg-rose-500 inline-block mr-1"></span>បានបដិសេធ
+                            <button type="button" onclick="selectStatusFilter('rejected')" data-status-bar="rejected"
+                                class="status-bar-btn px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-rose-500 inline-block"></span>
+                                <span>បានបដិសេធ</span>
                             </button>
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        <button onclick="exportApprovalsCSV()" class="h-9 px-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs rounded-xl flex items-center gap-2 font-medium transition shadow-xs cursor-pointer">
-                            <i class="fas fa-file-csv text-slate-500"></i>
-                            <span>នាំចេញ CSV</span>
+                    <!-- Actions & Date Toolbar -->
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <div id="dateFilterHost" class="flex items-center"></div>
+
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 text-slate-700 text-xs font-medium border border-slate-200">
+                            <iconify-icon icon="lucide:layers" class="text-slate-400 text-sm"></iconify-icon>
+                            <span>សរុប <b id="totalApprovalsCount" class="text-slate-800 font-bold">0</b> សំណើ</span>
+                        </span>
+
+                        <button type="button" onclick="exportApprovalsCSV()"
+                            class="w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-medium transition shadow-xs flex items-center justify-center cursor-pointer no-print"
+                            title="នាំចេញរបាយការណ៍ជា CSV">
+                            <iconify-icon icon="el:download-alt" class="text-sm text-slate-600"></iconify-icon>
                         </button>
                     </div>
+                </div>
+
+                <!-- Active Category Filter Chip (Visible when specific category is chosen from popover) -->
+                <div id="activeCategoryBanner" class="hidden flex items-center gap-2 px-1">
+                    <span class="text-xs text-slate-500 font-medium">តម្រងសកម្ម:</span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-50 text-sky-800 border border-sky-200 text-xs font-medium">
+                        <span id="activeCategoryLabel">ប្រភេទ</span>
+                        <button type="button" onclick="selectCategoryFilter('all')" class="text-sky-600 hover:text-sky-900 ml-1 cursor-pointer">
+                            <i class="fas fa-xmark text-xs"></i>
+                        </button>
+                    </span>
                 </div>
 
                 <!-- Approvals Table Container -->
@@ -197,26 +267,113 @@
         let searchQuery = '';
         let activeDropdownRequestId = null;
 
-        function setCategoryTab(category, btn) {
+        const CATEGORY_NAMES = {
+            all: 'ទាំងអស់',
+            disbursement: 'ប័ណ្ណចំណាយទូទាត់',
+            purchase_order: 'បញ្ជាទិញទំនិញ',
+            high_discount: 'បញ្ចុះតម្លៃពិសេស',
+            credit_override: 'លើកលែងពិដានឥណទាន',
+            stock_writeoff: 'កាត់កងស្តុកខូចខាត',
+            void_invoice: 'លុបវិក្កយបត្រ'
+        };
+
+        function toggleFilterMenu(event) {
+            if (event) event.stopPropagation();
+            const menu = document.getElementById('filterPopoverMenu');
+            if (menu) {
+                menu.classList.toggle('hidden');
+            }
+        }
+
+        function closeFilterMenu() {
+            const menu = document.getElementById('filterPopoverMenu');
+            if (menu && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+            }
+        }
+
+        function updateFilterButtonState() {
+            let activeCount = 0;
+            if (currentCategory && currentCategory !== 'all') activeCount++;
+            if (currentStatus && currentStatus !== 'all') activeCount++;
+
+            const badge = document.getElementById('activeFilterBadge');
+            const icon = document.getElementById('filterMainIcon');
+
+            if (activeCount > 0) {
+                if (icon) {
+                    icon.classList.remove('text-slate-400');
+                    icon.classList.add('text-[#1e3a5f]');
+                }
+                if (badge) badge.classList.remove('hidden');
+            } else {
+                if (icon) {
+                    icon.classList.add('text-slate-400');
+                    icon.classList.remove('text-[#1e3a5f]');
+                }
+                if (badge) badge.classList.add('hidden');
+            }
+
+            // Update Active Category Banner
+            const banner = document.getElementById('activeCategoryBanner');
+            const bannerLabel = document.getElementById('activeCategoryLabel');
+            if (banner && bannerLabel) {
+                if (currentCategory && currentCategory !== 'all') {
+                    bannerLabel.textContent = `ប្រភេទ: ${CATEGORY_NAMES[currentCategory] || currentCategory}`;
+                    banner.classList.remove('hidden');
+                } else {
+                    banner.classList.add('hidden');
+                }
+            }
+        }
+
+        function selectCategoryFilter(category) {
             currentCategory = category;
-            document.querySelectorAll('.category-tab').forEach(b => {
-                b.classList.remove('bg-[#1e3a5f]', 'text-white', 'shadow-sm');
-                b.classList.add('text-slate-600', 'hover:bg-slate-100');
+            document.querySelectorAll('.cat-opt-btn').forEach(btn => {
+                const cat = btn.getAttribute('data-cat');
+                if (cat === category) {
+                    btn.className = 'cat-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border bg-[#1e3a5f] text-white border-[#1e3a5f] cursor-pointer flex items-center justify-between';
+                } else {
+                    btn.className = 'cat-opt-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer flex items-center justify-between';
+                }
             });
-            btn.classList.add('bg-[#1e3a5f]', 'text-white', 'shadow-sm');
-            btn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+            updateFilterButtonState();
             renderTable();
         }
 
-        function setStatusFilter(status, btn) {
+        function selectStatusFilter(status) {
             currentStatus = status;
-            document.querySelectorAll('.status-btn').forEach(b => {
-                b.classList.remove('bg-white', 'text-slate-800', 'shadow-xs');
-                b.classList.add('text-slate-600');
+            // Update popover buttons
+            document.querySelectorAll('.pop-status-btn').forEach(btn => {
+                const s = btn.getAttribute('data-status');
+                if (s === status) {
+                    btn.className = 'pop-status-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border bg-[#1e3a5f] text-white border-[#1e3a5f] cursor-pointer';
+                } else {
+                    btn.className = 'pop-status-btn px-2.5 py-1.5 text-xs rounded-lg text-left font-medium transition border border-slate-200 hover:bg-slate-50 text-slate-700 cursor-pointer';
+                }
             });
-            btn.classList.add('bg-white', 'text-slate-800', 'shadow-xs');
-            btn.classList.remove('text-slate-600');
+
+            // Update quick status bar buttons
+            document.querySelectorAll('.status-bar-btn').forEach(btn => {
+                const s = btn.getAttribute('data-status-bar');
+                if (s === status) {
+                    btn.classList.add('bg-[#1e3a5f]', 'text-white', 'font-semibold');
+                    btn.classList.remove('bg-slate-100', 'text-slate-700', 'font-medium');
+                } else {
+                    btn.classList.remove('bg-[#1e3a5f]', 'text-white', 'font-semibold');
+                    btn.classList.add('bg-slate-100', 'text-slate-700', 'font-medium');
+                }
+            });
+
+            updateFilterButtonState();
             renderTable();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            searchQuery = '';
+            selectCategoryFilter('all');
+            selectStatusFilter('all');
         }
 
         function handleSearch() {
@@ -237,15 +394,26 @@
         function renderTable() {
             const all = BMS_GM.getApprovals();
             
-            // Update Tab Counts
-            document.getElementById('totalApprovalsCount').textContent = all.length;
-            document.getElementById('tabCountAll').textContent = all.length;
-            document.getElementById('tabCountDisb').textContent = all.filter(a => a.type === 'disbursement').length;
-            document.getElementById('tabCountPO').textContent = all.filter(a => a.type === 'purchase_order').length;
-            document.getElementById('tabCountDisc').textContent = all.filter(a => a.type === 'high_discount').length;
-            document.getElementById('tabCountCredit').textContent = all.filter(a => a.type === 'credit_override').length;
-            document.getElementById('tabCountWriteoff').textContent = all.filter(a => a.type === 'stock_writeoff').length;
-            document.getElementById('tabCountVoid').textContent = all.filter(a => a.type === 'void_invoice').length;
+            // Update Popover & Status Bar Counts
+            const totalCountEl = document.getElementById('totalApprovalsCount');
+            if (totalCountEl) totalCountEl.textContent = all.length;
+
+            const pendingCount = all.filter(a => a.status === 'pending').length;
+            const statusPendingBadge = document.getElementById('statusBarCountPending');
+            if (statusPendingBadge) statusPendingBadge.textContent = pendingCount;
+
+            const setElText = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = val;
+            };
+
+            setElText('popCountAll', all.length);
+            setElText('popCountDisb', all.filter(a => a.type === 'disbursement').length);
+            setElText('popCountPO', all.filter(a => a.type === 'purchase_order').length);
+            setElText('popCountDisc', all.filter(a => a.type === 'high_discount').length);
+            setElText('popCountCredit', all.filter(a => a.type === 'credit_override').length);
+            setElText('popCountWriteoff', all.filter(a => a.type === 'stock_writeoff').length);
+            setElText('popCountVoid', all.filter(a => a.type === 'void_invoice').length);
 
             let filtered = BMS_GM.getApprovals(currentCategory, currentStatus);
 
@@ -399,7 +567,12 @@
             if (dropdown) dropdown.classList.add('hidden');
         }
 
-        document.addEventListener('click', closeDropdown);
+        document.addEventListener('click', (e) => {
+            closeDropdown();
+            if (!e.target.closest('.filter-popover-container')) {
+                closeFilterMenu();
+            }
+        });
 
         function exportApprovalsCSV() {
             const approvals = BMS_GM.getApprovals();

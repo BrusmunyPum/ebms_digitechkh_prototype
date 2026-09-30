@@ -40,15 +40,6 @@
 
         <!-- Main Content Area -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-5">
-            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
-            <div class="w-full flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
-                <div class="flex flex-wrap items-center gap-2">
-                    <button type="button" onclick="handleSaveAllSettings()" class="h-9 px-4 bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs rounded-xl flex items-center gap-2 font-medium transition shadow-sm cursor-pointer">
-                        <i class="fas fa-save"></i>
-                        <span>រក្សាទុកការកំណត់</span>
-                    </button>
-                </div>
-            </div>
 
             <div class="w-full space-y-6">
 
@@ -57,13 +48,15 @@
 
                     <!-- Section 1: NBC Official Exchange Rate -->
                     <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
-                        <div class="flex items-center gap-2 pb-3 border-b border-slate-100">
-                            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm font-semibold">
-                                <i class="fas fa-money-bill-transfer"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-bold text-slate-800">អត្រាប្តូរប្រាក់ផ្លូវការធនាគារជាតិ</h3>
-                                <p class="text-xs text-slate-400">កំណត់អត្រាប្តូរប្រាក់ពីធនាគារជាតិនៃកម្ពុជាសម្រាប់បម្លែងវិក្កយបត្រ និង KHQR</p>
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm font-semibold">
+                                    <i class="fas fa-money-bill-transfer"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-slate-800">អត្រាប្តូរប្រាក់ផ្លូវការធនាគារជាតិ</h3>
+                                    <p class="text-xs text-slate-400">កំណត់អត្រាប្តូរប្រាក់ពីធនាគារជាតិនៃកម្ពុជាសម្រាប់បម្លែងវិក្កយបត្រ និង KHQR</p>
+                                </div>
                             </div>
                         </div>
 
@@ -96,13 +89,15 @@
 
                     <!-- Section 2: Tax Rates Configuration -->
                     <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
-                        <div class="flex items-center gap-2 pb-3 border-b border-slate-100">
-                            <div class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm font-semibold">
-                                <i class="fas fa-percent"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-bold text-slate-800">អត្រាពន្ធសារពើពន្ធកម្ពុជា</h3>
-                                <p class="text-xs text-slate-400">អត្រាពន្ធតាមច្បាប់សារពើពន្ធនៃព្រះរាជាណាចក្រកម្ពុជា</p>
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm font-semibold">
+                                    <i class="fas fa-percent"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-slate-800">អត្រាពន្ធសារពើពន្ធកម្ពុជា</h3>
+                                    <p class="text-xs text-slate-400">អត្រាពន្ធតាមច្បាប់សារពើពន្ធនៃព្រះរាជាណាចក្រកម្ពុជា</p>
+                                </div>
                             </div>
                         </div>
 
@@ -156,6 +151,10 @@
                                 <p class="text-xs text-slate-400">កំណត់ដែនសមត្ថកិច្ចហិរញ្ញវត្ថុដែលតម្រូវឱ្យមានការអនុម័តពីអភិបាលទូទៅ</p>
                             </div>
                         </div>
+                        <button type="button" onclick="handleSaveAllSettings()" class="h-9 px-4 bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs rounded-xl flex items-center gap-2 font-medium transition shadow-sm cursor-pointer">
+                            <i class="fas fa-check"></i>
+                            <span>រក្សាទុកការកំណត់ទាំងអស់</span>
+                        </button>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
@@ -210,6 +209,17 @@
                             </div>
                             <span class="text-[10px] text-slate-400 block">≤ $200.00: អ្នកគ្រប់គ្រងឃ្លាំង</span>
                         </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                            <i class="fas fa-info-circle text-slate-400"></i>
+                            <span>រាល់ការផ្លាស់ប្តូរអត្រាពន្ធ និងពិដានអនុម័ត នឹងមានប្រសិទ្ធភាពភ្លាមៗលើប្រព័ន្ធទាំងមូល</span>
+                        </span>
+                        <button type="button" onclick="handleSaveAllSettings()" class="h-9 px-4 bg-[#1e3a5f] hover:bg-[#142842] text-white text-xs rounded-xl flex items-center gap-2 font-medium transition shadow-sm cursor-pointer">
+                            <i class="fas fa-check"></i>
+                            <span>រក្សាទុកការកំណត់</span>
+                        </button>
                     </div>
                 </div>
 
