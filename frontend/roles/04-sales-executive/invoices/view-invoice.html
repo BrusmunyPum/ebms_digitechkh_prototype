@@ -48,11 +48,14 @@
     </div>
 
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
-        const invoiceId = new URLSearchParams(location.search).get('id') || 'INV-2026-0109';
-        const invoice = getInvoice(invoiceId);
+        const invoiceId = new URLSearchParams(location.search).get('id') || (listInvoices()[0] || {}).id;
+        let invoice = getInvoice(invoiceId);
 
         function renderNotFound() {
             setPortalTitle('រកមិនឃើញឯកសារ');
@@ -76,18 +79,22 @@
             const badge = document.getElementById('docStatus');
             badge.textContent = st.label;
             badge.className = 'sm-badge px-2.5 py-0.5 rounded-full border font-semibold flex-shrink-0 ' + st.tone;
+            badge.dataset.state = st.key;
             setPortalSubtitle(`${cust.name} · ផុតកំណត់ទូទាត់ ${fmtKhDate(invoice.dueDate)}`);
 
             document.getElementById('headerActions').innerHTML = `
                 <button onclick="window.print()" class="sm-badge px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition inline-flex items-center gap-2">
                     <i class="fas fa-print"></i> <span class="hidden sm:inline">បោះពុម្ព A4</span>
                 </button>
-                ${st.due > 0 ? `
+                ${st.key === 'CANCELLED' ? `
+                <span class="sm-badge px-4 py-2.5 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 font-semibold inline-flex items-center gap-2">
+                    <i class="fas fa-ban"></i> បានលុបចោល
+                </span>` : st.due > 0 ? `
                 <button onclick="remindPayment()" class="sm-badge px-5 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition inline-flex items-center gap-2">
                     <i class="fas fa-bell"></i> <span>រំលឹកទារប្រាក់</span>
                 </button>` : `
                 <span class="sm-badge px-4 py-2.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold inline-flex items-center gap-2">
-                    <i class="fas fa-circle-check"></i> បានទូទាត់ពេញ
+                    <i class="fas fa-circle-check"></i> បានទូទាត់
                 </span>`}`;
         }
 
@@ -103,7 +110,7 @@
             const srcQuote = invoice.quoteId ? getQuote(invoice.quoteId) : null;
 
             document.getElementById('pageBody').innerHTML = `
-                ${st.key === 'overdue' ? `
+                ${st.key === 'OVERDUE' ? `
                 <div class="bg-rose-50/80 border border-rose-200 rounded-2xl p-4 flex items-start gap-3 no-print">
                     <div class="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center text-lg flex-shrink-0">
                         <i class="fas fa-triangle-exclamation"></i>
@@ -111,7 +118,7 @@
                     <div>
                         <h4 class="sm-card-title text-rose-900">វិក្កយបត្រហួសកាលកំណត់ទូទាត់</h4>
                         <p class="sm-card-sub text-rose-800 mt-0.5">
-                            ហួសកំណត់ ${st.overdueDays} ថ្ងៃ · នៅជំពាក់ ${fmtUSD(st.due)}។ សូមទាក់ទងអតិថិជនដើម្បីតាមដានការទូទាត់។
+                            ហួសកាលកំណត់ ${st.overdueDays} ថ្ងៃ · នៅជំពាក់ ${fmtUSD(st.due)}។ សូមទាក់ទងអតិថិជនដើម្បីតាមដានការទូទាត់។
                         </p>
                     </div>
                 </div>` : ''}
@@ -134,7 +141,7 @@
                             <h3 class="text-lg font-semibold text-slate-800">វិក្កយបត្រពាណិជ្ជកម្ម</h3>
                             <p class="sm-value text-slate-700">${invoice.id}</p>
                             <p class="sm-td-sub text-slate-500">ចេញថ្ងៃ ${fmtKhDate(invoice.date)}</p>
-                            <p class="sm-td-sub ${st.key === 'overdue' ? 'text-rose-600 font-semibold' : 'text-slate-500'}">ផុតកំណត់ទូទាត់ ${fmtKhDate(invoice.dueDate)}</p>
+                            <p class="sm-td-sub ${st.key === 'OVERDUE' ? 'text-rose-600 font-semibold' : 'text-slate-500'}">ផុតកំណត់ទូទាត់ ${fmtKhDate(invoice.dueDate)}</p>
                             ${srcQuote ? `<p class="sm-td-sub text-slate-400">យោងសម្រង់តម្លៃ ${srcQuote.id}</p>` : ''}
                         </div>
                     </div>
@@ -215,11 +222,11 @@
                                     <span class="sm-value text-slate-700">${fmtUSD(t.subtotal)}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="sm-label text-slate-600">ចូលរួមមុន</span>
+                                    <span class="sm-label text-slate-600">ប្រាក់កក់</span>
                                     <span class="sm-value text-slate-700">${fmtUSD(t.downPayment)}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="sm-label ${t.discountAmount ? 'text-amber-700 font-semibold' : 'text-slate-600'}">ការបញ្ចុះតម្លៃពិសេស ${fmtPercent(t.discountPercent)}</span>
+                                    <span class="sm-label ${t.discountAmount ? 'text-amber-700 font-semibold' : 'text-slate-600'}">បញ្ចុះតម្លៃពិសេស ${fmtPercent(t.discountPercent)}</span>
                                     <span class="sm-value ${t.discountAmount ? 'text-amber-700' : 'text-slate-700'}">-${fmtUSD(t.discountAmount)}</span>
                                 </div>
                                 <div class="flex justify-between">
@@ -227,7 +234,7 @@
                                     <span class="sm-value text-slate-700">${fmtUSD(t.vatAmount)}</span>
                                 </div>
                                 <div class="flex justify-between pt-2 border-t border-slate-200">
-                                    <span class="sm-card-title text-slate-700">ទឹកប្រាក់សរុបចុងក្រោយ</span>
+                                    <span class="sm-card-title text-slate-700">សរុបត្រូវបង់</span>
                                     <span class="sm-kpi-value text-blue-700">${fmtUSD(t.grandTotal)}</span>
                                 </div>
                                 <div class="flex justify-between pt-2 border-t border-slate-100">
@@ -297,15 +304,23 @@
             });
         }
 
+        function refresh() {
+            invoice = getInvoice(invoiceId);
+            if (!invoice) return renderNotFound();
+            const st = invoiceState(invoice);
+            renderHeader(st);
+            renderBody(st);
+            renderKhqr(st);
+        }
+
+        window.onStoreChanged = refresh;
+
         document.addEventListener('DOMContentLoaded', () => {
             if (!invoice) {
                 renderNotFound();
                 return;
             }
-            const st = invoiceState(invoice);
-            renderHeader(st);
-            renderBody(st);
-            renderKhqr(st);
+            refresh();
         });
     </script>
 </body>

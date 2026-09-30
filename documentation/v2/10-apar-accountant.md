@@ -1,7 +1,7 @@
 # AP/AR Accountant — v2 UI/UX Design Plan
 
 > **Role:** AP/AR Accountant (Cashflow Operations)
-> **Portal ID:** `apPortal` *(NEW — does not exist in v1, must be created)*
+> **Portal ID:** `aparPortal` *(NEW — does not exist in v1, must be created)*
 > **Archetype:** D — Financial Ledger & Reconciliation
 > **File Path:** `frontend/roles/10-apar-accountant/`
 > **Last Updated:** 2026-09-25
@@ -841,11 +841,11 @@ The aging color system is the defining visual language of this role. Every aging
 
 ### NEW Portal Configuration (`portal.js`)
 
-`apPortal` does not exist in v1. Create a new portal configuration entry:
+`aparPortal` does not exist in v1. Create a new portal configuration entry:
 
 ```javascript
-apPortal: {
-  id: 'apPortal',
+aparPortal: {
+  id: 'aparPortal',
   roleLabel: 'AP/AR Accountant',
   basePath: 'frontend/roles/10-apar-accountant/',
   accentColor: '#0d9488',
@@ -967,7 +967,7 @@ WHT rates are configurable per vendor/payment-type in system settings — the fo
 - [ ] `frontend/roles/10-apar-accountant/ap/view-voucher.html`
 - [ ] `frontend/roles/10-apar-accountant/bank-recon/bank-recon.html`
 - [ ] `frontend/roles/10-apar-accountant/reports/reports.html`
-- [ ] `portal.js` → add `apPortal` config block
+- [ ] `portal.js` → add `aparPortal` config block
 - [ ] `components/aging-colors.css` (new shared component)
 - [ ] `components/voucher-print.css` (new shared component)
 - [ ] `components/amount-words.js` (new shared component)

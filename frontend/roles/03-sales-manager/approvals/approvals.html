@@ -35,7 +35,7 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <div id="headerHost" data-title="បញ្ជីសំណើរង់ចាំការអនុម័ត"
-             data-subtitle="ពិនិត្យ យល់ព្រម ឬបដិសេធការបញ្ចុះតម្លៃពិសេស មោឃភាពវិក្កយបត្រ និងការពន្យារឥណទាន"></div>
+             data-subtitle="ពិនិត្យ យល់ព្រម ឬបដិសេធសម្រង់តម្លៃ ការលុបចោលវិក្កយបត្រ និងការបង្កើនឥណទាន"></div>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
 
@@ -44,13 +44,13 @@
                 <!-- Tab Controls -->
                 <div class="bg-white rounded-2xl p-2 border border-slate-200/80 shadow-sm flex flex-wrap items-center gap-2">
                     <button id="tabBtn-quote" onclick="switchApprovalTab('quote')" class="sm-badge px-5 py-2.5 rounded-xl bg-[#1e3a5f] text-white font-semibold shadow-sm transition">
-                        សម្រង់តម្លៃបញ្ចុះពិសេស (<span id="tabCount-quote">0</span>)
+                        សម្រង់តម្លៃ (<span id="tabCount-quote">0</span>)
                     </button>
                     <button id="tabBtn-void" onclick="switchApprovalTab('void')" class="sm-badge px-5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-medium transition">
-                        សំណើមោឃភាពវិក្កយបត្រ (<span id="tabCount-void">0</span>)
+                        សំណើលុបចោលវិក្កយបត្រ (<span id="tabCount-void">0</span>)
                     </button>
                     <button id="tabBtn-credit" onclick="switchApprovalTab('credit')" class="sm-badge px-5 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 font-medium transition">
-                        សំណើពន្យារឥណទាន (<span id="tabCount-credit">0</span>)
+                        សំណើបង្កើនឥណទាន (<span id="tabCount-credit">0</span>)
                     </button>
                     <span class="ml-auto w-px h-6 bg-slate-200 hidden sm:block"></span>
                     <div class="flex flex-wrap items-center gap-2 no-print">
@@ -79,6 +79,9 @@
     </div>
 
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
@@ -94,17 +97,20 @@
                         requester: getRep(q.repId).name,
                         amount: fmtUSD(totals.grandTotal),
                         date: fmtKhDateTime(q.date),
-                        discount: q.discountPercent
+                        discount: q.discountPercent,
+                        needsGm: q.requiredLevels.includes('GM')
                     };
                 }),
                 void: pendingVoids().map(v => {
                     const cust = getCustomer(v.customerId);
+                    const inv = listInvoices().find(i => i.id === v.invoiceId);
                     return {
                         id: v.id,
+                        ref: v.invoiceId,
                         customer: cust.name,
                         tier: tierLabel(cust.tier),
                         requester: getRep(v.repId).name,
-                        amount: fmtUSD(v.amount),
+                        amount: inv ? fmtUSD(docTotals(inv).grandTotal) : '—',
                         date: fmtKhDateTime(v.date),
                         stock: v.stockReleased ? 'បានបញ្ចេញពីឃ្លាំងរួច' : 'មិនទាន់បញ្ចេញពីឃ្លាំង',
                         stockTone: v.stockReleased ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200',
@@ -113,8 +119,8 @@
                 }),
                 credit: pendingCredits().map(c => {
                     const cust = getCustomer(c.customerId);
-                    const debtInv = INVOICES.filter(i => i.customerId === c.customerId && i.status === 'overdue');
-                    const debt = debtInv.reduce((s, i) => s + (i.total - i.paid), 0);
+                    const debtInv = listInvoices().filter(i => i.customerId === c.customerId && invoiceState(i).key === 'OVERDUE');
+                    const debt = debtInv.reduce((s, i) => s + invoiceState(i).due, 0);
                     const oldestDays = debtInv.length ? Math.max(...debtInv.map(i => daysBetween(i.dueDate))) : 0;
                     return {
                         id: c.id,
@@ -136,32 +142,23 @@
 
         const HEADS = {
             quote: ['លេខសម្រង់តម្លៃ', 'អតិថិជន', 'ស្នើដោយ', 'ទឹកប្រាក់សរុប', 'កាលបរិច្ឆេទ', 'ការបញ្ចុះតម្លៃ'],
-            void: ['លេខវិក្កយបត្រ', 'អតិថិជន', 'ស្នើដោយ', 'ទឹកប្រាក់', 'ស្ថានភាពស្តុក', 'មូលហេតុ'],
+            void: ['លេខសំណើ', 'អតិថិជន', 'ស្នើដោយ', 'ទឹកប្រាក់', 'ស្ថានភាពស្តុក', 'មូលហេតុ'],
             credit: ['អតិថិជន', 'ស្នើដោយ', 'ពិដានបច្ចុប្បន្ន', 'ពិដានស្នើសុំថ្មី', 'បំណុលបច្ចុប្បន្ន', 'មូលហេតុ']
         };
 
         function rowActionMenu(item, tab) {
             const menuId = 'rowMenu-' + item.id;
-            const beyondAuthority = tab === 'quote' && item.discount > 15;
 
             const viewItem = tab === 'quote' ? `
                 <a href="view-approval.html?type=quote&id=${item.id}" class="sm-row-menu-item flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition">
                     <span class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0"><i class="fas fa-eye text-[11px]"></i></span>
-                    ពិនិត្យលម្អិត
+                    មើលលម្អិត
                 </a>` : '';
 
-            const decideItem = beyondAuthority ? `
-                <button onclick="decide('${tab}','${item.id}','forward')" class="sm-row-menu-item w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-purple-700 hover:bg-purple-50 transition text-left">
-                    <span class="w-7 h-7 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center flex-shrink-0"><i class="fas fa-paper-plane text-[11px]"></i></span>
-                    បញ្ជូនទៅអភិបាលទូទៅ
-                </button>` : `
-                <button onclick="decide('${tab}','${item.id}','approve')" class="sm-row-menu-item w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-emerald-700 hover:bg-emerald-50 transition text-left">
-                    <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0"><i class="fas fa-check text-[11px]"></i></span>
-                    យល់ព្រមអនុម័ត
-                </button>`;
+            const approveLabel = tab === 'quote' && item.needsGm ? 'អនុម័ត ហើយបញ្ជូនទៅអភិបាលទូទៅ' : 'យល់ព្រមអនុម័ត';
 
             return `
-                <button onclick="toggleRowActionMenu(event, '${menuId}')" title="សកម្មភាព"
+                <button onclick="toggleRowActionMenu(event, '${menuId}')"
                     class="w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-slate-700 border border-slate-200/70 inline-flex items-center justify-center transition">
                     <i class="fas fa-ellipsis-vertical text-sm"></i>
                 </button>
@@ -171,18 +168,22 @@
                         <p class="sm-value text-slate-700">${item.id}</p>
                     </div>
                     ${viewItem}
-                    ${decideItem}
+                    <button onclick="decide('${tab}','${item.id}','approve')" class="sm-row-menu-item w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-emerald-700 hover:bg-emerald-50 transition text-left">
+                        <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0"><i class="fas fa-check text-[11px]"></i></span>
+                        ${approveLabel}
+                    </button>
                     <button onclick="decide('${tab}','${item.id}','reject')" class="sm-row-menu-item w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-rose-700 hover:bg-rose-50 transition text-left">
                         <span class="w-7 h-7 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center flex-shrink-0"><i class="fas fa-xmark text-[11px]"></i></span>
-                        បដិសេធសំណើ
+                        បដិសេធ
                     </button>
                 </div>`;
         }
 
-        function discountBadge(pct) {
-            const beyond = pct > 15;
-            const cls = beyond ? 'bg-purple-50 text-purple-800 border-purple-200' : 'bg-blue-50 text-blue-800 border-blue-200';
-            return `<span class="sm-badge px-2 py-0.5 rounded-full border ${cls}">បញ្ចុះតម្លៃ ${fmtPercent(pct)}${beyond ? ' · លើសដែនសិទ្ធិ' : ''}</span>`;
+        function discountBadge(item) {
+            const over = item.discount > BMS_STORE.settings().discountSelfLimit;
+            const cls = over ? 'bg-amber-50 text-amber-800 border-amber-200' : 'bg-blue-50 text-blue-800 border-blue-200';
+            return `<span class="sm-badge px-2 py-0.5 rounded-full border ${cls}">បញ្ចុះតម្លៃ ${fmtPercent(item.discount)}</span>
+                ${item.needsGm ? '<p class="sm-td-sub text-purple-700 mt-1">ត្រូវការអភិបាលទូទៅបន្ត</p>' : ''}`;
         }
 
         function renderQueue() {
@@ -216,10 +217,10 @@
                         <td class="sm-td py-3.5 px-4">${item.requester}</td>
                         <td class="sm-td-strong py-3.5 px-4">${item.amount}</td>
                         <td class="sm-td py-3.5 px-4 text-slate-500">${item.date}</td>
-                        <td class="py-3.5 px-4">${discountBadge(item.discount)}</td>`;
+                        <td class="py-3.5 px-4">${discountBadge(item)}</td>`;
                 } else if (activeTab === 'void') {
                     cells = `
-                        <td class="sm-td-strong py-3.5 px-4">${item.id}</td>
+                        <td class="sm-td-strong py-3.5 px-4">${item.id}<p class="sm-td-sub text-slate-400">${item.ref}</p></td>
                         <td class="py-3.5 px-4">
                             <p class="sm-td text-slate-700">${item.customer}</p>
                             <p class="sm-td-sub text-slate-400">${item.tier}</p>
@@ -252,8 +253,6 @@
                 document.getElementById('tabCount-' + tab).textContent = QUEUE[tab].length;
             });
             const total = totalPending();
-            const badge = document.getElementById('navQueueBadge');
-            if (badge) badge.textContent = total;
             document.getElementById('headerQueuePill').textContent = total + ' ករណីរង់ចាំការសម្រេច';
         }
 
@@ -270,53 +269,52 @@
 
         async function decide(tab, id, action) {
             closeAllFloatingDropdowns();
+            const item = QUEUE[tab].find(x => x.id === id);
 
-            const copy = {
-                approve: {
-                    title: 'បញ្ជាក់ការអនុម័ត',
-                    message: `តើលោកអ្នកពិតជាយល់ព្រមអនុម័តសំណើ ${id} មែនទេ? សកម្មភាពនេះនឹងត្រូវកត់ត្រាទុកក្នុងកំណត់ហេតុសវនកម្មដែលមិនអាចកែប្រែបាន។`,
-                    confirmText: 'យល់ព្រមអនុម័ត',
-                    toast: `បានអនុម័តសំណើ ${id} ដោយជោគជ័យ`,
-                    type: 'success'
-                },
-                reject: {
+            let reason = '';
+            if (action === 'reject') {
+                reason = await showReasonPrompt({
                     title: 'បញ្ជាក់ការបដិសេធ',
-                    message: `តើលោកអ្នកពិតជាបដិសេធសំណើ ${id} មែនទេ? បុគ្គលិកលក់នឹងទទួលបានដំណឹងដើម្បីកែសម្រួលឡើងវិញ។`,
-                    confirmText: 'បដិសេធសំណើ',
-                    danger: true,
-                    toast: `បានបដិសេធសំណើ ${id} រួចរាល់`,
-                    type: 'warning'
-                },
-                forward: {
-                    title: 'បញ្ជាក់ការបញ្ជូនបន្ត',
-                    message: `ការបញ្ចុះតម្លៃនេះលើសពីដែនសិទ្ធិ 15.0%។ តើលោកអ្នកបញ្ជូនសំណើ ${id} ទៅកាន់អភិបាលទូទៅដើម្បីអនុម័តចុងក្រោយមែនទេ?`,
-                    confirmText: 'បញ្ជូនបន្ត',
-                    toast: `បានបញ្ជូនសំណើ ${id} ទៅកាន់អភិបាលទូទៅ`,
-                    type: 'info'
-                }
-            }[action];
+                    message: `សូមបញ្ចូលមូលហេតុនៃការបដិសេធសំណើ ${id}។ បុគ្គលិកលក់នឹងទទួលបានដំណឹងនេះ។`,
+                    placeholder: 'មូលហេតុនៃការបដិសេធ...',
+                    confirmText: 'បដិសេធ',
+                    danger: true
+                });
+                if (!reason) return;
+            } else {
+                const forward = tab === 'quote' && item && item.needsGm;
+                const ok = await showCustomConfirm({
+                    title: 'បញ្ជាក់ការអនុម័ត',
+                    message: forward
+                        ? `សម្រង់តម្លៃ ${id} មានទឹកប្រាក់លើសពីដែនសិទ្ធិរបស់លោកអ្នក។ បន្ទាប់ពីអនុម័ត វានឹងត្រូវបញ្ជូនទៅអភិបាលទូទៅដើម្បីអនុម័តបន្ត។ សកម្មភាពនេះនឹងត្រូវកត់ត្រាក្នុងកំណត់ហេតុសវនកម្ម។ តើបន្តមែនទេ?`
+                        : `តើលោកអ្នកពិតជាយល់ព្រមអនុម័តសំណើ ${id} មែនទេ? សកម្មភាពនេះនឹងត្រូវកត់ត្រាក្នុងកំណត់ហេតុសវនកម្មដែលមិនអាចកែប្រែបាន។`,
+                    confirmText: forward ? 'អនុម័ត និងបញ្ជូនបន្ត' : 'យល់ព្រមអនុម័ត',
+                    cancelText: 'បោះបង់'
+                });
+                if (!ok) return;
+            }
 
-            const ok = await showCustomConfirm({
-                title: copy.title,
-                message: copy.message,
-                confirmText: copy.confirmText,
-                cancelText: 'បោះបង់',
-                danger: copy.danger === true
-            });
-            if (!ok) return;
+            let res;
+            if (tab === 'quote') res = action === 'approve' ? smActions.approveQuote(id) : smActions.rejectQuote(id, reason);
+            else if (tab === 'void') res = smActions.decideVoid(id, action, reason);
+            else res = smActions.decideCredit(id, action, reason);
 
-            saveDecision(id, action);
-            QUEUE = buildQueue();
-            renderQueue();
-            updateCounts();
-            showToast(copy.toast, copy.type);
+            if (!res.ok) return showToast(res.error, 'error');
+            if (action === 'reject') return showToast(`បានបដិសេធសំណើ ${id} រួចរាល់`, 'warning');
+            showToast(tab === 'quote' && res.finalApproved === false
+                ? `បានអនុម័តសំណើ ${id} ហើយបានបញ្ជូនទៅអភិបាលទូទៅ`
+                : `បានអនុម័តសំណើ ${id} ដោយជោគជ័យ`, 'success');
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        function refresh() {
             QUEUE = buildQueue();
             renderQueue();
             updateCounts();
-        });
+        }
+
+        window.onStoreChanged = refresh;
+
+        document.addEventListener('DOMContentLoaded', refresh);
     </script>
 </body>
 </html>

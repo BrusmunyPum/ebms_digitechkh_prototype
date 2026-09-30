@@ -37,10 +37,10 @@
             <div class="w-full flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
                 <div class="flex flex-wrap items-center gap-2">
                     <button onclick="saveQuote('draft')" class="sm-badge px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition">
-                        រក្សាទុកជាសេចក្តីព្រាង
+                        រក្សាទុក
                     </button>
-                    <button onclick="saveQuote('send')" class="sm-badge px-5 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition inline-flex items-center gap-2">
-                        <i class="fas fa-paper-plane"></i> <span>រក្សាទុក និងផ្ញើ</span>
+                    <button onclick="saveQuote('submit')" class="sm-badge px-5 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition inline-flex items-center gap-2">
+                        <i class="fas fa-paper-plane"></i> <span>ដាក់ស្នើ</span>
                     </button>
                 </div>
             </div>
@@ -111,6 +111,9 @@
     </div>
 
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../doc-editor.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
@@ -163,39 +166,30 @@
             const doc = collectDoc();
             const cust = getCustomer(doc.customerId);
             const totals = editorTotals();
-            const id = nextDocNumber('QT');
-            const needsApproval = needsManagerApproval();
+            const submit = action === 'submit';
+            const levels = requiredApprovalLevels(totals.grandTotal).map(l => APPROVAL_LEVEL_LABEL[l]).join(' រួចបន្តទៅ ');
 
             const ok = await showCustomConfirm({
-                title: action === 'draft' ? 'រក្សាទុកជាសេចក្តីព្រាង' : 'បញ្ជាក់ការផ្ញើសម្រង់តម្លៃ',
-                message: needsApproval
-                    ? `ការបញ្ចុះតម្លៃ ${fmtPercent(totals.discountPercent)} លើសពីដែនកម្រិត ${fmtPercent(DISCOUNT_SELF_LIMIT)}។ សម្រង់តម្លៃ ${id} ទឹកប្រាក់ ${fmtUSD(totals.grandTotal)} នឹងផ្ញើទៅ ${CURRENT_REP.manager} ដើម្បីអនុម័តជាមុនសិន។ តើបន្តមែនទេ?`
-                    : `តើលោកអ្នកពិតជារក្សាទុកសម្រង់តម្លៃ ${id} ជូន ${cust.name} ទឹកប្រាក់ ${fmtUSD(totals.grandTotal)} មែនទេ?`,
-                confirmText: action === 'draft' ? 'រក្សាទុក' : 'រក្សាទុក និងផ្ញើ',
+                title: submit ? 'ដាក់ស្នើសម្រង់តម្លៃ' : 'រក្សាទុកសម្រង់តម្លៃ',
+                message: submit
+                    ? `សម្រង់តម្លៃជូន ${cust.name} ទឹកប្រាក់ ${fmtUSD(totals.grandTotal)} នឹងផ្ញើទៅ ${levels} ដើម្បីអនុម័តជាមុនសិន។ តើបន្តមែនទេ?`
+                    : `តើលោកអ្នកពិតជារក្សាទុកសម្រង់តម្លៃជូន ${cust.name} ទឹកប្រាក់ ${fmtUSD(totals.grandTotal)} ជាព្រាង មែនទេ? លោកអ្នកអាចដាក់ស្នើនៅពេលក្រោយ។`,
+                confirmText: submit ? 'ដាក់ស្នើ' : 'រក្សាទុក',
                 cancelText: 'បោះបង់'
             });
             if (!ok) return;
 
-            const status = action === 'draft' ? 'draft' : (needsApproval ? 'pending_approval' : 'approved');
-            saveNewDoc({
-                id,
-                type: 'quote',
-                customerId: doc.customerId,
-                items: doc.items,
-                discountPercent: doc.discountPercent,
-                downPayment: doc.downPayment,
-                status,
-                date: new Date(BMS_TODAY).toISOString(),
-                validUntil: validUntilDate().toISOString(),
+            const res = seActions.createQuotation({
+                ...doc,
+                validUntil: toIsoDate(validUntilDate()),
                 note: document.getElementById('fNote').value.trim()
-            });
+            }, submit);
+            if (!res.ok) return showToast(res.error, 'error');
 
-            const msg = status === 'pending_approval'
-                ? `បានរក្សាទុកសម្រង់តម្លៃ ${id} · បានផ្ញើទៅ ${CURRENT_REP.manager} ដើម្បីអនុម័ត`
-                : status === 'draft'
-                    ? `បានរក្សាទុកសម្រង់តម្លៃ ${id} ជាសេចក្តីព្រាង`
-                    : `បានរក្សាទុក និងផ្ញើសម្រង់តម្លៃ ${id} ជូន ${cust.name}`;
-            showToast(msg, 'success');
+            const id = res.record.id;
+            showToast(submit
+                ? `បានដាក់ស្នើសម្រង់តម្លៃ ${id} ទៅ ${CURRENT_REP.manager} ដើម្បីអនុម័ត`
+                : `បានរក្សាទុកសម្រង់តម្លៃ ${id} ជាព្រាង`, 'success');
 
             setTimeout(() => { window.location.href = 'quotes.html'; }, 1400);
         }

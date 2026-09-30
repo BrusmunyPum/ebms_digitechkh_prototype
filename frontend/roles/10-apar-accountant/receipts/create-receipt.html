@@ -43,12 +43,9 @@
 
         <!-- Main Form Container -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-6">
-            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
-            <div class="w-full max-w-4xl mx-auto flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
+            <div class="w-full flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
                 <div class="flex flex-wrap items-center gap-2">
-                    <button type="button" onclick="window.location.href='receipts.html'" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs transition">
-                        បោះបង់
-                    </button>
+                    <a href="receipts.html" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs transition">បោះបង់</a>
                     <button type="button" onclick="handleSaveReceipt()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs shadow-sm transition flex items-center gap-2">
                         <i class="fas fa-check"></i>
                         <span>ចេញបង្កាន់ដៃទទួលប្រាក់</span>
@@ -56,7 +53,8 @@
                 </div>
             </div>
 
-            <div class="w-full max-w-4xl mx-auto space-y-5">
+            <div class="w-full space-y-5">
+                <div id="claimNotice"></div>
 
                 <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
                     <h3 class="text-sm font-semibold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
@@ -64,51 +62,35 @@
                         <span>ព័ត៌មានលម្អិតការទទួលប្រាក់</span>
                     </h3>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1.5">លេខបង្កាន់ដៃ</label>
-                            <input type="text" id="recId" value="REC-2026-0146" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-primary outline-none">
+                            <input type="text" id="recId" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2.5 font-bold text-primary outline-none">
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1.5">កាលបរិច្ឆេទទទួលប្រាក់ <span class="text-rose-500">*</span></label>
-                            <input type="date" id="recDate" value="2026-09-26" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-primary font-medium">
+                            <input type="date" id="recDate" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-primary font-medium">
                         </div>
-                        <div class="sm:col-span-2">
-                            <label class="block font-semibold text-slate-700 mb-1.5">អតិថិជន <span class="text-rose-500">*</span></label>
-                            <select id="customerSelect" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-primary font-medium cursor-pointer">
-                                <option value="ហេង វិច្ឆិកា (ក្រុមហ៊ុន អេប៊ីស៊ី)">ហេង វិច្ឆិកា (ក្រុមហ៊ុន អេប៊ីស៊ី)</option>
-                                <option value="ក្រុមហ៊ុន ភ្នំពេញ ត្រេឌីង ឯ.ក">ក្រុមហ៊ុន ភ្នំពេញ ត្រេឌីង ឯ.ក</option>
-                                <option value="សាលាអន្តរជាតិ បាយ័ន">សាលាអន្តរជាតិ បាយ័ន</option>
-                                <option value="ក្រុមហ៊ុន ដំរី មេឌា ឯ.ក">ក្រុមហ៊ុន ដំរី មេឌា ឯ.ក</option>
-                                <option value="ហាងកុំព្យូទ័រ រស្មី ទំនើប">ហាងកុំព្យូទ័រ រស្មី ទំនើប</option>
-                            </select>
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1.5">វិធីសាស្ត្រទូទាត់ <span class="text-rose-500">*</span></label>
+                            <div id="methodPickerHost" class="relative"></div>
                         </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">យោងវិក្កយបត្រ <span class="text-rose-500">*</span></label>
+                        <div id="invoicePickerHost" class="relative"></div>
+                        <div id="invoiceInfo" class="mt-3"></div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs pt-1">
                         <div>
-                            <label class="block font-semibold text-slate-700 mb-1.5">យោងលេខវិក្កយបត្រ (Invoice Ref) <span class="text-rose-500">*</span></label>
-                            <input type="text" id="invoiceRef" value="INV-2026-0125" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-primary font-medium">
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1.5">វិធីសាស្ត្រទូទាត់ <span class="text-rose-500">*</span></label>
-                            <select id="paymentMethod" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-primary font-medium cursor-pointer">
-                                <option value="KHQR បាគង">KHQR បាគង (Bakong Scan)</option>
-                                <option value="ធនាគារ អេប៊ីអេ (ABA USD)">ធនាគារ អេប៊ីអេ (ABA USD)</option>
-                                <option value="ធនាគារ កាណាឌីយ៉ា (Canadia USD)">ធនាគារ កាណាឌីយ៉ា (Canadia USD)</option>
-                                <option value="សាច់ប្រាក់សុទ្ធ">សាច់ប្រាក់សុទ្ធ (Cash)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1.5">លេខយោងធនាគារ/ស្លីប</label>
-                            <input type="text" id="bankRef" placeholder="BKG-XXXXXX ឬ ABA-XXXXXX" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-primary font-medium">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-1">
-                        <div>
                             <label class="block font-semibold text-slate-700 mb-1.5">ទឹកប្រាក់ទទួលជាក់ស្តែង ($) <span class="text-rose-500">*</span></label>
-                            <input type="number" step="0.01" id="recAmount" value="3150.00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold text-emerald-700 outline-none focus:border-primary">
+                            <input type="number" step="0.01" min="0" id="recAmount" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold text-emerald-700 outline-none focus:border-primary">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1.5">លេខយោងធនាគារ ឬស្លីប</label>
+                            <input type="text" id="bankRef" placeholder="BKG-XXXXXX ឬ ABA-XXXXXX" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-primary font-medium">
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1.5">សម្គាល់ និងចំណាំ</label>
@@ -116,7 +98,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
@@ -126,40 +107,97 @@
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            renderPortalSidebar();
-        });
+        const METHODS = ['KHQR', 'BANK', 'BANK_CANADIA', 'CASH'];
+        let selectedInvoice = '';
+        let selectedMethod = 'KHQR';
+        let claimId = '';
+
+        function dropdown(hostId, menuId, current, options, onPick, placeholder) {
+            const active = options.find(o => o.value === current);
+            document.getElementById(hostId).innerHTML = `
+                <button onclick="toggleRowActionMenu(event, '${menuId}')" type="button"
+                    class="w-full flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition text-left">
+                    <span class="min-w-0 text-xs ${active ? 'text-slate-800 font-medium' : 'text-slate-400'}">${active ? active.label : placeholder}</span>
+                    <i class="fas fa-chevron-down text-[10px] text-slate-400 flex-shrink-0"></i>
+                </button>
+                <div id="${menuId}" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 text-left max-h-[300px] overflow-y-auto scrollbar-hide">
+                    ${options.map(o => `
+                        <button type="button" onclick="${onPick}('${o.value}')" class="w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition text-left text-xs">
+                            <span class="min-w-0">${o.label}${o.sub ? `<span class="block text-[11px] text-slate-400">${o.sub}</span>` : ''}</span>
+                            ${o.value === current ? '<i class="fas fa-check text-[11px] text-emerald-600 flex-shrink-0"></i>' : ''}
+                        </button>`).join('')}
+                </div>`;
+        }
+
+        function renderPickers() {
+            dropdown('methodPickerHost', 'methodMenu', selectedMethod,
+                METHODS.map(m => ({ value: m, label: PAYMENT_METHOD_LABEL[m] })), 'pickMethod', 'ជ្រើសរើសវិធីសាស្ត្រ...');
+            dropdown('invoicePickerHost', 'invoiceMenu', selectedInvoice,
+                listOpenInvoices().map(o => ({ value: o.id, label: `${o.id} · ${o.customerName}`, sub: `នៅជំពាក់ ${fmtUSD(o.due)} · កាលកំណត់ ${fmtKhDate(o.dueDate)}` })),
+                'pickInvoice', 'ជ្រើសរើសវិក្កយបត្រដែលនៅជំពាក់...');
+            const o = listOpenInvoices().find(x => x.id === selectedInvoice);
+            document.getElementById('invoiceInfo').innerHTML = o ? `
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-100"><span class="text-slate-400 block">អតិថិជន</span><span class="font-bold text-slate-800">${o.customerName}</span></div>
+                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-100"><span class="text-slate-400 block">សរុបត្រូវបង់</span><span class="font-bold text-slate-800">${fmtUSD(o.total)}</span></div>
+                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-100"><span class="text-slate-400 block">បានទូទាត់</span><span class="font-bold text-emerald-700">${fmtUSD(o.paid)}</span></div>
+                    <div class="p-3 rounded-xl bg-rose-50 border border-rose-100"><span class="text-rose-500 block">ប្រាក់នៅសល់ត្រូវបង់</span><span class="font-bold text-rose-700">${fmtUSD(o.due)}</span></div>
+                </div>` : '';
+        }
+
+        function pickMethod(m) {
+            closeAllFloatingDropdowns();
+            selectedMethod = m;
+            renderPickers();
+        }
+
+        function pickInvoice(id) {
+            closeAllFloatingDropdowns();
+            selectedInvoice = id;
+            const o = listOpenInvoices().find(x => x.id === id);
+            if (o) document.getElementById('recAmount').value = o.due.toFixed(2);
+            renderPickers();
+        }
 
         function handleSaveReceipt() {
+            if (!selectedInvoice) return showToast('សូមជ្រើសរើសវិក្កយបត្រដែលត្រូវទទួលប្រាក់', 'warning');
             const amount = parseFloat(document.getElementById('recAmount').value || 0);
-            if (amount <= 0) {
-                showToast('សូមបញ្ចូលទឹកប្រាក់ទទួលត្រឹមត្រូវ!', 'warning');
-                return;
-            }
+            if (amount <= 0) return showToast('សូមបញ្ចូលទឹកប្រាក់ទទួលត្រឹមត្រូវ', 'warning');
 
-            const store = getAPARStore();
-            const newRec = {
-                id: document.getElementById('recId').value,
-                invoiceId: document.getElementById('invoiceRef').value.trim(),
-                customerName: document.getElementById('customerSelect').value,
+            const res = aparActions.recordReceipt({
+                invoiceId: selectedInvoice, amount, method: selectedMethod, claimId,
                 date: document.getElementById('recDate').value,
-                paymentMethod: document.getElementById('paymentMethod').value,
-                bankRef: document.getElementById('bankRef').value.trim() || 'BKG-' + Math.floor(Math.random() * 90000000 + 10000000),
-                amount: amount,
-                currency: 'USD',
-                status: 'verified',
-                receivedBy: 'អ៊ុំ ម៉ានី (AP/AR)',
-                note: document.getElementById('recNote').value.trim() || 'ទូទាត់ជោគជ័យ'
-            };
+                bankRef: document.getElementById('bankRef').value.trim(),
+                note: document.getElementById('recNote').value.trim()
+            });
+            if (!res.ok) return showToast(res.error, 'error');
 
-            store.receipts.unshift(newRec);
-            saveAPARStore(store);
-
-            showToast('បានចេញបង្កាន់ដៃទទួលប្រាក់ ' + newRec.id + ' ដោយជោគជ័យ!', 'success');
-            setTimeout(() => {
-                window.location.href = 'receipts.html';
-            }, 800);
+            showToast(`បានចេញបង្កាន់ដៃទទួលប្រាក់ ${res.record.id} ដោយជោគជ័យ · ទិន្នានុប្បវត្តិ ${res.journal.id}`, 'success');
+            setTimeout(() => { window.location.href = `view-receipt.html?id=${res.record.id}`; }, 900);
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPortalSidebar();
+            document.getElementById('recId').value = BMS_STORE.nextId('receipts', 'RCP');
+            document.getElementById('recDate').value = toIsoDate(BMS_TODAY);
+
+            claimId = new URLSearchParams(location.search).get('claim') || '';
+            const claim = claimId ? listPaymentClaims('PENDING_VERIFICATION').find(c => c.id === claimId) : null;
+            if (claim) {
+                selectedInvoice = claim.invoiceId;
+                selectedMethod = claim.method;
+                document.getElementById('recAmount').value = claim.amount.toFixed(2);
+                document.getElementById('bankRef').value = claim.bankRef;
+                document.getElementById('claimNotice').innerHTML = `
+                    <div class="bg-sky-50 border border-sky-200 rounded-2xl p-4 flex items-start gap-3 text-xs text-sky-900">
+                        <i class="fas fa-qrcode mt-0.5"></i>
+                        <p>អតិថិជន ${claim.customerName} បានប្រកាសទូទាត់ ${fmtUSD(claim.amount)} តាម KHQR (លេខយោង ${claim.bankRef})។ សូមផ្ទៀងផ្ទាត់ជាមួយសេចក្តីថ្លែងការណ៍ធនាគារ មុនចេញបង្កាន់ដៃ។</p>
+                    </div>`;
+            } else {
+                claimId = '';
+            }
+            renderPickers();
+        });
     </script>
 </body>
 

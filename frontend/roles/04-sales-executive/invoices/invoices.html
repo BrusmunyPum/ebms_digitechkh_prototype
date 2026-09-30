@@ -84,6 +84,9 @@
     </div>
 
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
@@ -92,14 +95,15 @@
 
         const TABS = [
             { id: 'all', label: 'ទាំងអស់' },
-            { id: 'overdue', label: 'ហួសកាលកំណត់' },
-            { id: 'unpaid', label: 'មិនទាន់ទូទាត់' },
-            { id: 'partial', label: 'ទូទាត់មួយផ្នែក' },
-            { id: 'paid', label: 'បានទូទាត់ពេញ' }
+            { id: 'OVERDUE', label: statusLabel('OVERDUE') },
+            { id: 'UNPAID', label: statusLabel('UNPAID') },
+            { id: 'PARTIALLY_PAID', label: statusLabel('PARTIALLY_PAID') },
+            { id: 'PAID', label: statusLabel('PAID') },
+            { id: 'CANCELLED', label: statusLabel('CANCELLED') }
         ];
 
         function scopedInvoices() {
-            return INVOICES.filter(i => !filterCustomer || i.customerId === filterCustomer);
+            return listInvoices().filter(i => !filterCustomer || i.customerId === filterCustomer);
         }
 
         function renderSummary() {
@@ -107,7 +111,7 @@
             const total = list.reduce((s, i) => s + docTotals(i).grandTotal, 0);
             const collected = list.reduce((s, i) => s + i.paid, 0);
             const due = list.reduce((s, i) => s + invoiceState(i).due, 0);
-            const overdue = list.filter(i => invoiceState(i).key === 'overdue');
+            const overdue = list.filter(i => invoiceState(i).key === 'OVERDUE');
             const overdueAmount = overdue.reduce((s, i) => s + invoiceState(i).due, 0);
 
             const card = (label, value, tone, sub) => `
@@ -195,9 +199,9 @@
                 const cust = getCustomer(inv.customerId);
                 const st = invoiceState(inv);
                 const menuId = 'invMenu-' + inv.id;
-                const dueNote = st.key === 'overdue'
+                const dueNote = st.key === 'OVERDUE'
                     ? `<p class="sm-td-sub text-rose-600 font-semibold">ហួស ${st.overdueDays} ថ្ងៃ</p>`
-                    : st.key === 'paid' ? '' : `<p class="sm-td-sub text-slate-400">នៅសល់ ${Math.abs(st.overdueDays)} ថ្ងៃ</p>`;
+                    : ['PAID', 'CANCELLED'].includes(st.key) ? '' : `<p class="sm-td-sub text-slate-400">នៅសល់ ${Math.abs(st.overdueDays)} ថ្ងៃ</p>`;
 
                 return `
                     <tr class="hover:bg-slate-50 transition">
@@ -212,7 +216,7 @@
                             ${dueNote}
                         </td>
                         <td class="py-3.5 px-4">
-                            <span class="sm-badge px-2 py-0.5 rounded-full border ${st.tone}">${st.label}</span>
+                            ${statusBadge(st.key)}
                         </td>
                         <td class="sm-td-strong py-3.5 px-4 text-right">${fmtUSD(st.totals.grandTotal)}</td>
                         <td class="sm-td-strong py-3.5 px-4 text-right ${st.due > 0 ? 'text-rose-600' : 'text-emerald-600'}">${fmtUSD(st.due)}</td>
@@ -228,12 +232,21 @@
                                 </div>
                                 <a href="view-invoice.html?id=${inv.id}" class="sm-row-menu-item flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition">
                                     <span class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0"><i class="fas fa-eye text-[11px]"></i></span>
-                                    ពិនិត្យលម្អិត និងបោះពុម្ព
+                                    មើលលម្អិត និងបោះពុម្ព
                                 </a>
-                                ${st.due > 0 ? `
+                                ${st.due > 0 && st.key !== 'CANCELLED' ? `
                                 <button onclick="remindPayment('${inv.id}')" class="sm-row-menu-item w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-amber-700 hover:bg-amber-50 transition text-left">
                                     <span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0"><i class="fas fa-bell text-[11px]"></i></span>
                                     ផ្ញើការរំលឹកទារប្រាក់
+                                </button>` : ''}
+                                ${inv.status === 'ISSUED' && !inv.payments.length ? `
+                                <a href="edit-invoice.html?id=${inv.id}" class="sm-row-menu-item flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition">
+                                    <span class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0"><i class="fas fa-pen text-[11px]"></i></span>
+                                    កែប្រែ
+                                </a>
+                                <button onclick="requestVoid('${inv.id}')" class="sm-row-menu-item w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-rose-700 hover:bg-rose-50 transition text-left">
+                                    <span class="w-7 h-7 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center flex-shrink-0"><i class="fas fa-ban text-[11px]"></i></span>
+                                    ស្នើលុបចោល
                                 </button>` : ''}
                                 <a href="tel:${cust.phone.replace(/\s/g, '')}" class="sm-row-menu-item flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition">
                                     <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0"><i class="fas fa-phone text-[11px]"></i></span>
@@ -252,7 +265,28 @@
             showToast(`បានផ្ញើការរំលឹកទារប្រាក់ ${fmtUSD(invoiceState(inv).due)} ជូន ${cust.name}`, 'success');
         }
 
+        async function requestVoid(id) {
+            closeAllFloatingDropdowns();
+            const reason = await showReasonPrompt({
+                title: 'ស្នើលុបចោលវិក្កយបត្រ',
+                message: `សំណើលុបចោលវិក្កយបត្រ ${id} នឹងផ្ញើទៅ ${CURRENT_REP.manager} ដើម្បីសម្រេច។`,
+                placeholder: 'មូលហេតុនៃការលុបចោល...',
+                confirmText: 'ផ្ញើសំណើ',
+                danger: true
+            });
+            if (!reason) return;
+            const res = seActions.requestVoid(id, reason);
+            showToast(res.ok ? `បានផ្ញើសំណើលុបចោលវិក្កយបត្រ ${id} ទៅអ្នកគ្រប់គ្រង` : res.error, res.ok ? 'success' : 'error');
+        }
+
+        function refreshAll() {
+            renderSummary();
+            renderTabs();
+            renderInvoices();
+        }
+
         window.onDateRangeApplied = renderInvoices;
+        window.onStoreChanged = refreshAll;
 
         document.addEventListener('DOMContentLoaded', () => {
             renderDateRangePicker('dateFilterHost');

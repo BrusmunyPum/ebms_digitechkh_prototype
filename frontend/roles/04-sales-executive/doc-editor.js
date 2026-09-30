@@ -49,7 +49,7 @@ function renderCustomerPicker() {
     if (!host) return;
     const cust = editorCustomer();
 
-    const options = CUSTOMERS.map(c => `
+    const options = listCustomers().map(c => `
         <button onclick="pickEditorCustomer('${c.id}')" class="sm-row-menu-item w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition text-left">
             <span class="min-w-0">
                 <span class="block truncate">${c.name}</span>
@@ -81,9 +81,7 @@ function renderCustomerPicker() {
 }
 
 function customerCreditPanel(cust) {
-    const debt = INVOICES
-        .filter(i => i.customerId === cust.id)
-        .reduce((sum, i) => sum + invoiceState(i).due, 0);
+    const debt = customerDebt(cust.id);
     const totals = editorTotals();
     const after = debt + totals.grandTotal;
     const usage = Math.min((after / cust.creditLimit) * 100, 100);
@@ -158,7 +156,7 @@ function renderLines() {
         const lineTotal = line.qty * line.price;
         const menuId = `lineProductMenu-${idx}`;
 
-        const productOptions = PRODUCTS.map(p => `
+        const productOptions = listProducts().map(p => `
             <button onclick="setLineProduct(${idx}, '${p.sku}')" class="sm-row-menu-item w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition text-left">
                 <span class="min-w-0">
                     <span class="block truncate">${p.name}</span>
@@ -283,12 +281,12 @@ function renderSummary() {
         <div class="space-y-3">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                    <label class="sm-label text-slate-600 block mb-1.5">ចូលរួមមុន (ប្រាក់កក់)</label>
+                    <label class="sm-label text-slate-600 block mb-1.5">ប្រាក់កក់</label>
                     <input type="number" min="0" step="0.01" value="${DOC_EDITOR.downPayment}" onchange="setDownPayment(this.value)"
                         class="sm-td w-full px-3 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 focus:outline-none focus:border-[#1e3a5f] transition">
                 </div>
                 <div>
-                    <label class="sm-label text-slate-600 block mb-1.5">ការបញ្ចុះតម្លៃពិសេស (%)</label>
+                    <label class="sm-label text-slate-600 block mb-1.5">បញ្ចុះតម្លៃពិសេស (%)</label>
                     <input type="number" min="0" max="100" step="0.1" value="${DOC_EDITOR.discountPercent}" onchange="setDiscount(this.value)"
                         class="sm-td w-full px-3 py-2.5 rounded-xl bg-white border ${needsApproval ? 'border-amber-300 bg-amber-50/40' : 'border-slate-200'} text-slate-700 focus:outline-none focus:border-[#1e3a5f] transition">
                 </div>
@@ -299,9 +297,14 @@ function renderSummary() {
                     <i class="fas fa-triangle-exclamation text-amber-600 text-sm mt-0.5 flex-shrink-0"></i>
                     <p class="sm-card-sub text-amber-800">
                         ការបញ្ចុះតម្លៃ ${fmtPercent(t.discountPercent)} លើសពីដែនកម្រិត ${fmtPercent(DISCOUNT_SELF_LIMIT)} ដែលលោកអ្នកអនុវត្តបានដោយខ្លួនឯង។
-                        ពេលរក្សាទុក ឯកសារនេះនឹងផ្ញើទៅ ${CURRENT_REP.manager} ដើម្បីសុំការអនុម័តជាមុនសិន។
+                        ត្រូវបង្កើតជាសម្រង់តម្លៃ ហើយដាក់ស្នើឱ្យ ${CURRENT_REP.manager} អនុម័តជាមុនសិន។
                     </p>
                 </div>` : ''}
+
+            ${DOC_EDITOR.mode === 'quote' ? `
+                <p class="sm-kpi-sub text-slate-500">
+                    ត្រូវការការអនុម័តពី ${requiredApprovalLevels(t.grandTotal).map(l => APPROVAL_LEVEL_LABEL[l]).join(' រួចបន្តទៅ ')}
+                </p>` : ''}
 
             <div class="pt-3 border-t border-slate-200 space-y-2">
                 <div class="flex justify-between">
@@ -309,11 +312,11 @@ function renderSummary() {
                     <span class="sm-value text-slate-700">${fmtUSD(t.subtotal)}</span>
                 </div>
                 <div class="flex justify-between">
-                    <span class="sm-label text-slate-600">ចូលរួមមុន</span>
+                    <span class="sm-label text-slate-600">ប្រាក់កក់</span>
                     <span class="sm-value text-slate-700">${fmtUSD(t.downPayment)}</span>
                 </div>
                 <div class="flex justify-between">
-                    <span class="sm-label ${t.discountAmount ? 'text-amber-700 font-semibold' : 'text-slate-600'}">ការបញ្ចុះតម្លៃពិសេស ${fmtPercent(t.discountPercent)}</span>
+                    <span class="sm-label ${t.discountAmount ? 'text-amber-700 font-semibold' : 'text-slate-600'}">បញ្ចុះតម្លៃពិសេស ${fmtPercent(t.discountPercent)}</span>
                     <span class="sm-value ${t.discountAmount ? 'text-amber-700' : 'text-slate-700'}">-${fmtUSD(t.discountAmount)}</span>
                 </div>
                 <div class="flex justify-between">
@@ -321,7 +324,7 @@ function renderSummary() {
                     <span class="sm-value text-slate-700">${fmtUSD(t.vatAmount)}</span>
                 </div>
                 <div class="flex justify-between pt-2 border-t border-slate-200">
-                    <span class="sm-card-title text-slate-700">ទឹកប្រាក់សរុបចុងក្រោយ</span>
+                    <span class="sm-card-title text-slate-700">សរុបត្រូវបង់</span>
                     <span class="sm-kpi-value text-blue-700">${fmtUSD(t.grandTotal)}</span>
                 </div>
             </div>

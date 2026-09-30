@@ -88,15 +88,13 @@
     </div>
 
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
         let filterTier = '';
-
-        function customerDebt(id) {
-            return INVOICES.filter(i => i.customerId === id)
-                .reduce((sum, i) => sum + invoiceState(i).due, 0);
-        }
 
         function renderTierFilter() {
             const options = [{ value: '', label: 'កម្រិតទាំងអស់' }]
@@ -131,11 +129,12 @@
 
         function renderCustomers() {
             const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
-            const rows = CUSTOMERS
+            const all = listCustomers();
+            const rows = all
                 .filter(c => !filterTier || c.tier === filterTier)
                 .filter(c => !q || c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q) || c.phone.includes(q));
 
-            document.getElementById('resultCount').textContent = `បង្ហាញ ${rows.length} ក្នុងចំណោម ${CUSTOMERS.length} អតិថិជន`;
+            document.getElementById('resultCount').textContent = `បង្ហាញ ${rows.length} ក្នុងចំណោម ${all.length} អតិថិជន`;
 
             const body = document.getElementById('customerBody');
             const empty = document.getElementById('customerEmpty');
@@ -209,6 +208,8 @@
                     </tr>`;
             }).join('');
         }
+
+        window.onStoreChanged = renderCustomers;
 
         document.addEventListener('DOMContentLoaded', () => {
             renderTierFilter();

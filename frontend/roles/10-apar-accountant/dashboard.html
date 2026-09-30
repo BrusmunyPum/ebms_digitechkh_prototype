@@ -46,6 +46,8 @@
 
             <div class="w-full space-y-5">
 
+                <div id="claimsBanner"></div>
+
                 <!-- Filter Toolbar -->
                 <div class="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
                     <div class="flex items-center gap-2">
@@ -79,7 +81,7 @@
                             </div>
                         </div>
                         <div class="mt-3">
-                            <div class="text-2xl font-bold text-slate-800">$42,180.00</div>
+                            <div class="text-2xl font-bold text-slate-800" id="kpiCash">$0.00</div>
                             <div class="flex items-center justify-between mt-1 text-xs text-slate-500">
                                 <span>សមតុល្យចរន្តសរុប</span>
                                 <span class="text-emerald-600 font-semibold">សុវត្ថិភាពសាច់ប្រាក់</span>
@@ -96,10 +98,10 @@
                             </div>
                         </div>
                         <div class="mt-3">
-                            <div class="text-2xl font-bold text-emerald-700">$18,240.00</div>
+                            <div class="text-2xl font-bold text-emerald-700" id="kpiAR">$0.00</div>
                             <div class="flex items-center justify-between mt-1 text-xs text-slate-500">
                                 <span>ពីអតិថិជនសរុប</span>
-                                <span class="text-slate-700 font-semibold">12 វិក្កយបត្រ</span>
+                                <span class="text-slate-700 font-semibold" id="kpiARCount">0 វិក្កយបត្រ</span>
                             </div>
                         </div>
                     </div>
@@ -113,10 +115,10 @@
                             </div>
                         </div>
                         <div class="mt-3">
-                            <div class="text-2xl font-bold text-rose-600">$3,120.00</div>
+                            <div class="text-2xl font-bold text-rose-600" id="kpiOverdue">$0.00</div>
                             <div class="flex items-center justify-between mt-1 text-xs">
                                 <span class="text-slate-500">ត្រូវការទារបន្ទាន់</span>
-                                <span class="text-rose-600 font-semibold">3 អតិថិជន</span>
+                                <span class="text-rose-600 font-semibold" id="kpiOverdueCount">0 អតិថិជន</span>
                             </div>
                         </div>
                     </div>
@@ -215,9 +217,42 @@
     <script src="data.js"></script>
     <script src="../../shared/scripts/portal.js"></script>
     <script>
+        let charts = [];
+
+        function renderKpis() {
+            const ar = aparArSummary();
+            document.getElementById('kpiCash').textContent = fmtUSD(aparCashBalance());
+            document.getElementById('kpiAR').textContent = fmtUSD(ar.totalAR);
+            document.getElementById('kpiARCount').textContent = `${ar.openCount} វិក្កយបត្រ`;
+            document.getElementById('kpiOverdue').textContent = fmtUSD(ar.overdueAR);
+            document.getElementById('kpiOverdueCount').textContent = `${ar.overdueCustomers} អតិថិជន`;
+
+            const claims = listPaymentClaims('PENDING_VERIFICATION');
+            document.getElementById('claimsBanner').innerHTML = claims.length ? `
+                <a href="receipts/receipts.html" class="block bg-sky-50 border border-sky-200 rounded-2xl p-4 hover:shadow-md transition">
+                    <div class="flex items-center justify-between flex-wrap gap-3 text-sky-900">
+                        <div class="flex items-center gap-3"><i class="fas fa-qrcode text-lg"></i>
+                            <p class="text-sm font-semibold">មានការទូទាត់ KHQR ${claims.length} រង់ចាំផ្ទៀងផ្ទាត់ · ${claims.map(c => c.invoiceId).join(' · ')}</p></div>
+                        <span class="text-xs font-semibold">ចេញបង្កាន់ដៃ →</span>
+                    </div>
+                </a>` : '';
+        }
+
+        function refresh() {
+            renderKpis();
+            charts.forEach(c => c.dispose());
+            charts = [];
+            initCharts();
+            renderReceivables();
+            renderVouchers();
+        }
+
+        window.onStoreChanged = refresh;
+
         document.addEventListener('DOMContentLoaded', () => {
             renderPortalSidebar();
             initDateFilter();
+            renderKpis();
             initCharts();
             renderReceivables();
             renderVouchers();
@@ -231,7 +266,7 @@
                     <span class="text-xs text-slate-400 hidden sm:inline">កាលបរិច្ឆេទ:</span>
                     <button type="button" class="h-9 px-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs rounded-xl flex items-center gap-2 shadow-sm transition-all focus:outline-none cursor-pointer">
                         <i class="fas fa-calendar-days text-primary text-xs"></i>
-                        <span class="font-medium text-slate-800">ថ្ងៃនេះ (26 កញ្ញា 2026)</span>
+                        <span class="font-medium text-slate-800">ថ្ងៃនេះ (${fmtKhDate(BMS_TODAY)})</span>
                     </button>
                 </div>
             `;
@@ -243,7 +278,7 @@
             // Cash Flow Chart
             const cashFlowEl = document.getElementById('cashFlowChart');
             if (cashFlowEl) {
-                const chart = echarts.init(cashFlowEl);
+                const chart = echarts.init(cashFlowEl); charts.push(chart);
                 chart.setOption({
                     tooltip: { trigger: 'axis' },
                     grid: { top: 20, right: 20, bottom: 25, left: 50 },
@@ -286,7 +321,7 @@
             // AR Aging Chart
             const arAgingEl = document.getElementById('arAgingChart');
             if (arAgingEl) {
-                const chart = echarts.init(arAgingEl);
+                const chart = echarts.init(arAgingEl); charts.push(chart);
                 chart.setOption({
                     tooltip: { trigger: 'axis' },
                     grid: { top: 20, right: 20, bottom: 25, left: 50 },

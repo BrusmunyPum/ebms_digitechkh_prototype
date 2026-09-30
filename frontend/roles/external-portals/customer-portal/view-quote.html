@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGITECHKH - សម្រង់តម្លៃ</title>
+    <link rel="icon" type="image/png" href="../../../shared/assets/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="../../../shared/assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1e1b4b",
+                        'primary-dark': "#0f0e26",
+                        accent: "#a855f7",
+                    },
+                    fontFamily: {
+                        sans: ["'Kantumruy Pro'", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+    <style>
+        /* custom.css ដាក់ពណ៌បៃតងលើ <aside> ទាំងអស់ជាសកល — ច្រកអតិថិជននេះត្រូវការពណ៌ស្វាយ/ខៀវក្រម់ផ្ទាល់ខ្លួន ដូច្នេះត្រូវបដិសេធដោយ ID-scoped rule ដែលមាន specificity ខ្ពស់ជាង */
+        #cpPortal aside {
+            background-color: #1e1b4b !important;
+        }
+    </style>
+</head>
+
+<body id="cpPortal" class="bg-indigo-50/30 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden" data-role-root="..">
+
+    <!-- របារចំហៀងអតិថិជន -->
+    <aside class="w-64 bg-[#1e1b4b] text-white flex flex-col flex-shrink-0 select-none z-20 border-r border-indigo-950">
+        <div class="h-[72px] px-6 flex items-center justify-between border-b border-white/10 flex-shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center p-1 shadow-sm overflow-hidden flex-shrink-0">
+                    <img src="../../../shared/assets/logo-mark-transparent.png" alt="DIGITECHKH" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h1 class="text-lg font-semibold tracking-wider whitespace-nowrap text-white">DIGITECHKH</h1>
+                    <span class="text-[11px] font-medium text-purple-300 uppercase tracking-wider block">អតិថិជន</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-5 py-3 border-b border-white/5 bg-black/20">
+            <div class="flex items-center justify-between">
+                <span class="text-xs text-indigo-300">គណនី:</span>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                    <i class="fas fa-star text-[10px]"></i> អតិថិជន VIP
+                </span>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto px-4 py-4 space-y-1.5 scrollbar-hide text-sm">
+            <a href="dashboard.html" class="flex items-center p-3 text-indigo-200 hover:bg-white/5 hover:text-white rounded-xl transition-all whitespace-nowrap">
+                <i class="fas fa-chart-pie w-6 text-center text-indigo-300"></i>
+                <span class="ml-3 text-[15px]">ទិដ្ឋភាពរួម</span>
+            </a>
+
+            <a href="my-quotes.html" class="flex items-center p-3 bg-white/10 text-purple-300 font-medium rounded-xl shadow-sm transition-all whitespace-nowrap border border-white/10">
+                <i class="fas fa-file-signature w-6 text-center text-purple-400"></i>
+                <span class="ml-3 text-[15px]">សម្រង់តម្លៃរបស់ខ្ញុំ</span>
+                <span id="navQuoteBadge" class="hidden ml-auto bg-rose-500 text-white text-[11px] font-semibold px-2 py-0.5 rounded-full">0</span>
+            </a>
+
+            <a href="my-invoices.html" class="flex items-center p-3 text-indigo-200 hover:bg-white/5 hover:text-white rounded-xl transition-all whitespace-nowrap">
+                <i class="fas fa-file-invoice-dollar w-6 text-center text-indigo-300"></i>
+                <span class="ml-3 text-[15px]">វិក្កយបត្ររបស់ខ្ញុំ</span>
+            </a>
+
+            <a href="order-tracking.html" class="flex items-center p-3 text-indigo-200 hover:bg-white/5 hover:text-white rounded-xl transition-all whitespace-nowrap">
+                <i class="fas fa-truck-fast w-6 text-center text-indigo-300"></i>
+                <span class="ml-3 text-[15px]">តាមដានការដឹកជញ្ជូន</span>
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10 bg-black/10">
+            <a href="../../00-auth/login.html" class="flex items-center text-[15px] text-indigo-300 hover:text-rose-400 transition-colors p-2 rounded-lg hover:bg-white/5">
+                <i class="fas fa-arrow-right-from-bracket w-6 mr-2"></i> ចាកចេញ
+            </a>
+        </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <div id="headerHost" data-title="សម្រង់តម្លៃ" data-subtitle="-" data-back="my-quotes.html"></div>
+
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-indigo-50/20 px-4 md:px-6 py-4">
+            <div class="w-full flex flex-wrap items-center justify-between gap-2 mb-4 no-print">
+                <div><span id="quoteStatusBadge" class="inline-block"></span></div>
+                <div id="quoteActions" class="flex flex-wrap items-center gap-2"></div>
+            </div>
+            <div id="quoteBody" class="w-full space-y-5"></div>
+        </main>
+    </div>
+
+    <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
+    <script src="data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        const quoteId = new URLSearchParams(location.search).get('id') || (cpQuotes()[0] || {}).id;
+
+        function statusBanner(q) {
+            const box = (tone, icon, title, text) => `
+                <div class="bg-${tone}-50 border border-${tone}-200 text-${tone}-900 rounded-2xl p-4 flex items-start gap-3 no-print">
+                    <div class="w-10 h-10 rounded-xl bg-${tone}-500 text-white flex items-center justify-center flex-shrink-0"><i class="fas ${icon}"></i></div>
+                    <div><h4 class="text-sm font-bold">${title}</h4><p class="text-xs mt-0.5">${text}</p></div>
+                </div>`;
+            switch (q.status) {
+                case 'SENT_TO_CUSTOMER': return box('amber', 'fa-hourglass-half', 'សូមពិនិត្យ និងឆ្លើយតប', `សម្រង់តម្លៃនេះមានសុពលភាពដល់ ${cpFmtDate(q.validUntil)} (${q.expiry.label})។ ចុច «យល់ព្រម» ដើម្បីឱ្យក្រុមហ៊ុនចេញវិក្កយបត្រ។`);
+                case 'ACCEPTED_BY_CUSTOMER': return box('emerald', 'fa-handshake', 'លោកអ្នកបានយល់ព្រមរួចហើយ', 'បុគ្គលិកលក់នឹងចេញវិក្កយបត្រតាមសម្រង់តម្លៃនេះ។');
+                case 'CONVERTED_TO_INVOICE': return box('indigo', 'fa-receipt', 'បានចេញវិក្កយបត្ររួចហើយ', `វិក្កយបត្រ ${q.invoiceId}`);
+                case 'DECLINED_BY_CUSTOMER': return box('slate', 'fa-thumbs-down', 'លោកអ្នកបានបដិសេធសម្រង់តម្លៃនេះ', 'សូមទាក់ទងបុគ្គលិកលក់ ប្រសិនបើលោកអ្នកចង់ពិភាក្សាឡើងវិញ។');
+                case 'EXPIRED': return box('slate', 'fa-hourglass-end', 'សម្រង់តម្លៃផុតសុពលភាព', 'សូមទាក់ទងបុគ្គលិកលក់ ដើម្បីទទួលសម្រង់តម្លៃថ្មី។');
+                default: return '';
+            }
+        }
+
+        function renderQuote() {
+            const q = cpQuote(quoteId);
+            const profile = cpProfile();
+            if (!q) {
+                setPortalTitle('រកមិនឃើញឯកសារ');
+                document.getElementById('quoteBody').innerHTML = '<div class="bg-white rounded-2xl border border-purple-100 shadow-sm py-16 text-center"><h3 class="text-sm font-semibold text-slate-700">រកមិនឃើញសម្រង់តម្លៃនេះទេ</h3><a href="my-quotes.html" class="inline-block mt-4 px-4 py-2 rounded-xl bg-primary text-white text-xs font-semibold">ត្រឡប់ទៅបញ្ជីសម្រង់តម្លៃ</a></div>';
+                return;
+            }
+            const t = q.totals;
+
+            document.title = `DIGITECHKH - សម្រង់តម្លៃ ${q.id}`;
+            setPortalTitle(`សម្រង់តម្លៃ ${q.id}`);
+            setPortalSubtitle(`ចេញថ្ងៃ ${cpFmtDate(q.date)} · សុពលភាពដល់ ${cpFmtDate(q.validUntil)}`);
+            document.getElementById('quoteStatusBadge').innerHTML = statusBadge(q.status);
+
+            const btn = 'px-4 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-2';
+            document.getElementById('quoteActions').innerHTML = `
+                <button onclick="window.print()" class="${btn} bg-slate-100 hover:bg-slate-200 text-slate-700"><i class="fas fa-print"></i> បោះពុម្ព</button>
+                ${q.status === 'SENT_TO_CUSTOMER' ? `
+                    <button onclick="declineQuote()" class="${btn} bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200"><i class="fas fa-thumbs-down"></i> បដិសេធ</button>
+                    <button onclick="acceptQuote()" class="${btn} bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"><i class="fas fa-handshake"></i> យល់ព្រម</button>` : ''}
+                ${q.status === 'CONVERTED_TO_INVOICE' && q.invoiceId ? `<a href="view-invoice.html?id=${q.invoiceId}" class="${btn} bg-purple-600 hover:bg-purple-700 text-white shadow-sm"><i class="fas fa-receipt"></i> មើលវិក្កយបត្រ</a>` : ''}`;
+
+            document.getElementById('quoteBody').innerHTML = `
+                ${statusBanner(q)}
+                <div class="bg-white rounded-2xl border border-purple-100 shadow-sm p-8 space-y-6">
+                    <div class="flex justify-between items-start border-b border-slate-100 pb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-400/20 flex items-center justify-center p-1.5"><img src="../../../shared/assets/logo-mark-transparent.png" alt="DIGITECHKH" class="w-full h-full object-contain"></div>
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-800">DIGITECHKH CO., LTD.</h3>
+                                <p class="text-xs text-slate-500">លេខអត្តសញ្ញាណកម្មសារពើពន្ធ ${BMS_STORE.settings().merchant.tin}</p>
+                                <p class="text-xs text-slate-500">ទូរស័ព្ទ 023 888 999</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <h2 class="text-2xl font-bold text-purple-950">សម្រង់តម្លៃ</h2>
+                            <p class="text-sm font-bold text-slate-800 mt-1">${q.id}</p>
+                            <p class="text-xs text-slate-500">ចេញថ្ងៃ ${cpFmtDate(q.date)}</p>
+                            <p class="text-xs ${q.expiry.tone}">សុពលភាពដល់ ${cpFmtDate(q.validUntil)}</p>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-[11px] font-semibold text-slate-400 block mb-1">ជូនចំពោះ</span>
+                        <p class="font-bold text-slate-800 text-[15px]">${profile.companyName}</p>
+                        <p class="text-xs text-slate-600">${profile.contactName} · ${profile.phone}</p>
+                        <p class="text-xs text-slate-600">${profile.address}</p>
+                    </div>
+                    <div class="overflow-hidden border border-slate-200 rounded-xl">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 text-slate-600 text-[11px] font-semibold border-b border-slate-200">
+                                <tr><th class="py-3 px-4">ល.រ</th><th class="py-3 px-4">បរិយាយមុខទំនិញ</th><th class="py-3 px-4 text-center">ចំនួន</th><th class="py-3 px-4 text-right">តម្លៃឯកតា</th><th class="py-3 px-4 text-right">ទឹកប្រាក់សរុប</th></tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-slate-700 font-medium text-xs">
+                                ${q.items.map((it, i) => `<tr>
+                                    <td class="py-3 px-4 text-slate-400">${i + 1}</td>
+                                    <td class="py-3 px-4 font-semibold text-slate-800">${it.name}</td>
+                                    <td class="py-3 px-4 text-center font-bold">${it.qty} ${it.unit}</td>
+                                    <td class="py-3 px-4 text-right">${cpFmtUSD(it.price)}</td>
+                                    <td class="py-3 px-4 text-right font-bold text-slate-800">${cpFmtUSD(it.qty * it.price)}</td>
+                                </tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="flex justify-end">
+                        <div class="w-80 space-y-2 text-xs">
+                            <div class="flex justify-between text-slate-600"><span>សរុបរង:</span><span class="font-semibold text-slate-800">${cpFmtUSD(t.subtotal)}</span></div>
+                            <div class="flex justify-between text-slate-600"><span>ប្រាក់កក់:</span><span class="font-semibold text-slate-800">${cpFmtUSD(t.downPayment)}</span></div>
+                            <div class="flex justify-between text-slate-600"><span>បញ្ចុះតម្លៃពិសេស ${fmtPercent(t.discountPercent)}:</span><span class="font-semibold text-slate-800">-${cpFmtUSD(t.discountAmount)}</span></div>
+                            <div class="flex justify-between text-slate-600"><span>អាករលើតម្លៃបន្ថែម 10%:</span><span class="font-semibold text-slate-800">${cpFmtUSD(t.vatAmount)}</span></div>
+                            <div class="flex justify-between text-purple-950 font-bold text-sm pt-2 border-t-2 border-slate-200"><span>សរុបត្រូវបង់:</span><span class="text-purple-700 text-base">${cpFmtUSD(t.grandTotal)}</span></div>
+                        </div>
+                    </div>
+                    ${q.note ? `<div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs"><p class="text-slate-500 mb-1">កំណត់ចំណាំ</p><p class="text-slate-700">${q.note}</p></div>` : ''}
+                    <div class="pt-8 border-t border-slate-100 grid grid-cols-2 text-center text-xs text-slate-600">
+                        <div><p class="font-semibold text-slate-800 mb-14">DIGITECHKH</p><p class="border-t border-slate-300 w-44 mx-auto pt-1 font-medium">ផ្នែកលក់</p></div>
+                        <div><p class="font-semibold text-slate-800 mb-14">អតិថិជនយល់ព្រម</p><p class="border-t border-slate-300 w-44 mx-auto pt-1 font-medium">${profile.companyName}</p></div>
+                    </div>
+                </div>`;
+        }
+
+        async function acceptQuote() {
+            const q = cpQuote(quoteId);
+            const ok = await showCustomConfirm({
+                title: 'យល់ព្រមលើសម្រង់តម្លៃ',
+                message: `តើលោកអ្នកពិតជាយល់ព្រមលើសម្រង់តម្លៃ ${quoteId} សរុបត្រូវបង់ ${cpFmtUSD(q.totals.grandTotal)} មែនទេ?`,
+                confirmText: 'យល់ព្រម',
+                cancelText: 'បោះបង់'
+            });
+            if (!ok) return;
+            const res = cpActions.acceptQuote(quoteId);
+            showToast(res.ok ? `បានយល់ព្រមលើសម្រង់តម្លៃ ${quoteId} · បុគ្គលិកលក់នឹងចេញវិក្កយបត្រ` : res.error, res.ok ? 'success' : 'error');
+        }
+
+        async function declineQuote() {
+            const ok = await showCustomConfirm({
+                title: 'បដិសេធសម្រង់តម្លៃ',
+                message: `តើលោកអ្នកពិតជាបដិសេធសម្រង់តម្លៃ ${quoteId} មែនទេ?`,
+                confirmText: 'បដិសេធ',
+                cancelText: 'បោះបង់',
+                danger: true
+            });
+            if (!ok) return;
+            const res = cpActions.declineQuote(quoteId, null);
+            showToast(res.ok ? `បានបដិសេធសម្រង់តម្លៃ ${quoteId}` : res.error, res.ok ? 'warning' : 'error');
+        }
+
+        function paintQuoteBadge() {
+            const n = cpQuotesAwaiting();
+            const el = document.getElementById('navQuoteBadge');
+            if (el) { el.textContent = n; el.classList.toggle('hidden', !n); }
+        }
+
+        window.onStoreChanged = () => { renderQuote(); paintQuoteBadge(); };
+        document.addEventListener('DOMContentLoaded', () => { renderQuote(); paintQuoteBadge(); });
+    </script>
+</body>
+
+</html>

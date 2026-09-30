@@ -147,6 +147,67 @@ function showCustomConfirm(options = {}) {
     });
 }
 
+// 2b. Reason Prompt — ប្រអប់សួរមូលហេតុ (ប្រើសម្រាប់បដិសេធ លុបចោល ដែលតម្រូវឱ្យមានមូលហេតុ — ឯកសារ 15)
+// ត្រឡប់ Promise<string|null>: អត្ថបទមូលហេតុ ឬ null បើអ្នកប្រើបោះបង់
+function showReasonPrompt(options = {}) {
+    return new Promise((resolve) => {
+        const title = options.title || 'បញ្ចូលមូលហេតុ';
+        const message = options.message || '';
+        const placeholder = options.placeholder || 'សូមបញ្ចូលមូលហេតុ...';
+        const confirmText = options.confirmText || 'បញ្ជាក់';
+        const cancelText = options.cancelText || 'បោះបង់';
+        const isDanger = options.danger === true;
+
+        let modal = document.getElementById('bmsReasonModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'bmsReasonModal';
+            document.body.appendChild(modal);
+        }
+
+        modal.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 select-none';
+        modal.style.display = 'flex';
+
+        const iconClass = isDanger ? 'bg-rose-50 text-rose-500' : 'bg-emerald-50 text-primary';
+        const btnClass = isDanger ? 'bg-rose-600 hover:bg-rose-700 text-white' : 'bg-primary hover:bg-primary-dark text-white';
+
+        modal.innerHTML = `
+            <div class="bg-white rounded-3xl shadow-2xl border border-slate-100 max-w-md w-full p-6 text-center">
+                <div class="w-12 h-12 rounded-2xl ${iconClass} flex items-center justify-center text-xl mx-auto mb-3"><i class="fas fa-pen-to-square"></i></div>
+                <h4 class="text-base font-bold text-slate-900 mb-1.5">${title}</h4>
+                ${message ? `<p class="text-xs text-slate-500 leading-relaxed mb-4">${message}</p>` : ''}
+                <textarea id="bmsReasonInput" rows="3" placeholder="${placeholder}"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-700 text-left focus:outline-none focus:border-primary transition resize-none select-text"></textarea>
+                <p id="bmsReasonError" class="hidden text-[11px] text-rose-600 text-left mt-1.5">សូមបញ្ចូលមូលហេតុជាមុនសិន</p>
+                <div class="flex items-center justify-center gap-2.5 mt-5">
+                    <button id="bmsReasonCancelBtn" type="button" class="flex-1 py-2.5 px-4 rounded-xl text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition cursor-pointer">${cancelText}</button>
+                    <button id="bmsReasonOkBtn" type="button" class="flex-1 py-2.5 px-4 rounded-xl text-xs font-medium ${btnClass} shadow-sm transition cursor-pointer">${confirmText}</button>
+                </div>
+            </div>`;
+
+        const input = document.getElementById('bmsReasonInput');
+        const error = document.getElementById('bmsReasonError');
+        const close = value => {
+            modal.style.display = 'none';
+            modal.innerHTML = '';
+            resolve(value);
+        };
+
+        document.getElementById('bmsReasonCancelBtn').onclick = () => close(null);
+        document.getElementById('bmsReasonOkBtn').onclick = () => {
+            const text = input.value.trim();
+            if (!text) {
+                error.classList.remove('hidden');
+                input.focus();
+                return;
+            }
+            close(text);
+        };
+        input.oninput = () => error.classList.add('hidden');
+        input.focus();
+    });
+}
+
 // 3. Custom Dropdown Helpers (Fixed Floating Dropdown Elevation System)
 function openFloatingDropdown(btn, menu) {
     if (!btn || !menu) return;

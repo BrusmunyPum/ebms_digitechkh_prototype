@@ -181,6 +181,9 @@
     </div>
 
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
@@ -220,7 +223,7 @@
         function renderFilters() {
             renderFilterDropdown('repFilterHost', 'repFilterMenu',
                 { icon: 'fa-user-tie', all: 'បុគ្គលិកលក់ទាំងអស់', title: 'ជ្រើសរើសបុគ្គលិកលក់' },
-                [{ value: '', label: 'បុគ្គលិកលក់ទាំងអស់' }].concat(SALES_REPS.map(r => ({ value: r.id, label: r.name }))),
+                [{ value: '', label: 'បុគ្គលិកលក់ទាំងអស់' }].concat(listReps().map(r => ({ value: r.id, label: r.name }))),
                 filterRep, 'pickRep');
 
             renderFilterDropdown('categoryFilterHost', 'categoryFilterMenu',
@@ -298,14 +301,12 @@
                     <td class="sm-td-strong py-3 px-5 text-right ${row.color}">${row.value}</td>
                 </tr>`).join('');
 
-            const decisions = loadDecisions();
-            const decided = Object.values(decisions);
-            const countOf = a => decided.filter(d => d === a).length;
+            const stats = approvalStats();
             document.getElementById('approvalKpis').innerHTML =
-                statCard('សំណើបានអនុម័ត', countOf('approve'), 'text-emerald-600') +
-                statCard('សំណើបានបដិសេធ', countOf('reject'), 'text-rose-600') +
-                statCard('បញ្ជូនបន្តទៅអភិបាលទូទៅ', countOf('forward'), 'text-purple-600') +
-                statCard('សំណើនៅរង់ចាំ', totalPending(), 'text-amber-600');
+                statCard('សំណើបានអនុម័ត', stats.approved, 'text-emerald-600') +
+                statCard('សំណើបានបដិសេធ', stats.rejected, 'text-rose-600') +
+                statCard('បញ្ជូនបន្តទៅអភិបាលទូទៅ', stats.forwarded, 'text-purple-600') +
+                statCard('សំណើនៅរង់ចាំ', stats.pending, 'text-amber-600');
 
             const overdue = m.overdueList.filter(i => !filterRep || i.repId === filterRep);
             document.getElementById('overdueTableBody').innerHTML = overdue.length ? overdue.map(inv =>
@@ -314,7 +315,7 @@
                     <td class="sm-td py-3.5 px-4">${inv.id}</td>
                     <td class="sm-td py-3.5 px-4">${getRep(inv.repId).name}</td>
                     <td class="sm-td py-3.5 px-4 text-rose-600">${daysBetween(inv.dueDate)} ថ្ងៃ</td>
-                    <td class="sm-td-strong py-3.5 px-4 text-right">${fmtUSD(inv.total - inv.paid)}</td>
+                    <td class="sm-td-strong py-3.5 px-4 text-right">${fmtUSD(invoiceState(inv).due)}</td>
                 </tr>`).join('') : '<tr><td colspan="5" class="sm-card-sub text-slate-500 py-10 text-center">គ្មានបំណុលហួសកាលកំណត់ទេ</td></tr>';
 
             const badge = document.getElementById('navQueueBadge');
@@ -372,6 +373,7 @@
         }
 
         window.onDateRangeApplied = renderReports;
+        window.onStoreChanged = renderReports;
 
         document.addEventListener('DOMContentLoaded', () => {
             renderDateRangePicker('dateFilterHost');
@@ -383,11 +385,11 @@
                 trendChart.setOption({
                     tooltip: { trigger: 'axis', textStyle: { fontFamily: 'Kantumruy Pro' } },
                     grid: { top: '10%', left: '3%', right: '4%', bottom: '15%', containLabel: true },
-                    xAxis: { type: 'category', data: WEEKLY_REVENUE.map(w => w.week), axisLabel: { fontFamily: 'Kantumruy Pro' } },
+                    xAxis: { type: 'category', data: weeklyRevenueSeries().map(w => w.week), axisLabel: { fontFamily: 'Kantumruy Pro' } },
                     yAxis: { type: 'value', axisLabel: { fontFamily: 'Kantumruy Pro' } },
                     series: [{
                         name: 'ការលក់', type: 'line', smooth: true,
-                        data: WEEKLY_REVENUE.map(w => w.actual),
+                        data: weeklyRevenueSeries().map(w => w.actual),
                         itemStyle: { color: '#1e3a5f' },
                         lineStyle: { width: 3 },
                         areaStyle: { color: 'rgba(30, 58, 95, 0.08)' }

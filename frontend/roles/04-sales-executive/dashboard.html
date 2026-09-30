@@ -113,6 +113,9 @@
     </div>
 
     <script src="../../shared/scripts/ui-components.js"></script>
+    <script src="../../shared/data/seed.js"></script>
+    <script src="../../shared/scripts/status-meta.js"></script>
+    <script src="../../shared/scripts/store.js"></script>
     <script src="data.js"></script>
     <script src="../../shared/scripts/portal.js"></script>
     <script>
@@ -218,10 +221,9 @@
         }
 
         function renderRecent() {
-            const quotes = [...QUOTES].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 4);
+            const quotes = listQuotes().sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 4);
             document.getElementById('recentQuotes').innerHTML = quotes.map(q => {
                 const cust = getCustomer(q.customerId);
-                const st = QUOTE_STATUS[q.status];
                 const exp = quoteExpiry(q);
                 return `
                     <a href="quotes/view-quote.html?id=${q.id}" class="p-4 flex items-center justify-between gap-3 hover:bg-slate-50 transition">
@@ -231,13 +233,13 @@
                         </div>
                         <div class="text-right flex-shrink-0">
                             <p class="sm-td-strong text-slate-700">${fmtUSD(docTotals(q).grandTotal)}</p>
-                            <span class="sm-badge px-2 py-0.5 rounded-full border ${st.tone} mt-1 inline-block">${st.label}</span>
+                            <span class="mt-1 inline-block">${statusBadge(q.status)}</span>
                         </div>
                     </a>`;
             }).join('');
 
-            const invs = INVOICES
-                .filter(i => invoiceState(i).key !== 'paid')
+            const invs = listInvoices()
+                .filter(i => !['PAID', 'CANCELLED'].includes(invoiceState(i).key))
                 .sort((a, b) => invoiceState(b).overdueDays - invoiceState(a).overdueDays)
                 .slice(0, 4);
             document.getElementById('recentInvoices').innerHTML = invs.map(inv => {
@@ -251,7 +253,7 @@
                         </div>
                         <div class="text-right flex-shrink-0">
                             <p class="sm-td-strong text-slate-700">${fmtUSD(st.due)}</p>
-                            <span class="sm-badge px-2 py-0.5 rounded-full border ${st.tone} mt-1 inline-block">${st.label}</span>
+                            <span class="mt-1 inline-block">${statusBadge(st.key)}</span>
                         </div>
                     </a>`;
             }).join('');
@@ -267,6 +269,7 @@
         }
 
         window.onDateRangeApplied = renderDashboard;
+        window.onStoreChanged = renderDashboard;
 
         document.addEventListener('DOMContentLoaded', () => {
             renderDateRangePicker('dateFilterHost');
@@ -278,11 +281,11 @@
                 chart.setOption({
                     tooltip: { trigger: 'axis', textStyle: { fontFamily: 'Kantumruy Pro' } },
                     grid: { top: '12%', left: '3%', right: '4%', bottom: '10%', containLabel: true },
-                    xAxis: { type: 'category', data: WEEKLY_SALES.map(w => w.week), axisLabel: { fontFamily: 'Kantumruy Pro' } },
+                    xAxis: { type: 'category', data: weeklySales().map(w => w.week), axisLabel: { fontFamily: 'Kantumruy Pro' } },
                     yAxis: { type: 'value', axisLabel: { fontFamily: 'Kantumruy Pro' } },
                     series: [{
                         name: 'ការលក់', type: 'bar',
-                        data: WEEKLY_SALES.map(w => w.actual),
+                        data: weeklySales().map(w => w.actual),
                         itemStyle: { color: '#1e3a5f', borderRadius: [6, 6, 0, 0] }
                     }]
                 });

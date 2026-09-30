@@ -151,6 +151,9 @@
     </div>
 
     <script src="../../shared/scripts/ui-components.js"></script>
+    <script src="../../shared/data/seed.js"></script>
+    <script src="../../shared/scripts/status-meta.js"></script>
+    <script src="../../shared/scripts/store.js"></script>
     <script src="data.js"></script>
     <script src="../../shared/scripts/portal.js"></script>
     <script>
@@ -271,7 +274,7 @@
                         <p class="sm-td text-slate-700 truncate">${cust.name}</p>
                         <p class="sm-td-sub text-slate-400">${inv.id} · ហួស ${daysBetween(inv.dueDate)} ថ្ងៃ</p>
                     </div>
-                    <span class="sm-td-strong text-rose-600 flex-shrink-0">${fmtUSD(inv.total - inv.paid)}</span>
+                    <span class="sm-td-strong text-rose-600 flex-shrink-0">${fmtUSD(invoiceState(inv).due)}</span>
                 </div>`;
             }).join('');
         }
@@ -290,6 +293,7 @@
         }
 
         window.onDateRangeApplied = renderDashboard;
+        window.onStoreChanged = renderDashboard;
 
         document.addEventListener('DOMContentLoaded', () => {
             renderDateRangePicker('dateFilterHost');
@@ -302,11 +306,11 @@
                     tooltip: { trigger: 'axis', textStyle: { fontFamily: 'Kantumruy Pro' } },
                     legend: { data: ['ចំណូលជាក់ស្តែង', 'គោលដៅ'], bottom: 0, textStyle: { fontFamily: 'Kantumruy Pro' } },
                     grid: { top: '10%', left: '3%', right: '4%', bottom: '15%', containLabel: true },
-                    xAxis: { type: 'category', data: MONTHLY_REVENUE.map(m => m.month), axisLabel: { fontFamily: 'Kantumruy Pro' } },
+                    xAxis: { type: 'category', data: monthlyRevenueSeries().map(m => m.month), axisLabel: { fontFamily: 'Kantumruy Pro' } },
                     yAxis: { type: 'value', axisLabel: { fontFamily: 'Kantumruy Pro' } },
                     series: [
-                        { name: 'ចំណូលជាក់ស្តែង', type: 'bar', data: MONTHLY_REVENUE.map(m => m.actual), itemStyle: { color: '#1e3a5f', borderRadius: [6, 6, 0, 0] } },
-                        { name: 'គោលដៅ', type: 'line', smooth: true, data: MONTHLY_REVENUE.map(m => m.target), itemStyle: { color: '#0ea5e9' }, lineStyle: { width: 3, type: 'dashed' } }
+                        { name: 'ចំណូលជាក់ស្តែង', type: 'bar', data: monthlyRevenueSeries().map(m => m.actual), itemStyle: { color: '#1e3a5f', borderRadius: [6, 6, 0, 0] } },
+                        { name: 'គោលដៅ', type: 'line', smooth: true, data: monthlyRevenueSeries().map(m => m.target), itemStyle: { color: '#0ea5e9' }, lineStyle: { width: 3, type: 'dashed' } }
                     ]
                 });
                 window.addEventListener('resize', () => chart.resize());

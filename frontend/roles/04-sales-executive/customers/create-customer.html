@@ -147,6 +147,9 @@
     </div>
 
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
@@ -215,7 +218,7 @@
         }
 
         function renderTierPreview() {
-            document.getElementById('tierPreview').innerHTML = PRODUCTS.slice(0, 4).map(p => `
+            document.getElementById('tierPreview').innerHTML = listProducts().slice(0, 4).map(p => `
                 <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
                     <span class="sm-td-sub text-slate-600 truncate">${p.name}</span>
                     <span class="sm-value text-slate-700 flex-shrink-0">${fmtUSD(p.price[newTier])}</span>
@@ -258,7 +261,14 @@
             });
             if (!ok) return;
 
-            showToast(`បានចុះឈ្មោះអតិថិជន ${name} ដោយជោគជ័យ` + (needsApproval ? ' · សំណើឥណទានបានផ្ញើទៅអ្នកគ្រប់គ្រង' : ''), 'success');
+            const res = seActions.createCustomer({
+                name, contact, phone, tier: newTier, paymentTerms: newTerms, creditLimit: credit,
+                email: document.getElementById('fEmail').value.trim(),
+                address: document.getElementById('fAddress').value.trim()
+            });
+            if (!res.ok) return showToast(res.error, 'error');
+
+            showToast(`បានចុះឈ្មោះអតិថិជន ${name} ដោយជោគជ័យ` + (res.creditRequested ? ' · សំណើឥណទានបានផ្ញើទៅអ្នកគ្រប់គ្រង' : ''), 'success');
             setTimeout(() => { window.location.href = 'customers.html'; }, 1300);
         }
 

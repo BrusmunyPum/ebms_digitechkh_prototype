@@ -62,6 +62,7 @@ Status codes are defined in `15-approval-state-machine.md`. This is the only all
 | OVERDUE | ហួសកាលកំណត់ *(33 uses — replaces ហួសកំណត់, 6 uses)* | rose |
 | PARTIALLY_PAID | បានទូទាត់ខ្លះ | amber |
 | PAID | បានទូទាត់ *(21 uses — replaces បានបង់, បង់រួច)* | emerald |
+| UNPAID | មិនទាន់ទូទាត់ *(added 2026-09-30 — invoice with no payment yet and not overdue)* | slate |
 | AWAITING_DELIVERY | រង់ចាំទទួលទំនិញ | amber |
 | IN_TRANSIT | កំពុងដឹកជញ្ជូន | sky |
 | DELIVERED | បានទទួលទំនិញ | emerald |

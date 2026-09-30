@@ -36,11 +36,8 @@
             <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
             <div class="w-full flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
                 <div class="flex flex-wrap items-center gap-2">
-                    <button onclick="saveInvoice('draft')" class="sm-badge px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition cursor-pointer">
-                        រក្សាទុកជាសេចក្តីព្រាង
-                    </button>
-                    <button onclick="saveInvoice('issue')" class="sm-badge px-5 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition inline-flex items-center gap-2 cursor-pointer">
-                        <i class="fas fa-check"></i> <span>រក្សាទុក និងចេញវិក្កយបត្រ</span>
+                    <button onclick="saveInvoice()" class="sm-badge px-5 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition inline-flex items-center gap-2 cursor-pointer">
+                        <i class="fas fa-check"></i> <span>រក្សាទុក</span>
                     </button>
                 </div>
             </div>
@@ -104,7 +101,7 @@
                         </div>
 
                         <div>
-                            <label class="sm-label text-slate-600 block mb-1.5">កាលកំណត់ទូទាត់ (Due Date)</label>
+                            <label class="sm-label text-slate-600 block mb-1.5">កាលកំណត់ទូទាត់</label>
                             <input id="fDueDate" type="date"
                                 class="sm-td w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-[#1e3a5f]">
                         </div>
@@ -129,6 +126,10 @@
         </main>
     </div>
 
+    <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../doc-editor.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
@@ -137,51 +138,56 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
-            editInvId = params.get('id') || 'INV-2026-0104';
+            editInvId = params.get('id');
 
-            const inv = getInvoice(editInvId);
-            if (inv) {
-                document.getElementById('portalTitle').innerText = `កែប្រែវិក្កយបត្រ ${inv.id}`;
-                setPortalSubtitle(`ស្ថានភាពបច្ចុប្បន្ន៖ ${inv.status}`);
-                document.getElementById('fDate').value = inv.date.slice(0, 10);
-                document.getElementById('fDueDate').value = inv.dueDate;
-                document.getElementById('fNote').value = inv.note || '';
-
-                DOC_EDITOR.customerId = inv.customerId;
-                DOC_EDITOR.items = inv.items.map(it => ({ ...it }));
-                DOC_EDITOR.discountPercent = inv.discountPercent || 0;
-                DOC_EDITOR.downPayment = inv.downPayment || 0;
-
-                initDocEditor({ mode: 'invoice' });
-            } else {
-                initDocEditor({ mode: 'invoice' });
+            const inv = editInvId ? getInvoice(editInvId) : null;
+            if (!inv) {
+                showToast('រកមិនឃើញវិក្កយបត្រនេះទេ', 'error');
+                setTimeout(() => { window.location.href = 'invoices.html'; }, 1200);
+                return;
             }
+            if (inv.status !== 'ISSUED' || inv.payments.length) {
+                showToast('វិក្កយបត្រដែលបានទទួលការទូទាត់ ឬត្រូវបានលុបចោលហើយ មិនអាចកែប្រែបានទេ', 'warning');
+                setTimeout(() => { window.location.href = `view-invoice.html?id=${inv.id}`; }, 1400);
+                return;
+            }
+
+            document.getElementById('portalTitle').innerText = `កែប្រែវិក្កយបត្រ ${inv.id}`;
+            setPortalSubtitle(`ស្ថានភាពបច្ចុប្បន្ន៖ ${invoiceState(inv).label}`);
+            document.getElementById('fDate').value = inv.date.slice(0, 10);
+            document.getElementById('fDate').disabled = true;
+            document.getElementById('fDueDate').value = inv.dueDate;
+            document.getElementById('fNote').value = inv.note || '';
+
+            DOC_EDITOR.customerId = inv.customerId;
+            DOC_EDITOR.items = inv.items.map(it => ({ ...it }));
+            DOC_EDITOR.discountPercent = inv.discountPercent || 0;
+            DOC_EDITOR.downPayment = inv.downPayment || 0;
+
+            initDocEditor({ mode: 'invoice' });
         });
 
-        function saveInvoice(action) {
-            if (!DOC_EDITOR.customerId) {
-                showToast('សូមជ្រើសរើសអតិថិជនជាមុនសិន', 'error');
-                return;
-            }
-            if (!DOC_EDITOR.items.length || !DOC_EDITOR.items.some(i => i.sku && i.qty > 0)) {
-                showToast('សូមបន្ថែមមុខទំនិញយ៉ាងហោចណាស់ ១ មុខ', 'error');
-                return;
-            }
+        async function saveInvoice() {
+            const error = validateDoc();
+            if (error) return showToast(error, 'error');
 
-            const inv = getInvoice(editInvId);
-            if (inv) {
-                inv.customerId = DOC_EDITOR.customerId;
-                inv.items = DOC_EDITOR.items.filter(it => it.sku && it.qty > 0);
-                inv.discountPercent = DOC_EDITOR.discountPercent;
-                inv.downPayment = DOC_EDITOR.downPayment;
-                inv.dueDate = document.getElementById('fDueDate').value;
-                inv.note = document.getElementById('fNote').value;
-            }
+            const ok = await showCustomConfirm({
+                title: 'រក្សាទុកការកែប្រែ',
+                message: `តើលោកអ្នកពិតជារក្សាទុកការកែប្រែវិក្កយបត្រ ${editInvId} មែនទេ?`,
+                confirmText: 'រក្សាទុក',
+                cancelText: 'បោះបង់'
+            });
+            if (!ok) return;
+
+            const res = seActions.updateInvoice(editInvId, {
+                ...collectDoc(),
+                dueDate: document.getElementById('fDueDate').value,
+                note: document.getElementById('fNote').value.trim()
+            });
+            if (!res.ok) return showToast(res.error, 'error');
 
             showToast(`បានរក្សាទុកការកែប្រែវិក្កយបត្រ ${editInvId} ដោយជោគជ័យ`, 'success');
-            setTimeout(() => {
-                window.location.href = `view-invoice.html?id=${editInvId}`;
-            }, 800);
+            setTimeout(() => { window.location.href = `view-invoice.html?id=${editInvId}`; }, 800);
         }
     </script>
 </body>

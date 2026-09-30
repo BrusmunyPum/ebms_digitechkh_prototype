@@ -165,7 +165,7 @@ const INITIAL_APAR_STORE = {
     ]
 };
 
-function getAPARStore() {
+function getLegacyAPARStore() {
     try {
         const raw = localStorage.getItem(BMS_APAR_STORAGE_KEY);
         if (raw) return JSON.parse(raw);
@@ -186,7 +186,7 @@ function saveAPARStore(store) {
 
 /* ===== ការជូនដំណឹងក្នុងក្បាលទំព័រ (អានដោយ portal.js) ===== */
 
-const APAR_TODAY = new Date(2026, 8, 25); // 25 កញ្ញា 2026
+const APAR_TODAY = BMS_TODAY;
 
 function aparFmtUSD(val) {
     const n = Number(val) || 0;
@@ -200,59 +200,175 @@ function aparDaysUntil(dateStr) {
     return Math.round((target - APAR_TODAY) / 86400000);
 }
 
+/* ===== ផ្នែកបំណុលត្រូវទារ (AR) — អានពីឃ្លាំងរួច bms_store_v2 =====
+   បង្កាន់ដៃ វិក្កយបត្រដែលនៅជំពាក់ និងការទូទាត់ KHQR ដែលអតិថិជនប្រកាស មកពីឃ្លាំងរួច។
+   ផ្នែកបំណុលត្រូវសង (AP) ប័ណ្ណចំណាយ នៅរក្សាទិន្នន័យដើមរហូតដល់ជំហានទី 4។ */
+
+const APAR_USER_ID = 'U-APAR-01';
+
+function aparCustomerName(id) {
+    const c = BMS_STORE.get('customers', id);
+    return c ? c.name : id;
+}
+
+function listReceipts() {
+    return BMS_STORE.list('receipts')
+        .map(r => ({
+            id: r.id, invoiceId: r.invoiceId, customerId: r.customerId, customerName: aparCustomerName(r.customerId),
+            date: r.date, methodCode: r.method, paymentMethod: PAYMENT_METHOD_LABEL[r.method] || r.method,
+            bankRef: r.bankRef, amount: r.amount, note: r.note, journalId: r.journalId,
+            receivedBy: (BMS_STORE.user(r.receivedBy) || {}).name || r.receivedBy
+        }))
+        .sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+}
+
+function getReceipt(id) {
+    return listReceipts().find(r => r.id === id);
+}
+
+/* វិក្កយបត្រដែលនៅមានសមតុល្យត្រូវទារ */
+function listOpenInvoices() {
+    return BMS_STORE.list('invoices')
+        .map(i => ({ inv: i, st: invoiceState(i) }))
+        .filter(x => x.st.key !== 'CANCELLED' && x.st.due > 0.005)
+        .map(x => ({
+            id: x.inv.id, customerId: x.inv.customerId, customerName: aparCustomerName(x.inv.customerId),
+            date: x.inv.date, dueDate: x.inv.dueDate, total: x.st.totals.grandTotal, paid: x.st.paid, due: x.st.due,
+            state: x.st.key, overdueDays: x.st.overdueDays
+        }))
+        .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+}
+
+function listPaymentClaims(status) {
+    return BMS_STORE.list('paymentClaims')
+        .filter(c => !status || c.status === status)
+        .map(c => ({ ...c, customerName: aparCustomerName(c.customerId) }))
+        .sort((a, b) => b.at.localeCompare(a.at));
+}
+
+function aparArSummary() {
+    const open = listOpenInvoices();
+    const overdue = open.filter(o => o.state === 'OVERDUE');
+    const buckets = [[1, 30], [31, 60], [61, 90], [91, 99999]];
+    return {
+        totalAR: open.reduce((s, o) => s + o.due, 0),
+        openCount: open.length,
+        overdueAR: overdue.reduce((s, o) => s + o.due, 0),
+        overdueCustomers: new Set(overdue.map(o => o.customerId)).size,
+        aging: {
+            brackets: ['1-30 ថ្ងៃ', '31-60 ថ្ងៃ', '61-90 ថ្ងៃ', 'លើសពី 90 ថ្ងៃ'],
+            amounts: buckets.map(([lo, hi]) => Math.round(overdue.filter(o => o.overdueDays >= lo && o.overdueDays <= hi).reduce((s, o) => s + o.due, 0)))
+        }
+    };
+}
+
+function aparCashBalance() {
+    const b = BMS_STORE.accountBalances();
+    return ['1111', '1121', '1122', '1123'].reduce((s, c) => s + (b[c] || 0), 0);
+}
+
+/* ប្រាក់ប្រមូលបានប្រចាំថ្ងៃ 6 ថ្ងៃចុងក្រោយ */
+function aparDailyCashIn() {
+    const days = [], amounts = [];
+    for (let back = 5; back >= 0; back--) {
+        const d = new Date(BMS_TODAY.getFullYear(), BMS_TODAY.getMonth(), BMS_TODAY.getDate() - back);
+        days.push(`${d.getDate()} ${MONTHS_KH[d.getMonth()]}`);
+        const iso = toIsoDate(d);
+        amounts.push(Math.round(BMS_STORE.list('receipts').filter(r => r.date === iso).reduce((s, r) => s + r.amount, 0)));
+    }
+    return { days, amounts };
+}
+
+/* ទិន្នន័យដើមផ្នែក AP + ផ្នែក AR ដែលជំនួសដោយទិន្នន័យពិតពីឃ្លាំងរួច */
+function getAPARStore() {
+    const store = getLegacyAPARStore();
+    const ar = aparArSummary();
+    const cash = aparDailyCashIn();
+    store.receipts = listReceipts();
+    store.kpis.totalAR = ar.totalAR;
+    store.kpis.overdueAR = ar.overdueAR;
+    store.kpis.arAgingChart = ar.aging;
+    store.kpis.dailyCashFlow = { days: cash.days, cashIn: cash.amounts, cashOut: store.kpis.dailyCashFlow.cashOut.slice(-6) };
+    store.upcomingReceivables = listOpenInvoices().slice(0, 5).map(o => {
+        const left = -o.overdueDays;
+        return {
+            customer: o.customerName, invoiceId: o.id, dueDate: o.dueDate, amount: o.due,
+            status: left < 0 ? 'overdue' : left === 0 ? 'due_today' : 'due_soon'
+        };
+    });
+    return store;
+}
+
+const aparActions = {
+    recordReceipt: data => BMS_STORE.actions.recordReceipt(data, APAR_USER_ID)
+};
+
+/* ===== ផ្លាកលេខក្នុងម៉ឺនុយចំហៀង ===== */
+
+function totalPending() {
+    return listPaymentClaims('PENDING_VERIFICATION').length;
+}
+
+function totalAlerts() {
+    return getLegacyAPARStore().vouchers.filter(v => v.status === 'pending').length;
+}
+
+/* ===== ការជូនដំណឹងក្នុងក្បាលទំព័រ (អានដោយ portal.js) ===== */
+
+function aparFmtUSD(val) {
+    return fmtUSD(Number(val) || 0);
+}
+
 function portalNotifications() {
     const list = [];
-    const store = getAPARStore();
-    const kpis = store.kpis;
+    const root = getRoleRoot();
+
+    // ការទូទាត់ KHQR ដែលអតិថិជនប្រកាស រង់ចាំចេញបង្កាន់ដៃ
+    listPaymentClaims('PENDING_VERIFICATION').forEach(c => {
+        list.push({
+            icon: 'mdi:qrcode-scan', tone: 'warning', unread: true,
+            title: `ការទូទាត់ KHQR ${aparFmtUSD(c.amount)} សម្រាប់វិក្កយបត្រ ${c.invoiceId} រង់ចាំផ្ទៀងផ្ទាត់`,
+            note: `${c.customerName} · លេខយោង ${c.bankRef}`, time: fmtKhDateTime(c.at),
+            href: `${root}/receipts/create-receipt.html?claim=${c.id}`
+        });
+    });
 
     // បំណុលត្រូវទារហួសកាលកំណត់
-    if (kpis.overdueAR > 0) {
+    const ar = aparArSummary();
+    if (ar.overdueAR > 0) {
         list.push({
-            icon: 'mdi:cash-clock',
-            tone: 'danger',
-            title: `បំណុលត្រូវទារហួសកាលកំណត់ ${aparFmtUSD(kpis.overdueAR)}`,
-            note: `ក្នុងបំណុលត្រូវទារសរុប ${aparFmtUSD(kpis.totalAR)} · ត្រូវទូរស័ព្ទទារបន្ទាន់`
+            icon: 'mdi:cash-clock', tone: 'danger',
+            title: `បំណុលត្រូវទារហួសកាលកំណត់ ${aparFmtUSD(ar.overdueAR)}`,
+            note: `ក្នុងបំណុលត្រូវទារសរុប ${aparFmtUSD(ar.totalAR)} · ${ar.overdueCustomers} អតិថិជន`
         });
     }
 
     // វិក្កយបត្រជិតដល់កាលកំណត់ទទួលប្រាក់
-    (store.upcomingReceivables || [])
-        .map(r => ({ r, left: aparDaysUntil(r.dueDate) }))
-        .sort((a, b) => (a.left === null ? 99 : a.left) - (b.left === null ? 99 : b.left))
-        .slice(0, 3)
-        .forEach(x => {
-            const overdue = x.left !== null && x.left < 0;
-            list.push({
-                icon: overdue ? 'mdi:calendar-remove-outline' : 'mdi:calendar-clock-outline',
-                tone: overdue ? 'danger' : (x.left !== null && x.left <= 3 ? 'warning' : 'info'),
-                title: overdue
-                    ? `${x.r.invoiceId} ហួសកាលកំណត់ ${Math.abs(x.left)} ថ្ងៃ`
-                    : `${x.r.invoiceId} ដល់កំណត់ក្នុង ${x.left} ថ្ងៃ`,
-                note: `${x.r.customer} · ${aparFmtUSD(x.r.amount)}`
-            });
-        });
-
-    // ប័ណ្ណចំណាយរង់ចាំការអនុម័ត
-    store.vouchers.filter(v => v.status !== 'paid' && v.status !== 'rejected').forEach(v => {
+    listOpenInvoices().filter(o => o.state !== 'OVERDUE').slice(0, 3).forEach(o => {
+        const left = -o.overdueDays;
         list.push({
-            icon: 'mdi:file-sign',
-            tone: 'warning',
+            icon: 'mdi:calendar-clock-outline', tone: left <= 3 ? 'warning' : 'info',
+            title: `${o.id} ដល់កំណត់ក្នុង ${left} ថ្ងៃ`, note: `${o.customerName} · ${aparFmtUSD(o.due)}`
+        });
+    });
+
+    // ប័ណ្ណចំណាយរង់ចាំការអនុម័ត (ទិន្នន័យ AP ដើម)
+    getLegacyAPARStore().vouchers.filter(v => v.status !== 'paid' && v.status !== 'rejected').forEach(v => {
+        list.push({
+            icon: 'mdi:file-sign', tone: 'warning',
             title: `ប័ណ្ណចំណាយ ${v.id} រង់ចាំដំណើរការ`,
             note: `${v.vendorName} · សុទ្ធ ${aparFmtUSD(v.netAmount)}${v.whtAmount ? ` · ពន្ធកាត់ទុក ${aparFmtUSD(v.whtAmount)}` : ''} · ${v.paymentMethod}`,
             time: v.date
         });
     });
 
-    // បង្កាន់ដៃទទួលប្រាក់ដែលមិនទាន់ផ្ទៀងផ្ទាត់ជាមួយធនាគារ
-    store.receipts.filter(r => r.status !== 'verified').forEach(r => {
-        list.push({
-            icon: 'mdi:bank-check',
-            tone: 'warning',
-            title: `បង្កាន់ដៃ ${r.id} មិនទាន់ផ្ទៀងផ្ទាត់ធនាគារ`,
-            note: `${r.customerName} · ${aparFmtUSD(r.amount)} · ${r.paymentMethod}${r.bankRef ? ` · យោង ${r.bankRef}` : ''}`,
-            time: r.date
-        });
-    });
-
     return list;
+}
+
+function unreadNotificationCount() {
+    return listPaymentClaims('PENDING_VERIFICATION').length + BMS_STORE.notificationsFor('APAR', APAR_USER_ID).filter(n => !n.isRead).length;
+}
+
+function markNotificationsRead() {
+    BMS_STORE.markAllRead('APAR', APAR_USER_ID);
 }

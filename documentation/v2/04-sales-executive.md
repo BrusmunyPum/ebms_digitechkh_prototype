@@ -55,7 +55,7 @@ Maximum 3 items. All labels in Khmer.
 
 **Purpose:** Give the Sales Executive an immediate, actionable view of their current workday — quota progress, who to call, and what documents need action — without any historical charts or cost data.
 
-**Layout:** Single-column content area, `max-width: 960px`, centered. No sidebar interference. Sections stack vertically with `24px` gap between cards. Page header shows greeting: `ជំរាបសួរ, [First Name]! 👋` with today's date in Khmer format.
+**Layout:** Single-column content area, full width (`w-full`, no `max-w-* mx-auto` — GEMINI.md full-width rule). No sidebar interference. Sections stack vertically with `24px` gap between cards. Page header shows greeting: `ជំរាបសួរ, [First Name]! 👋` with today's date in Khmer format.
 
 ---
 
@@ -255,7 +255,7 @@ Maximum 3 items. All labels in Khmer.
 
 **Purpose:** Collect and maintain customer account information for sales operations.
 
-**Layout:** Centered form card, `max-width: 720px`. Single-column form with grouped sections separated by `<fieldset>` or labeled dividers.
+**Layout:** Full-width form (`w-full`). Single-column form with grouped sections separated by `<fieldset>` or labeled dividers.
 
 ---
 
@@ -491,7 +491,7 @@ Three tabs rendered as a tab bar below the header card:
 
 **Purpose:** Allow Sales Executive to compose a formal quote for a customer with line items, financial summary, and submit for approval.
 
-**Layout:** Full-width form page. Two visual zones: top customer/meta section, then line items table, then financial summary footer panel. `max-width: 1024px`.
+**Layout:** Full-width form page. Two visual zones: top customer/meta section, then line items table, then financial summary footer panel. Full width (`w-full`).
 
 ---
 

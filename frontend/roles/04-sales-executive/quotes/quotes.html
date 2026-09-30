@@ -43,7 +43,7 @@
                         <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
                         <div class="flex flex-wrap items-center gap-2 no-print">
                             <a href="create-quote.html" class="sm-badge inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition">
-                                <i class="fas fa-plus"></i> <span class="hidden sm:inline">បង្កើតសម្រង់តម្លៃ</span>
+                                <i class="fas fa-plus"></i> <span class="hidden sm:inline">បង្កើតថ្មី</span>
                             </a>
                         </div>
                     </div>
@@ -84,6 +84,7 @@
                         </div>
                         <h3 class="sm-card-title text-slate-700">គ្មានសម្រង់តម្លៃក្នុងលក្ខខណ្ឌនេះទេ</h3>
                         <p class="sm-card-sub text-slate-500 mt-1">សូមប្តូរតម្រងស្ថានភាព ឬកំឡុងពេល។</p>
+                        <button onclick="clearFilters()" class="sm-badge mt-4 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition">ជម្រះតម្រង</button>
                     </div>
                 </div>
 
@@ -92,24 +93,22 @@
     </div>
 
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
         let filterStatus = 'all';
 
-        const TABS = [
-            { id: 'all', label: 'ទាំងអស់' },
-            { id: 'draft', label: 'សេចក្តីព្រាង' },
-            { id: 'pending_approval', label: 'រង់ចាំការអនុម័ត' },
-            { id: 'approved', label: 'បានអនុម័ត' },
-            { id: 'converted', label: 'បានបម្លែង' },
-            { id: 'expired', label: 'ផុតសុពលភាព' },
-            { id: 'rejected', label: 'បានបដិសេធ' }
-        ];
+        const TAB_ORDER = ['DRAFT', 'PENDING_APPROVAL', 'REJECTED', 'APPROVED', 'SENT_TO_CUSTOMER', 'ACCEPTED_BY_CUSTOMER',
+            'CONVERTED_TO_INVOICE', 'DECLINED_BY_CUSTOMER', 'EXPIRED', 'CANCELLED'];
+        const TABS = [{ id: 'all', label: 'ទាំងអស់' }].concat(TAB_ORDER.map(code => ({ id: code, label: statusLabel(code) })));
 
         function renderTabs() {
+            const all = listQuotes();
             document.getElementById('statusTabs').innerHTML = TABS.map(t => {
-                const count = t.id === 'all' ? QUOTES.length : QUOTES.filter(q => q.status === t.id).length;
+                const count = t.id === 'all' ? all.length : all.filter(q => q.status === t.id).length;
                 const active = filterStatus === t.id;
                 return `<button onclick="pickStatus('${t.id}')" class="sm-badge px-4 py-2 rounded-xl transition ${active
                     ? 'bg-[#1e3a5f] text-white font-semibold shadow-sm'
@@ -124,16 +123,46 @@
             renderQuotes();
         }
 
+        function clearFilters() {
+            filterStatus = 'all';
+            clearRangeTag();
+            renderTabs();
+            renderQuotes();
+        }
+
+        function pendingNote(q) {
+            if (q.status !== 'PENDING_APPROVAL') return '';
+            return `<p class="sm-td-sub text-slate-500 mt-1">រង់ចាំ ${APPROVAL_LEVEL_LABEL[q.pendingLevel]}</p>`;
+        }
+
+        function menuItem(href, icon, tone, text) {
+            const tag = href.startsWith('javascript:') ? 'button' : 'a';
+            const attr = tag === 'a' ? `href="${href}"` : `onclick="${href.replace('javascript:', '')}" type="button"`;
+            return `
+                <${tag} ${attr} class="sm-row-menu-item w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl ${tone.text} ${tone.hover} transition text-left">
+                    <span class="w-7 h-7 rounded-lg ${tone.box} flex items-center justify-center flex-shrink-0"><i class="fas ${icon} text-[11px]"></i></span>
+                    ${text}
+                </${tag}>`;
+        }
+
+        const TONE = {
+            slate: { text: 'text-slate-700', hover: 'hover:bg-slate-50', box: 'bg-slate-100 text-slate-600' },
+            emerald: { text: 'text-emerald-700', hover: 'hover:bg-emerald-50', box: 'bg-emerald-100 text-emerald-700' },
+            blue: { text: 'text-blue-700', hover: 'hover:bg-blue-50', box: 'bg-blue-100 text-blue-700' },
+            amber: { text: 'text-slate-700', hover: 'hover:bg-slate-50', box: 'bg-amber-100 text-amber-700' }
+        };
+
         function renderQuotes() {
             const range = getSelectedRange();
-            const rows = QUOTES
+            const all = listQuotes();
+            const rows = all
                 .filter(q => filterStatus === 'all' || q.status === filterStatus)
                 .filter(q => inRange(q.date, range))
                 .sort((a, b) => new Date(b.date) - new Date(a.date));
 
             // ផ្ទាំងព្រមានសម្រង់តម្លៃដែលនៅសកម្ម ប៉ុន្តែជិតផុតសុពលភាព
-            const expiring = QUOTES.filter(q => {
-                if (!['draft', 'pending_approval', 'approved'].includes(q.status)) return false;
+            const expiring = all.filter(q => {
+                if (!['DRAFT', 'PENDING_APPROVAL', 'APPROVED', 'SENT_TO_CUSTOMER'].includes(q.status)) return false;
                 const left = quoteExpiry(q).days;
                 return left >= 0 && left <= 3;
             });
@@ -160,22 +189,16 @@
 
             body.innerHTML = rows.map(q => {
                 const cust = getCustomer(q.customerId);
-                const st = QUOTE_STATUS[q.status];
                 const exp = quoteExpiry(q);
                 const totals = docTotals(q);
                 const menuId = 'quoteMenu-' + q.id;
 
-                const convertItem = q.status === 'approved' ? `
-                    <a href="../invoices/create-invoice.html?from=${q.id}" class="sm-row-menu-item flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-emerald-700 hover:bg-emerald-50 transition">
-                        <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0"><i class="fas fa-file-invoice-dollar text-[11px]"></i></span>
-                        បម្លែងជាវិក្កយបត្រ
-                    </a>` : '';
-
-                const invoiceItem = q.status === 'converted' && q.invoiceId ? `
-                    <a href="../invoices/view-invoice.html?id=${q.invoiceId}" class="sm-row-menu-item flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-blue-700 hover:bg-blue-50 transition">
-                        <span class="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0"><i class="fas fa-receipt text-[11px]"></i></span>
-                        មើលវិក្កយបត្រ ${q.invoiceId}
-                    </a>` : '';
+                const items = [menuItem(`view-quote.html?id=${q.id}`, 'fa-eye', TONE.slate, 'មើលលម្អិត')];
+                if (['DRAFT', 'REJECTED'].includes(q.status)) items.push(menuItem(`edit-quote.html?id=${q.id}`, 'fa-pen', TONE.slate, 'កែប្រែ'));
+                if (q.status === 'APPROVED') items.push(menuItem(`javascript:sendQuote('${q.id}')`, 'fa-paper-plane', TONE.blue, 'ផ្ញើជូនអតិថិជន'));
+                if (q.status === 'ACCEPTED_BY_CUSTOMER') items.push(menuItem(`../invoices/create-invoice.html?from=${q.id}`, 'fa-file-invoice-dollar', TONE.emerald, 'បំប្លែងជាវិក្កយបត្រ'));
+                if (q.status === 'CONVERTED_TO_INVOICE' && q.invoiceId) items.push(menuItem(`../invoices/view-invoice.html?id=${q.invoiceId}`, 'fa-receipt', TONE.blue, `មើលវិក្កយបត្រ ${q.invoiceId}`));
+                items.push(menuItem(`tel:${cust.phone.replace(/\s/g, '')}`, 'fa-phone', TONE.amber, 'ទូរស័ព្ទតាមដានអតិថិជន'));
 
                 return `
                     <tr class="hover:bg-slate-50 transition">
@@ -190,12 +213,13 @@
                             <p class="sm-td-sub ${exp.tone}">${exp.label}</p>
                         </td>
                         <td class="py-3.5 px-4">
-                            <span class="sm-badge px-2 py-0.5 rounded-full border ${st.tone}">${st.label}</span>
+                            ${statusBadge(q.status)}
+                            ${pendingNote(q)}
                             ${q.discountPercent > DISCOUNT_SELF_LIMIT ? `<p class="sm-td-sub text-amber-600 mt-1">បញ្ចុះតម្លៃ ${fmtPercent(q.discountPercent)}</p>` : ''}
                         </td>
                         <td class="sm-td-strong py-3.5 px-4 text-right">${fmtUSD(totals.grandTotal)}</td>
                         <td class="py-3.5 px-4 text-right">
-                            <button onclick="toggleRowActionMenu(event, '${menuId}')" title="សកម្មភាព"
+                            <button onclick="toggleRowActionMenu(event, '${menuId}')"
                                 class="w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-slate-700 border border-slate-200/70 inline-flex items-center justify-center transition">
                                 <i class="fas fa-ellipsis-vertical text-sm"></i>
                             </button>
@@ -204,23 +228,30 @@
                                     <p class="sm-td-sub text-slate-400">សកម្មភាពលើសម្រង់តម្លៃ</p>
                                     <p class="sm-value text-slate-700">${q.id}</p>
                                 </div>
-                                <a href="view-quote.html?id=${q.id}" class="sm-row-menu-item flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition">
-                                    <span class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0"><i class="fas fa-eye text-[11px]"></i></span>
-                                    ពិនិត្យលម្អិត
-                                </a>
-                                ${convertItem}
-                                ${invoiceItem}
-                                <a href="tel:${cust.phone.replace(/\s/g, '')}" class="sm-row-menu-item flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition">
-                                    <span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0"><i class="fas fa-phone text-[11px]"></i></span>
-                                    ទូរស័ព្ទតាមដានអតិថិជន
-                                </a>
+                                ${items.join('')}
                             </div>
                         </td>
                     </tr>`;
             }).join('');
         }
 
+        async function sendQuote(id) {
+            closeAllFloatingDropdowns();
+            const q = getQuote(id);
+            const cust = getCustomer(q.customerId);
+            const ok = await showCustomConfirm({
+                title: 'ផ្ញើជូនអតិថិជន',
+                message: `តើលោកអ្នកពិតជាផ្ញើសម្រង់តម្លៃ ${id} ទឹកប្រាក់ ${fmtUSD(docTotals(q).grandTotal)} ជូន ${cust.name} មែនទេ?`,
+                confirmText: 'ផ្ញើជូនអតិថិជន',
+                cancelText: 'បោះបង់'
+            });
+            if (!ok) return;
+            const res = seActions.sendQuotation(id);
+            showToast(res.ok ? `បានផ្ញើសម្រង់តម្លៃ ${id} ជូន ${cust.name}` : res.error, res.ok ? 'success' : 'error');
+        }
+
         window.onDateRangeApplied = renderQuotes;
+        window.onStoreChanged = () => { renderTabs(); renderQuotes(); };
 
         document.addEventListener('DOMContentLoaded', () => {
             renderDateRangePicker('dateFilterHost');

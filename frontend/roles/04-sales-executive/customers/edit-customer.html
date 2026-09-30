@@ -120,6 +120,10 @@
     </div>
 
     <!-- Scripts -->
+    <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
@@ -127,8 +131,7 @@
 
         function loadCustomerForm() {
             const urlParams = new URLSearchParams(window.location.search);
-            const id = urlParams.get('id') || 'c-rasmey';
-            editCust = CUSTOMERS.find(c => c.id === id) || CUSTOMERS[0];
+            editCust = getCustomer(urlParams.get('id')) || listCustomers()[0];
 
             if (!editCust) return;
 
@@ -145,16 +148,21 @@
 
         function saveCustomerEdit() {
             if (!editCust) return;
-            editCust.name = document.getElementById('custNameInput').value;
-            editCust.tier = document.getElementById('custTierSelect').value;
-            editCust.creditLimit = parseFloat(document.getElementById('custCreditLimitInput').value) || 0;
-            editCust.paymentTerms = parseInt(document.getElementById('custTermsInput').value) || 0;
-            editCust.contact = document.getElementById('custContactInput').value;
-            editCust.phone = document.getElementById('custPhoneInput').value;
-            editCust.email = document.getElementById('custEmailInput').value;
-            editCust.address = document.getElementById('custAddressInput').value;
+            const name = document.getElementById('custNameInput').value.trim();
+            if (!name) return showToast('សូមបញ្ចូលឈ្មោះអតិថិជន ឬក្រុមហ៊ុន', 'error');
+            const res = seActions.updateCustomer(editCust.id, {
+                name,
+                tier: document.getElementById('custTierSelect').value,
+                creditLimit: parseFloat(document.getElementById('custCreditLimitInput').value) || 0,
+                paymentTerms: parseInt(document.getElementById('custTermsInput').value) || 0,
+                contact: document.getElementById('custContactInput').value.trim(),
+                phone: document.getElementById('custPhoneInput').value.trim(),
+                email: document.getElementById('custEmailInput').value.trim(),
+                address: document.getElementById('custAddressInput').value.trim()
+            });
+            if (!res.ok) return showToast(res.error, 'error');
 
-            showToast(`បានរក្សាទុកព័ត៌មានអតិថិជន ${editCust.name} ដោយជោគជ័យ`, 'success');
+            showToast(`បានរក្សាទុកព័ត៌មានអតិថិជន ${name} ដោយជោគជ័យ` + (res.creditRequested ? ' · សំណើបង្កើនពិដានឥណទានបានផ្ញើទៅអ្នកគ្រប់គ្រង' : ''), 'success');
             setTimeout(() => {
                 window.location.href = `view-customer.html?id=${editCust.id}`;
             }, 700);

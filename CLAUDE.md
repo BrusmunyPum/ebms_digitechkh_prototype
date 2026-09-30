@@ -21,8 +21,8 @@ There is no `docs/` directory anymore (it was removed). Business/system design i
   │   ├── scripts/portal.js           sidebar renderer + date picker + mobile drawer + ⋮ menu
   │   ├── styles/custom.css           (unchanged copy of the old stylesheet)
   │   └── styles/portal.css           ID-scoped type scale + A4 print rules
-  └── roles/03-sales-manager/         Sales Manager portal (5 pages)
-      ├── data.js                     the role's single mock-data source
+  └── roles/03-sales-manager/         Sales Manager portal (5 pages) — one folder per role, 00–12 + external-portals
+      ├── data.js                     the role's projection of the shared store (roles 03 and 04)
       ├── dashboard.html
       ├── approvals/{approvals,view-approval}.html
       ├── pipeline/pipeline.html
@@ -50,8 +50,11 @@ Unlike the backup (where every page carried its own ~153-line `<aside>` copy), t
 - `<body>` carries `id="smPortal"` (scopes `portal.css`), `data-role-root` (`.` for a page at the role root, `..` for one in a subfolder) and `data-active` (which nav item to highlight).
 - The page contains only `<div id="sidebarHost"></div>`; `renderPortalSidebar()` in `portal.js` replaces it, building nav hrefs from `data-role-root`. Change the nav in `portal.js` and every page follows — there are no copies to keep in sync.
 - `portal.js` also provides `renderDateRangePicker(hostId)` (emits the GEMINI.md §3 markup, so it is identical everywhere by construction), `toggleRowActionMenu()` for the `⋮` menus, and the mobile drawer.
-- Script order on every page: `ui-components.js` → the role's `data.js` → `portal.js` → the page's own inline `<script>`.
-- All figures come from `data.js`; nothing numeric is hard-coded in the markup. Decisions and Kanban moves persist in `sessionStorage`, so counts stay consistent across pages within a session.
+- Script order on a page that uses the shared store (**roles 03 Sales Manager and 04 Sales Executive so far**): `ui-components.js` → `shared/data/seed.js` → `status-meta.js` → `store.js` → the role's `data.js` → `portal.js` → the page's own inline `<script>`. Roles not yet migrated still use `ui-components.js` → own `data.js` → `portal.js` with their own `sessionStorage`/`localStorage` stores (see `documentation/v2/22-implementation-roadmap.md` for the migration order).
+- **Shared store (`bms_store_v2` in `localStorage`)**: `seed.js` builds the one canonical dataset (dates relative to today), `store.js` is the only code that reads/writes it and exposes `BMS_STORE.actions.*` (state transitions checked against `documentation/v2/15-approval-state-machine.md`, audit trail, notifications per doc 16). A role's `data.js` exposes only whitelisted projections (`listQuotes()`, `getCustomer()` …) and bound actions (`seActions`, `smActions`); pages never read the store directly or set `status` themselves. Status labels/colours come from `STATUS_META` (`statusBadge(code)`), Khmer terms from `documentation/v2/19-khmer-glossary.md`.
+- A page re-renders when another tab changes the store by setting `window.onStoreChanged = render`; `portal.js` already refreshes the sidebar badges and the notification bell. The login page has a «កំណត់ទិន្នន័យគំរូឡើងវិញ» button. **Serve over HTTP** (`python3 -m http.server 8000 --directory frontend`) — `file://` `localStorage` is unreliable.
+- Rejecting or voiding needs a reason: use `showReasonPrompt()` (in `ui-components.js`), not a bare confirm.
+- All figures come from the store; nothing numeric is hard-coded in the markup.
 
 ## Mandatory project standards
 
@@ -161,7 +164,7 @@ When asked to change navigation, brand colour, the date picker or the header, **
 
 ## Data
 
-All data is fake and hard-coded in the markup or in JS literals. There is no persistence beyond `sessionStorage` (`bms_active_nav`) and the in-memory action tracker — both depend on `sidebar.js`/`ui-components.js` being wired into a page, which isn't the case anywhere under `frontend/` yet (see above). Per GEMINI.md §10, prices are modelled as varying by customer tier / contract and by supplier — reflect that in any pricing UI rather than showing one fixed price per product.
+All data is fake. Roles 03 and 04 read the shared `bms_store_v2` store described above; the other roles still hold hard-coded data in their own `data.js` until they are migrated. Per GEMINI.md §10, prices are modelled as varying by customer tier / contract and by supplier — reflect that in any pricing UI rather than showing one fixed price per product.
 
 ## Documentation suite (`documentation/`)
 

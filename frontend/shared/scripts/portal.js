@@ -32,7 +32,7 @@ const PORTAL_CONFIGS = {
         userInitials: 'ហវ',
         userName: 'ហេង វិច្ឆិកា',
         userRole: 'អ្នកគ្រប់គ្រងផ្នែកលក់',
-        policyNote: 'បញ្ចុះតម្លៃ 0.0% ដល់ 15.0% អនុម័តដោយផ្ទាល់។ លើសពី 15.0% ត្រូវបញ្ជូនទៅអភិបាលទូទៅ។',
+        policyNote: 'អនុម័តសម្រង់តម្លៃទឹកប្រាក់ដល់ $5,000.00 ដោយផ្ទាល់។ លើសពីនេះត្រូវបញ្ជូនបន្តទៅអភិបាលទូទៅ។ ការបញ្ចុះតម្លៃពិសេសទាំងអស់ត្រូវឆ្លងកាត់លោកអ្នក។',
         nav: [
             { id: 'dashboard', label: 'ផ្ទាំងគ្រប់គ្រង', icon: 'mdi:chart-pie', href: 'dashboard.html' },
             { id: 'approvals', label: 'ការអនុម័ត', icon: 'mdi:stamper', href: 'approvals/approvals.html', badge: true },
@@ -48,7 +48,7 @@ const PORTAL_CONFIGS = {
         userInitials: 'សស',
         userName: 'សៅ សុខា',
         userRole: 'បុគ្គលិកប្រតិបត្តិផ្នែកលក់',
-        policyNote: 'បញ្ចុះតម្លៃ 0.0% ដល់ 5.0% អនុវត្តបានដោយផ្ទាល់។ លើសពី 5.0% ត្រូវស្នើសុំការអនុម័តពីអ្នកគ្រប់គ្រងផ្នែកលក់។ ថ្លៃដើមទិញត្រូវលាក់ 100%។',
+        policyNote: 'សម្រង់តម្លៃទាំងអស់ត្រូវអនុម័តដោយអ្នកគ្រប់គ្រងផ្នែកលក់មុន។ វិក្កយបត្រដែលបញ្ចុះតម្លៃលើសពី 5.0% ត្រូវចេញតាមសម្រង់តម្លៃ។ ថ្លៃដើមទិញត្រូវលាក់ 100%។',
         nav: [
             { id: 'dashboard', label: 'ផ្ទាំងការងារ', icon: 'mdi:chart-pie', href: 'dashboard.html' },
             { id: 'customers', label: 'អតិថិជនរបស់ខ្ញុំ', icon: 'mdi:account-multiple-outline', href: 'customers/customers.html' },
@@ -465,6 +465,52 @@ function initDarkMode() {
     updateDarkModeUI(isDarkMode());
 }
 
+const NOTE_TONE_MAP = {
+    info: 'bg-sky-100 text-sky-700',
+    success: 'bg-emerald-100 text-emerald-700',
+    warning: 'bg-amber-100 text-amber-700',
+    danger: 'bg-rose-100 text-rose-700'
+};
+
+/* បង្កើតបញ្ជីជូនដំណឹងឡើងវិញ — ហៅពេលបើកទំព័រ និងពេលឃ្លាំងទិន្នន័យផ្លាស់ប្តូរ (រួមទាំងពីផ្ទាំងរុករកផ្សេង) */
+function refreshPortalNotifications() {
+    const rowsEl = document.getElementById('portalNotifRows');
+    if (!rowsEl) return;
+    const notes = portalNotificationList();
+
+    rowsEl.innerHTML = notes.length
+        ? notes.map(n => {
+            const inner = `
+                <span class="w-8 h-8 rounded-lg ${NOTE_TONE_MAP[n.tone] || NOTE_TONE_MAP.info} flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <iconify-icon icon="${n.icon || 'mdi:bell-outline'}" class="text-base"></iconify-icon>
+                </span>
+                <div class="min-w-0 flex-1">
+                    <p class="text-xs ${n.unread ? 'font-bold' : 'font-semibold'} text-slate-800 leading-snug">${n.title}</p>
+                    ${n.note ? `<p class="text-[11px] text-slate-500 mt-1 leading-relaxed">${n.note}</p>` : ''}
+                    ${n.time ? `<span class="inline-block text-[10px] text-slate-400 font-medium mt-1">${n.time}</span>` : ''}
+                </div>
+                ${n.unread ? '<span class="w-2 h-2 rounded-full bg-rose-500 flex-shrink-0 mt-2"></span>' : ''}`;
+            const cls = 'flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition';
+            return n.href ? `<a href="${n.href}" class="${cls}">${inner}</a>` : `<div class="${cls}">${inner}</div>`;
+        }).join('')
+        : `<div class="py-8 text-center text-slate-400">
+               <iconify-icon icon="mdi:bell-check-outline" class="text-3xl text-slate-300 mb-1"></iconify-icon>
+               <p class="text-xs">គ្មានដំណឹងថ្មីទេ</p>
+           </div>`;
+
+    const unread = typeof unreadNotificationCount === 'function' ? unreadNotificationCount() : notes.length;
+    const dot = document.getElementById('portalNotifDot');
+    if (dot) dot.classList.toggle('hidden', !unread);
+    const count = document.getElementById('portalNotifCount');
+    if (count) count.textContent = notes.length;
+    const readBtn = document.getElementById('portalNotifReadBtn');
+    if (readBtn) readBtn.classList.toggle('hidden', !(unread && typeof markNotificationsRead === 'function'));
+}
+
+function markPortalNotificationsRead() {
+    if (typeof markNotificationsRead === 'function') markNotificationsRead();
+}
+
 function renderPortalHeader() {
     const host = document.getElementById('headerHost');
     if (!host) return;
@@ -477,29 +523,6 @@ function renderPortalHeader() {
     const avatarSrc = `${getRoleRoot()}/../../shared/assets/avatars/${portalId}.jpg`;
 
     const notes = portalNotificationList();
-    const toneMap = {
-        info: 'bg-sky-100 text-sky-700',
-        success: 'bg-emerald-100 text-emerald-700',
-        warning: 'bg-amber-100 text-amber-700',
-        danger: 'bg-rose-100 text-rose-700'
-    };
-
-    const notifRows = notes.length
-        ? notes.map(n => `
-            <div class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition">
-                <span class="w-8 h-8 rounded-lg ${toneMap[n.tone] || toneMap.info} flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <iconify-icon icon="${n.icon || 'mdi:bell-outline'}" class="text-base"></iconify-icon>
-                </span>
-                <div class="min-w-0 flex-1">
-                    <p class="text-xs font-semibold text-slate-800 leading-snug">${n.title}</p>
-                    ${n.note ? `<p class="text-[11px] text-slate-500 mt-1 leading-relaxed">${n.note}</p>` : ''}
-                    ${n.time ? `<span class="inline-block text-[10px] text-slate-400 font-medium mt-1">${n.time}</span>` : ''}
-                </div>
-            </div>`).join('')
-        : `<div class="py-8 text-center text-slate-400">
-               <iconify-icon icon="mdi:bell-check-outline" class="text-3xl text-slate-300 mb-1"></iconify-icon>
-               <p class="text-xs">គ្មានដំណឹងថ្មីទេ</p>
-           </div>`;
 
     const backBtn = backHref
         ? `<a id="portalBackBtn" href="${backHref}" title="ត្រឡប់ក្រោយ"
@@ -531,21 +554,23 @@ function renderPortalHeader() {
                     <button onclick="toggleRowActionMenu(event, 'portalNotifMenu')" type="button" aria-label="ការជូនដំណឹង"
                         class="relative w-10 h-10 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition cursor-pointer">
                         <iconify-icon icon="mdi:bell-outline" class="text-xl"></iconify-icon>
-                        ${notes.length
-            ? '<span class="absolute top-2 right-2.5 w-2.5 h-2.5 rounded-full bg-rose-500 border-2 border-white"></span>'
-            : ''}
+                        <span id="portalNotifDot" class="hidden absolute top-2 right-2.5 w-2.5 h-2.5 rounded-full bg-rose-500 border-2 border-white"></span>
                     </button>
                     <div id="portalNotifMenu" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2.5 text-left z-50">
                         <div class="px-3 py-2 mb-1.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between gap-2">
                             <span class="text-xs font-semibold text-slate-700">ការជូនដំណឹង</span>
-                            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-white border border-slate-200 text-slate-600">${notes.length}</span>
+                            <span class="flex items-center gap-2">
+                                <button id="portalNotifReadBtn" onclick="markPortalNotificationsRead()" type="button" class="hidden text-[11px] font-medium text-sky-700 hover:text-sky-900">សម្គាល់ថាបានអានទាំងអស់</button>
+                                <span id="portalNotifCount" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-white border border-slate-200 text-slate-600">0</span>
+                            </span>
                         </div>
-                        <div class="max-h-[360px] overflow-y-auto scrollbar-hide space-y-1">${notifRows}</div>
+                        <div id="portalNotifRows" class="max-h-[360px] overflow-y-auto scrollbar-hide space-y-1"></div>
                     </div>
                 </div>
             </div>
         </header>`;
 
+    refreshPortalNotifications();
     initDarkMode();
 }
 
@@ -625,27 +650,20 @@ function renderPortalSidebar() {
 }
 
 function handleLogout() {
-    if (typeof showCustomConfirm === 'function') {
-        showCustomConfirm({
-            title: 'ចាកចេញពីប្រព័ន្ធ',
-            message: 'តើលោកអ្នកពិតជាចង់ចាកចេញពីប្រព័ន្ធមែនទេ?',
-            confirmText: 'ចាកចេញ',
-            cancelText: 'បោះបង់',
-            confirmColor: 'danger',
-            onConfirm: () => {
-                showToast('កំពុងចាកចេញពីប្រព័ន្ធ...', 'info');
-                const roleRoot = getRoleRoot();
-                setTimeout(() => {
-                    window.location.href = `${roleRoot}/../00-auth/login.html`;
-                }, 400);
-            }
-        });
-    } else {
-        if (confirm('តើលោកអ្នកពិតជាចង់ចាកចេញពីប្រព័ន្ធមែនទេ?')) {
+    showCustomConfirm({
+        title: 'ចាកចេញពីប្រព័ន្ធ',
+        message: 'តើលោកអ្នកពិតជាចង់ចាកចេញពីប្រព័ន្ធមែនទេ?',
+        confirmText: 'ចាកចេញ',
+        cancelText: 'បោះបង់',
+        danger: true,
+        onConfirm: () => {
+            showToast('កំពុងចាកចេញពីប្រព័ន្ធ...', 'info');
             const roleRoot = getRoleRoot();
-            window.location.href = `${roleRoot}/../00-auth/login.html`;
+            setTimeout(() => {
+                window.location.href = `${roleRoot}/../00-auth/login.html`;
+            }, 400);
         }
-    }
+    });
 }
 
 /* ===== 1. របារចំហៀងចល័តសម្រាប់អេក្រង់តូច (< 1024px) ===== */
@@ -721,16 +739,26 @@ const DATE_PRESETS = [
 let rangeStartDate = null;
 let rangeEndDate = null;
 let selectingRangeStart = false;
-let currentPresetName = 'ខែនេះ';
-let calCurrentMonth = 9;
-let calCurrentYear = 2026;
+/* ច្រកដែលបានផ្លាស់ទៅប្រើឃ្លាំងរួច (មាន store.js) ប្រើ BMS_TODAY ពិត និងជួរ «ខែនេះ» ដល់ថ្ងៃនេះ (ឯកសារ 18 ផ្នែក C)
+   ច្រកដែលមិនទាន់ផ្លាស់ទៅ នៅរក្សាអាកប្បកិរិយាដើម (BMS_TODAY ក្នុង data.js របស់ខ្លួន ឬថ្ងៃពិត) រហូតដល់ត្រូវផ្លាស់ */
+const PORTAL_USES_STORE = typeof BMS_STORE !== 'undefined';
+
+function portalToday() {
+    return typeof BMS_TODAY !== 'undefined' ? new Date(BMS_TODAY) : new Date(new Date().setHours(0, 0, 0, 0));
+}
+
+// ទិន្នន័យគំរូក្នុងឃ្លាំងរួចត្រូវបង្កើតធៀបនឹងថ្ងៃនេះ ដូច្នេះ 30 ថ្ងៃចុងក្រោយ តែងតែមានទិន្នន័យ ទោះថ្ងៃដើមខែក៏ដោយ
+const DEFAULT_PRESET = PORTAL_USES_STORE ? '30 ថ្ងៃចុងក្រោយ' : 'ខែនេះ';
+let currentPresetName = DEFAULT_PRESET;
+let calCurrentMonth = portalToday().getMonth() + 1;
+let calCurrentYear = portalToday().getFullYear();
 
 function renderDateRangePicker(hostId) {
     const host = document.getElementById(hostId);
     if (!host) return;
 
     const presetButtons = DATE_PRESETS.map(name => {
-        const isDefault = name === 'ខែនេះ';
+        const isDefault = name === DEFAULT_PRESET;
         const cls = isDefault
             ? 'preset-btn w-full text-left px-3 py-1.5 rounded-lg bg-[#0f2b5c] text-white font-medium shadow-sm transition-colors'
             : 'preset-btn w-full text-left px-3 py-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-600';
@@ -742,7 +770,7 @@ function renderDateRangePicker(hostId) {
         <span class="text-xs text-slate-400 hidden sm:inline mr-1.5">កាលបរិច្ឆេទ:</span>
         <button onclick="toggleDatePicker(event)" class="h-9 px-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs rounded-xl inline-flex items-center gap-2 shadow-sm transition-all focus:outline-none cursor-pointer">
             <i class="fas fa-calendar-days text-primary text-xs"></i>
-            <span id="selectedDateLabel" class="font-medium text-slate-800">1 កញ្ញា - 30 កញ្ញា</span>
+            <span id="selectedDateLabel" class="font-medium text-slate-800"></span>
             <i class="fas fa-chevron-down text-[10px] text-slate-400 transition-transform duration-200 ml-0.5" id="datePickerChevron"></i>
         </button>
         <div id="datePickerPopover" onclick="event.stopPropagation()" class="hidden absolute right-0 top-full mt-1.5 w-[480px] max-w-[92vw] bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 select-none">
@@ -766,7 +794,7 @@ function renderDateRangePicker(hostId) {
             </div>
             <div class="flex items-center justify-between gap-2 p-3 border-t border-slate-100 bg-slate-50 rounded-b-2xl">
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-[11px] font-medium text-slate-700">
-                    <span id="rangeTagLabel">ខែនេះ</span>
+                    <span id="rangeTagLabel"></span>
                     <button onclick="clearRangeTag()" class="text-slate-400 hover:text-rose-500 transition"><i class="fas fa-xmark text-[10px]"></i></button>
                 </span>
                 <div class="flex items-center gap-2">
@@ -776,7 +804,7 @@ function renderDateRangePicker(hostId) {
             </div>
         </div>`;
 
-    selectPreset('ខែនេះ');
+    selectPreset(DEFAULT_PRESET);
 }
 
 function toggleDatePicker(e) {
@@ -905,28 +933,46 @@ function renderCalendarGrid() {
     }
 }
 
+/* ជួរកាលបរិច្ឆេទទាំងអស់គណនាពី BMS_TODAY (ឯកសារ 18 ផ្នែក C) មិនមានកាលបរិច្ឆេទចាក់សោរទេ
+   ទិន្នន័យគំរូក៏ត្រូវបង្កើតធៀបនឹងថ្ងៃដដែល ដូច្នេះតម្រង «7 ថ្ងៃចុងក្រោយ» តែងតែមានកំណត់ត្រា។ */
+function presetRange(name) {
+    const t = portalToday();
+    const at = (y, m, d) => new Date(y, m, d);
+    const shift = days => at(t.getFullYear(), t.getMonth(), t.getDate() + days);
+    const dow = (t.getDay() + 6) % 7; // ច័ន្ទ = 0
+    switch (name) {
+        case 'ថ្ងៃនេះ': return [t, t];
+        case 'ម្សិលមិញ': return [shift(-1), shift(-1)];
+        case 'សប្តាហ៍នេះ': return [shift(-dow), t];
+        case 'សប្តាហ៍មុន': return [shift(-dow - 7), shift(-dow - 1)];
+        case 'ខែនេះ': return [at(t.getFullYear(), t.getMonth(), 1), PORTAL_USES_STORE ? t : at(t.getFullYear(), t.getMonth() + 1, 0)];
+        case 'ខែមុន': return [at(t.getFullYear(), t.getMonth() - 1, 1), at(t.getFullYear(), t.getMonth(), 0)];
+        case 'ឆ្នាំនេះ': return [at(t.getFullYear(), 0, 1), PORTAL_USES_STORE ? t : at(t.getFullYear(), 11, 31)];
+        case '7 ថ្ងៃចុងក្រោយ': return [shift(-6), t];
+        case '14 ថ្ងៃចុងក្រោយ': return [shift(-13), t];
+        case '30 ថ្ងៃចុងក្រោយ': return [shift(-29), t];
+        default: return null;
+    }
+}
+
+function rangeLabel(name, start, end) {
+    if (name === 'ឆ្នាំនេះ') return `ឆ្នាំ ${start.getFullYear()}`;
+    const part = d => `${d.getDate()} ${MONTH_NAMES_KH[d.getMonth() + 1]}`;
+    return start.getTime() === end.getTime() ? part(start) : `${part(start)} - ${part(end)}`;
+}
+
 function selectPreset(name) {
     currentPresetName = name;
     selectingRangeStart = false;
 
-    const seed = {
-        'ថ្ងៃនេះ': [9, new Date(2026, 8, 3), new Date(2026, 8, 3), '3 កញ្ញា'],
-        'ម្សិលមិញ': [9, new Date(2026, 8, 2), new Date(2026, 8, 2), '2 កញ្ញា'],
-        'សប្តាហ៍នេះ': [9, new Date(2026, 8, 1), new Date(2026, 8, 7), '1 កញ្ញា - 7 កញ្ញា'],
-        'សប្តាហ៍មុន': [8, new Date(2026, 7, 24), new Date(2026, 7, 30), '24 សីហា - 30 សីហា'],
-        'ខែនេះ': [9, new Date(2026, 8, 1), new Date(2026, 8, 30), '1 កញ្ញា - 30 កញ្ញា'],
-        'ខែមុន': [8, new Date(2026, 7, 1), new Date(2026, 7, 31), '1 សីហា - 31 សីហា'],
-        'ឆ្នាំនេះ': [9, new Date(2026, 0, 1), new Date(2026, 11, 31), 'ឆ្នាំ 2026'],
-        '7 ថ្ងៃចុងក្រោយ': [9, new Date(2026, 7, 28), new Date(2026, 8, 3), '28 សីហា - 3 កញ្ញា'],
-        '14 ថ្ងៃចុងក្រោយ': [9, new Date(2026, 7, 21), new Date(2026, 8, 3), '21 សីហា - 3 កញ្ញា'],
-        '30 ថ្ងៃចុងក្រោយ': [9, new Date(2026, 7, 5), new Date(2026, 8, 3), '5 សីហា - 3 កញ្ញា']
-    }[name];
-
-    if (seed) {
-        calCurrentMonth = seed[0];
-        rangeStartDate = seed[1];
-        rangeEndDate = seed[2];
-        updateRangeLabels(seed[3], seed[3]);
+    const range = presetRange(name);
+    if (range) {
+        rangeStartDate = range[0];
+        rangeEndDate = range[1];
+        calCurrentMonth = range[0].getMonth() + 1;
+        calCurrentYear = range[0].getFullYear();
+        const text = rangeLabel(name, range[0], range[1]);
+        updateRangeLabels(text, text);
     }
 
     highlightPresetButton(name);
@@ -980,130 +1026,6 @@ function toggleRowActionMenu(event, menuId) {
     }
 }
 
-/* ===== 4. ប្រព័ន្ធរុករកទំព័រភ្លាមៗឥត Reload (Seamless Instant SPA Navigation) ===== */
-function initSeamlessNavigation() {
-    document.addEventListener('click', (e) => {
-        const link = e.target.closest('a');
-        if (!link || !link.href) return;
-
-        // Skip if modifier keys or target blank or hash or javascript
-        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-        if (link.target === '_blank' || link.getAttribute('target') === '_blank') return;
-        if (link.href.startsWith('javascript:') || link.getAttribute('href') === '#') return;
-
-        // Check if internal link within the current site
-        const url = new URL(link.href, window.location.href);
-        if (url.origin !== window.location.origin) return;
-
-        // Only handle .html files within roles
-        if (!url.pathname.endsWith('.html') && !url.pathname.includes('.html')) return;
-
-        e.preventDefault();
-        navigateSeamlessly(url.href, true);
-    });
-
-    window.addEventListener('popstate', () => {
-        navigateSeamlessly(window.location.href, false);
-    });
-}
-
-async function navigateSeamlessly(targetUrl, pushState = true) {
-    try {
-        const res = await fetch(targetUrl);
-        if (!res.ok) throw new Error('Network error');
-
-        const htmlText = await res.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlText, 'text/html');
-
-        const newMain = doc.querySelector('main');
-        const newHeader = doc.querySelector('header');
-        const currentMain = document.querySelector('main');
-        const currentHeader = document.querySelector('header');
-
-        if (!newMain) {
-            window.location.href = targetUrl;
-            return;
-        }
-
-        // Close any open modals or floating dropdowns
-        closeAllFloatingDropdowns?.();
-        closePortalDrawer();
-
-        // Smooth transition animation
-        if (currentMain) {
-            currentMain.style.transition = 'opacity 0.15s ease-out, transform 0.15s ease-out';
-            currentMain.style.opacity = '0';
-            currentMain.style.transform = 'translateY(4px)';
-        }
-
-        setTimeout(() => {
-            if (pushState) {
-                history.pushState({ path: targetUrl }, '', targetUrl);
-            }
-
-            // Update page metadata
-            document.title = doc.title || document.title;
-            if (doc.body.id) document.body.id = doc.body.id;
-            if (doc.body.dataset.active) document.body.dataset.active = doc.body.dataset.active;
-            if (doc.body.dataset.roleRoot) document.body.dataset.roleRoot = doc.body.dataset.roleRoot;
-
-            // Replace header and main content
-            if (currentHeader && newHeader) {
-                currentHeader.innerHTML = newHeader.innerHTML;
-            }
-            if (currentMain && newMain) {
-                currentMain.innerHTML = newMain.innerHTML;
-                currentMain.className = newMain.className;
-                currentMain.scrollTop = 0;
-            }
-
-            // Sync any modals/popovers that live outside main in the target document
-            const newModals = doc.querySelectorAll('[id$="Modal"], [id$="Menu"], [id$="Drawer"]');
-            newModals.forEach(m => {
-                const existing = document.getElementById(m.id);
-                if (existing) {
-                    existing.outerHTML = m.outerHTML;
-                } else {
-                    document.body.appendChild(m.cloneNode(true));
-                }
-            });
-
-            // Update sidebar navigation active highlight with updated location
-            renderPortalSidebar();
-            renderPortalHeader();
-            initPortalMobileDrawer();
-
-            // Update badge counters
-            updatePortalBadges();
-
-            // Execute scripts inside the target page
-            const scripts = doc.querySelectorAll('body script:not([src])');
-            scripts.forEach(s => {
-                try {
-                    const scriptFn = new Function(s.textContent);
-                    scriptFn();
-                } catch (err) {
-                    console.warn('Inline script execution:', err);
-                }
-            });
-
-            // Trigger DOMContentLoaded callbacks if any
-            if (typeof totalPending === 'function') updatePortalBadges();
-
-            // Fade in content
-            if (currentMain) {
-                currentMain.style.opacity = '1';
-                currentMain.style.transform = 'translateY(0)';
-            }
-        }, 150);
-
-    } catch (err) {
-        // Graceful fallback for environments where fetch might be restricted
-        window.location.href = targetUrl;
-    }
-}
-
 function updatePortalBadges() {
     // ផ្លាកលេខបង្ហាញតែពេលមានចំនួនពិតប្រាកដ — លេខ 0 ជារំខាន
     const paint = (id, value) => {
@@ -1116,12 +1038,19 @@ function updatePortalBadges() {
     if (typeof totalAlerts === 'function') paint('navAlertBadge', totalAlerts());
 }
 
+/* ពេលឃ្លាំងទិន្នន័យផ្លាស់ប្តូរ (ក្នុងផ្ទាំងនេះ ឬផ្ទាំងរុករកផ្សេង) ធ្វើបច្ចុប្បន្នភាពផ្លាកលេខ ជូនដំណឹង
+   និងទំព័រ (ទំព័រកំណត់ window.onStoreChanged ដើម្បីគូរបញ្ជីឡើងវិញ) */
+window.addEventListener('bms-store-changed', e => {
+    updatePortalBadges();
+    refreshPortalNotifications();
+    if (typeof window.onStoreChanged === 'function') window.onStoreChanged(e.detail || {});
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     renderPortalSidebar();
     // ក្បាលទំព័រត្រូវបង្កើតមុនថតចល័ត ព្រោះថតចល័តបញ្ចូលប៊ូតុងម៉ឺនុយទៅក្នុងក្បាលទំព័រ
     renderPortalHeader();
     initPortalMobileDrawer();
-    // initSeamlessNavigation(); // បិទការស្ទាក់ចាប់ SPA នេះ ដើម្បីឱ្យការប្តូរទំព័រដំណើរការតាម Browser ធម្មជាតិ និងដំណើរការ DOMContentLoaded គ្រប់ទំព័រ 100%
     updatePortalBadges();
 
     document.addEventListener('click', (e) => {

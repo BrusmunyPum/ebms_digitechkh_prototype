@@ -110,3 +110,24 @@ These were decided in docs 13–20 so planning could proceed. They are reasonabl
 | 6 | B2B invoice payments are recorded by AP/AR; the Cashier handles only walk-in retail | 13 |
 | 7 | Demos run from a local web server, not by double-clicking files | 20 |
 | 8 | Driver and HR portals are deferred to Phase 3 | 17 |
+
+---
+
+## 6. Implementation status (updated 2026-09-30)
+
+| Stage | Status | Notes |
+|---|---|---|
+| 0. Docs consistent | Done (docs) | Backlog items 10–11 fixed. Section 5 assumptions are **still awaiting product-owner sign-off** — the build follows them as defaults. |
+| 1. Foundation | Done | `shared/data/seed.js`, `shared/scripts/status-meta.js`, `shared/scripts/store.js`; reset button on the login page; `BMS_TODAY` + presets in `portal.js`; backlog items 1–3 fixed. |
+| 2. First hand-off | Done | Sales Executive (04) and Sales Manager (03) run entirely on `bms_store_v2`. A1–A2 verified in two browser tabs (badge, list and bell update without refresh). |
+| 3–6 | Not started | Next: Customer Portal quotation pages, AP/AR receipts, Chief Accountant ledger (stage 3). |
+
+### As-built deviations from doc 20
+
+- **Seed scope:** only the sales domain is seeded (users, customers, products, quotations, invoices, pipeline deals, void / credit-limit requests, follow-ups, notifications, audit log, settings). Purchasing, warehouse and ledger collections are added when their stage is migrated.
+- **Customer IDs:** `CUST-0001`…`CUST-0045` (8 customers). `CUST-0042` is reserved for the Customer Portal demo login (stage 3).
+- **Approval levels:** a quotation stores `requiredLevels` (`SM`, then `GM`, then `DIRECTOR` by amount — doc 16 A1) and `pendingLevel`. The Sales Manager only sees quotations whose `pendingLevel` is `SM`. The GM (and Director sign-off from the GM portal) portal must call `approveQuotation` / `rejectQuotation` — the store already supports it.
+- **Discount rule:** the old "0–15% Sales Manager / above 15% GM" split is gone. Every quotation goes through the Sales Manager (doc 16 A4); an invoice with discount above 5% can only be issued through a quotation.
+- **Default date filter:** portals on the shared store default to «30 ថ្ងៃចុងក្រោយ» instead of «ខែនេះ», because at the start of a month "this month" would be nearly empty. Portals not yet migrated keep «ខែនេះ».
+- **Store actions added beyond doc 20:** `createCustomer`, `updateCustomer`, `updateInvoice` (only while unpaid), `requestVoidInvoice`, `requestCreditIncrease`, `decideRequest`, `moveDeal`.
+- **Seed freshness:** if the stored seed is older than 14 days the store re-seeds itself on load, so a forgotten demo never shows stale dates.

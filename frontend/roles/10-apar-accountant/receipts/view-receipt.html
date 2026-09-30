@@ -80,26 +80,26 @@
                 <!-- Receipt Body Content -->
                 <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 space-y-4 mb-6 text-xs">
                     <div class="flex justify-between items-center border-b border-slate-200 pb-3">
-                        <span class="text-slate-500">ទទួលបានប្រាក់ពី (Received From):</span>
+                        <span class="text-slate-500">ទទួលបានប្រាក់ពី:</span>
                         <span class="font-bold text-slate-900 text-sm" id="customerDisplay">ហេង វិច្ឆិកា (ក្រុមហ៊ុន អេប៊ីស៊ី)</span>
                     </div>
                     <div class="flex justify-between items-center border-b border-slate-200 pb-3">
-                        <span class="text-slate-500">យោងតាមវិក្កយបត្រ (Invoice Ref):</span>
+                        <span class="text-slate-500">យោងតាមវិក្កយបត្រ:</span>
                         <span class="font-bold text-primary text-sm" id="invoiceDisplay">INV-2026-0120</span>
                     </div>
                     <div class="flex justify-between items-center border-b border-slate-200 pb-3">
-                        <span class="text-slate-500">វិធីសាស្ត្រទូទាត់ (Payment Method):</span>
+                        <span class="text-slate-500">វិធីសាស្ត្រទូទាត់:</span>
                         <span class="font-semibold text-slate-800" id="methodDisplay">KHQR បាគង (Bakong Scan)</span>
                     </div>
                     <div class="flex justify-between items-center border-b border-slate-200 pb-3">
-                        <span class="text-slate-500">លេខយោងធនាគារ (Transaction Ref):</span>
+                        <span class="text-slate-500">លេខយោងធនាគារ:</span>
                         <span class="font-mono font-semibold text-slate-800" id="bankRefDisplay">BKG-99283741</span>
                     </div>
                     <div class="flex justify-between items-center pt-1">
-                        <span class="text-sm font-bold text-slate-800">ទឹកប្រាក់ទទួលសរុប (Amount Received):</span>
+                        <span class="text-sm font-bold text-slate-800">ទឹកប្រាក់ទទួលសរុប:</span>
                         <div class="text-right">
                             <span class="text-2xl font-bold text-emerald-700" id="amountDisplay">$450.00</span>
-                            <span class="block text-[11px] text-slate-400 mt-0.5">បានផ្ទៀងផ្ទាត់ចូលគណនីធនាគារ 100%</span>
+                            <span class="block text-[11px] text-slate-400 mt-0.5">ទិន្នានុប្បវត្តិ៖ <span id="journalDisplay">—</span></span>
                         </div>
                     </div>
                 </div>
@@ -107,17 +107,17 @@
                 <!-- Signatures -->
                 <div class="pt-8 border-t border-slate-200 grid grid-cols-2 gap-8 text-center text-xs">
                     <div>
-                        <p class="text-slate-500 mb-14">អ្នកបង់ប្រាក់ (Paid By)</p>
+                        <p class="text-slate-500 mb-14">អ្នកបង់ប្រាក់</p>
                         <div class="border-t border-slate-300 pt-2">
                             <span class="font-bold text-slate-800 block" id="sigPayer">ហេង វិច្ឆិកា</span>
                             <span class="text-[11px] text-slate-400">អតិថិជន</span>
                         </div>
                     </div>
                     <div>
-                        <p class="text-slate-500 mb-14">បេឡាករ / អ្នកទទួលប្រាក់ (Received By)</p>
+                        <p class="text-slate-500 mb-14">បេឡាករ / អ្នកទទួលប្រាក់</p>
                         <div class="border-t border-slate-300 pt-2">
-                            <span class="font-bold text-slate-800 block">អ៊ុំ ម៉ានី</span>
-                            <span class="text-[11px] text-slate-400">គណនេយ្យករទូទាត់ និងទារបំណុល</span>
+                            <span class="font-bold text-slate-800 block" id="sigReceiver">—</span>
+                            <span class="text-[11px] text-slate-400">គណនេយ្យករបំណុល និងទារប្រាក់</span>
                         </div>
                     </div>
                 </div>
@@ -131,29 +131,31 @@
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            renderPortalSidebar();
-            loadReceiptDetail();
-        });
-
         function loadReceiptDetail() {
             const params = new URLSearchParams(window.location.search);
-            const id = params.get('id') || 'REC-2026-0145';
-            const store = getAPARStore();
-            const rec = store.receipts.find(r => r.id === id) || store.receipts[0];
-
+            const rec = getReceipt(params.get('id')) || listReceipts()[0];
             if (!rec) return;
 
             setPortalTitle('បង្កាន់ដៃទទួលប្រាក់ ' + rec.id);
             document.getElementById('recNumberDisplay').innerText = rec.id;
-            document.getElementById('recDateDisplay').innerText = rec.date;
+            document.getElementById('recDateDisplay').innerText = fmtKhDate(rec.date);
             document.getElementById('customerDisplay').innerText = rec.customerName;
             document.getElementById('invoiceDisplay').innerText = rec.invoiceId;
             document.getElementById('methodDisplay').innerText = rec.paymentMethod;
-            document.getElementById('bankRefDisplay').innerText = rec.bankRef;
-            document.getElementById('amountDisplay').innerText = '$' + rec.amount.toFixed(2);
-            document.getElementById('sigPayer').innerText = rec.customerName.split(' (')[0];
+            document.getElementById('bankRefDisplay').innerText = rec.bankRef || '—';
+            document.getElementById('amountDisplay').innerText = fmtUSD(rec.amount);
+            document.getElementById('sigPayer').innerText = rec.customerName;
+            document.getElementById('sigReceiver').innerText = rec.receivedBy;
+            const je = document.getElementById('journalDisplay');
+            if (je) je.innerHTML = rec.journalId ? `<a href="../../09-chief-accountant/ledger/view-journal.html?id=${rec.journalId}" class="font-mono font-semibold text-primary hover:underline">${rec.journalId}</a>` : '—';
         }
+
+        window.onStoreChanged = loadReceiptDetail;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPortalSidebar();
+            loadReceiptDetail();
+        });
     </script>
 </body>
 

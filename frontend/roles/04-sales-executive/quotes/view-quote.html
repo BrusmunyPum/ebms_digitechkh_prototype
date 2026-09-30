@@ -47,11 +47,14 @@
     </div>
 
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
-        const quoteId = new URLSearchParams(location.search).get('id') || 'QT-2026-0089';
-        const quote = getQuote(quoteId);
+        const quoteId = new URLSearchParams(location.search).get('id') || (listQuotes()[0] || {}).id;
+        let quote = getQuote(quoteId);
 
         function renderNotFound() {
             setPortalTitle('រកមិនឃើញឯកសារ');
@@ -70,9 +73,9 @@
         }
 
         function renderHeader() {
-            const st = QUOTE_STATUS[quote.status];
             const exp = quoteExpiry(quote);
             const cust = getCustomer(quote.customerId);
+            const st = statusMeta(quote.status);
 
             setPortalTitle('សម្រង់តម្លៃ ' + quote.id);
             const badge = document.getElementById('docStatus');
@@ -80,29 +83,134 @@
             badge.className = 'sm-badge px-2.5 py-0.5 rounded-full border font-semibold flex-shrink-0 ' + st.tone;
             setPortalSubtitle(`${cust.name} · ${exp.label}`);
 
-            const canConvert = quote.status === 'approved';
-            const convertBtn = quote.status === 'converted'
-                ? `<a href="../invoices/view-invoice.html?id=${quote.invoiceId}" class="sm-badge px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm transition inline-flex items-center gap-2">
-                       <i class="fas fa-receipt"></i> <span>មើលវិក្កយបត្រ</span>
-                   </a>`
-                : canConvert
-                    ? `<a href="../invoices/create-invoice.html?from=${quote.id}" class="sm-badge px-5 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition inline-flex items-center gap-2">
-                           <i class="fas fa-file-invoice-dollar"></i> <span>បម្លែងជាវិក្កយបត្រ</span>
-                       </a>`
-                    : `<button onclick="explainConvert()" class="sm-badge px-5 py-2.5 rounded-xl bg-slate-200 text-slate-400 font-semibold cursor-not-allowed inline-flex items-center gap-2">
-                           <i class="fas fa-file-invoice-dollar"></i> <span>បម្លែងជាវិក្កយបត្រ</span>
-                       </button>`;
+            const primary = 'bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white';
+            const ghost = 'bg-slate-100 hover:bg-slate-200 text-slate-700';
+            const danger = 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200';
+            const btn = (onclick, icon, text, cls) => `
+                <button onclick="${onclick}" class="sm-badge px-5 py-2.5 rounded-xl ${cls} font-semibold shadow-sm transition inline-flex items-center gap-2">
+                    <i class="fas ${icon}"></i> <span>${text}</span>
+                </button>`;
+            const link = (href, icon, text, cls) => `
+                <a href="${href}" class="sm-badge px-5 py-2.5 rounded-xl ${cls} font-semibold shadow-sm transition inline-flex items-center gap-2">
+                    <i class="fas ${icon}"></i> <span>${text}</span>
+                </a>`;
+
+            // ប៊ូតុងសម្រាប់ស្ថានភាពដែលតួនាទីនេះមិនអាចធ្វើបាន ត្រូវលាក់ (មិនមែនបិទ) — ឯកសារ 15
+            const byStatus = {
+                DRAFT: btn('cancelQuote()', 'fa-ban', 'លុបចោល', danger) + link(`edit-quote.html?id=${quote.id}`, 'fa-pen', 'កែប្រែ', ghost) + btn('submitQuote()', 'fa-paper-plane', 'ដាក់ស្នើ', primary),
+                REJECTED: link(`edit-quote.html?id=${quote.id}`, 'fa-pen', 'កែប្រែ និងដាក់ស្នើឡើងវិញ', primary),
+                APPROVED: btn('sendQuote()', 'fa-paper-plane', 'ផ្ញើជូនអតិថិជន', primary),
+                SENT_TO_CUSTOMER: btn('recordDecline()', 'fa-thumbs-down', 'កត់ត្រាការបដិសេធ', ghost) + btn('recordAccept()', 'fa-handshake', 'កត់ត្រាការយល់ព្រម', primary),
+                ACCEPTED_BY_CUSTOMER: link(`../invoices/create-invoice.html?from=${quote.id}`, 'fa-file-invoice-dollar', 'បំប្លែងជាវិក្កយបត្រ', primary),
+                CONVERTED_TO_INVOICE: quote.invoiceId ? link(`../invoices/view-invoice.html?id=${quote.invoiceId}`, 'fa-receipt', 'មើលវិក្កយបត្រ', primary) : ''
+            };
 
             document.getElementById('headerActions').innerHTML = `
-                <button onclick="window.print()" class="sm-badge px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition inline-flex items-center gap-2">
+                <button onclick="window.print()" class="sm-badge px-4 py-2.5 rounded-xl ${ghost} font-medium transition inline-flex items-center gap-2">
                     <i class="fas fa-print"></i> <span class="hidden sm:inline">បោះពុម្ព A4</span>
                 </button>
-                ${convertBtn}`;
+                ${byStatus[quote.status] || ''}`;
         }
 
-        function explainConvert() {
-            const st = QUOTE_STATUS[quote.status];
-            showToast(`សម្រង់តម្លៃស្ថិតក្នុងស្ថានភាព «${st.label}» — អាចបម្លែងជាវិក្កយបត្របាន លុះត្រាតែបានអនុម័តជាមុនសិន`, 'warning');
+        function report(res, okMessage) {
+            showToast(res.ok ? okMessage : res.error, res.ok ? 'success' : 'error');
+            return res.ok;
+        }
+
+        async function submitQuote() {
+            const total = docTotals(quote).grandTotal;
+            const levels = requiredApprovalLevels(total).map(l => APPROVAL_LEVEL_LABEL[l]).join(' រួចបន្តទៅ ');
+            const ok = await showCustomConfirm({
+                title: 'ដាក់ស្នើសម្រង់តម្លៃ',
+                message: `សម្រង់តម្លៃ ${quote.id} ទឹកប្រាក់ ${fmtUSD(total)} នឹងផ្ញើទៅ ${levels} ដើម្បីអនុម័ត។ តើបន្តមែនទេ?`,
+                confirmText: 'ដាក់ស្នើ',
+                cancelText: 'បោះបង់'
+            });
+            if (ok) report(seActions.submitQuotation(quote.id), `បានដាក់ស្នើសម្រង់តម្លៃ ${quote.id} ដើម្បីអនុម័ត`);
+        }
+
+        async function cancelQuote() {
+            const reason = await showReasonPrompt({
+                title: 'លុបចោលសម្រង់តម្លៃ',
+                message: `សម្រង់តម្លៃ ${quote.id} នឹងត្រូវបានលុបចោល ហើយមិនអាចដាក់ស្នើវិញបានទេ។`,
+                placeholder: 'មូលហេតុនៃការលុបចោល...',
+                confirmText: 'លុបចោល',
+                danger: true
+            });
+            if (reason) report(seActions.cancelQuotation(quote.id, reason), `បានលុបចោលសម្រង់តម្លៃ ${quote.id}`);
+        }
+
+        async function sendQuote() {
+            const cust = getCustomer(quote.customerId);
+            const ok = await showCustomConfirm({
+                title: 'ផ្ញើជូនអតិថិជន',
+                message: `តើលោកអ្នកពិតជាផ្ញើសម្រង់តម្លៃ ${quote.id} ជូន ${cust.name} មែនទេ?`,
+                confirmText: 'ផ្ញើជូនអតិថិជន',
+                cancelText: 'បោះបង់'
+            });
+            if (ok) report(seActions.sendQuotation(quote.id), `បានផ្ញើសម្រង់តម្លៃ ${quote.id} ជូន ${cust.name}`);
+        }
+
+        async function recordAccept() {
+            const cust = getCustomer(quote.customerId);
+            const ok = await showCustomConfirm({
+                title: 'កត់ត្រាការយល់ព្រម',
+                message: `កត់ត្រាថា ${cust.name} បានយល់ព្រមលើសម្រង់តម្លៃ ${quote.id} (ឧ. តាមទូរស័ព្ទ ឬជួបផ្ទាល់)។ បន្ទាប់មកលោកអ្នកអាចបំប្លែងជាវិក្កយបត្របាន។`,
+                confirmText: 'កត់ត្រាការយល់ព្រម',
+                cancelText: 'បោះបង់'
+            });
+            if (ok) report(seActions.recordAcceptance(quote.id), `បានកត់ត្រាថាអតិថិជនយល់ព្រមលើសម្រង់តម្លៃ ${quote.id}`);
+        }
+
+        async function recordDecline() {
+            const reason = await showReasonPrompt({
+                title: 'កត់ត្រាការបដិសេធរបស់អតិថិជន',
+                message: `សូមបញ្ចូលមូលហេតុដែលអតិថិជនបដិសេធសម្រង់តម្លៃ ${quote.id}។`,
+                placeholder: 'មូលហេតុ...',
+                confirmText: 'កត់ត្រា'
+            });
+            if (reason) report(seActions.recordDecline(quote.id, reason), `បានកត់ត្រាថាអតិថិជនបដិសេធសម្រង់តម្លៃ ${quote.id}`);
+        }
+
+        /* របាំងស្ថានភាព — ពន្យល់ជំហានបន្ទាប់តាមស្ថានភាពបច្ចុប្បន្ន */
+        function bannerHtml() {
+            const box = (tone, icon, title, text) => `
+                <div class="bg-${tone}-50/80 border border-${tone}-200 rounded-2xl p-4 flex items-start gap-3 no-print">
+                    <div class="w-10 h-10 rounded-xl bg-${tone}-500 text-white flex items-center justify-center text-lg flex-shrink-0">
+                        <i class="fas ${icon}"></i>
+                    </div>
+                    <div>
+                        <h4 class="sm-card-title text-${tone}-900">${title}</h4>
+                        <p class="sm-card-sub text-${tone}-800 mt-0.5">${text}</p>
+                    </div>
+                </div>`;
+
+            switch (quote.status) {
+                case 'PENDING_APPROVAL': {
+                    const steps = quote.requiredLevels.map(l => {
+                        const done = quote.approvals.some(a => a.level === l);
+                        return `${done ? '✓ ' : ''}${APPROVAL_LEVEL_LABEL[l]}`;
+                    }).join(' → ');
+                    return box('amber', 'fa-hourglass-half', 'កំពុងរង់ចាំការអនុម័ត',
+                        `បច្ចុប្បន្នរង់ចាំ ${APPROVAL_LEVEL_LABEL[quote.pendingLevel]}។ ជំហានអនុម័ត៖ ${steps}។ លោកអ្នកមិនអាចកែប្រែ ឬបំប្លែងជាវិក្កយបត្របានទេ រហូតដល់មានការអនុម័តគ្រប់កម្រិត។`);
+                }
+                case 'REJECTED':
+                    return box('rose', 'fa-circle-xmark', 'សម្រង់តម្លៃត្រូវបានបដិសេធ', `មូលហេតុ៖ ${quote.rejectionReason || 'មិនបានបញ្ជាក់'}។ លោកអ្នកអាចកែប្រែ ហើយដាក់ស្នើឡើងវិញ។`);
+                case 'APPROVED':
+                    return box('emerald', 'fa-circle-check', 'សម្រង់តម្លៃបានអនុម័តរួចរាល់', 'សូមផ្ញើជូនអតិថិជន ដើម្បីទទួលការយល់ព្រម មុនបំប្លែងជាវិក្កយបត្រ។');
+                case 'SENT_TO_CUSTOMER':
+                    return box('sky', 'fa-paper-plane', 'កំពុងរង់ចាំការឆ្លើយតបពីអតិថិជន', 'បើអតិថិជនយល់ព្រមតាមទូរស័ព្ទ ឬជួបផ្ទាល់ សូមកត់ត្រាការយល់ព្រមដោយខ្លួនឯង។');
+                case 'ACCEPTED_BY_CUSTOMER':
+                    return box('emerald', 'fa-handshake', 'អតិថិជនបានយល់ព្រម', `បានកត់ត្រា${quote.acceptedVia === 'PORTAL' ? 'តាមច្រកអតិថិជន' : 'ដោយបុគ្គលិកលក់'}។ សូមបំប្លែងជាវិក្កយបត្រ។`);
+                case 'DECLINED_BY_CUSTOMER':
+                    return box('slate', 'fa-thumbs-down', 'អតិថិជនបានបដិសេធ', `មូលហេតុ៖ ${quote.declineReason || 'មិនបានបញ្ជាក់'}។`);
+                case 'CANCELLED':
+                    return box('slate', 'fa-ban', 'សម្រង់តម្លៃត្រូវបានលុបចោល', `មូលហេតុ៖ ${quote.cancellationReason || 'មិនបានបញ្ជាក់'}។`);
+                case 'EXPIRED':
+                    return box('slate', 'fa-hourglass-end', 'សម្រង់តម្លៃផុតសុពលភាព', 'សូមបង្កើតសម្រង់តម្លៃថ្មី ប្រសិនបើអតិថិជននៅតែចាប់អារម្មណ៍។');
+                default:
+                    return '';
+            }
         }
 
         function renderBody() {
@@ -112,30 +220,7 @@
             const needsApproval = quote.discountPercent > DISCOUNT_SELF_LIMIT;
 
             document.getElementById('pageBody').innerHTML = `
-                ${needsApproval && quote.status === 'pending_approval' ? `
-                <div class="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 flex items-start gap-3 no-print">
-                    <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center text-lg flex-shrink-0">
-                        <i class="fas fa-hourglass-half"></i>
-                    </div>
-                    <div>
-                        <h4 class="sm-card-title text-amber-900">កំពុងរង់ចាំការអនុម័ត</h4>
-                        <p class="sm-card-sub text-amber-800 mt-0.5">
-                            ការបញ្ចុះតម្លៃ ${fmtPercent(quote.discountPercent)} លើសពីដែនកម្រិត ${fmtPercent(DISCOUNT_SELF_LIMIT)}។
-                            ${CURRENT_REP.manager} កំពុងពិនិត្យ។ លោកអ្នកមិនអាចបម្លែងជាវិក្កយបត្របានទេ រហូតដល់មានការអនុម័ត។
-                        </p>
-                    </div>
-                </div>` : ''}
-
-                ${quote.status === 'rejected' ? `
-                <div class="bg-rose-50/80 border border-rose-200 rounded-2xl p-4 flex items-start gap-3 no-print">
-                    <div class="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center text-lg flex-shrink-0">
-                        <i class="fas fa-circle-xmark"></i>
-                    </div>
-                    <div>
-                        <h4 class="sm-card-title text-rose-900">សម្រង់តម្លៃត្រូវបានបដិសេធ</h4>
-                        <p class="sm-card-sub text-rose-800 mt-0.5">${quote.note || 'សូមទាក់ទងអ្នកគ្រប់គ្រងសម្រាប់ព័ត៌មានបន្ថែម។'}</p>
-                    </div>
-                </div>` : ''}
+                ${bannerHtml()}
 
                 <!-- ឯកសារ A4 -->
                 <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 md:p-8 space-y-6">
@@ -213,11 +298,11 @@
                                 <span class="sm-value text-slate-700">${fmtUSD(t.subtotal)}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="sm-label text-slate-600">ចូលរួមមុន</span>
+                                <span class="sm-label text-slate-600">ប្រាក់កក់</span>
                                 <span class="sm-value text-slate-700">${fmtUSD(t.downPayment)}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="sm-label ${t.discountAmount ? 'text-amber-700 font-semibold' : 'text-slate-600'}">ការបញ្ចុះតម្លៃពិសេស ${fmtPercent(t.discountPercent)}</span>
+                                <span class="sm-label ${t.discountAmount ? 'text-amber-700 font-semibold' : 'text-slate-600'}">បញ្ចុះតម្លៃពិសេស ${fmtPercent(t.discountPercent)}</span>
                                 <span class="sm-value ${t.discountAmount ? 'text-amber-700' : 'text-slate-700'}">-${fmtUSD(t.discountAmount)}</span>
                             </div>
                             <div class="flex justify-between">
@@ -225,7 +310,7 @@
                                 <span class="sm-value text-slate-700">${fmtUSD(t.vatAmount)}</span>
                             </div>
                             <div class="flex justify-between pt-2 border-t border-slate-200">
-                                <span class="sm-card-title text-slate-700">ទឹកប្រាក់សរុបចុងក្រោយ</span>
+                                <span class="sm-card-title text-slate-700">សរុបត្រូវបង់</span>
                                 <span class="sm-kpi-value text-blue-700">${fmtUSD(t.grandTotal)}</span>
                             </div>
                         </div>
@@ -260,8 +345,23 @@
                     <div class="print-footer">
                         DIGITECHKH Co., Ltd. · សម្រង់តម្លៃលេខ ${quote.id} · ចេញដោយ ${CURRENT_REP.name} · ឯកសារនេះបង្កើតចេញពីប្រព័ន្ធដោយស្វ័យប្រវត្តិ
                     </div>
+                </div>
+
+                <!-- ប្រវត្តិឯកសារ -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm no-print">
+                    <h3 class="sm-card-title text-slate-700 border-b border-slate-100 pb-3 mb-4">ប្រវត្តិឯកសារ</h3>
+                    ${trailTimelineHtml(quote.auditTrail)}
                 </div>`;
         }
+
+        function refresh() {
+            quote = getQuote(quoteId);
+            if (!quote) return renderNotFound();
+            renderHeader();
+            renderBody();
+        }
+
+        window.onStoreChanged = refresh;
 
         document.addEventListener('DOMContentLoaded', () => {
             if (!quote) {

@@ -38,12 +38,14 @@
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Content Top Header -->
         <div id="headerHost" data-title="បង្កាន់ដៃទទួលប្រាក់"
-             data-subtitle="គ្រប់គ្រងការប្រមូលប្រាក់ពីអតិថិជន (AR) តាមដានស្លីបធនាគារ និងបោះពុម្ពបង្កាន់ដៃ"></div>
+             data-subtitle="គ្រប់គ្រងការប្រមូលប្រាក់ពីអតិថិជន តាមដានស្លីបធនាគារ និងបោះពុម្ពបង្កាន់ដៃ"></div>
 
         <!-- Main Content -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
 
             <div class="w-full space-y-4">
+
+                <div id="claimsHost"></div>
 
                 <!-- Search & Filters -->
                 <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
@@ -60,7 +62,7 @@
                         <div class="flex flex-wrap items-center gap-2 no-print">
                             <a href="create-receipt.html" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs flex items-center gap-2 shadow-sm transition">
                                 <i class="fas fa-plus"></i>
-                                <span>ចេញបង្កាន់ដៃទទួលប្រាក់</span>
+                                <span>បង្កើតថ្មី</span>
                             </a>
                         </div>
                     </div>
@@ -97,15 +99,31 @@
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            renderPortalSidebar();
-            renderReceiptsTable();
-        });
+        function renderClaims() {
+            const claims = listPaymentClaims('PENDING_VERIFICATION');
+            document.getElementById('claimsHost').innerHTML = claims.length ? `
+                <div class="bg-sky-50 border border-sky-200 rounded-2xl p-4 space-y-3">
+                    <div class="flex items-center gap-2 text-sky-900">
+                        <i class="fas fa-qrcode"></i>
+                        <h3 class="text-sm font-semibold">ការទូទាត់ KHQR រង់ចាំផ្ទៀងផ្ទាត់ (${claims.length})</h3>
+                    </div>
+                    ${claims.map(c => `
+                        <div class="bg-white rounded-xl border border-sky-100 p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+                            <div>
+                                <p class="font-bold text-slate-800">${c.customerName}</p>
+                                <p class="text-slate-500">វិក្កយបត្រ ${c.invoiceId} · លេខយោង ${c.bankRef} · ${fmtKhDateTime(c.at)}</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-bold text-emerald-700 text-sm">${fmtUSD(c.amount)}</span>
+                                <a href="create-receipt.html?claim=${c.id}" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium transition">ផ្ទៀងផ្ទាត់ និងចេញបង្កាន់ដៃ</a>
+                            </div>
+                        </div>`).join('')}
+                </div>` : '';
+        }
 
         function renderReceiptsTable() {
-            const store = getAPARStore();
             const search = (document.getElementById('receiptSearch').value || '').trim().toLowerCase();
-            const filtered = store.receipts.filter(r =>
+            const filtered = listReceipts().filter(r =>
                 r.id.toLowerCase().includes(search) ||
                 r.invoiceId.toLowerCase().includes(search) ||
                 r.customerName.toLowerCase().includes(search)
@@ -115,7 +133,11 @@
             const tbody = document.getElementById('receiptsTableBody');
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="py-8 text-center text-slate-400">ពុំមានទិន្នន័យបង្កាន់ដៃទទួលប្រាក់ឡើយ</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="py-14 text-center text-slate-400">
+                    <i class="fas fa-receipt text-3xl mb-2"></i>
+                    <p class="text-sm font-medium">គ្មានបង្កាន់ដៃទទួលប្រាក់ក្នុងលក្ខខណ្ឌនេះទេ</p>
+                    <button onclick="clearReceiptSearch()" class="mt-3 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition">ជម្រះតម្រង</button>
+                </td></tr>`;
                 return;
             }
 
@@ -126,27 +148,44 @@
                     </td>
                     <td class="py-3 px-4 font-semibold text-slate-600">${r.invoiceId}</td>
                     <td class="py-3 px-4 font-medium text-slate-900">${r.customerName}</td>
-                    <td class="py-3 px-4 text-slate-600">${r.date}</td>
+                    <td class="py-3 px-4 text-slate-600">${fmtKhDate(r.date)}</td>
                     <td class="py-3 px-4">
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            ${r.paymentMethod}
-                        </span>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">${r.paymentMethod}</span>
                     </td>
-                    <td class="py-3 px-4 font-mono text-slate-500 text-[11px]">${r.bankRef}</td>
-                    <td class="py-3 px-4 text-right font-bold text-emerald-700 text-sm">$${r.amount.toFixed(2)}</td>
+                    <td class="py-3 px-4 font-mono text-slate-500 text-[11px]">${r.bankRef || '—'}</td>
+                    <td class="py-3 px-4 text-right font-bold text-emerald-700 text-sm">${fmtUSD(r.amount)}</td>
                     <td class="py-3 px-4 text-center">
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-                            បានផ្ទៀងផ្ទាត់
-                        </span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">បានផ្ទៀងផ្ទាត់</span>
                     </td>
                     <td class="py-3 px-4 text-center">
-                        <a href="view-receipt.html?id=${r.id}" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-600 inline-flex items-center justify-center transition" title="មើលបង្កាន់ដៃ">
-                            <i class="fas fa-eye text-xs"></i>
-                        </a>
+                        <button onclick="toggleRowActionMenu(event, 'rm-${r.id}')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 inline-flex items-center justify-center transition">
+                            <i class="fas fa-ellipsis-vertical text-xs"></i>
+                        </button>
+                        <div id="rm-${r.id}" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 text-left text-xs">
+                            <a href="view-receipt.html?id=${r.id}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition"><i class="fas fa-eye w-4 text-center"></i>មើលលម្អិត</a>
+                            <a href="../../09-chief-accountant/ledger/view-journal.html?id=${r.journalId}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition"><i class="fas fa-book w-4 text-center"></i>មើលទិន្នានុប្បវត្តិ ${r.journalId || ''}</a>
+                        </div>
                     </td>
                 </tr>
             `).join('');
         }
+
+        function clearReceiptSearch() {
+            document.getElementById('receiptSearch').value = '';
+            renderReceiptsTable();
+        }
+
+        function refresh() {
+            renderClaims();
+            renderReceiptsTable();
+        }
+
+        window.onStoreChanged = refresh;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPortalSidebar();
+            refresh();
+        });
     </script>
 </body>
 

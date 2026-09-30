@@ -90,6 +90,12 @@
                 <span class="ml-3 text-[15px]">ទិដ្ឋភាពរួម</span>
             </a>
 
+            <a href="my-quotes.html" class="flex items-center p-3 text-indigo-200 hover:bg-white/5 hover:text-white rounded-xl transition-all whitespace-nowrap">
+                <i class="fas fa-file-signature w-6 text-center text-indigo-300"></i>
+                <span class="ml-3 text-[15px]">សម្រង់តម្លៃរបស់ខ្ញុំ</span>
+                <span id="navQuoteBadge" class="hidden ml-auto bg-rose-500 text-white text-[11px] font-semibold px-2 py-0.5 rounded-full">0</span>
+            </a>
+
             <a href="my-invoices.html" class="flex items-center p-3 bg-white/10 text-purple-300 font-medium rounded-xl shadow-sm transition-all whitespace-nowrap border border-white/10">
                 <i class="fas fa-file-invoice-dollar w-6 text-center text-purple-400"></i>
                 <span class="ml-3 text-[15px]">វិក្កយបត្ររបស់ខ្ញុំ</span>
@@ -181,7 +187,7 @@
                         </table>
                     </div>
 
-                    <!-- សេចក្តីសង្ខេបហិរញ្ញវត្ថុ: សរុបរង -> ប្រាក់កក់មុន -> ការបញ្ចុះតម្លៃពិសេស -> អាករ 10% -> ទឹកប្រាក់សរុប -->
+                    <!-- សេចក្តីសង្ខេបហិរញ្ញវត្ថុ: សរុបរង -> ប្រាក់កក់មុន -> បញ្ចុះតម្លៃពិសេស -> អាករ 10% -> ទឹកប្រាក់សរុប -->
                     <div class="flex justify-end pt-2">
                         <div class="w-80 space-y-2 text-xs">
                             <div class="flex justify-between text-slate-600">
@@ -189,11 +195,11 @@
                                 <span class="font-semibold text-slate-800" id="sumSubtotal">-</span>
                             </div>
                             <div class="flex justify-between text-slate-600">
-                                <span>ចូលរួមមុន (Down Payment):</span>
+                                <span>ប្រាក់កក់:</span>
                                 <span class="font-semibold text-slate-800" id="sumDownPayment">-</span>
                             </div>
                             <div class="flex justify-between text-slate-600">
-                                <span>ការបញ្ចុះតម្លៃពិសេស:</span>
+                                <span>បញ្ចុះតម្លៃពិសេស:</span>
                                 <span class="font-semibold text-slate-800" id="sumDiscount">-</span>
                             </div>
                             <div class="flex justify-between text-slate-600">
@@ -259,7 +265,7 @@
                             class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-semibold text-xs rounded-xl transition flex items-center justify-center gap-2 shadow-sm">
                             <i class="fas fa-check-circle"></i> ខ្ញុំបានស្កេនទូទាត់រួចរាល់
                         </button>
-                        <p class="text-[11px] text-center text-slate-400">ប្រព័ន្ធនឹងផ្ទៀងផ្ទាត់ការទូទាត់ដោយស្វ័យប្រវត្តិតាមរយៈបណ្តាញបាគង</p>
+                        <p class="text-[11px] text-center text-slate-400">ផ្នែកគណនេយ្យនឹងផ្ទៀងផ្ទាត់ការទូទាត់ និងចេញបង្កាន់ដៃជូនលោកអ្នក</p>
                     </div>
                 </div>
 
@@ -268,6 +274,9 @@
     </div>
 
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
@@ -334,29 +343,33 @@
 
             const paymentSidebar = document.getElementById('paymentSidebar');
             const confirmBtn = document.getElementById('btnConfirmPay');
-            if (invoice.status === 'paid') {
+            if (invoice.status === 'paid' || invoice.status === 'cancelled') {
                 paymentSidebar.classList.add('opacity-60', 'pointer-events-none');
-                confirmBtn.innerHTML = '<i class="fas fa-badge-check"></i> បានទូទាត់រួចរាល់';
+                confirmBtn.innerHTML = invoice.status === 'paid' ? '<i class="fas fa-circle-check"></i> បានទូទាត់រួចរាល់' : '<i class="fas fa-ban"></i> វិក្កយបត្របានលុបចោល';
                 confirmBtn.className = 'w-full py-3 bg-emerald-600 text-white font-semibold text-xs rounded-xl cursor-default flex items-center justify-center gap-2';
+                confirmBtn.onclick = null;
+            } else if (invoice.claim) {
+                paymentSidebar.classList.add('opacity-70');
+                confirmBtn.disabled = true;
+                confirmBtn.innerHTML = '<i class="fas fa-hourglass-half"></i> រង់ចាំផ្នែកគណនេយ្យផ្ទៀងផ្ទាត់';
+                confirmBtn.className = 'w-full py-3 bg-sky-600 text-white font-semibold text-xs rounded-xl cursor-default flex items-center justify-center gap-2';
                 confirmBtn.onclick = null;
             }
         }
 
+        /* ប្រកាសការទូទាត់ KHQR — វិក្កយបត្រនៅមិនទាន់ទូទាត់ រហូតដល់គណនេយ្យករផ្ទៀងផ្ទាត់ និងចេញបង្កាន់ដៃ */
         function simulateCustomerPayment() {
             const data = getCustomerPortalData();
             const id = getInvoiceIdFromUrl() || data.invoices[0].id;
             const invoice = data.invoices.find(inv => inv.id === id);
             if (!invoice) return;
 
-            const totals = cpInvoiceTotals(invoice);
-            invoice.paidAmount = totals.grandTotal;
-            invoice.status = 'paid';
-            saveCustomerPortalData(data);
-
-            showToast(`ការទូទាត់ចំនួន ${cpFmtUSD(totals.remaining)} តាមរយៈ KHQR ទទួលបានជោគជ័យ!`, 'success');
-            renderInvoice();
+            const res = cpActions.payKhqr(invoice.id);
+            if (!res.ok) return showToast(res.error, 'error');
+            showToast(`បានទទួលការទូទាត់ ${cpFmtUSD(res.record.amount)} តាម KHQR · រង់ចាំផ្នែកគណនេយ្យផ្ទៀងផ្ទាត់`, 'success');
         }
 
+        window.onStoreChanged = renderInvoice;
         document.addEventListener('DOMContentLoaded', renderInvoice);
     </script>
 </body>

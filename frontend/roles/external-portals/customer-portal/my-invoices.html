@@ -69,6 +69,12 @@
                 <span class="ml-3 text-[15px]">ទិដ្ឋភាពរួម</span>
             </a>
 
+            <a href="my-quotes.html" class="flex items-center p-3 text-indigo-200 hover:bg-white/5 hover:text-white rounded-xl transition-all whitespace-nowrap">
+                <i class="fas fa-file-signature w-6 text-center text-indigo-300"></i>
+                <span class="ml-3 text-[15px]">សម្រង់តម្លៃរបស់ខ្ញុំ</span>
+                <span id="navQuoteBadge" class="hidden ml-auto bg-rose-500 text-white text-[11px] font-semibold px-2 py-0.5 rounded-full">0</span>
+            </a>
+
             <a href="my-invoices.html" class="flex items-center p-3 bg-white/10 text-purple-300 font-medium rounded-xl shadow-sm transition-all whitespace-nowrap border border-white/10">
                 <i class="fas fa-file-invoice-dollar w-6 text-center text-purple-400"></i>
                 <span class="ml-3 text-[15px]">វិក្កយបត្ររបស់ខ្ញុំ</span>
@@ -99,6 +105,7 @@
                     <div class="flex items-center gap-2">
                         <button onclick="filterInvoiceStatus('all')" class="inv-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-primary text-white" data-status="all">ទាំងអស់</button>
                         <button onclick="filterInvoiceStatus('unpaid')" class="inv-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="unpaid">នៅជំពាក់</button>
+                        <button onclick="filterInvoiceStatus('partial')" class="inv-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="partial">បានទូទាត់ខ្លះ</button>
                         <button onclick="filterInvoiceStatus('overdue')" class="inv-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="overdue">ហួសកាលកំណត់</button>
                         <button onclick="filterInvoiceStatus('paid')" class="inv-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="paid">បានទូទាត់</button>
                     </div>
@@ -133,6 +140,9 @@
     </div>
 
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
@@ -177,7 +187,10 @@
                         <td class="py-3.5 px-4 font-bold text-slate-900 text-sm">${cpFmtUSD(totals.grandTotal)}</td>
                         <td class="py-3.5 px-4 text-slate-400">${cpFmtUSD(inv.paidAmount)}</td>
                         <td class="py-3.5 px-4 font-bold ${totals.remaining > 0 ? 'text-purple-700' : 'text-slate-400'}">${cpFmtUSD(totals.remaining)}</td>
-                        <td class="py-3.5 px-4"><span class="px-2.5 py-0.5 rounded-full ${meta.badge} border font-semibold">${meta.label}</span></td>
+                        <td class="py-3.5 px-4">
+                            <span class="px-2.5 py-0.5 rounded-full ${meta.badge} border font-semibold">${meta.label}</span>
+                            ${inv.claim ? '<p class="text-[11px] text-sky-600 font-semibold mt-1">ទូទាត់ KHQR រង់ចាំផ្ទៀងផ្ទាត់</p>' : ''}
+                        </td>
                         <td class="py-3.5 px-4 text-right">
                             <div class="flex items-center justify-end gap-2">
                                 <button onclick="showToast('កំពុងទាញយកវិក្កយបត្រ ${inv.id} ជា PDF...', 'info')" class="p-2 text-slate-500 hover:text-purple-700" title="ទាញយក PDF">
@@ -192,7 +205,14 @@
             }).join('');
         }
 
-        document.addEventListener('DOMContentLoaded', renderInvoiceList);
+        function paintQuoteBadge() {
+            const n = cpQuotesAwaiting();
+            const el = document.getElementById('navQuoteBadge');
+            if (el) { el.textContent = n; el.classList.toggle('hidden', !n); }
+        }
+
+        window.onStoreChanged = () => { renderInvoiceList(); paintQuoteBadge(); };
+        document.addEventListener('DOMContentLoaded', () => { renderInvoiceList(); paintQuoteBadge(); });
     </script>
 </body>
 

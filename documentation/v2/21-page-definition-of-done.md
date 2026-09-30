@@ -71,9 +71,9 @@ Line numbers are as of that review and may have moved.
 
 | # | Where | Problem | Checklist item |
 |---|---|---|---|
-| 1 | `shared/scripts/portal.js` `handleLogout()` ~l.306 | Falls back to `window.confirm()` | B |
-| 2 | `shared/scripts/portal.js` `selectPreset()` ~l.574–585 | Date presets fixed to 2026-09-03 | D (`BMS_TODAY`) |
-| 3 | `shared/scripts/portal.js` `navigateSeamlessly()` ~l.745 | `new Function()` hides page functions from `window`; currently disabled — do not re-enable as is | A |
+| 1 | `shared/scripts/portal.js` `handleLogout()` ~l.306 | Falls back to `window.confirm()` | B — **FIXED 2026-09-30** |
+| 2 | `shared/scripts/portal.js` `selectPreset()` ~l.574–585 | Date presets fixed to 2026-09-03 | D (`BMS_TODAY`) — **FIXED 2026-09-30** (pages without `store.js` keep their own `BMS_TODAY` until migrated) |
+| 3 | `shared/scripts/portal.js` `navigateSeamlessly()` ~l.745 | `new Function()` hides page functions from `window`; currently disabled — do not re-enable as is | A — **FIXED 2026-09-30** (dead SPA-navigation code deleted) |
 | 4 | `10-apar-accountant/vouchers/view-voucher.html`, `receipts/view-receipt.html` | Wrong script order | A |
 | 5 | AP/AR `create-voucher`, `create-receipt`; Procurement `create-po`, `create-supplier`, `purchase-orders`; Chief Accountant `approvals`; Supplier `create-bill` | 16 native `<select>` | B |
 | 6 | Procurement `create-po`, `create-supplier`; AP/AR `create-voucher`; Supplier `create-bill` | `max-w-* mx-auto` on forms | A |
@@ -81,5 +81,5 @@ Line numbers are as of that review and may have moved.
 | 8 | `00-auth/login.html` | Password field pre-filled with bullet characters; `selectDemoRole()` is dead code | — |
 | 9 | Supplier Portal sidebar, `create-bill`; Customer Portal data; Procurement `purchase-orders`, `view-po`; Warehouse Manager `dashboard`, `movements`, `stock-alerts/alerts` | English in UI: `(PO)`, `(COD)`, `(Matched)`, `(Batch PR)`, «PM», «Procurement Manager» in toasts | C |
 | 9b | Supplier Portal `purchase-orders.html` ~l.222 | Inline row button with native `title=""` tooltip | B |
-| 10 | `documentation/v2/04-sales-executive.md` | Specifies a 960px centred dashboard — contradicts the full-width rule; update the doc to `w-full` | A |
-| 11 | `documentation/v2/10-apar-accountant.md` | Portal ID written as `apPortal`; code uses `aparPortal` — fix the doc | — |
+| 10 | `documentation/v2/04-sales-executive.md` | Specifies a 960px centred dashboard — contradicts the full-width rule; update the doc to `w-full` | A — **FIXED 2026-09-30** |
+| 11 | `documentation/v2/10-apar-accountant.md` | Portal ID written as `apPortal`; code uses `aparPortal` — fix the doc | — **FIXED 2026-09-30** |

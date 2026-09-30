@@ -29,7 +29,7 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <div id="headerHost" data-title="បង្កើតវិក្កយបត្រថ្មី"
-             data-subtitle="ចូលរួមមុន · បញ្ចុះតម្លៃពិសេស · អាករលើតម្លៃបន្ថែម 10%"
+             data-subtitle="ប្រាក់កក់ · បញ្ចុះតម្លៃពិសេស · អាករលើតម្លៃបន្ថែម 10%"
              data-back="invoices.html"></div>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-6">
@@ -109,6 +109,9 @@
     </div>
 
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../doc-editor.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
@@ -188,44 +191,41 @@
             const doc = collectDoc();
             const cust = getCustomer(doc.customerId);
             const totals = editorTotals();
-            const id = nextDocNumber('INV');
 
             // ពិនិត្យពិដានឥណទានមុនចេញវិក្កយបត្រជំពាក់
-            const debt = INVOICES.filter(i => i.customerId === cust.id)
-                .reduce((sum, i) => sum + invoiceState(i).due, 0);
-            const after = debt + totals.grandTotal;
+            const after = customerDebt(cust.id) + totals.grandTotal;
             const overLimit = paymentTerms > 0 && after > cust.creditLimit;
 
-            if (needsManagerApproval()) {
+            if (!sourceQuoteId && needsManagerApproval()) {
                 return showToast(`ការបញ្ចុះតម្លៃ ${fmtPercent(totals.discountPercent)} លើសដែនកម្រិត ${fmtPercent(DISCOUNT_SELF_LIMIT)} — សូមបង្កើតជាសម្រង់តម្លៃ ដើម្បីសុំការអនុម័តជាមុនសិន`, 'error');
             }
 
             const ok = await showCustomConfirm({
                 title: 'បញ្ជាក់ការចេញវិក្កយបត្រ',
                 message: overLimit
-                    ? `បំណុលសរុបរបស់ ${cust.name} នឹងឡើងដល់ ${fmtUSD(after)} ដែលលើសពិដានឥណទាន ${fmtUSD(cust.creditLimit)}។ សំណើលើកលែងនឹងផ្ញើទៅ ${CURRENT_REP.manager}។ តើបន្តមែនទេ?`
-                    : `តើលោកអ្នកពិតជាចេញវិក្កយបត្រ ${id} ជូន ${cust.name} ទឹកប្រាក់ ${fmtUSD(totals.grandTotal)} មែនទេ? វិក្កយបត្រដែលចេញរួច មិនអាចលុបចោលដោយខ្លួនឯងបានទេ។`,
+                    ? `បំណុលសរុបរបស់ ${cust.name} នឹងឡើងដល់ ${fmtUSD(after)} ដែលលើសពិដានឥណទាន ${fmtUSD(cust.creditLimit)}។ សំណើបង្កើនពិដាននឹងផ្ញើទៅ ${CURRENT_REP.manager}។ តើបន្តមែនទេ?`
+                    : `តើលោកអ្នកពិតជាចេញវិក្កយបត្រជូន ${cust.name} ទឹកប្រាក់ ${fmtUSD(totals.grandTotal)} មែនទេ? វិក្កយបត្រដែលចេញរួច មិនអាចលុបចោលដោយខ្លួនឯងបានទេ។`,
                 confirmText: 'ចេញវិក្កយបត្រ',
                 cancelText: 'បោះបង់',
                 danger: overLimit
             });
             if (!ok) return;
 
-            saveNewDoc({
-                id,
-                type: 'invoice',
-                customerId: doc.customerId,
-                items: doc.items,
-                discountPercent: doc.discountPercent,
-                downPayment: doc.downPayment,
+            const res = seActions.createInvoice({
+                ...doc,
                 quoteId: sourceQuoteId || null,
-                date: new Date(BMS_TODAY).toISOString(),
-                dueDate: dueDate().toISOString(),
-                paid: 0,
+                dueDate: toIsoDate(dueDate()),
                 note: document.getElementById('fNote').value.trim()
             });
+            if (!res.ok) return showToast(res.error, 'error');
 
-            showToast(`បានចេញវិក្កយបត្រ ${id} ជូន ${cust.name}` + (overLimit ? ' · សំណើលើកលែងឥណទានបានផ្ញើទៅអ្នកគ្រប់គ្រង' : ''), 'success');
+            let extra = '';
+            if (overLimit) {
+                const requested = Math.ceil(after / 1000) * 1000;
+                seActions.requestCreditIncrease(cust.id, requested, `វិក្កយបត្រ ${res.record.id} លើសពិដានឥណទាន`);
+                extra = ' · សំណើបង្កើនពិដានឥណទានបានផ្ញើទៅអ្នកគ្រប់គ្រង';
+            }
+            showToast(`បានចេញវិក្កយបត្រ ${res.record.id} ជូន ${cust.name}${extra}`, 'success');
             setTimeout(() => { window.location.href = 'invoices.html'; }, 1400);
         }
 
@@ -233,6 +233,13 @@
             const params = new URLSearchParams(location.search);
             sourceQuoteId = params.get('from') || '';
             const preCustomer = params.get('customer');
+
+            // ការបំប្លែងអនុញ្ញាតតែសម្រង់តម្លៃដែលអតិថិជនបានយល់ព្រមប៉ុណ្ណោះ (ឯកសារ 15)
+            const srcQuote = sourceQuoteId ? getQuote(sourceQuoteId) : null;
+            if (sourceQuoteId && (!srcQuote || srcQuote.status !== 'ACCEPTED_BY_CUSTOMER')) {
+                showToast('សម្រង់តម្លៃត្រូវតែទទួលបានការយល់ព្រមពីអតិថិជនសិន ទើបបំប្លែងជាវិក្កយបត្របាន', 'warning');
+                sourceQuoteId = '';
+            }
 
             initDocEditor({ mode: 'invoice', prefillFrom: sourceQuoteId || null });
 

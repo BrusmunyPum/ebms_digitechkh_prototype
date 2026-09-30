@@ -69,6 +69,12 @@
                 <span class="ml-3 text-[15px]">ទិដ្ឋភាពរួម</span>
             </a>
 
+            <a href="my-quotes.html" class="flex items-center p-3 text-indigo-200 hover:bg-white/5 hover:text-white rounded-xl transition-all whitespace-nowrap">
+                <i class="fas fa-file-signature w-6 text-center text-indigo-300"></i>
+                <span class="ml-3 text-[15px]">សម្រង់តម្លៃរបស់ខ្ញុំ</span>
+                <span id="navQuoteBadge" class="hidden ml-auto bg-rose-500 text-white text-[11px] font-semibold px-2 py-0.5 rounded-full">0</span>
+            </a>
+
             <a href="my-invoices.html" class="flex items-center p-3 text-indigo-200 hover:bg-white/5 hover:text-white rounded-xl transition-all whitespace-nowrap">
                 <i class="fas fa-file-invoice-dollar w-6 text-center text-indigo-300"></i>
                 <span class="ml-3 text-[15px]">វិក្កយបត្ររបស់ខ្ញុំ</span>
@@ -124,6 +130,8 @@
                     </div>
                 </div>
 
+                <div id="quoteBanner"></div>
+
                 <!-- ស្ថានភាពការបញ្ជាទិញសកម្ម -->
                 <div id="activeOrderBanner"></div>
 
@@ -155,9 +163,18 @@
     </div>
 
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
+        function paintQuoteBadge() {
+            const n = cpQuotesAwaiting();
+            const el = document.getElementById('navQuoteBadge');
+            if (el) { el.textContent = n; el.classList.toggle('hidden', !n); }
+        }
+
         function renderDashboard() {
             const data = getCustomerPortalData();
             const profile = data.customerProfile;
@@ -166,7 +183,7 @@
 
             const totalPaid = data.invoices.reduce((s, inv) => s + inv.paidAmount, 0);
             const outstandingInvoices = data.invoices
-                .filter(inv => inv.status !== 'paid')
+                .filter(inv => !['paid', 'cancelled'].includes(inv.status))
                 .map(inv => ({ inv, totals: cpInvoiceTotals(inv) }));
             const totalOutstanding = outstandingInvoices.reduce((s, o) => s + o.totals.remaining, 0);
 
@@ -181,6 +198,22 @@
             } else {
                 document.getElementById('kpiOutstandingSub').textContent = 'គ្មានសមតុល្យជំពាក់ទេ';
             }
+
+            // សម្រង់តម្លៃរង់ចាំការឆ្លើយតបពីអតិថិជន
+            const awaiting = data.quotes.filter(q => q.status === 'SENT_TO_CUSTOMER');
+            document.getElementById('quoteBanner').innerHTML = awaiting.length ? `
+                <a href="my-quotes.html" class="block bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl p-5 shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between flex-wrap gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-11 h-11 rounded-xl bg-amber-500 text-white flex items-center justify-center text-lg flex-shrink-0"><i class="fas fa-file-signature"></i></div>
+                            <div>
+                                <p class="text-sm font-bold">មានសម្រង់តម្លៃ ${awaiting.length} រង់ចាំការយល់ព្រមពីលោកអ្នក</p>
+                                <p class="text-xs text-amber-800 mt-0.5">${awaiting.map(q => q.id).join(' · ')}</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-semibold flex items-center gap-1.5">ពិនិត្យ និងឆ្លើយតប <i class="fas fa-arrow-right text-[10px]"></i></span>
+                    </div>
+                </a>` : '';
 
             // ស្ថានភាពការបញ្ជាទិញសកម្ម
             const activeOrder = data.orders.find(o => o.currentStage < 4);
@@ -227,7 +260,8 @@
             }).join('');
         }
 
-        document.addEventListener('DOMContentLoaded', renderDashboard);
+        window.onStoreChanged = () => { renderDashboard(); paintQuoteBadge(); };
+        document.addEventListener('DOMContentLoaded', () => { renderDashboard(); paintQuoteBadge(); });
     </script>
 </body>
 

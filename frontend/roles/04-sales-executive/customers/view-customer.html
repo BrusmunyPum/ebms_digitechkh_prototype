@@ -34,7 +34,7 @@
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
             <!-- Header (72px aligned) -->
         <div id="headerHost" data-title="ក្រុមហ៊ុន រស្មី អភិវឌ្ឍន៍"
-                 data-subtitle="កូដអតិថិជន៖ CUST-2026-0001"
+                 data-subtitle=""
                  data-back="customers.html"></div>
 
             <!-- Main Content Area -->
@@ -61,7 +61,7 @@
                     <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
                         <div class="text-slate-500 text-xs font-medium">បំណុលត្រូវទារ (AR ជំពាក់)</div>
                         <div class="text-2xl font-bold text-rose-600 mt-1 tabular-nums font-mono" id="custArBalance">$0.00</div>
-                        <div class="mt-2 text-[11px] text-slate-400" id="custArStatus">មិនទាន់មានបំណុលហួសកំណត់</div>
+                        <div class="mt-2 text-[11px] text-slate-400" id="custArStatus">មិនទាន់មានបំណុលហួសកាលកំណត់</div>
                     </div>
 
                     <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
@@ -170,6 +170,10 @@
     </div>
 
     <!-- Scripts -->
+    <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
@@ -196,8 +200,7 @@
 
         function loadCustomer() {
             const urlParams = new URLSearchParams(window.location.search);
-            const id = urlParams.get('id') || 'c-rasmey';
-            currentCust = CUSTOMERS.find(c => c.id === id) || CUSTOMERS[0];
+            currentCust = getCustomer(urlParams.get('id')) || listCustomers()[0];
 
             if (!currentCust) return;
 
@@ -205,86 +208,71 @@
             setPortalSubtitle(`កូដអតិថិជន៖ ${currentCust.code}`);
             document.getElementById('custCreditLimit').innerText = fmtUSD(currentCust.creditLimit);
             document.getElementById('custTerms').innerText = `${currentCust.paymentTerms} ថ្ងៃ`;
-            document.getElementById('custSince').innerText = currentCust.since;
+            document.getElementById('custSince').innerText = fmtKhDate(currentCust.since);
 
             document.getElementById('editCustBtn').href = `edit-customer.html?id=${currentCust.id}`;
-            document.getElementById('quoteCustBtn').href = `../quotes/create-quote.html?customer_id=${currentCust.id}`;
+            document.getElementById('quoteCustBtn').href = `../quotes/create-quote.html?customer=${currentCust.id}`;
 
             document.getElementById('infoContact').innerText = currentCust.contact;
             document.getElementById('infoPhone').innerText = currentCust.phone;
             document.getElementById('infoEmail').innerText = currentCust.email || 'គ្មាន';
             document.getElementById('infoAddress').innerText = currentCust.address;
 
-            // Invoices for this customer
-            const custInvoices = INVOICES.filter(inv => inv.customerId === currentCust.id);
-            let totalDue = 0;
+            const badge = code => statusBadge(code);
+            const cell = 'py-2.5 px-3';
 
+            // វិក្កយបត្ររបស់អតិថិជននេះ
+            const custInvoices = listInvoices().filter(inv => inv.customerId === currentCust.id)
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
             const invBody = document.getElementById('custInvoicesBody');
             if (custInvoices.length === 0) {
                 invBody.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-slate-400">មិនទាន់មានវិក្កយបត្រសម្រាប់អតិថិជននេះឡើយ</td></tr>`;
             } else {
                 invBody.innerHTML = custInvoices.map(inv => {
-                    const totals = calculateInvoiceTotals(inv);
-                    const balanceDue = totals.total - (inv.paidAmount || 0);
-                    if (inv.status !== 'paid') totalDue += balanceDue;
-
-                    let badge = '';
-                    if (inv.status === 'paid') badge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-700">បានទូទាត់</span>';
-                    else if (inv.status === 'overdue') badge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-rose-100 text-rose-700">ហួសកំណត់</span>';
-                    else if (inv.status === 'partial') badge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">បង់ខ្លះ</span>';
-                    else badge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-700">មិនទាន់បង់</span>';
-
+                    const st = invoiceState(inv);
                     return `
                         <tr class="hover:bg-slate-50 transition">
-                            <td class="py-2.5 px-3 font-mono font-bold text-slate-800"><a href="../invoices/view-invoice.html?id=${inv.id}" class="hover:underline">${inv.id}</a></td>
-                            <td class="py-2.5 px-3 text-slate-600">${fmtKhDate(inv.date)}</td>
-                            <td class="py-2.5 px-3 text-slate-600">${fmtKhDate(inv.dueDate)}</td>
-                            <td class="py-2.5 px-3 text-right font-bold text-slate-800 font-mono tabular-nums">${fmtUSD(totals.total)}</td>
-                            <td class="py-2.5 px-3 text-right font-bold text-rose-600 font-mono tabular-nums">${fmtUSD(balanceDue)}</td>
-                            <td class="py-2.5 px-3 text-center">${badge}</td>
-                            <td class="py-2.5 px-3 text-right">
+                            <td class="${cell} font-mono font-bold text-slate-800"><a href="../invoices/view-invoice.html?id=${inv.id}" class="hover:underline">${inv.id}</a></td>
+                            <td class="${cell} text-slate-600">${fmtKhDate(inv.date)}</td>
+                            <td class="${cell} text-slate-600">${fmtKhDate(inv.dueDate)}</td>
+                            <td class="${cell} text-right font-bold text-slate-800 font-mono tabular-nums">${fmtUSD(st.totals.grandTotal)}</td>
+                            <td class="${cell} text-right font-bold ${st.due > 0 ? 'text-rose-600' : 'text-slate-500'} font-mono tabular-nums">${fmtUSD(st.due)}</td>
+                            <td class="${cell} text-center">${badge(st.key)}</td>
+                            <td class="${cell} text-right">
                                 <a href="../invoices/view-invoice.html?id=${inv.id}" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px]">មើល</a>
                             </td>
-                        </tr>
-                    `;
+                        </tr>`;
                 }).join('');
             }
 
+            const totalDue = customerDebt(currentCust.id);
             document.getElementById('custArBalance').innerText = fmtUSD(totalDue);
-            const usagePercent = Math.min(Math.round((totalDue / currentCust.creditLimit) * 100), 100);
+            const usagePercent = currentCust.creditLimit ? Math.min(Math.round((totalDue / currentCust.creditLimit) * 100), 100) : 0;
             document.getElementById('creditUsageBar').style.width = `${usagePercent}%`;
 
-            // Quotes for this customer
-            const custQuotes = QUOTES.filter(q => q.customerId === currentCust.id);
+            // សម្រង់តម្លៃរបស់អតិថិជននេះ
+            const custQuotes = listQuotes().filter(q => q.customerId === currentCust.id)
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
             const qBody = document.getElementById('custQuotesBody');
             if (custQuotes.length === 0) {
                 qBody.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-slate-400">មិនទាន់មានសម្រង់តម្លៃសម្រាប់អតិថិជននេះឡើយ</td></tr>`;
             } else {
-                qBody.innerHTML = custQuotes.map(q => {
-                    const totals = calculateQuoteTotals(q);
-                    let badge = '';
-                    if (q.status === 'approved') badge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-700">បានអនុម័ត</span>';
-                    else if (q.status === 'converted') badge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-blue-100 text-blue-700">បានបម្លែងជាវិក្កយបត្រ</span>';
-                    else if (q.status === 'pending_approval') badge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">រង់ចាំអនុម័ត</span>';
-                    else badge = '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-700">ព្រាង</span>';
-
-                    return `
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="py-2.5 px-3 font-mono font-bold text-slate-800"><a href="../quotes/view-quote.html?id=${q.id}" class="hover:underline">${q.id}</a></td>
-                            <td class="py-2.5 px-3 text-slate-600">${fmtKhDate(q.date)}</td>
-                            <td class="py-2.5 px-3 text-slate-600">${fmtKhDate(q.validUntil)}</td>
-                            <td class="py-2.5 px-3 text-right text-slate-700">${q.discountPercent}%</td>
-                            <td class="py-2.5 px-3 text-right font-bold text-slate-800 font-mono tabular-nums">${fmtUSD(totals.total)}</td>
-                            <td class="py-2.5 px-3 text-center">${badge}</td>
-                            <td class="py-2.5 px-3 text-right">
-                                <a href="../quotes/view-quote.html?id=${q.id}" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px]">មើល</a>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
+                qBody.innerHTML = custQuotes.map(q => `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="${cell} font-mono font-bold text-slate-800"><a href="../quotes/view-quote.html?id=${q.id}" class="hover:underline">${q.id}</a></td>
+                        <td class="${cell} text-slate-600">${fmtKhDate(q.date)}</td>
+                        <td class="${cell} text-slate-600">${fmtKhDate(q.validUntil)}</td>
+                        <td class="${cell} text-right text-slate-700">${q.discountPercent}%</td>
+                        <td class="${cell} text-right font-bold text-slate-800 font-mono tabular-nums">${fmtUSD(docTotals(q).grandTotal)}</td>
+                        <td class="${cell} text-center">${badge(q.status)}</td>
+                        <td class="${cell} text-right">
+                            <a href="../quotes/view-quote.html?id=${q.id}" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px]">មើល</a>
+                        </td>
+                    </tr>`).join('');
             }
         }
 
+        window.onStoreChanged = loadCustomer;
         document.addEventListener('DOMContentLoaded', loadCustomer);
     </script>
 </body>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGITECHKH - សម្រង់តម្លៃរបស់ខ្ញុំ</title>
+    <link rel="icon" type="image/png" href="../../../shared/assets/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="../../../shared/assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1e1b4b",
+                        'primary-dark': "#0f0e26",
+                        accent: "#a855f7",
+                    },
+                    fontFamily: {
+                        sans: ["'Kantumruy Pro'", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
+    <style>
+        /* custom.css ដាក់ពណ៌បៃតងលើ <aside> ទាំងអស់ជាសកល — ច្រកអតិថិជននេះត្រូវការពណ៌ស្វាយ/ខៀវក្រម់ផ្ទាល់ខ្លួន ដូច្នេះត្រូវបដិសេធដោយ ID-scoped rule ដែលមាន specificity ខ្ពស់ជាង */
+        #cpPortal aside {
+            background-color: #1e1b4b !important;
+        }
+    </style>
+</head>
+
+<body id="cpPortal" class="bg-indigo-50/30 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden" data-role-root="..">
+
+    <!-- របារចំហៀងអតិថិជន -->
+    <aside class="w-64 bg-[#1e1b4b] text-white flex flex-col flex-shrink-0 select-none z-20 border-r border-indigo-950">
+        <div class="h-[72px] px-6 flex items-center justify-between border-b border-white/10 flex-shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center p-1 shadow-sm overflow-hidden flex-shrink-0">
+                    <img src="../../../shared/assets/logo-mark-transparent.png" alt="DIGITECHKH" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h1 class="text-lg font-semibold tracking-wider whitespace-nowrap text-white">DIGITECHKH</h1>
+                    <span class="text-[11px] font-medium text-purple-300 uppercase tracking-wider block">អតិថិជន</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-5 py-3 border-b border-white/5 bg-black/20">
+            <div class="flex items-center justify-between">
+                <span class="text-xs text-indigo-300">គណនី:</span>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                    <i class="fas fa-star text-[10px]"></i> អតិថិជន VIP
+                </span>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto px-4 py-4 space-y-1.5 scrollbar-hide text-sm">
+            <a href="dashboard.html" class="flex items-center p-3 text-indigo-200 hover:bg-white/5 hover:text-white rounded-xl transition-all whitespace-nowrap">
+                <i class="fas fa-chart-pie w-6 text-center text-indigo-300"></i>
+                <span class="ml-3 text-[15px]">ទិដ្ឋភាពរួម</span>
+            </a>
+
+            <a href="my-quotes.html" class="flex items-center p-3 bg-white/10 text-purple-300 font-medium rounded-xl shadow-sm transition-all whitespace-nowrap border border-white/10">
+                <i class="fas fa-file-signature w-6 text-center text-purple-400"></i>
+                <span class="ml-3 text-[15px]">សម្រង់តម្លៃរបស់ខ្ញុំ</span>
+                <span id="navQuoteBadge" class="hidden ml-auto bg-rose-500 text-white text-[11px] font-semibold px-2 py-0.5 rounded-full">0</span>
+            </a>
+
+            <a href="my-invoices.html" class="flex items-center p-3 text-indigo-200 hover:bg-white/5 hover:text-white rounded-xl transition-all whitespace-nowrap">
+                <i class="fas fa-file-invoice-dollar w-6 text-center text-indigo-300"></i>
+                <span class="ml-3 text-[15px]">វិក្កយបត្ររបស់ខ្ញុំ</span>
+            </a>
+
+            <a href="order-tracking.html" class="flex items-center p-3 text-indigo-200 hover:bg-white/5 hover:text-white rounded-xl transition-all whitespace-nowrap">
+                <i class="fas fa-truck-fast w-6 text-center text-indigo-300"></i>
+                <span class="ml-3 text-[15px]">តាមដានការដឹកជញ្ជូន</span>
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10 bg-black/10">
+            <a href="../../00-auth/login.html" class="flex items-center text-[15px] text-indigo-300 hover:text-rose-400 transition-colors p-2 rounded-lg hover:bg-white/5">
+                <i class="fas fa-arrow-right-from-bracket w-6 mr-2"></i> ចាកចេញ
+            </a>
+        </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <div id="headerHost" data-title="សម្រង់តម្លៃរបស់ខ្ញុំ"
+             data-subtitle="ពិនិត្យ យល់ព្រម ឬបដិសេធសម្រង់តម្លៃពី DIGITECHKH"></div>
+
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-indigo-50/20 px-4 md:px-6 py-4">
+            <div class="w-full space-y-4">
+
+                <div id="awaitBanner"></div>
+
+                <div class="bg-white rounded-2xl p-3 border border-purple-100 shadow-sm flex flex-wrap items-center justify-between gap-3">
+                    <div id="quoteTabs" class="flex flex-wrap items-center gap-2"></div>
+                    <div class="relative w-full sm:w-64">
+                        <i class="fas fa-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                        <input type="text" id="searchQuote" oninput="renderQuoteList()" placeholder="ស្វែងរកតាមលេខសម្រង់តម្លៃ..."
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:border-primary">
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-purple-100 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 text-slate-500 uppercase text-[11px] font-semibold border-b border-slate-100">
+                                <tr>
+                                    <th class="py-3 px-4">លេខសម្រង់តម្លៃ</th>
+                                    <th class="py-3 px-4">កាលបរិច្ឆេទចេញ</th>
+                                    <th class="py-3 px-4">សុពលភាពដល់</th>
+                                    <th class="py-3 px-4">សរុបត្រូវបង់</th>
+                                    <th class="py-3 px-4">ស្ថានភាព</th>
+                                    <th class="py-3 px-4 text-right">សកម្មភាព</th>
+                                </tr>
+                            </thead>
+                            <tbody id="quoteListBody" class="divide-y divide-slate-100 text-slate-700 font-medium text-xs"></tbody>
+                        </table>
+                    </div>
+                    <div id="quoteEmpty" class="hidden py-14 px-6 text-center">
+                        <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3"><i class="fas fa-file-circle-question text-2xl"></i></div>
+                        <h3 class="text-sm font-semibold text-slate-700">គ្មានសម្រង់តម្លៃក្នុងលក្ខខណ្ឌនេះទេ</h3>
+                        <button onclick="clearQuoteFilters()" class="mt-4 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition">ជម្រះតម្រង</button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
+    <script src="data.js"></script>
+    <script src="../../../shared/scripts/portal.js"></script>
+    <script>
+        let quoteFilter = 'all';
+        const QUOTE_TABS = ['SENT_TO_CUSTOMER', 'ACCEPTED_BY_CUSTOMER', 'CONVERTED_TO_INVOICE', 'DECLINED_BY_CUSTOMER', 'EXPIRED'];
+
+        function paintQuoteBadge() {
+            const n = cpQuotesAwaiting();
+            const el = document.getElementById('navQuoteBadge');
+            if (el) { el.textContent = n; el.classList.toggle('hidden', !n); }
+        }
+
+        function renderTabs() {
+            const all = cpQuotes();
+            const tabs = [{ id: 'all', label: 'ទាំងអស់' }].concat(QUOTE_TABS.map(c => ({ id: c, label: c === 'SENT_TO_CUSTOMER' ? 'រង់ចាំការឆ្លើយតប' : statusLabel(c) })));
+            document.getElementById('quoteTabs').innerHTML = tabs.map(t => {
+                const count = t.id === 'all' ? all.length : all.filter(q => q.status === t.id).length;
+                return `<button onclick="pickQuoteTab('${t.id}')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${quoteFilter === t.id
+                    ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">${t.label} (${count})</button>`;
+            }).join('');
+        }
+
+        function pickQuoteTab(id) {
+            quoteFilter = id;
+            renderTabs();
+            renderQuoteList();
+        }
+
+        function clearQuoteFilters() {
+            quoteFilter = 'all';
+            document.getElementById('searchQuote').value = '';
+            renderTabs();
+            renderQuoteList();
+        }
+
+        function menuLink(href, icon, tone, text) {
+            return `<a href="${href}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl ${tone} hover:bg-slate-50 transition text-xs font-medium"><i class="fas ${icon} w-4 text-center"></i>${text}</a>`;
+        }
+
+        function menuButton(fn, icon, tone, text) {
+            return `<button onclick="${fn}" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl ${tone} hover:bg-slate-50 transition text-xs font-medium text-left"><i class="fas ${icon} w-4 text-center"></i>${text}</button>`;
+        }
+
+        function renderQuoteList() {
+            const search = (document.getElementById('searchQuote').value || '').trim().toLowerCase();
+            const rows = cpQuotes()
+                .filter(q => quoteFilter === 'all' || q.status === quoteFilter)
+                .filter(q => !search || q.id.toLowerCase().includes(search))
+                .sort((a, b) => b.date.localeCompare(a.date));
+
+            const awaiting = cpQuotes().filter(q => q.status === 'SENT_TO_CUSTOMER');
+            document.getElementById('awaitBanner').innerHTML = awaiting.length ? `
+                <div class="bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl p-4 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center flex-shrink-0"><i class="fas fa-hourglass-half"></i></div>
+                    <p class="text-xs font-semibold">មានសម្រង់តម្លៃ ${awaiting.length} រង់ចាំការយល់ព្រមពីលោកអ្នក៖ ${awaiting.map(q => q.id).join(' · ')}</p>
+                </div>` : '';
+
+            const body = document.getElementById('quoteListBody');
+            const empty = document.getElementById('quoteEmpty');
+            if (!rows.length) {
+                body.innerHTML = '';
+                body.parentElement.parentElement.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+            body.parentElement.parentElement.classList.remove('hidden');
+            empty.classList.add('hidden');
+
+            body.innerHTML = rows.map(q => {
+                const menuId = 'qMenu-' + q.id;
+                const items = [menuLink(`view-quote.html?id=${q.id}`, 'fa-eye', 'text-slate-700', 'មើលលម្អិត')];
+                if (q.status === 'SENT_TO_CUSTOMER') {
+                    items.push(menuButton(`acceptQuote('${q.id}')`, 'fa-handshake', 'text-emerald-700', 'យល់ព្រម'));
+                    items.push(menuButton(`declineQuote('${q.id}')`, 'fa-thumbs-down', 'text-rose-700', 'បដិសេធ'));
+                }
+                if (q.status === 'CONVERTED_TO_INVOICE' && q.invoiceId) items.push(menuLink(`view-invoice.html?id=${q.invoiceId}`, 'fa-receipt', 'text-purple-700', `មើលវិក្កយបត្រ ${q.invoiceId}`));
+                return `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3.5 px-4 font-bold text-slate-800"><a href="view-quote.html?id=${q.id}" class="hover:underline hover:text-purple-700">${q.id}</a></td>
+                        <td class="py-3.5 px-4 text-slate-500">${cpFmtDate(q.date)}</td>
+                        <td class="py-3.5 px-4"><p class="text-slate-700">${cpFmtDate(q.validUntil)}</p><p class="text-[11px] ${q.expiry.tone}">${q.expiry.label}</p></td>
+                        <td class="py-3.5 px-4 font-bold text-slate-900 text-sm">${cpFmtUSD(q.totals.grandTotal)}</td>
+                        <td class="py-3.5 px-4">${statusBadge(q.status)}</td>
+                        <td class="py-3.5 px-4 text-right">
+                            <button onclick="toggleRowActionMenu(event, '${menuId}')" class="w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-500 border border-slate-200/70 inline-flex items-center justify-center transition">
+                                <i class="fas fa-ellipsis-vertical text-sm"></i>
+                            </button>
+                            <div id="${menuId}" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 text-left">
+                                <div class="px-3 py-2 mb-1 rounded-xl bg-slate-50 border border-slate-100"><p class="text-[11px] text-slate-400">សកម្មភាពលើសម្រង់តម្លៃ</p><p class="text-xs font-semibold text-slate-700">${q.id}</p></div>
+                                ${items.join('')}
+                            </div>
+                        </td>
+                    </tr>`;
+            }).join('');
+        }
+
+        async function acceptQuote(id) {
+            closeAllFloatingDropdowns();
+            const q = cpQuote(id);
+            const ok = await showCustomConfirm({
+                title: 'យល់ព្រមលើសម្រង់តម្លៃ',
+                message: `តើលោកអ្នកពិតជាយល់ព្រមលើសម្រង់តម្លៃ ${id} សរុបត្រូវបង់ ${cpFmtUSD(q.totals.grandTotal)} មែនទេ? ក្រុមហ៊ុននឹងចេញវិក្កយបត្រតាមសម្រង់តម្លៃនេះ។`,
+                confirmText: 'យល់ព្រម',
+                cancelText: 'បោះបង់'
+            });
+            if (!ok) return;
+            const res = cpActions.acceptQuote(id);
+            showToast(res.ok ? `បានយល់ព្រមលើសម្រង់តម្លៃ ${id} · បុគ្គលិកលក់នឹងចេញវិក្កយបត្រ` : res.error, res.ok ? 'success' : 'error');
+        }
+
+        async function declineQuote(id) {
+            closeAllFloatingDropdowns();
+            const ok = await showCustomConfirm({
+                title: 'បដិសេធសម្រង់តម្លៃ',
+                message: `តើលោកអ្នកពិតជាបដិសេធសម្រង់តម្លៃ ${id} មែនទេ?`,
+                confirmText: 'បដិសេធ',
+                cancelText: 'បោះបង់',
+                danger: true
+            });
+            if (!ok) return;
+            const res = cpActions.declineQuote(id, null);
+            showToast(res.ok ? `បានបដិសេធសម្រង់តម្លៃ ${id}` : res.error, res.ok ? 'warning' : 'error');
+        }
+
+        function refresh() { renderTabs(); renderQuoteList(); paintQuoteBadge(); }
+        window.onStoreChanged = refresh;
+        document.addEventListener('DOMContentLoaded', refresh);
+    </script>
+</body>
+
+</html>

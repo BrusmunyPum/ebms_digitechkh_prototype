@@ -37,10 +37,10 @@
             <div class="w-full flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
                 <div class="flex flex-wrap items-center gap-2">
                     <button onclick="saveQuote('draft')" class="sm-badge px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition cursor-pointer">
-                        រក្សាទុកជាសេចក្តីព្រាង
+                        រក្សាទុក
                     </button>
-                    <button onclick="saveQuote('send')" class="sm-badge px-5 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition inline-flex items-center gap-2 cursor-pointer">
-                        <i class="fas fa-paper-plane"></i> <span>រក្សាទុក និងផ្ញើ</span>
+                    <button onclick="saveQuote('submit')" class="sm-badge px-5 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition inline-flex items-center gap-2 cursor-pointer">
+                        <i class="fas fa-paper-plane"></i> <span>ដាក់ស្នើ</span>
                     </button>
                 </div>
             </div>
@@ -129,6 +129,10 @@
         </main>
     </div>
 
+    <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../doc-editor.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
@@ -137,59 +141,60 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
-            editQuoteId = params.get('id') || 'QT-2026-0089';
+            editQuoteId = params.get('id');
 
-            const quote = getQuote(editQuoteId);
-            if (quote) {
-                document.getElementById('portalTitle').innerText = `កែប្រែសម្រង់តម្លៃ ${quote.id}`;
-                setPortalSubtitle(`ស្ថានភាពបច្ចុប្បន្ន៖ ${quote.status}`);
-                document.getElementById('fDate').value = quote.date.slice(0, 10);
-                document.getElementById('fValidUntil').value = quote.validUntil;
-                document.getElementById('fNote').value = quote.note || '';
-
-                initDocEditor({
-                    mode: 'quote',
-                    prefillFrom: quote.id
-                });
-            } else {
-                initDocEditor({ mode: 'quote' });
+            const quote = editQuoteId ? getQuote(editQuoteId) : null;
+            if (!quote) {
+                showToast('រកមិនឃើញសម្រង់តម្លៃនេះទេ', 'error');
+                setTimeout(() => { window.location.href = 'quotes.html'; }, 1200);
+                return;
             }
+            if (!['DRAFT', 'REJECTED'].includes(quote.status)) {
+                showToast(`សម្រង់តម្លៃស្ថិតក្នុងស្ថានភាព «${statusLabel(quote.status)}» មិនអាចកែប្រែបានទេ`, 'warning');
+                setTimeout(() => { window.location.href = `view-quote.html?id=${quote.id}`; }, 1400);
+                return;
+            }
+
+            document.getElementById('portalTitle').innerText = `កែប្រែសម្រង់តម្លៃ ${quote.id}`;
+            setPortalSubtitle(quote.status === 'REJECTED'
+                ? `ត្រូវបានបដិសេធ៖ ${quote.rejectionReason || ''}`
+                : `ស្ថានភាពបច្ចុប្បន្ន៖ ${statusLabel(quote.status)}`);
+            document.getElementById('fDate').value = quote.date.slice(0, 10);
+            document.getElementById('fDate').disabled = true;
+            document.getElementById('fValidUntil').value = quote.validUntil;
+            document.getElementById('fNote').value = quote.note || '';
+
+            initDocEditor({ mode: 'quote', prefillFrom: quote.id });
         });
 
-        function saveQuote(action) {
+        async function saveQuote(action) {
+            const error = validateDoc();
+            if (error) return showToast(error, 'error');
+
+            const doc = collectDoc();
+            const submit = action === 'submit';
             const totals = editorTotals();
-            if (!DOC_EDITOR.customerId) {
-                showToast('សូមជ្រើសរើសអតិថិជនជាមុនសិន', 'error');
-                return;
-            }
-            if (!DOC_EDITOR.items.length || !DOC_EDITOR.items.some(i => i.sku && i.qty > 0)) {
-                showToast('សូមបន្ថែមមុខទំនិញយ៉ាងហោចណាស់ ១ មុខ', 'error');
-                return;
-            }
+            const ok = await showCustomConfirm({
+                title: submit ? 'ដាក់ស្នើសម្រង់តម្លៃ' : 'រក្សាទុកការកែប្រែ',
+                message: submit
+                    ? `សម្រង់តម្លៃ ${editQuoteId} ទឹកប្រាក់ ${fmtUSD(totals.grandTotal)} នឹងផ្ញើទៅ ${CURRENT_REP.manager} ដើម្បីអនុម័ត។ តើបន្តមែនទេ?`
+                    : `តើលោកអ្នកពិតជារក្សាទុកការកែប្រែសម្រង់តម្លៃ ${editQuoteId} មែនទេ?`,
+                confirmText: submit ? 'ដាក់ស្នើ' : 'រក្សាទុក',
+                cancelText: 'បោះបង់'
+            });
+            if (!ok) return;
 
-            const needsApproval = DOC_EDITOR.discountPercent > DISCOUNT_SELF_LIMIT;
-            const status = action === 'draft' ? 'draft' : (needsApproval ? 'pending_approval' : 'approved');
+            const res = seActions.updateQuotation(editQuoteId, {
+                ...doc,
+                validUntil: document.getElementById('fValidUntil').value,
+                note: document.getElementById('fNote').value.trim()
+            }, submit);
+            if (!res.ok) return showToast(res.error, 'error');
 
-            const quote = getQuote(editQuoteId);
-            if (quote) {
-                quote.customerId = DOC_EDITOR.customerId;
-                quote.items = DOC_EDITOR.items.filter(it => it.sku && it.qty > 0);
-                quote.discountPercent = DOC_EDITOR.discountPercent;
-                quote.downPayment = DOC_EDITOR.downPayment;
-                quote.status = status;
-                quote.validUntil = document.getElementById('fValidUntil').value;
-                quote.note = document.getElementById('fNote').value;
-            }
-
-            if (needsApproval && action === 'send') {
-                showToast(`បានរក្សាទុក និងបញ្ជូនសម្រង់តម្លៃ ${editQuoteId} ទៅកាន់ Manager ដើម្បីអនុម័តបញ្ចុះតម្លៃ ${DOC_EDITOR.discountPercent}%`, 'warning');
-            } else {
-                showToast(`បានរក្សាទុកការកែប្រែសម្រង់តម្លៃ ${editQuoteId} ដោយជោគជ័យ`, 'success');
-            }
-
-            setTimeout(() => {
-                window.location.href = `view-quote.html?id=${editQuoteId}`;
-            }, 800);
+            showToast(submit
+                ? `បានដាក់ស្នើសម្រង់តម្លៃ ${editQuoteId} ដើម្បីអនុម័ត`
+                : `បានរក្សាទុកការកែប្រែសម្រង់តម្លៃ ${editQuoteId} ដោយជោគជ័យ`, 'success');
+            setTimeout(() => { window.location.href = `view-quote.html?id=${editQuoteId}`; }, 900);
         }
     </script>
 </body>

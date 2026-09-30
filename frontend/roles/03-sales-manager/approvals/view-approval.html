@@ -53,35 +53,14 @@
     </div>
 
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
-        const quoteId = new URLSearchParams(location.search).get('id') || 'QT-2026-0089';
-        const quote = getQuote(quoteId);
-
-        const STATUS_LABEL = {
-            draft: 'សេចក្តីព្រាង',
-            pending_approval: 'រង់ចាំការអនុម័ត',
-            approved: 'បានអនុម័ត',
-            rejected: 'បានបដិសេធ',
-            converted: 'បានបម្លែងជាវិក្កយបត្រ',
-            expired: 'ផុតសុពលភាព'
-        };
-
-        const STATUS_TONE = {
-            draft: 'bg-slate-100 text-slate-600 border-slate-200',
-            pending_approval: 'bg-amber-50 text-amber-700 border-amber-200',
-            approved: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-            rejected: 'bg-rose-50 text-rose-700 border-rose-200',
-            converted: 'bg-blue-50 text-blue-700 border-blue-200',
-            expired: 'bg-slate-100 text-slate-500 border-slate-200'
-        };
-
-        function authorityOf(percent) {
-            if (percent <= 5) return 'staff';
-            if (percent <= 15) return 'manager';
-            return 'gm';
-        }
+        const quoteId = new URLSearchParams(location.search).get('id') || (pendingQuotes()[0] || listQuotes()[0] || {}).id;
+        let quote = getQuote(quoteId);
 
         function renderNotFound() {
             setPortalTitle('រកមិនឃើញឯកសារ');
@@ -100,15 +79,15 @@
                 </div>`;
         }
 
-        function renderHeader(totals, decided) {
-            const auth = authorityOf(quote.discountPercent);
-            const status = decided ? (decided === 'approve' ? 'approved' : decided === 'reject' ? 'rejected' : 'pending_approval') : quote.status;
+        function renderHeader(totals) {
+            const st = statusMeta(quote.status);
+            const mine = quote.status === 'PENDING_APPROVAL' && quote.pendingLevel === 'SM';
+            const waiting = quote.status === 'PENDING_APPROVAL' && !mine;
 
             setPortalTitle('សម្រង់តម្លៃ ' + quote.id);
             const statusEl = document.getElementById('docStatus');
-            statusEl.textContent = decided === 'forward' ? 'បញ្ជូនទៅអភិបាលទូទៅ' : STATUS_LABEL[status];
-            statusEl.className = 'sm-badge px-2.5 py-0.5 rounded-full border font-semibold flex-shrink-0 ' +
-                (decided === 'forward' ? 'bg-purple-50 text-purple-700 border-purple-200' : STATUS_TONE[status]);
+            statusEl.textContent = waiting ? `រង់ចាំ ${APPROVAL_LEVEL_LABEL[quote.pendingLevel]}` : st.label;
+            statusEl.className = 'sm-badge px-2.5 py-0.5 rounded-full border font-semibold flex-shrink-0 ' + (waiting ? STATUS_TONES.purple : st.tone);
 
             setPortalSubtitle(`សុពលភាពដល់ ${fmtKhDate(quote.validUntil)} · ស្នើសុំដោយ ${getRep(quote.repId).name}`);
 
@@ -118,19 +97,16 @@
                     <i class="fas fa-print text-sm"></i>
                 </button>`;
 
-            if (decided || quote.status !== 'pending_approval') {
-                actions.innerHTML = printBtn +
-                    '<span class="sm-badge px-4 py-2.5 rounded-xl bg-slate-100 text-slate-500 font-medium">សំណើនេះត្រូវបានសម្រេចរួចហើយ</span>';
+            if (!mine) {
+                const note = waiting ? 'លោកអ្នកបានអនុម័តរួចហើយ · រង់ចាំអភិបាលទូទៅ' : 'សំណើនេះត្រូវបានសម្រេចរួចហើយ';
+                actions.innerHTML = printBtn + `<span class="sm-badge px-4 py-2.5 rounded-xl bg-slate-100 text-slate-500 font-medium">${note}</span>`;
                 return;
             }
 
-            const mainBtn = auth === 'gm'
-                ? `<button onclick="processApproval('forward')" class="sm-badge px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold shadow-sm transition inline-flex items-center gap-1.5">
-                        <i class="fas fa-paper-plane"></i><span>បញ្ជូនទៅអភិបាលទូទៅ</span>
-                   </button>`
-                : `<button onclick="processApproval('approve')" class="sm-badge px-5 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition inline-flex items-center gap-1.5">
-                        <i class="fas fa-check"></i><span>យល់ព្រមអនុម័ត ${fmtUSD(totals.grandTotal)}</span>
-                   </button>`;
+            const needGm = quote.requiredLevels.includes('GM');
+            const mainBtn = `<button onclick="processApproval('approve')" class="sm-badge px-5 py-2.5 rounded-xl ${needGm ? 'bg-purple-600 hover:bg-purple-700' : 'bg-[#0f2b5c] hover:bg-[#0a1d3f]'} text-white font-semibold shadow-sm transition inline-flex items-center gap-1.5">
+                    <i class="fas ${needGm ? 'fa-paper-plane' : 'fa-check'}"></i><span>${needGm ? 'អនុម័ត ហើយបញ្ជូនទៅអភិបាលទូទៅ' : `យល់ព្រមអនុម័ត ${fmtUSD(totals.grandTotal)}`}</span>
+                </button>`;
 
             actions.innerHTML = printBtn + `
                 <button onclick="processApproval('reject')" class="sm-badge px-4 py-2.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 font-medium transition inline-flex items-center gap-1.5">
@@ -141,12 +117,13 @@
         function renderBody(totals) {
             const cust = getCustomer(quote.customerId);
             const rep = getRep(quote.repId);
-            const auth = authorityOf(quote.discountPercent);
-            const newDebt = cust.oldDebt + totals.grandTotal;
+            const oldDebt = customerDebt(cust.id);
+            const newDebt = oldDebt + totals.grandTotal;
             const usage = Math.min((newDebt / cust.creditLimit) * 100, 100);
             const overLimit = newDebt > cust.creditLimit;
 
-            const authCard = (range, who, note, active) => `
+            const lim = BMS_STORE.settings().quotationLimits;
+            const levelCard = (range, who, note, active) => `
                 <div class="p-3 rounded-xl border ${active ? 'bg-[#0f2b5c] border-[#0f2b5c] shadow-sm' : 'bg-slate-50 border-slate-200'}">
                     <p class="sm-kpi-sub ${active ? 'text-sky-200' : 'text-slate-500'}">${range}</p>
                     <p class="sm-value ${active ? 'text-white' : 'text-slate-700'} mt-0.5">${who}</p>
@@ -154,32 +131,35 @@
                 </div>`;
 
             document.getElementById('pageBody').innerHTML = `
-                <div class="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 flex items-start justify-between gap-4 flex-wrap sm-print-block">
-                    <div class="flex items-start gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center text-lg flex-shrink-0">
-                            <i class="fas fa-triangle-exclamation"></i>
-                        </div>
-                        <div>
-                            <h4 class="sm-card-title text-amber-900">មូលហេតុដែលប្រព័ន្ធទាមទារការអនុម័ត</h4>
-                            <p class="sm-card-sub text-amber-800 mt-0.5">
-                                ${rep.name} បានស្នើសុំបញ្ចុះតម្លៃពិសេស ${fmtPercent(quote.discountPercent)}
-                                ដែលហួសពីដែនកម្រិតស្វ័យប្រវត្តិ 5.0%។
-                                ការបញ្ចុះតម្លៃនេះកាត់បន្ថយប្រាក់ចំណេញដុលប្រមាណ ${fmtUSD(totals.discountAmount)}។
-                            </p>
-                        </div>
+                ${quote.discountPercent > BMS_STORE.settings().discountSelfLimit ? `
+                <div class="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 flex items-start gap-3 sm-print-block">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center text-lg flex-shrink-0">
+                        <i class="fas fa-triangle-exclamation"></i>
                     </div>
-                    <span class="sm-badge px-3 py-1 rounded-full font-semibold whitespace-nowrap ${auth === 'gm' ? 'bg-purple-200 text-purple-900' : 'bg-amber-200 text-amber-900'}">
-                        ${auth === 'gm' ? 'លើសដែនសិទ្ធិ 15.0%' : 'ស្ថិតក្នុងដែនសិទ្ធិ 15.0%'}
-                    </span>
-                </div>
+                    <div>
+                        <h4 class="sm-card-title text-amber-900">មានបញ្ចុះតម្លៃពិសេស</h4>
+                        <p class="sm-card-sub text-amber-800 mt-0.5">
+                            ${rep.name} បានស្នើសុំបញ្ចុះតម្លៃពិសេស ${fmtPercent(quote.discountPercent)}
+                            ដែលហួសពីដែនកម្រិតដែលបុគ្គលិកលក់អនុវត្តបានដោយខ្លួនឯង ${fmtPercent(BMS_STORE.settings().discountSelfLimit)}។
+                            ការបញ្ចុះតម្លៃនេះកាត់បន្ថយប្រាក់ចំណេញដុលប្រមាណ ${fmtUSD(totals.discountAmount)}។
+                        </p>
+                    </div>
+                </div>` : ''}
 
                 <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm sm-print-block">
-                    <h3 class="sm-card-title text-slate-700 mb-3">ដែនសិទ្ធិអនុម័តការបញ្ចុះតម្លៃ</h3>
+                    <h3 class="sm-card-title text-slate-700 mb-3">កម្រិតអនុម័តតាមទឹកប្រាក់</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        ${authCard('0.0% ដល់ 5.0%', 'បុគ្គលិកលក់', auth === 'staff' ? `<i class="fas fa-circle-check mr-1"></i> សំណើនេះ ${fmtPercent(quote.discountPercent)}` : 'អនុញ្ញាតដោយស្វ័យប្រវត្តិ', auth === 'staff')}
-                        ${authCard('5.1% ដល់ 15.0%', 'អ្នកគ្រប់គ្រងផ្នែកលក់', auth === 'manager' ? `<i class="fas fa-circle-check mr-1"></i> សំណើនេះ ${fmtPercent(quote.discountPercent)}` : 'សិទ្ធិអនុម័តផ្ទាល់', auth === 'manager')}
-                        ${authCard('លើសពី 15.0%', 'អភិបាលទូទៅ', auth === 'gm' ? `<i class="fas fa-circle-check mr-1"></i> សំណើនេះ ${fmtPercent(quote.discountPercent)}` : 'ត្រូវបញ្ជូនបន្ត', auth === 'gm')}
+                        ${levelCard(`ដល់ ${fmtUSD(lim.SM)}`, 'អ្នកគ្រប់គ្រងផ្នែកលក់', 'សិទ្ធិអនុម័តផ្ទាល់', quote.requiredLevels.length === 1)}
+                        ${levelCard(`លើសពី ${fmtUSD(lim.SM)} ដល់ ${fmtUSD(lim.GM)}`, 'ប្រធានផ្នែកលក់ រួចអភិបាលទូទៅ', 'ត្រូវបញ្ជូនបន្តបន្ទាប់ពីអនុម័ត', quote.requiredLevels.length === 2)}
+                        ${levelCard(`លើសពី ${fmtUSD(lim.GM)}`, 'បន្ថែមការចុះហត្ថលេខារបស់នាយក', 'ចុះហត្ថលេខាតាមច្រកអភិបាលទូទៅ', quote.requiredLevels.length === 3)}
                     </div>
+                    <p class="sm-kpi-sub text-slate-500 mt-3">
+                        ជំហានអនុម័តសម្រាប់សម្រង់តម្លៃនេះ៖
+                        ${quote.requiredLevels.map(l => {
+                            const done = quote.approvals.some(a => a.level === l);
+                            return `<span class="${done ? 'text-emerald-700 font-semibold' : ''}">${done ? '✓ ' : ''}${APPROVAL_LEVEL_LABEL[l]}</span>`;
+                        }).join(' → ')}
+                    </p>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -205,7 +185,7 @@
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="sm-label text-slate-500">បំណុលចាស់</span>
-                                        <span class="sm-value text-slate-700">${fmtUSD(cust.oldDebt)}</span>
+                                        <span class="sm-value text-slate-700">${fmtUSD(oldDebt)}</span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="sm-label text-slate-500">សម្រង់តម្លៃនេះ</span>
@@ -243,7 +223,7 @@
 
                         <div class="bg-slate-50 rounded-2xl p-4 border border-dashed border-slate-300 text-center no-print">
                             <button disabled class="sm-badge w-full px-4 py-2.5 rounded-xl bg-slate-200 text-slate-400 font-medium cursor-not-allowed inline-flex items-center justify-center gap-2">
-                                <i class="fas fa-file-invoice"></i> បម្លែងជាវិក្កយបត្រ
+                                <i class="fas fa-file-invoice"></i> បំប្លែងជាវិក្កយបត្រ
                             </button>
                             <p class="sm-kpi-sub text-slate-400 mt-2">អាចប្រើប្រាស់បាន បន្ទាប់ពីសម្រង់តម្លៃត្រូវបានអនុម័ត</p>
                         </div>
@@ -267,7 +247,7 @@
                                     </thead>
                                     <tbody class="divide-y divide-slate-100 text-slate-700">
                                         ${quote.items.map(it => {
-                                            const p = PRODUCTS[it.sku];
+                                            const p = getProduct(it.sku);
                                             return `<tr>
                                                 <td class="py-3 px-4">
                                                     <p class="sm-td text-slate-700">${p.name}</p>
@@ -290,11 +270,11 @@
                                     <span class="sm-value text-slate-700">${fmtUSD(totals.subtotal)}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="sm-label text-slate-600">ចូលរួមមុន</span>
+                                    <span class="sm-label text-slate-600">ប្រាក់កក់</span>
                                     <span class="sm-value text-slate-700">${fmtUSD(totals.downPayment)}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="sm-label text-amber-700 font-semibold">ការបញ្ចុះតម្លៃពិសេស ${fmtPercent(totals.discountPercent)}</span>
+                                    <span class="sm-label text-amber-700 font-semibold">បញ្ចុះតម្លៃពិសេស ${fmtPercent(totals.discountPercent)}</span>
                                     <span class="sm-value text-amber-700">-${fmtUSD(totals.discountAmount)}</span>
                                 </div>
                                 <div class="flex justify-between">
@@ -302,7 +282,7 @@
                                     <span class="sm-value text-slate-700">${fmtUSD(totals.vatAmount)}</span>
                                 </div>
                                 <div class="flex justify-between pt-2 border-t border-slate-200">
-                                    <span class="sm-card-title text-slate-700">ទឹកប្រាក់សរុបចុងក្រោយ</span>
+                                    <span class="sm-card-title text-slate-700">សរុបត្រូវបង់</span>
                                     <span class="sm-kpi-value text-blue-700">${fmtUSD(totals.grandTotal)}</span>
                                 </div>
                             </div>
@@ -337,6 +317,11 @@
                     </div>
                 </div>
 
+                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm no-print">
+                    <h3 class="sm-card-title text-slate-700 border-b border-slate-100 pb-3 mb-4">ប្រវត្តិឯកសារ</h3>
+                    ${trailTimelineHtml(quote.auditTrail)}
+                </div>
+
                 <div class="print-footer">
                     DIGITECHKH Co., Ltd. · សម្រង់តម្លៃលេខ ${quote.id} · បោះពុម្ពដោយ ហេង វិច្ឆិកា · ឯកសារនេះបង្កើតចេញពីប្រព័ន្ធដោយស្វ័យប្រវត្តិ
                 </div>`;
@@ -345,57 +330,57 @@
         async function processApproval(action) {
             const remarks = document.getElementById('approvalComment').value.trim();
             const totals = quoteTotals(quote);
+            const needGm = quote.requiredLevels.includes('GM');
 
-            const copy = {
-                approve: {
-                    title: 'បញ្ជាក់ការអនុម័ត',
-                    message: `តើលោកអ្នកពិតជាយល់ព្រមអនុម័តការបញ្ចុះតម្លៃ ${fmtPercent(quote.discountPercent)} លើសម្រង់តម្លៃ ${quote.id} ទឹកប្រាក់ ${fmtUSD(totals.grandTotal)} មែនទេ? សកម្មភាពនេះនឹងត្រូវកត់ត្រាក្នុងកំណត់ហេតុសវនកម្មដែលមិនអាចកែប្រែបាន។`,
-                    confirmText: 'យល់ព្រមអនុម័ត',
-                    toast: `បានអនុម័តសម្រង់តម្លៃ ${quote.id} ដោយជោគជ័យ`,
-                    type: 'success'
-                },
-                reject: {
+            let reason = '';
+            if (action === 'reject') {
+                reason = remarks || await showReasonPrompt({
                     title: 'បញ្ជាក់ការបដិសេធ',
-                    message: `តើលោកអ្នកពិតជាបដិសេធសម្រង់តម្លៃ ${quote.id} មែនទេ? បុគ្គលិកលក់នឹងទទួលបានដំណឹងដើម្បីកែសម្រួលឡើងវិញ។`,
-                    confirmText: 'បដិសេធសំណើ',
-                    danger: true,
-                    toast: `បានបដិសេធសម្រង់តម្លៃ ${quote.id}`,
-                    type: 'warning'
-                },
-                forward: {
-                    title: 'បញ្ជាក់ការបញ្ជូនបន្ត',
-                    message: `ការបញ្ចុះតម្លៃ ${fmtPercent(quote.discountPercent)} លើសពីដែនសិទ្ធិ 15.0%។ តើលោកអ្នកបញ្ជូនសម្រង់តម្លៃ ${quote.id} ទៅកាន់អភិបាលទូទៅដើម្បីអនុម័តចុងក្រោយមែនទេ?`,
-                    confirmText: 'បញ្ជូនបន្ត',
-                    toast: `បានបញ្ជូនសម្រង់តម្លៃ ${quote.id} ទៅកាន់អភិបាលទូទៅ`,
-                    type: 'info'
-                }
-            }[action];
+                    message: `សូមបញ្ចូលមូលហេតុនៃការបដិសេធសម្រង់តម្លៃ ${quote.id}។ បុគ្គលិកលក់នឹងទទួលបានដំណឹងដើម្បីកែសម្រួលឡើងវិញ។`,
+                    placeholder: 'មូលហេតុនៃការបដិសេធ...',
+                    confirmText: 'បដិសេធ',
+                    danger: true
+                });
+                if (!reason) return;
+            } else {
+                const ok = await showCustomConfirm({
+                    title: 'បញ្ជាក់ការអនុម័ត',
+                    message: `តើលោកអ្នកពិតជាយល់ព្រមអនុម័តសម្រង់តម្លៃ ${quote.id} ទឹកប្រាក់ ${fmtUSD(totals.grandTotal)} មែនទេ?`
+                        + (needGm ? ' បន្ទាប់ពីអនុម័ត វានឹងត្រូវបញ្ជូនទៅអភិបាលទូទៅ។' : '')
+                        + ' សកម្មភាពនេះនឹងត្រូវកត់ត្រាក្នុងកំណត់ហេតុសវនកម្មដែលមិនអាចកែប្រែបាន។',
+                    confirmText: needGm ? 'អនុម័ត និងបញ្ជូនបន្ត' : 'យល់ព្រមអនុម័ត',
+                    cancelText: 'បោះបង់'
+                });
+                if (!ok) return;
+            }
 
-            const ok = await showCustomConfirm({
-                title: copy.title,
-                message: copy.message,
-                confirmText: copy.confirmText,
-                cancelText: 'បោះបង់',
-                danger: copy.danger === true
-            });
-            if (!ok) return;
+            const res = action === 'approve' ? smActions.approveQuote(quote.id, remarks) : smActions.rejectQuote(quote.id, reason);
+            if (!res.ok) return showToast(res.error, 'error');
 
-            saveDecision(quote.id, action);
-            showToast(copy.toast + (remarks ? ' · មតិយោបល់ត្រូវបានកត់ត្រា' : ''), copy.type);
+            showToast(action === 'reject'
+                ? `បានបដិសេធសម្រង់តម្លៃ ${quote.id}`
+                : res.finalApproved ? `បានអនុម័តសម្រង់តម្លៃ ${quote.id} ដោយជោគជ័យ` : `បានអនុម័តសម្រង់តម្លៃ ${quote.id} ហើយបានបញ្ជូនទៅអភិបាលទូទៅ`,
+                action === 'reject' ? 'warning' : 'success');
 
-            setTimeout(() => {
-                window.location.href = 'approvals.html';
-            }, 1400);
+            setTimeout(() => { window.location.href = 'approvals.html'; }, 1400);
         }
+
+        function refresh() {
+            quote = getQuote(quoteId);
+            if (!quote) return renderNotFound();
+            const totals = quoteTotals(quote);
+            renderHeader(totals);
+            renderBody(totals);
+        }
+
+        window.onStoreChanged = refresh;
 
         document.addEventListener('DOMContentLoaded', () => {
             if (!quote) {
                 renderNotFound();
                 return;
             }
-            const totals = quoteTotals(quote);
-            renderHeader(totals, loadDecisions()[quote.id]);
-            renderBody(totals);
+            refresh();
         });
     </script>
 </body>

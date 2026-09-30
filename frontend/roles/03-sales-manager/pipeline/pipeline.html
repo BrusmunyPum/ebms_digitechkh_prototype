@@ -80,6 +80,9 @@
     </div>
 
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
@@ -117,7 +120,7 @@
         function renderFilters() {
             renderFilterDropdown('repFilterHost', 'repFilterMenu',
                 { icon: 'fa-user-tie', all: 'បុគ្គលិកលក់ទាំងអស់', title: 'ជ្រើសរើសបុគ្គលិកលក់' },
-                [{ value: '', label: 'បុគ្គលិកលក់ទាំងអស់' }].concat(SALES_REPS.map(r => ({ value: r.id, label: r.name }))),
+                [{ value: '', label: 'បុគ្គលិកលក់ទាំងអស់' }].concat(listReps().map(r => ({ value: r.id, label: r.name }))),
                 filterRep, 'pickRep');
 
             renderFilterDropdown('categoryFilterHost', 'categoryFilterMenu',
@@ -161,7 +164,7 @@
 
         function cardActionMenu(deal) {
             const menuId = 'dealMenu-' + deal.id;
-            const stage = dealStage(deal);
+            const stage = deal.stage;
             const moves = PIPELINE_STAGES.filter(s => s.id !== stage).map(s => `
                 <button onclick="moveDeal('${deal.id}','${s.id}')" class="sm-row-menu-item w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition text-left">
                     <span class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color:${s.accent}1a;color:${s.accent}">
@@ -283,11 +286,11 @@
         }
 
         function applyMove(dealId, stageId) {
-            const deal = PIPELINE_DEALS.find(d => d.id === dealId);
-            if (!deal || dealStage(deal) === stageId) return;
+            const deal = getDeal(dealId);
+            if (!deal || deal.stage === stageId) return;
 
-            savePipelineMove(dealId, stageId);
-            renderBoard();
+            const res = smActions.moveDeal(dealId, stageId);
+            if (!res.ok) return showToast(res.error, 'error');
 
             const stage = PIPELINE_STAGES.find(s => s.id === stageId);
             const tone = stageId === 'won' ? 'success' : stageId === 'lost' ? 'warning' : 'info';
@@ -295,6 +298,7 @@
         }
 
         window.onDateRangeApplied = renderBoard;
+        window.onStoreChanged = renderBoard;
 
         document.addEventListener('DOMContentLoaded', () => {
             renderDateRangePicker('dateFilterHost');
