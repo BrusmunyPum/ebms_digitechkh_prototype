@@ -486,6 +486,17 @@
         /* ចាប់ផ្តើមឃ្លាំងទិន្នន័យ — បើមិនទាន់មាន ឬហួសកាលកំណត់ នឹងបង្កើតទិន្នន័យគំរូថ្មី */
         BMS_STORE.ensure();
 
+        /* ច្រកគិតលុយរក្សាវេនរបស់ខ្លួនដាច់ដោយឡែកពីឃ្លាំងទិន្នន័យរួម
+           ដូច្នេះការកំណត់ឡើងវិញត្រូវបើកវេនដែលបានបិទឱ្យវិញផងដែរ */
+        function resetPosShift() {
+            ['pos_shift_state_v2'].forEach(k => {
+                try { localStorage.removeItem(k); } catch (e) { /* ការផ្ទុកបិទ */ }
+            });
+            ['pos_shift_sales', 'pos_cart', 'pos_pending_khqr'].forEach(k => {
+                try { sessionStorage.removeItem(k); } catch (e) { /* ការផ្ទុកបិទ */ }
+            });
+        }
+
         async function resetDemoData() {
             const ok = await showCustomConfirm({
                 title: 'កំណត់ទិន្នន័យគំរូឡើងវិញ',
@@ -496,6 +507,7 @@
             });
             if (!ok) return;
             BMS_STORE.reset();
+            resetPosShift();
             showToast('បានកំណត់ទិន្នន័យគំរូឡើងវិញរួចរាល់', 'success');
         }
 

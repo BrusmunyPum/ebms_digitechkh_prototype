@@ -37,7 +37,7 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Content Top Header -->
-        <div id="headerHost" data-title="បង្កាន់ដៃទទួលប្រាក់ REC-2026-0145"
+        <div id="headerHost" data-title="បង្កាន់ដៃទទួលប្រាក់"
              data-subtitle="ភស្តុតាងទទួលប្រាក់ផ្លូវការ បោះពុម្ពកម្រិតសហគ្រាស A4"
              data-back="receipts.html"></div>
 
@@ -65,14 +65,14 @@
                             <h1 class="text-xl font-bold text-slate-900 tracking-wider">ក្រុមហ៊ុន ឌីជីថេក ខេអេច ឯ.ក</h1>
                             <p class="text-xs text-slate-500 mt-0.5">DIGITECHKH CO., LTD. • TIN: K002-90188231</p>
                             <p class="text-xs text-slate-500">អគារ 128 មហាវិថីសហព័ន្ធរុស្ស៊ី រាជធានីភ្នំពេញ</p>
-                            <p class="text-xs text-slate-500">ទូរស័ព្ទ: 023 999 888 • អ៊ីមែល: finance@digitechkh.com</p>
+                            <p class="text-xs text-slate-500">ទូរស័ព្ទ 023 999 888 · អ៊ីមែល finance@digitechkh.com</p>
                         </div>
                     </div>
                     <div class="text-right">
                         <div class="inline-block px-3 py-1 rounded-lg bg-emerald-100 text-emerald-800 font-bold text-xs uppercase tracking-wider mb-2">
                             បង្កាន់ដៃទទួលប្រាក់ផ្លូវការ
                         </div>
-                        <div class="text-2xl font-bold text-emerald-700" id="recNumberDisplay">REC-2026-0145</div>
+                        <div class="text-2xl font-bold text-emerald-700" id="recNumberDisplay">—</div>
                         <div class="text-xs text-slate-500 mt-1" id="recDateDisplay">2026-09-24</div>
                     </div>
                 </div>
@@ -85,15 +85,15 @@
                     </div>
                     <div class="flex justify-between items-center border-b border-slate-200 pb-3">
                         <span class="text-slate-500">យោងតាមវិក្កយបត្រ:</span>
-                        <span class="font-bold text-primary text-sm" id="invoiceDisplay">INV-2026-0120</span>
+                        <span class="font-bold text-primary text-sm" id="invoiceDisplay">—</span>
                     </div>
                     <div class="flex justify-between items-center border-b border-slate-200 pb-3">
                         <span class="text-slate-500">វិធីសាស្ត្រទូទាត់:</span>
-                        <span class="font-semibold text-slate-800" id="methodDisplay">KHQR បាគង (Bakong Scan)</span>
+                        <span class="font-semibold text-slate-800" id="methodDisplay">ស្កេនកូដបាគង</span>
                     </div>
                     <div class="flex justify-between items-center border-b border-slate-200 pb-3">
                         <span class="text-slate-500">លេខយោងធនាគារ:</span>
-                        <span class="font-mono font-semibold text-slate-800" id="bankRefDisplay">BKG-99283741</span>
+                        <span class="font-mono font-semibold text-slate-800" id="bankRefDisplay">—</span>
                     </div>
                     <div class="flex justify-between items-center pt-1">
                         <span class="text-sm font-bold text-slate-800">ទឹកប្រាក់ទទួលសរុប:</span>
@@ -128,6 +128,9 @@
 
     <!-- Scripts -->
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>

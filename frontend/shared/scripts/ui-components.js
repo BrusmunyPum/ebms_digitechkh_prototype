@@ -231,9 +231,12 @@ function openFloatingDropdown(btn, menu) {
     const isProfile = menu.id === 'portalProfileMenu';
 
     // Width calculation
-    let minWidth = 280;
-    if (isNotif) minWidth = 380;
-    else if (isProfile) minWidth = 260;
+    // ទទឹងអប្បបរមាមិនត្រូវលើសទទឹងអេក្រង់ឡើយ បើមិនដូច្នេះទេ
+    // ការគណនាទីតាំងនឹងហូសគែម ហើយម៉ឺនុយត្រូវខ្ទាស់ទៅឆ្ងាយពីប៊ូតុង
+    const roomy = vWidth - 32;
+    let minWidth = Math.min(280, roomy);
+    if (isNotif) minWidth = Math.min(380, roomy);
+    else if (isProfile) minWidth = Math.min(260, roomy);
 
     const targetWidth = Math.min(Math.max(rect.width, minWidth), vWidth - 32);
 
@@ -252,6 +255,8 @@ function openFloatingDropdown(btn, menu) {
         let right = vWidth - rect.right;
         if (right < 16) right = 16;
         if (right + targetWidth > vWidth - 16) {
+            // ម៉ឺនុយមិនអាចតម្រឹមតាមប៊ូតុងដោយមិនហូសគែមឆ្វេង —
+            // រុញត្រឹមតែប៉ុណ្ណោះដែលល្មមចូល ដើម្បីនៅជិតប៊ូតុងបំផុត
             right = Math.max(16, vWidth - targetWidth - 16);
         }
         menu.style.setProperty('right', `${right}px`, 'important');

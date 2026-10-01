@@ -14,7 +14,7 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { primary: "#1e3a5f", 'primary-dark': "#142842", accent: "#0ea5e9" },
+                    colors: { primary: "#0891b2", 'primary-dark': "#0e7490", accent: "#22d3ee" },
                     fontFamily: { sans: ["'Kantumruy Pro'", "sans-serif"] }
                 }
             }
@@ -23,90 +23,155 @@
     <link rel="stylesheet" href="../../shared/styles/custom.css">
     <link rel="stylesheet" href="../../shared/styles/portal.css">
     <style>
-        /* បោះពុម្ពតែរបាយការណ៍ X/Z ប៉ុណ្ណោះ — មិនរួមបញ្ចូលប្រអប់រាប់សាច់ប្រាក់ */
+        /* គោលដៅប៉ះ 48 ភិចសែលសម្រាប់គ្រប់ប៊ូតុង និងប្រអប់បញ្ចូល */
+        main button, main input, main a.pos-tap { min-height: 48px; }
+        .pos-num::-webkit-outer-spin-button, .pos-num::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .pos-num { -moz-appearance: textfield; }
+
         @media print {
             body * { visibility: hidden !important; }
-            #reportPreview, #reportPreview * { visibility: visible !important; }
-            #reportPreview {
-                position: absolute; left: 0; top: 0; width: 100%;
-                max-width: none !important; box-shadow: none !important; padding: 0 !important;
-            }
-            @page { size: 80mm auto; margin: 4mm; }
+            #zReport, #zReport * { visibility: visible !important; }
+            #zReport { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+            @page { size: A4; margin: 14mm; }
         }
     </style>
 </head>
-<body id="posPortal" data-role-root="." data-active="close-shift" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
+<body id="posPortal" data-role-root="." data-active="close-shift" class="bg-teal-50/40 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
 
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <div id="headerHost" data-title="បិទវេន និងរាប់សាច់ប្រាក់"
-                 data-subtitle="រាប់សាច់ប្រាក់ជាក់ស្តែង ផ្ទៀងផ្ទាត់ និងចេញរបាយការណ៍"></div>
+             data-subtitle="រាប់សាច់ប្រាក់ជាក់ស្តែង ផ្ទៀងផ្ទាត់ និងចេញរបាយការណ៍បិទវេន"></div>
 
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-6">
-            <div class="w-full grid grid-cols-1 xl:grid-cols-5 gap-6">
+        <main class="flex-1 overflow-x-hidden overflow-y-auto px-4 md:px-6 lg:px-16 py-6">
+            <div class="w-full space-y-5">
 
-                <!-- ការរាប់សាច់ប្រាក់ជាក់ស្តែង -->
-                <div class="xl:col-span-3 space-y-6">
-                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-                        <div class="p-5 border-b border-slate-100">
-                            <h3 class="sm-card-title text-slate-700">រាប់ក្រដាសប្រាក់ដុល្លារ</h3>
-                            <p class="sm-card-sub text-slate-500">បញ្ចូលចំនួនសន្លឹកជាក់ស្តែងក្នុងថតប្រាក់</p>
-                        </div>
-                        <div id="usdNotes" class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-                        <div class="px-5 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-                            <span class="sm-card-title text-slate-700">សរុបរាប់បាន USD</span>
-                            <span id="usdCounted" class="sm-kpi-value text-slate-700"></span>
-                        </div>
+                <!-- របារជំហាន -->
+                <div id="stepper" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 no-print"></div>
+
+                <!-- ជំហានទី 1 — ព័ត៌មានប្រព័ន្ធ -->
+                <section id="step-1" class="space-y-5">
+                    <div class="p-4 rounded-2xl bg-sky-50 border border-sky-200 flex items-start gap-3">
+                        <i class="fas fa-circle-info text-sky-600 mt-0.5 flex-shrink-0"></i>
+                        <p class="sm-card-sub text-sky-900">
+                            ចំណាំ៖ តួលេខខាងក្រោមគឺជាការគណនារបស់ប្រព័ន្ធ — សូមមើលជាមុនសិន មុននឹងរាប់សាច់ប្រាក់ជាក់ស្តែង។
+                        </p>
+                    </div>
+                    <div id="systemCards" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"></div>
+                    <div id="topSellerCard" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden"></div>
+                </section>
+
+                <!-- ជំហានទី 2 — រាប់ប្រាក់ -->
+                <section id="step-2" class="hidden space-y-5">
+                    <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3">
+                        <i class="fas fa-hand-holding-dollar text-amber-600 mt-0.5 flex-shrink-0"></i>
+                        <p class="sm-card-sub text-amber-900">
+                            សូមរាប់សាច់ប្រាក់ក្នុងថតរបស់លោកអ្នកឥឡូវនេះ ហើយបំពេញចំនួនសន្លឹកតាមប្រភេទក្រដាសប្រាក់។
+                        </p>
                     </div>
 
-                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-                        <div class="p-5 border-b border-slate-100">
-                            <h3 class="sm-card-title text-slate-700">រាប់ក្រដាសប្រាក់រៀល</h3>
-                            <p class="sm-card-sub text-slate-500">បញ្ចូលចំនួនសន្លឹកជាក់ស្តែងក្នុងថតប្រាក់</p>
-                        </div>
-                        <div id="khrNotes" class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-                        <div class="px-5 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-                            <span class="sm-card-title text-slate-700">សរុបរាប់បាន ៛</span>
-                            <span id="khrCounted" class="sm-kpi-value text-slate-700"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ការផ្ទៀងផ្ទាត់ និងរបាយការណ៍ -->
-                <div class="xl:col-span-2 space-y-6">
-                    <div id="varianceCard" class="bg-white rounded-2xl border-2 shadow-sm p-5"></div>
-
-                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 space-y-3 no-print">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pb-3 border-b border-slate-100">
-                            <button onclick="window.print()"
-                                class="sm-badge px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition inline-flex items-center justify-center gap-2">
-                                <i class="fas fa-print"></i> បោះពុម្ព X Report
-                            </button>
-                            <button onclick="closeShift()"
-                                class="sm-badge px-4 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold shadow-sm transition inline-flex items-center justify-center gap-2">
-                                <i class="fas fa-lock"></i> បិទវេន និងចេញ Z Report
-                            </button>
-                        </div>
-                        <label class="sm-label text-slate-700 font-semibold block">មូលហេតុនៃភាពខុសគ្នា (បើមាន)</label>
-                        <textarea id="varianceNote" rows="2" placeholder="ឧទាហរណ៍៖ អាប់ប្រាក់ខុស · ក្រដាសប្រាក់រហែក..."
-                            class="sm-td w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-[#1e3a5f] transition resize-none"></textarea>
-                    </div>
-
-                    <!-- X/Z Report -->
-                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden sm-print-block">
-                        <div class="p-4 border-b border-slate-100 flex items-center gap-2">
-                            <i class="fas fa-file-invoice text-[#1e3a5f]"></i>
-                            <div>
-                                <h3 class="sm-card-title text-slate-700">មើលរបាយការណ៍មុនបោះពុម្ព</h3>
-                                <p class="sm-card-sub text-slate-500">ទម្រង់ក្រដាសកម្តៅ 80mm</p>
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                            <div class="p-5 border-b border-slate-100">
+                                <h3 class="sm-card-title text-slate-700">ក្រដាសប្រាក់ដុល្លារ</h3>
+                                <p class="sm-card-sub text-slate-500">បញ្ចូលចំនួនសន្លឹកជាក់ស្តែងក្នុងថតប្រាក់</p>
+                            </div>
+                            <div id="usdNotes" class="p-5 space-y-3"></div>
+                            <div class="px-5 py-4 bg-teal-50/60 border-t border-slate-100 flex items-center justify-between">
+                                <span class="sm-card-title text-slate-700">សរុបរាប់បានជាដុល្លារ</span>
+                                <span id="usdCounted" class="sm-kpi-value text-slate-800 sm-figure"></span>
                             </div>
                         </div>
-                        <div class="p-5 bg-slate-100/70">
-                            <div id="reportPreview" class="mx-auto bg-white rounded-lg shadow-sm p-5 max-w-[320px]"></div>
+
+                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                            <div class="p-5 border-b border-slate-100 flex items-center justify-between gap-2">
+                                <div>
+                                    <h3 class="sm-card-title text-slate-700">ក្រដាសប្រាក់រៀល</h3>
+                                    <p class="sm-card-sub text-slate-500">បញ្ចូលចំនួនសន្លឹកជាក់ស្តែងក្នុងថតប្រាក់</p>
+                                </div>
+                                <button onclick="toggleRiel()" type="button" id="rielToggle"
+                                    class="sm-badge px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition flex-shrink-0"></button>
+                            </div>
+                            <div id="khrNotes" class="p-5 space-y-3"></div>
+                            <div id="khrFoot" class="px-5 py-4 bg-teal-50/60 border-t border-slate-100 flex items-center justify-between">
+                                <span class="sm-card-title text-slate-700">សរុបរាប់បានជារៀល</span>
+                                <span id="khrCounted" class="sm-kpi-value text-slate-800 sm-figure"></span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </section>
+
+                <!-- ជំហានទី 3 — ភាពខុសគ្នា -->
+                <section id="step-3" class="hidden space-y-5">
+                    <div id="varianceBanner"></div>
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                        <div id="varianceCard" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5"></div>
+                        <div id="varianceReasonCard" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5"></div>
+                    </div>
+                </section>
+
+                <!-- ជំហានទី 4 — បញ្ជាក់ និងបិទ -->
+                <section id="step-4" class="hidden space-y-5">
+                    <div id="recapCard" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden"></div>
+
+                    <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3">
+                        <i class="fas fa-triangle-exclamation text-amber-600 mt-0.5 flex-shrink-0"></i>
+                        <p class="sm-card-sub text-amber-900">
+                            ការបិទវេនមិនអាចត្រឡប់ក្រោយវិញបានទេ។ មានតែអ្នកគ្រប់គ្រងទូទៅប៉ុណ្ណោះដែលអាចបើកវេនម្តងទៀត។
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 space-y-4">
+                        <div>
+                            <label class="sm-label text-slate-700 font-semibold block mb-1.5">លេខសម្ងាត់បញ្ជាក់ 4 ខ្ទង់</label>
+                            <input id="pinInput" type="password" inputmode="numeric" maxlength="6" placeholder="••••"
+                                oninput="renderStep4()"
+                                class="pos-num sm-td w-full sm:w-48 px-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-center tracking-[0.5em] focus:outline-none focus:border-teal-600 transition">
+                            <p class="sm-td-sub text-slate-400 mt-1.5">សម្រាប់ការបង្ហាញសាកល្បង សូមវាយលេខណាមួយ 4 ខ្ទង់</p>
+                        </div>
+
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input id="confirmCheck" type="checkbox" onchange="renderStep4()"
+                                class="!min-h-0 w-5 h-5 mt-0.5 rounded border-slate-300 text-teal-600 focus:ring-teal-500 flex-shrink-0">
+                            <span class="sm-td text-slate-700">
+                                ខ្ញុំបញ្ជាក់ថាការរាប់សាច់ប្រាក់ខាងលើត្រឹមត្រូវ ហើយខ្ញុំព្រមបិទវេននេះ។
+                            </span>
+                        </label>
+
+                        <button id="closeBtn" onclick="closeShift()" type="button"
+                            class="sm-card-title w-full !min-h-[64px] rounded-2xl font-bold transition inline-flex items-center justify-center gap-2">
+                            <i class="fas fa-lock"></i> បញ្ជាក់ និងបិទវេន
+                        </button>
+                    </div>
+                </section>
+
+                <!-- របារផ្លាស់ទីជំហាន -->
+                <div id="wizardNav" class="flex flex-wrap items-center justify-between gap-3 no-print"></div>
+
+                <!-- ===== អេក្រង់បន្ទាប់ពីបិទវេន ===== -->
+                <section id="closedScreen" class="hidden space-y-5">
+                    <div class="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 flex flex-wrap items-center gap-4 no-print">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-xl flex-shrink-0">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="sm-card-title text-emerald-900">ការបិទវេនបានជោគជ័យ</h3>
+                            <p id="closedNote" class="sm-card-sub text-emerald-800 mt-0.5"></p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 flex-shrink-0">
+                            <button onclick="window.print()" type="button"
+                                class="sm-badge px-4 rounded-xl bg-white hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold transition inline-flex items-center gap-2">
+                                <i class="fas fa-print"></i> បោះពុម្ពរបាយការណ៍បិទវេន
+                            </button>
+                            <a href="receipts/receipts.html" class="pos-tap sm-badge px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition inline-flex items-center gap-2">
+                                <i class="fas fa-receipt"></i> មើលវិក្កយបត្រវេន
+                            </a>
+                        </div>
+                    </div>
+
+                    <div id="zReport" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 md:p-10"></div>
+                </section>
 
             </div>
         </main>
@@ -116,39 +181,163 @@
     <script src="data.js"></script>
     <script src="../../shared/scripts/portal.js"></script>
     <script>
+        /* ជំនួយការបិទវេន 4 ជំហាន (ឯកសាររចនាលេខ 05 ផ្នែក 3.3) */
+
+        const STEPS = [
+            { n: 1, label: 'ព័ត៌មានប្រព័ន្ធ' },
+            { n: 2, label: 'រាប់ប្រាក់' },
+            { n: 3, label: 'ភាពខុសគ្នា' },
+            { n: 4, label: 'បញ្ជាក់ និងបិទ' }
+        ];
+
         const countUSD = {};
         const countKHR = {};
+        let step = 1;
+        let showRiel = true;
+        let closed = false;
+
+        /* ===== របារជំហាន ===== */
+
+        function renderStepper() {
+            document.getElementById('stepper').innerHTML = `
+                <div class="flex flex-wrap items-center gap-y-3">
+                    ${STEPS.map((s, i) => {
+                        const done = s.n < step;
+                        const now = s.n === step;
+                        return `
+                        <div class="flex items-center">
+                            <button onclick="goStep(${s.n})" type="button" ${s.n > step ? 'disabled' : ''}
+                                class="px-1 inline-flex items-center gap-2.5 ${s.n > step ? 'cursor-not-allowed' : 'cursor-pointer'}">
+                                <span class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 sm-badge font-bold transition ${done
+                                    ? 'bg-teal-600 text-white'
+                                    : now ? 'bg-teal-600 text-white ring-4 ring-teal-100' : 'bg-slate-100 text-slate-400 border border-slate-200'}">
+                                    ${done ? '<i class="fas fa-check text-xs"></i>' : s.n}
+                                </span>
+                                <span class="sm-badge ${now ? 'text-slate-800 font-semibold' : done ? 'text-slate-600 font-medium' : 'text-slate-400 font-medium'} hidden sm:!inline">${s.label}</span>
+                            </button>
+                            ${i < STEPS.length - 1 ? `<span class="w-6 sm:w-12 h-0.5 mx-2 sm:mx-3 rounded-full ${done ? 'bg-teal-600' : 'bg-slate-200'}"></span>` : ''}
+                        </div>`;
+                    }).join('')}
+                </div>`;
+        }
+
+        function goStep(n) {
+            if (n > step) return;
+            step = n;
+            paintStep();
+        }
+
+        function nextStep() {
+            if (step === 2 && !(totalCountedUSD() + totalCountedKHR())) {
+                return showToast('សូមបញ្ចូលចំនួនសន្លឹកប្រាក់ជាមុនសិន', 'error');
+            }
+            if (step < 4) { step += 1; paintStep(); }
+        }
+
+        function prevStep() {
+            if (step > 1) { step -= 1; paintStep(); }
+        }
+
+        function paintStep() {
+            STEPS.forEach(s => document.getElementById('step-' + s.n).classList.toggle('hidden', s.n !== step));
+            renderStepper();
+            renderWizardNav();
+            if (step === 1) renderSystemSummary();
+            if (step === 3) renderVariance();
+            if (step === 4) renderStep4();
+        }
+
+        function renderWizardNav() {
+            const host = document.getElementById('wizardNav');
+            if (closed) { host.innerHTML = ''; return; }
+            host.innerHTML = `
+                <button onclick="prevStep()" type="button" ${step === 1 ? 'disabled' : ''}
+                    class="sm-value px-5 rounded-2xl font-semibold transition inline-flex items-center gap-2 ${step === 1
+                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                        : 'bg-white border border-slate-200 hover:bg-slate-50 text-slate-700'}">
+                    <i class="fas fa-arrow-left"></i> ថយក្រោយ
+                </button>
+                ${step < 4 ? `
+                <button onclick="nextStep()" type="button"
+                    class="sm-value px-6 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-semibold shadow-sm transition inline-flex items-center gap-2">
+                    ${STEPS[step].label} <i class="fas fa-arrow-right"></i>
+                </button>` : '<span></span>'}`;
+        }
+
+        /* ===== ជំហានទី 1 ===== */
+
+        function metricCard(label, value, tone, sub) {
+            return `<div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
+                <p class="sm-eyebrow text-slate-400">${label}</p>
+                <p class="sm-kpi-value ${tone} sm-figure mt-1.5">${value}</p>
+                <p class="sm-kpi-sub text-slate-500 mt-1">${sub}</p>
+            </div>`;
+        }
+
+        function renderSystemSummary() {
+            const s = shiftSummary();
+            const d = shiftDuration();
+            document.getElementById('systemCards').innerHTML =
+                metricCard('ចំនួនវិក្កយបត្រ', `${s.count}`, 'text-slate-800', `${s.qty} ឯកតាទំនិញ`) +
+                metricCard('លក់បានសរុប', fmtUSD(s.gross), 'text-emerald-600', fmtKHR(toKHR(s.gross))) +
+                metricCard('អាករលើតម្លៃបន្ថែមប្រមូលបាន', fmtUSD(s.vat), 'text-slate-800', `តម្លៃមុនអាករ ${fmtUSD(s.net)}`) +
+                metricCard('ការបញ្ចុះតម្លៃ', fmtUSD(s.discount), s.discount > 0 ? 'text-amber-600' : 'text-slate-800',
+                    s.discount > 0 ? 'ផ្តល់ជូនអតិថិជនក្នុងវេននេះ' : 'មិនមានការបញ្ចុះតម្លៃ') +
+                metricCard('ទទួលជាសាច់ប្រាក់ដុល្លារ', fmtUSD(s.usdCash), 'text-slate-800', 'ចូលថតប្រាក់') +
+                metricCard('ទទួលជាសាច់ប្រាក់រៀល', fmtKHR(s.khrCash), 'text-slate-800', 'ចូលថតប្រាក់') +
+                metricCard('ទទួលតាមបាគង', fmtUSD(s.khqr), 'text-cyan-600', 'មិនចូលថតប្រាក់') +
+                metricCard('រយៈពេលវេន', `${d.hours} ម៉ោង ${d.minutes} នាទី`, 'text-slate-800', `បើកម៉ោង ${fmtTime(SHIFT.openedAt)}`);
+
+            const top = topSellers(5);
+            document.getElementById('topSellerCard').innerHTML = `
+                <div class="px-5 pt-5 pb-3">
+                    <p class="sm-eyebrow text-slate-400">ទំនិញលក់ដាច់ក្នុងវេន</p>
+                    <p class="sm-card-sub text-slate-500 mt-1">តម្រៀបតាមចំនួនឯកតាដែលលក់ចេញ</p>
+                </div>
+                <div class="divide-y divide-slate-100 border-t border-slate-100">
+                    ${top.length ? top.map((r, i) => `
+                        <div class="px-5 py-3 flex items-center gap-3">
+                            <span class="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 inline-flex items-center justify-center sm-badge font-bold flex-shrink-0">${i + 1}</span>
+                            <p class="sm-td text-slate-700 flex-1 truncate">${r.product.name}</p>
+                            <p class="sm-value text-slate-700 sm-figure flex-shrink-0">${r.qty} ${r.product.unit}</p>
+                        </div>`).join('')
+                    : '<p class="px-5 py-10 text-center sm-card-sub text-slate-500">មិនទាន់មានការលក់ក្នុងវេននេះទេ</p>'}
+                </div>`;
+        }
+
+        /* ===== ជំហានទី 2 ===== */
+
+        function noteRow(currency, note, label) {
+            const map = currency === 'usd' ? countUSD : countKHR;
+            return `
+                <div class="flex items-center gap-3">
+                    <span class="sm-value text-slate-700 sm-figure w-24 flex-shrink-0">${label}</span>
+                    <span class="sm-td-sub text-slate-400 flex-shrink-0">×</span>
+                    <input type="number" inputmode="numeric" min="0" step="1" value="${map[note] || ''}" placeholder="0"
+                        onchange="setCount('${currency}', ${note}, this.value)"
+                        class="pos-num sm-td w-20 px-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-center focus:outline-none focus:border-teal-600 transition flex-shrink-0">
+                    <span id="${currency}Line-${note}" class="sm-value text-slate-500 sm-figure flex-1 text-right"></span>
+                </div>`;
+        }
 
         function renderNoteInputs() {
-            document.getElementById('usdNotes').innerHTML = USD_NOTES.map(n => `
-                <div class="flex items-center gap-3">
-                    <span class="sm-value text-slate-700 w-16 flex-shrink-0">$${n}</span>
-                    <span class="sm-td-sub text-slate-400">×</span>
-                    <input type="number" min="0" step="1" value="${countUSD[n] || ''}" placeholder="0"
-                        onchange="setCount('usd', ${n}, this.value)"
-                        class="sm-td w-20 px-2.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-center focus:outline-none focus:border-[#1e3a5f] transition">
-                    <span id="usdLine-${n}" class="sm-value text-slate-500 flex-1 text-right"></span>
-                </div>`).join('');
-
-            document.getElementById('khrNotes').innerHTML = KHR_NOTES.map(n => `
-                <div class="flex items-center gap-3">
-                    <span class="sm-value text-slate-700 w-20 flex-shrink-0">${n.toLocaleString('en-US')} ៛</span>
-                    <span class="sm-td-sub text-slate-400">×</span>
-                    <input type="number" min="0" step="1" value="${countKHR[n] || ''}" placeholder="0"
-                        onchange="setCount('khr', ${n}, this.value)"
-                        class="sm-td w-20 px-2.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-center focus:outline-none focus:border-[#1e3a5f] transition">
-                    <span id="khrLine-${n}" class="sm-value text-slate-500 flex-1 text-right"></span>
-                </div>`).join('');
-
+            document.getElementById('usdNotes').innerHTML = USD_NOTES.map(n => noteRow('usd', n, '$' + n)).join('');
+            document.getElementById('khrNotes').innerHTML = KHR_NOTES.map(n => noteRow('khr', n, n.toLocaleString('en-US') + ' ៛')).join('');
+            document.getElementById('rielToggle').textContent = showRiel ? 'បង្រួម' : 'បើកមើល';
+            document.getElementById('khrNotes').classList.toggle('hidden', !showRiel);
+            document.getElementById('khrFoot').classList.toggle('hidden', !showRiel);
             updateLineLabels();
+        }
+
+        function toggleRiel() {
+            showRiel = !showRiel;
+            renderNoteInputs();
         }
 
         function setCount(currency, note, value) {
             const qty = Math.max(parseInt(value, 10) || 0, 0);
             if (currency === 'usd') countUSD[note] = qty; else countKHR[note] = qty;
             updateLineLabels();
-            renderVariance();
-            renderReport();
         }
 
         function updateLineLabels() {
@@ -172,171 +361,345 @@
             return KHR_NOTES.reduce((sum, n) => sum + n * (countKHR[n] || 0), 0);
         }
 
-        /* ភាពខុសគ្នាគិតជាដុល្លាររួម ដោយបម្លែងរៀលតាមអត្រាវេន */
+        /* ===== ជំហានទី 3 ===== */
+
         function varianceData() {
             const s = shiftSummary();
             const expectedTotal = s.expectedUSD + toUSD(s.expectedKHR);
             const countedTotal = totalCountedUSD() + toUSD(totalCountedKHR());
+            const diff = countedTotal - expectedTotal;
+            const abs = Math.abs(diff);
             return {
-                summary: s,
-                expectedTotal,
-                countedTotal,
-                diff: countedTotal - expectedTotal,
-                usdDiff: totalCountedUSD() - s.expectedUSD,
-                khrDiff: totalCountedKHR() - s.expectedKHR
+                summary: s, expectedTotal, countedTotal, diff, abs,
+                level: abs <= 0.005 ? 'exact' : abs <= VARIANCE_TOLERANCE ? 'small' : 'large',
+                direction: diff > 0.005 ? 'over' : diff < -0.005 ? 'short' : 'exact'
             };
+        }
+
+        const DIRECTION_LABEL = { over: 'លើសប្រាក់', short: 'ខ្វះប្រាក់', exact: 'ត្រឹមត្រូវគត់' };
+
+        function varianceTone(v) {
+            if (v.level === 'exact') return { text: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200', icon: 'fa-circle-check' };
+            if (v.level === 'small') return { text: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200', icon: 'fa-triangle-exclamation' };
+            return { text: 'text-rose-700', bg: 'bg-rose-50', border: 'border-rose-200', icon: 'fa-circle-exclamation' };
         }
 
         function renderVariance() {
             const v = varianceData();
-            const counted = totalCountedUSD() + totalCountedKHR();
-            const isOver = v.diff > 0.005;
-            const isShort = v.diff < -0.005;
-            const neutral = !counted;
+            const tone = varianceTone(v);
 
-            const tone = neutral ? 'border-slate-200' : isShort ? 'border-rose-300' : isOver ? 'border-amber-300' : 'border-emerald-300';
-            const label = neutral ? 'មិនទាន់រាប់' : isShort ? 'ខ្វះសាច់ប្រាក់ (Short)' : isOver ? 'លើសសាច់ប្រាក់ (Over)' : 'ត្រឹមត្រូវគត់';
-            const labelTone = neutral ? 'text-slate-500' : isShort ? 'text-rose-700' : isOver ? 'text-amber-700' : 'text-emerald-700';
-            const icon = neutral ? 'fa-calculator' : isShort ? 'fa-arrow-trend-down' : isOver ? 'fa-arrow-trend-up' : 'fa-circle-check';
-
-            document.getElementById('varianceCard').className = `bg-white rounded-2xl border-2 ${tone} shadow-sm p-5`;
-            document.getElementById('varianceCard').innerHTML = `
-                <div class="flex items-center gap-2.5 mb-4">
-                    <div class="w-10 h-10 rounded-xl ${neutral ? 'bg-slate-100 text-slate-500' : isShort ? 'bg-rose-100 text-rose-600' : isOver ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600'} flex items-center justify-center flex-shrink-0">
-                        <i class="fas ${icon}"></i>
+            document.getElementById('varianceBanner').innerHTML = `
+                <div class="p-5 rounded-2xl ${tone.bg} border ${tone.border} flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-white/70 ${tone.text} flex items-center justify-center text-xl flex-shrink-0">
+                        <i class="fas ${tone.icon}"></i>
                     </div>
                     <div class="min-w-0">
-                        <h3 class="sm-card-title text-slate-700">ការផ្ទៀងផ្ទាត់សាច់ប្រាក់</h3>
-                        <p class="sm-card-sub ${labelTone}">${label}</p>
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <div class="flex justify-between">
-                        <span class="sm-label text-slate-600">ប្រាក់បើកវេន</span>
-                        <div class="text-right">
-                            <span class="sm-value text-slate-700 block">${fmtUSD(SHIFT.openingFloatUSD)}</span>
-                            <span class="sm-td-sub text-slate-500">${fmtKHR(SHIFT.openingFloatKHR)}</span>
-                        </div>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="sm-label text-slate-600">លក់បានជាសាច់ប្រាក់</span>
-                        <div class="text-right">
-                            <span class="sm-value text-slate-700 block">${fmtUSD(v.summary.usdCash)}</span>
-                            <span class="sm-td-sub text-slate-500">${fmtKHR(v.summary.khrCash)}</span>
-                        </div>
-                    </div>
-                    <div class="flex justify-between pt-2 border-t border-slate-200">
-                        <span class="sm-label text-slate-700 font-semibold">ប្រព័ន្ធរំពឹងទុក</span>
-                        <div class="text-right">
-                            <span class="sm-value text-slate-700 block">${fmtUSD(v.summary.expectedUSD)}</span>
-                            <span class="sm-td-sub text-slate-500">${fmtKHR(v.summary.expectedKHR)}</span>
-                        </div>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="sm-label text-slate-700 font-semibold">រាប់បានជាក់ស្តែង</span>
-                        <div class="text-right">
-                            <span class="sm-value text-slate-700 block">${fmtUSD(totalCountedUSD())}</span>
-                            <span class="sm-td-sub text-slate-500">${fmtKHR(totalCountedKHR())}</span>
-                        </div>
-                    </div>
-                    <div class="flex justify-between pt-2 border-t-2 border-slate-200">
-                        <span class="sm-card-title ${labelTone}">ភាពខុសគ្នា</span>
-                        <div class="text-right">
-                            <span class="sm-kpi-value ${labelTone} block">${v.diff >= 0 ? '+' : '−'}${fmtUSD(Math.abs(v.diff))}</span>
-                            <span class="sm-td-sub ${labelTone}">${fmtKHR(Math.abs(toKHR(v.diff)))}</span>
-                        </div>
+                        <h3 class="sm-card-title ${tone.text}">
+                            ${v.level === 'exact' ? 'ត្រឹមត្រូវ! គ្មានភាពខុសគ្នា'
+                                : v.level === 'small' ? `ភាពខុសគ្នាតូច · ${fmtUSD(v.abs)} — សូមត្រួតពិនិត្យ`
+                                : `ភាពខុសគ្នាធំ · ${fmtUSD(v.abs)} — ទាមទារការពន្យល់`}
+                        </h3>
+                        <p class="sm-card-sub ${tone.text} mt-1 opacity-90">
+                            ${v.level === 'exact' ? 'សាច់ប្រាក់ដែលរាប់បានស្មើនឹងអ្វីដែលប្រព័ន្ធរំពឹងទុក។'
+                                : v.level === 'small' ? `ក្រោម ${fmtUSD(VARIANCE_TOLERANCE)} — លោកអ្នកអាចបន្តបាន ប៉ុន្តែសូមទទួលស្គាល់ជាមុនសិន។`
+                                : `លើស ${fmtUSD(VARIANCE_TOLERANCE)} — ការពន្យល់នឹងត្រូវផ្ញើទៅអ្នកគ្រប់គ្រងទូទៅ និងប្រធានគណនេយ្យ។`}
+                        </p>
                     </div>
                 </div>`;
+
+            const row = (label, value, sub, strong) => `
+                <div class="flex items-baseline justify-between gap-3 ${strong ? 'pt-2.5 mt-1 border-t border-slate-200' : ''}">
+                    <span class="${strong ? 'sm-card-title text-slate-700' : 'sm-label text-slate-600'}">${label}</span>
+                    <div class="text-right flex-shrink-0">
+                        <span class="${strong ? 'sm-kpi-value' : 'sm-value'} text-slate-800 sm-figure block">${value}</span>
+                        ${sub ? `<span class="sm-td-sub text-slate-500 sm-figure">${sub}</span>` : ''}
+                    </div>
+                </div>`;
+
+            document.getElementById('varianceCard').innerHTML = `
+                <h3 class="sm-card-title text-slate-700 border-b border-slate-100 pb-3 mb-3">ការផ្ទៀងផ្ទាត់សាច់ប្រាក់</h3>
+                <div class="space-y-2.5">
+                    ${row('ប្រាក់បើកវេន', fmtUSD(SHIFT.openingFloatUSD), fmtKHR(SHIFT.openingFloatKHR))}
+                    ${row('លក់បានជាសាច់ប្រាក់', fmtUSD(v.summary.usdCash), fmtKHR(v.summary.khrCash))}
+                    ${row('ប្រព័ន្ធរំពឹងទុក', fmtUSD(v.summary.expectedUSD), fmtKHR(v.summary.expectedKHR))}
+                    ${row('រាប់បានជាក់ស្តែង', fmtUSD(totalCountedUSD()), fmtKHR(totalCountedKHR()))}
+                    <div class="flex items-baseline justify-between gap-3 pt-2.5 mt-1 border-t-2 border-slate-200">
+                        <span class="sm-card-title ${tone.text}">${DIRECTION_LABEL[v.direction]}</span>
+                        <span class="sm-kpi-value ${tone.text} sm-figure">${v.diff >= 0 ? '+' : '−'}${fmtUSD(v.abs)}</span>
+                    </div>
+                </div>`;
+
+            const reason = document.getElementById('varianceReasonCard');
+            if (v.level === 'exact') {
+                reason.innerHTML = `
+                    <h3 class="sm-card-title text-slate-700 border-b border-slate-100 pb-3 mb-3">មូលហេតុនៃភាពខុសគ្នា</h3>
+                    <div class="py-10 text-center">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-check text-xl"></i>
+                        </div>
+                        <p class="sm-card-sub text-slate-500">មិនចាំបាច់ពន្យល់ទេ ព្រោះសាច់ប្រាក់ត្រឹមត្រូវគត់។</p>
+                    </div>`;
+                return;
+            }
+
+            const required = v.level === 'large';
+            reason.innerHTML = `
+                <h3 class="sm-card-title text-slate-700 border-b border-slate-100 pb-3 mb-3">
+                    មូលហេតុនៃភាពខុសគ្នា ${required ? '<span class="text-rose-500">*</span>' : ''}
+                </h3>
+                ${required ? '' : `
+                <label class="flex items-start gap-3 cursor-pointer mb-3">
+                    <input id="ackCheck" type="checkbox" onchange="renderStep4()"
+                        class="!min-h-0 w-5 h-5 mt-0.5 rounded border-slate-300 text-teal-600 focus:ring-teal-500 flex-shrink-0">
+                    <span class="sm-td text-slate-700">ខ្ញុំបានពិនិត្យរួចហើយ — ទទួលស្គាល់ភាពខុសគ្នានេះ</span>
+                </label>`}
+                <textarea id="varianceNote" rows="4" oninput="renderStep4()"
+                    placeholder="ឧទាហរណ៍៖ អាប់ប្រាក់ខុសក្នុងប្រតិបត្តិការមួយ · ក្រដាសប្រាក់រហែក · ទទួលបានក្រដាសប្រាក់ក្លែងក្លាយ..."
+                    class="sm-td w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-teal-600 transition resize-none"></textarea>
+                ${required ? '<p id="reasonHint" class="sm-td-sub text-slate-400 mt-1.5"></p>' : ''}`;
+            syncReasonHint();
         }
 
-        function renderReport() {
+        function reasonText() {
+            const el = document.getElementById('varianceNote');
+            return el ? el.value.trim() : '';
+        }
+
+        function acknowledged() {
+            const el = document.getElementById('ackCheck');
+            return el ? el.checked : true;
+        }
+
+        function syncReasonHint() {
+            const hint = document.getElementById('reasonHint');
+            if (!hint) return;
+            const n = reasonText().length;
+            hint.textContent = n >= 20
+                ? `បានបញ្ចូល ${n} តួអក្សរ — គ្រប់គ្រាន់`
+                : `ត្រូវការយ៉ាងតិច 20 តួអក្សរ · បានបញ្ចូល ${n}`;
+            hint.className = 'sm-td-sub mt-1.5 ' + (n >= 20 ? 'text-emerald-600 font-semibold' : 'text-slate-400');
+        }
+
+        /* ===== ជំហានទី 4 ===== */
+
+        function canClose() {
             const v = varianceData();
+            if (!(totalCountedUSD() + totalCountedKHR())) return { ok: false, why: 'សូមរាប់សាច់ប្រាក់ជាមុនសិន' };
+            if (v.level === 'small' && !acknowledged()) return { ok: false, why: 'សូមទទួលស្គាល់ភាពខុសគ្នាក្នុងជំហានទី 3' };
+            if (v.level === 'large' && reasonText().length < 20) return { ok: false, why: 'សូមពន្យល់ភាពខុសគ្នាយ៉ាងតិច 20 តួអក្សរ ក្នុងជំហានទី 3' };
+            const pin = (document.getElementById('pinInput') || {}).value || '';
+            if (pin.length < 4) return { ok: false, why: 'សូមវាយលេខសម្ងាត់បញ្ជាក់យ៉ាងតិច 4 ខ្ទង់' };
+            if (!(document.getElementById('confirmCheck') || {}).checked) return { ok: false, why: 'សូមធីកប្រអប់បញ្ជាក់' };
+            return { ok: true, why: '' };
+        }
+
+        function renderStep4() {
+            syncReasonHint();
+            const v = varianceData();
+            const tone = varianceTone(v);
             const s = v.summary;
-            const row = (label, value, strong) => `
-                <div class="flex justify-between gap-3 ${strong ? 'pt-1.5 border-t border-dashed border-slate-300' : ''}">
-                    <span class="${strong ? 'sm-value' : 'sm-td'} text-slate-600">${label}</span>
-                    <span class="${strong ? 'sm-value' : 'sm-td'} text-slate-800">${value}</span>
+
+            document.getElementById('recapCard').innerHTML = `
+                <div class="px-5 pt-5 pb-3">
+                    <p class="sm-eyebrow text-slate-400">សេចក្តីសង្ខេបវេន</p>
+                    <p class="sm-card-sub text-slate-500 mt-1">សូមពិនិត្យម្តងចុងក្រោយ មុននឹងបិទ</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 border-t border-slate-100 divide-y sm:divide-y-0 divide-slate-100">
+                    <div class="p-5 space-y-2.5 sm:border-r sm:border-slate-100">
+                        ${recapRow('លេខវេន', SHIFT.id)}
+                        ${recapRow('ម៉ាស៊ីន', SHIFT.terminal)}
+                        ${recapRow('អ្នកគិតលុយ', SHIFT.cashier)}
+                        ${recapRow('បើកម៉ោង', fmtTime(SHIFT.openedAt))}
+                        ${recapRow('ចំនួនវិក្កយបត្រ', `${s.count}`)}
+                        ${recapRow('លក់បានសរុប', fmtUSD(s.gross))}
+                    </div>
+                    <div class="p-5 space-y-2.5">
+                        ${recapRow('ប្រព័ន្ធរំពឹងទុក', `${fmtUSD(s.expectedUSD)} · ${fmtKHR(s.expectedKHR)}`)}
+                        ${recapRow('រាប់បានជាក់ស្តែង', `${fmtUSD(totalCountedUSD())} · ${fmtKHR(totalCountedKHR())}`)}
+                        ${recapRow('ភាពខុសគ្នា', `${v.diff >= 0 ? '+' : '−'}${fmtUSD(v.abs)}`, tone.text)}
+                        ${recapRow('ស្ថានភាព', DIRECTION_LABEL[v.direction], tone.text)}
+                        ${v.level !== 'exact' && reasonText() ? recapRow('មូលហេតុ', reasonText()) : ''}
+                    </div>
                 </div>`;
 
-            document.getElementById('reportPreview').innerHTML = `
-                <div class="text-center border-b border-dashed border-slate-300 pb-3 mb-3">
-                    <p class="sm-card-title text-slate-800">DIGITECHKH RETAIL</p>
-                    <p class="sm-td-sub text-slate-500">${SHIFT.branch}</p>
-                    <p class="sm-td-sub text-slate-500">លេខ អតប ${MERCHANT.tin}</p>
-                    <p class="sm-value text-slate-800 mt-2">របាយការណ៍បិទវេន (X Report)</p>
-                </div>
-
-                <div class="space-y-1.5 pb-3 mb-3 border-b border-dashed border-slate-300">
-                    ${row('លេខវេន', SHIFT.id)}
-                    ${row('ម៉ាស៊ីន', SHIFT.terminal)}
-                    ${row('អ្នកគិតលុយ', SHIFT.cashier)}
-                    ${row('បើកវេន', fmtTime(SHIFT.openedAt))}
-                    ${row('បោះពុម្ព', fmtTime(BMS_TODAY))}
-                </div>
-
-                <div class="space-y-1.5 pb-3 mb-3 border-b border-dashed border-slate-300">
-                    ${row('ចំនួនវិក្កយបត្រ', s.count)}
-                    ${row('ចំនួនឯកតាលក់', s.qty)}
-                    ${row('តម្លៃមុនអាករ', fmtUSD(s.net))}
-                    ${row('អាករ អតប 10%', fmtUSD(s.vat))}
-                    ${row('លក់បានសរុប', fmtUSD(s.gross), true)}
-                </div>
-
-                <div class="space-y-1.5 pb-3 mb-3 border-b border-dashed border-slate-300">
-                    ${row('សាច់ប្រាក់ USD', fmtUSD(s.usdCash))}
-                    ${row('សាច់ប្រាក់ ៛', fmtKHR(s.khrCash))}
-                    ${row('KHQR បាគង', fmtUSD(s.khqr))}
-                </div>
-
-                <div class="space-y-1.5">
-                    ${row('រំពឹងទុក USD', fmtUSD(s.expectedUSD))}
-                    ${row('រាប់បាន USD', fmtUSD(totalCountedUSD()))}
-                    ${row('រំពឹងទុក ៛', fmtKHR(s.expectedKHR))}
-                    ${row('រាប់បាន ៛', fmtKHR(totalCountedKHR()))}
-                    ${row('ភាពខុសគ្នា', `${v.diff >= 0 ? '+' : '−'}${fmtUSD(Math.abs(v.diff))}`, true)}
-                </div>
-
-                <p class="sm-td-sub text-slate-400 text-center mt-4 pt-3 border-t border-dashed border-slate-300">
-                    អត្រាប្តូរប្រាក់ 1 USD = ${FX_RATE.toLocaleString('en-US')} ៛<br>
-                    សូមអរគុណ · ជួបគ្នាពេលក្រោយ
-                </p>`;
+            const state = canClose();
+            const btn = document.getElementById('closeBtn');
+            btn.disabled = !state.ok;
+            btn.className = `sm-card-title w-full !min-h-[64px] rounded-2xl font-bold transition inline-flex items-center justify-center gap-2 ${state.ok
+                ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-sm'
+                : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`;
+            btn.innerHTML = state.ok
+                ? '<i class="fas fa-lock"></i> បញ្ជាក់ និងបិទវេន'
+                : `<i class="fas fa-circle-info"></i> ${state.why}`;
         }
+
+        function recapRow(label, value, tone) {
+            return `<div class="flex items-baseline justify-between gap-3">
+                <span class="sm-td-sub text-slate-500 flex-shrink-0">${label}</span>
+                <span class="sm-value ${tone || 'text-slate-700'} text-right">${value}</span>
+            </div>`;
+        }
+
+        /* ===== ការបិទវេន ===== */
 
         async function closeShift() {
-            const counted = totalCountedUSD() + totalCountedKHR();
-            if (!counted) {
-                return showToast('សូមរាប់សាច់ប្រាក់ជាក់ស្តែងជាមុនសិន មុននឹងបិទវេន', 'error');
-            }
+            const state = canClose();
+            if (!state.ok) return showToast(state.why, 'error');
 
             const v = varianceData();
-            const note = document.getElementById('varianceNote').value.trim();
-            const isOff = Math.abs(v.diff) > 0.005;
-
-            if (isOff && !note) {
-                return showToast('មានភាពខុសគ្នាសាច់ប្រាក់ — សូមបញ្ចូលមូលហេតុជាមុនសិន', 'error');
-            }
-
             const ok = await showCustomConfirm({
-                title: 'បញ្ជាក់ការបិទវេន',
-                message: isOff
-                    ? `មានភាពខុសគ្នា ${v.diff >= 0 ? 'លើស' : 'ខ្វះ'} ${fmtUSD(Math.abs(v.diff))}។ ក្រោយបិទវេន លោកអ្នកមិនអាចកែប្រែប្រតិបត្តិការបានទៀតឡើយ ហើយ Z Report នឹងត្រូវផ្ញើទៅប្រធានគណនេយ្យ។ តើបន្តមែនទេ?`
-                    : `សាច់ប្រាក់ត្រឹមត្រូវគត់។ ក្រោយបិទវេន លោកអ្នកមិនអាចកែប្រែប្រតិបត្តិការបានទៀតឡើយ។ តើបិទវេនមែនទេ?`,
-                confirmText: 'បិទវេន និងចេញ Z Report',
-                cancelText: 'បោះបង់',
+                title: 'តើលោកអ្នកប្រាកដជាចង់បិទវេននេះ?',
+                message: v.level === 'exact'
+                    ? 'សាច់ប្រាក់ត្រឹមត្រូវគត់។ ក្រោយបិទវេន លោកអ្នកមិនអាចលក់ ឬកែប្រែប្រតិបត្តិការបានទៀតឡើយ។'
+                    : `មាន${DIRECTION_LABEL[v.direction]} ${fmtUSD(v.abs)}។ របាយការណ៍បិទវេននឹងផ្ញើទៅអ្នកគ្រប់គ្រងទូទៅ និងប្រធានគណនេយ្យ។ ក្រោយបិទវេន លោកអ្នកមិនអាចលក់បានទៀតឡើយ។`,
+                confirmText: 'បាទ/ចាស — បិទវេន',
+                cancelText: 'ទេ',
                 danger: true
             });
             if (!ok) return;
 
-            showToast(`បានបិទវេន ${SHIFT.id} · កំពុងបោះពុម្ព Z Report`, 'success');
-            setTimeout(() => window.print(), 900);
+            const record = recordShiftClose({
+                countedUSD: totalCountedUSD(),
+                countedKHR: totalCountedKHR(),
+                expectedUSD: v.summary.expectedUSD,
+                expectedKHR: v.summary.expectedKHR,
+                variance: v.diff,
+                reason: reasonText()
+            });
+
+            closed = true;
+            renderClosedScreen(v, record);
+            showToast(`បានបិទវេន ${SHIFT.id} រួចរាល់`, 'success');
+        }
+
+        function renderClosedScreen(v, record) {
+            document.getElementById('stepper').classList.add('hidden');
+            STEPS.forEach(s => document.getElementById('step-' + s.n).classList.add('hidden'));
+            document.getElementById('wizardNav').innerHTML = '';
+            document.getElementById('closedScreen').classList.remove('hidden');
+            document.getElementById('closedNote').textContent =
+                `វេន ${SHIFT.id} ត្រូវបានបិទម៉ោង ${fmtTime(record.closedAt)} · ${DIRECTION_LABEL[v.direction]} ${fmtUSD(v.abs)}`;
+            renderZReport(v, record);
+            window.scrollTo(0, 0);
+        }
+
+        function renderZReport(v, record) {
+            const s = v.summary;
+            const line = (label, value, strong) => `
+                <div class="flex justify-between gap-4 py-1.5 ${strong ? 'border-t border-slate-300 mt-1 pt-2' : ''}">
+                    <span class="${strong ? 'sm-value' : 'sm-td'} text-slate-600">${label}</span>
+                    <span class="${strong ? 'sm-value' : 'sm-td'} text-slate-800 sm-figure">${value}</span>
+                </div>`;
+
+            document.getElementById('zReport').innerHTML = `
+                <div class="text-center pb-5 border-b-2 border-slate-800">
+                    <p class="sm-card-title text-slate-800 text-[18px]">${MERCHANT.name}</p>
+                    <p class="sm-card-sub text-slate-500">${SHIFT.branch}</p>
+                    <p class="sm-card-sub text-slate-500">លេខអត្តសញ្ញាណកម្មអាករ ${MERCHANT.tin}</p>
+                    <p class="sm-card-title text-slate-800 text-[20px] mt-4">របាយការណ៍បិទវេន</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-10 mt-5">
+                    <div>
+                        ${line('លេខវេន', SHIFT.id)}
+                        ${line('ម៉ាស៊ីន', SHIFT.terminal)}
+                        ${line('អ្នកគិតលុយ', SHIFT.cashier)}
+                    </div>
+                    <div>
+                        ${line('កាលបរិច្ឆេទ', fmtKhDate(SHIFT.openedAt))}
+                        ${line('បើកវេន', fmtTime(SHIFT.openedAt))}
+                        ${line('បិទវេន', fmtTime(record.closedAt))}
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <p class="sm-eyebrow text-slate-400 pb-2 border-b border-slate-200">ការលក់ក្នុងវេន</p>
+                    <div class="mt-2">
+                        ${line('ចំនួនវិក្កយបត្រ', `${s.count}`)}
+                        ${line('ចំនួនឯកតាលក់', `${s.qty}`)}
+                        ${line('តម្លៃមុនអាករ', fmtUSD(s.net))}
+                        ${line('ការបញ្ចុះតម្លៃ', fmtUSD(s.discount))}
+                        ${line('អាករលើតម្លៃបន្ថែម 10%', fmtUSD(s.vat))}
+                        ${line('លក់បានសរុប', fmtUSD(s.gross), true)}
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <p class="sm-eyebrow text-slate-400 pb-2 border-b border-slate-200">ទទួលតាមវិធីទូទាត់</p>
+                    <div class="mt-2">
+                        ${line('សាច់ប្រាក់ដុល្លារ', fmtUSD(s.usdCash))}
+                        ${line('សាច់ប្រាក់រៀល', fmtKHR(s.khrCash))}
+                        ${line('ស្កេនកូដបាគង', fmtUSD(s.khqr))}
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <p class="sm-eyebrow text-slate-400 pb-2 border-b border-slate-200">ការផ្ទៀងផ្ទាត់សាច់ប្រាក់</p>
+                    <div class="mt-2">
+                        ${line('ប្រាក់បើកវេន', `${fmtUSD(SHIFT.openingFloatUSD)} · ${fmtKHR(SHIFT.openingFloatKHR)}`)}
+                        ${line('ប្រព័ន្ធរំពឹងទុក', `${fmtUSD(s.expectedUSD)} · ${fmtKHR(s.expectedKHR)}`)}
+                        ${line('រាប់បានជាក់ស្តែង', `${fmtUSD(record.countedUSD)} · ${fmtKHR(record.countedKHR)}`)}
+                        ${line(`ភាពខុសគ្នា · ${DIRECTION_LABEL[v.direction]}`, `${v.diff >= 0 ? '+' : '−'}${fmtUSD(v.abs)}`, true)}
+                    </div>
+                    ${record.reason ? `
+                    <div class="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
+                        <p class="sm-td-sub text-slate-500">មូលហេតុនៃភាពខុសគ្នា</p>
+                        <p class="sm-td text-slate-700 mt-1">${record.reason}</p>
+                    </div>` : ''}
+                </div>
+
+                <div class="grid grid-cols-2 gap-10 mt-10 pt-6 border-t border-slate-300" style="page-break-inside: avoid">
+                    <div class="text-center">
+                        <div class="h-14 border-b border-slate-400"></div>
+                        <p class="sm-td text-slate-600 mt-2">អ្នកគិតលុយ</p>
+                        <p class="sm-td-sub text-slate-400">${SHIFT.cashier}</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="h-14 border-b border-slate-400"></div>
+                        <p class="sm-td text-slate-600 mt-2">អ្នកគ្រប់គ្រងវេន</p>
+                        <p class="sm-td-sub text-slate-400">ហត្ថលេខា និងកាលបរិច្ឆេទ</p>
+                    </div>
+                </div>
+
+                <p class="sm-td-sub text-slate-400 text-center mt-6">
+                    អត្រាប្តូរប្រាក់ 1 ដុល្លារ = ${FX_RATE.toLocaleString('en-US')} ៛ ·
+                    បោះពុម្ពម៉ោង ${fmtTime(new Date().toISOString())}
+                </p>`;
+        }
+
+        /* ===== វេនដែលបិទរួចហើយ ===== */
+
+        function renderAlreadyClosed() {
+            const st = shiftState();
+            document.getElementById('stepper').classList.add('hidden');
+            STEPS.forEach(s => document.getElementById('step-' + s.n).classList.add('hidden'));
+            document.getElementById('wizardNav').innerHTML = '';
+            closed = true;
+
+            const diff = Number(st.variance) || 0;
+            const v = {
+                summary: shiftSummary(),
+                diff,
+                abs: Math.abs(diff),
+                level: Math.abs(diff) <= 0.005 ? 'exact' : Math.abs(diff) <= VARIANCE_TOLERANCE ? 'small' : 'large',
+                direction: diff > 0.005 ? 'over' : diff < -0.005 ? 'short' : 'exact'
+            };
+            document.getElementById('closedScreen').classList.remove('hidden');
+            document.getElementById('closedNote').textContent =
+                `វេន ${SHIFT.id} ត្រូវបានបិទម៉ោង ${fmtTime(st.closedAt)} · ${DIRECTION_LABEL[v.direction]} ${fmtUSD(v.abs)}`;
+            renderZReport(v, st);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             setPortalSubtitle(`វេន ${SHIFT.id} · បើកម៉ោង ${fmtTime(SHIFT.openedAt)} · ${SHIFT.cashier}`);
             renderNoteInputs();
-            renderVariance();
-            renderReport();
+            updatePortalBadges();
+
+            if (!isShiftOpen()) {
+                renderAlreadyClosed();
+                return;
+            }
+            paintStep();
         });
     </script>
 </body>

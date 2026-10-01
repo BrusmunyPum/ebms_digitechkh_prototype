@@ -459,7 +459,7 @@ function toggleDarkMode() {
     } catch (e) {}
     updateDarkModeUI(nextDark);
     if (typeof showToast === 'function') {
-        showToast(nextDark ? 'បានប្តូរទៅ Dark Mode' : 'បានប្តូរទៅ Light Mode', 'info');
+        showToast(nextDark ? 'បានប្តូរទៅទម្រង់ងងឹត' : 'បានប្តូរទៅទម្រង់ភ្លឺ', 'info');
     }
 }
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIGITECHKH - ទូទាត់តាម KHQR បាគង</title>
+    <title>DIGITECHKH - ទូទាត់តាមកូដស្កេនបាគង</title>
     <link rel="icon" type="image/png" href="../../shared/assets/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +15,7 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { primary: "#1e3a5f", 'primary-dark': "#142842", accent: "#0ea5e9" },
+                    colors: { primary: "#0891b2", 'primary-dark': "#0e7490", accent: "#22d3ee" },
                     fontFamily: { sans: ["'Kantumruy Pro'", "sans-serif"] }
                 }
             }
@@ -26,7 +26,7 @@
 </head>
 <body id="posPortal" data-role-root="." data-active="pos" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex flex-col h-screen overflow-hidden">
 
-    <div id="headerHost" data-title="ទូទាត់តាម KHQR បាគង"
+    <div id="headerHost" data-title="ទូទាត់តាមកូដស្កេនបាគង"
              data-subtitle="សូមឱ្យអតិថិជនស្កេនកូដដើម្បីទូទាត់"
              data-back="pos-terminal.html"></div>
 
@@ -54,17 +54,17 @@
                 <div class="w-full grid grid-cols-1 lg:grid-cols-5 gap-6">
 
                     <!-- ផ្ទាំងស្កេនសម្រាប់អតិថិជន -->
-                    <div class="lg:col-span-3 bg-white rounded-2xl border-2 border-[#1e3a5f]/15 shadow-sm p-6 md:p-8 text-center">
-                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e3a5f] text-white mb-5">
+                    <div class="lg:col-span-3 bg-white rounded-2xl border-2 border-teal-600/20 shadow-sm p-6 md:p-8 text-center">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-teal-600 text-white mb-5">
                             <i class="fas fa-qrcode"></i>
                             <span class="sm-value text-white">សូមស្កេនដើម្បីទូទាត់</span>
                         </div>
 
                         <p class="sm-label text-slate-500">ទឹកប្រាក់ត្រូវទូទាត់</p>
-                        <p class="text-5xl font-bold text-[#1e3a5f] leading-tight mt-1">${fmtUSD(amount)}</p>
+                        <p class="text-5xl font-bold text-teal-700 leading-tight mt-1 sm-figure">${fmtUSD(amount)}</p>
                         <p class="sm-card-title text-slate-500 mt-1">${fmtKHR(toKHR(amount))}</p>
                         <div class="mt-4 flex justify-center">
-                            <span id="countdownChip" class="sm-badge inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-sky-50 text-sky-700 border border-sky-200 font-semibold"></span>
+                            <span id="countdownChip" class="sm-badge inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-teal-50 text-teal-700 border border-teal-200 font-semibold"></span>
                         </div>
 
                         <div class="flex justify-center my-6">
@@ -144,9 +144,9 @@
             }
             const rows = [
                 ['សរុបត្រូវបង់', fmtUSD(pending.due), 'text-slate-700'],
-                ['សាច់ប្រាក់ USD', fmtUSD(pending.pay.usdCash), 'text-slate-700'],
+                [PAY_LABEL.usdCash, fmtUSD(pending.pay.usdCash), 'text-slate-700'],
                 ['សាច់ប្រាក់ ៛', fmtKHR(pending.pay.khrCash), 'text-slate-700'],
-                ['តាម KHQR បាគង', fmtUSD(pending.pay.khqr), 'text-[#1e3a5f]']
+                [PAY_LABEL.khqr, fmtUSD(pending.pay.khqr), 'text-teal-700']
             ];
             host.innerHTML = rows.map(([label, value, tone], i) => `
                 <div class="flex justify-between ${i === rows.length - 1 ? 'pt-2 border-t border-slate-200' : ''}">
@@ -163,7 +163,7 @@
                 text: buildKhqrPayload(receiptId, amount),
                 width: 220,
                 height: 220,
-                colorDark: '#1e3a5f',
+                colorDark: '#0f172a',
                 colorLight: '#ffffff',
                 correctLevel: QRCode.CorrectLevel.M
             });
@@ -189,7 +189,7 @@
                             <i class="fas fa-clock-rotate-left text-rose-600"></i>
                             <span class="sm-value text-rose-800">កូដផុតសុពលភាព</span>
                         </div>
-                        <button onclick="restartCountdown()" class="sm-badge px-4 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white font-semibold transition">
+                        <button onclick="restartCountdown()" class="sm-badge px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-semibold transition">
                             <i class="fas fa-rotate-right mr-1"></i> បង្កើតកូដថ្មី
                         </button>
                     </div>`;
@@ -197,9 +197,9 @@
             }
 
             box.innerHTML = `
-                <div class="inline-flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-sky-50 border border-sky-200">
-                    <span class="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse"></span>
-                    <span class="sm-value text-sky-800">កំពុងរង់ចាំការទូទាត់ពីអតិថិជន...</span>
+                <div class="inline-flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-teal-50 border border-teal-200">
+                    <span class="w-2.5 h-2.5 rounded-full bg-teal-500 animate-pulse"></span>
+                    <span class="sm-value text-teal-800">កំពុងរង់ចាំការទូទាត់ពីអតិថិជន...</span>
                 </div>`;
         }
 
@@ -219,7 +219,7 @@
                     clearInterval(ticker);
                     if (chip) {
                         chip.innerHTML = '<i class="fas fa-clock-rotate-left"></i> កូដផុតសុពលភាព';
-                        chip.className = 'sm-badge hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 font-semibold';
+                        chip.className = 'sm-badge hidden sm:!inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 font-semibold';
                     }
                     renderStatus();
                 }
@@ -230,11 +230,11 @@
         function restartCountdown() {
             secondsLeft = 300;
             const chip = document.getElementById('countdownChip');
-            if (chip) chip.className = 'sm-badge hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-sky-50 text-sky-700 border border-sky-200 font-semibold';
+            if (chip) chip.className = 'sm-badge hidden sm:!inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-teal-50 text-teal-700 border border-teal-200 font-semibold';
             renderQr();
             renderStatus();
             startCountdown();
-            showToast('បានបង្កើតកូដ KHQR ថ្មី', 'info');
+            showToast('បានបង្កើតកូដស្កេនថ្មី', 'info');
         }
 
         async function confirmPaid() {
@@ -253,9 +253,11 @@
             if (pending) {
                 saveSale({
                     id: pending.receiptId,
-                    time: new Date(BMS_TODAY).toISOString(),
+                    time: isoLocal(new Date()),
                     items: pending.items,
-                    pay: pending.pay
+                    pay: pending.pay,
+                    discountPercent: pending.discountPercent || 0,
+                    customerId: pending.customerId || ''
                 });
             }
             clearPendingPayment();
@@ -263,7 +265,7 @@
 
             document.getElementById('paidBtn').disabled = true;
             renderStatus();
-            showToast(`បានទទួលប្រាក់ ${fmtUSD(amount)} តាម KHQR បាគង`, 'success');
+            showToast(`បានទទួលប្រាក់ ${fmtUSD(amount)} តាមកូដស្កេនបាគង`, 'success');
 
             setTimeout(() => {
                 window.location.href = `pos-terminal.html?paid=${receiptId}`;
@@ -282,7 +284,7 @@
 
             clearInterval(ticker);
             clearPendingPayment();
-            showToast('បានបោះបង់ការទូទាត់ KHQR', 'warning');
+            showToast('បានបោះបង់ការទូទាត់តាមកូដស្កេន', 'warning');
             setTimeout(() => { window.location.href = 'pos-terminal.html'; }, 900);
         }
 

@@ -38,7 +38,7 @@
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <!-- Content Top Header -->
         <div id="headerHost" data-title="ប័ណ្ណចំណាយទូទាត់"
-             data-subtitle="គ្រប់គ្រងការទូទាត់បំណុលអ្នកផ្គត់ផ្គង់ (AP) កាត់ពន្ធកាត់ទុក (WHT) និងតាមដានការអនុម័ត"></div>
+             data-subtitle="គ្រប់គ្រងការទូទាត់បំណុលអ្នកផ្គត់ផ្គង់ (AP) កាត់ពន្ធកាត់ទុក និងតាមដានការអនុម័ត"></div>
 
         <!-- Main Content -->
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
@@ -74,10 +74,10 @@
                                 <tr>
                                     <th class="py-3 px-4">លេខប័ណ្ណចំណាយ</th>
                                     <th class="py-3 px-4">អ្នកផ្គត់ផ្គង់ / អ្នកទទួលប្រាក់</th>
-                                    <th class="py-3 px-4">យោងវិក្កយបត្រ (Bill)</th>
+                                    <th class="py-3 px-4">យោងលេខវិក្កយបត្រ</th>
                                     <th class="py-3 px-4">កាលបរិច្ឆេទស្នើ</th>
                                     <th class="py-3 px-4 text-right">ទឹកប្រាក់សរុប</th>
-                                    <th class="py-3 px-4 text-right">ពន្ធកាត់ទុក (WHT)</th>
+                                    <th class="py-3 px-4 text-right">ពន្ធកាត់ទុក</th>
                                     <th class="py-3 px-4 text-right">ទឹកប្រាក់បើកសុទ្ធ</th>
                                     <th class="py-3 px-4 text-center">ស្ថានភាព</th>
                                     <th class="py-3 px-4 text-center">សកម្មភាព</th>
@@ -94,6 +94,9 @@
 
     <!-- Scripts -->
     <script src="../../../shared/scripts/ui-components.js"></script>
+    <script src="../../../shared/data/seed.js"></script>
+    <script src="../../../shared/scripts/status-meta.js"></script>
+    <script src="../../../shared/scripts/store.js"></script>
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
@@ -138,7 +141,7 @@
                     <td class="py-3 px-4 text-right font-bold text-slate-900 text-sm">$${v.netAmount.toFixed(2)}</td>
                     <td class="py-3 px-4 text-center">${statusBadges[v.status] || v.status}</td>
                     <td class="py-3 px-4 text-center">
-                        <a href="view-voucher.html?id=${v.id}" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-primary hover:text-white text-slate-600 inline-flex items-center justify-center transition" title="មើលប័ណ្ណ">
+                        <a href="view-voucher.html?id=${v.id}" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-primary hover:text-white text-slate-600 inline-flex items-center justify-center transition" aria-label="មើលប័ណ្ណចំណាយ">
                             <i class="fas fa-eye text-xs"></i>
                         </a>
                     </td>
