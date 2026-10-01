@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>កែប្រែវិក្កយបត្រ — eBMS v2</title>
+    <title>DIGITECHKH - កែប្រែវិក្កយបត្រ</title>
     <link rel="icon" type="image/png" href="../../../shared/assets/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,14 +23,14 @@
     <link rel="stylesheet" href="../../../shared/styles/custom.css">
     <link rel="stylesheet" href="../../../shared/styles/portal.css">
 </head>
-<body id="sePortal" data-role-root=".." data-active="invoices" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
+<body id="sePortal" data-role-root=".." data-active="documents" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
 
     <div id="sidebarHost"></div>
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <div id="headerHost" data-title="កែប្រែវិក្កយបត្រ"
              data-subtitle="កែសម្រួលព័ត៌មានមុខទំនិញ និងលក្ខខណ្ឌទូទាត់"
-             data-back="invoices.html"></div>
+             data-back="../quotes/quotes.html?tab=invoices"></div>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-6">
             <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
@@ -152,7 +152,7 @@
                 return;
             }
 
-            document.getElementById('portalTitle').innerText = `កែប្រែវិក្កយបត្រ ${inv.id}`;
+            setPortalTitle(`កែប្រែវិក្កយបត្រ ${inv.id}`);
             setPortalSubtitle(`ស្ថានភាពបច្ចុប្បន្ន៖ ${invoiceState(inv).label}`);
             document.getElementById('fDate').value = inv.date.slice(0, 10);
             document.getElementById('fDate').disabled = true;

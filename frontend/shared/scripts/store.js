@@ -682,7 +682,7 @@ const BMS_STORE = (() => {
             const maxNo = db.customers.reduce((m, c) => Math.max(m, parseInt(String(c.id).split('-')[1], 10) || 0), 0);
             const id = `CUST-${String(maxNo + 1).padStart(4, '0')}`;
             const requested = Number(data.creditLimit) || 0;
-            const autoLimit = 10000;
+            const autoLimit = db.settings.creditSelfLimit;
             db.customers.push({
                 id, name: data.name, tier: data.tier, contact: data.contact, phone: data.phone, email: data.email || '',
                 address: data.address || '', creditLimit: Math.min(requested, autoLimit), paymentTerms: Number(data.paymentTerms) || 0,

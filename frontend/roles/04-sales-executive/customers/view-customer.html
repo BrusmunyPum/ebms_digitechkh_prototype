@@ -3,173 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ព័ត៌មានអតិថិជន — eBMS v2</title>
+    <title>DIGITECHKH - ព័ត៌មានអតិថិជន</title>
+    <link rel="icon" type="image/png" href="../../../shared/assets/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../../../shared/styles/portal.css">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        primary: '#1e3a5f',
-                        'primary-dark': '#142842',
-                        accent: '#10b981'
-                    },
-                    fontFamily: {
-                        sans: ['"Kantumruy Pro"', 'sans-serif']
-                    }
+                    colors: { primary: "#1e3a5f", 'primary-dark': "#142842", accent: "#0ea5e9" },
+                    fontFamily: { sans: ["'Kantumruy Pro'", "sans-serif"] }
                 }
             }
-        };
+        }
     </script>
+    <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
 </head>
-<body class="bg-slate-50 font-sans text-slate-800 antialiased" data-portal="sePortal" data-role-root="../" data-active="customers">
-    <div class="flex h-screen overflow-hidden">
-        <div id="sidebarHost"></div>
+<body id="sePortal" data-role-root=".." data-active="customers" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
 
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-            <!-- Header (72px aligned) -->
-        <div id="headerHost" data-title="ក្រុមហ៊ុន រស្មី អភិវឌ្ឍន៍"
-                 data-subtitle=""
-                 data-back="customers.html"></div>
+    <div id="sidebarHost"></div>
 
-            <!-- Main Content Area -->
-            <main class="flex-1 overflow-y-auto p-6 space-y-6">
-            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
-            <div class="w-full flex flex-wrap items-center justify-between gap-2 no-print">
-                <div class="flex flex-wrap items-center gap-2">
-                    <span id="custTierBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">អតិថិជនដុំ</span>
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <div id="headerHost" data-title="ព័ត៌មានអតិថិជន"
+             data-subtitle=""
+             data-back="customers.html"></div>
+
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
+
+            <div class="w-full space-y-4">
+
+                <!-- ប័ណ្ណសម្គាល់អតិថិជន -->
+                <section id="profileCard" class="bg-white rounded-2xl border border-slate-200/80 border-l-[6px] border-l-[#1e3a5f] shadow-sm p-5"></section>
+
+                <!-- តួលេខសង្ខេប -->
+                <div id="statRow" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+
+                <!-- ផ្ទាំងរង -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                    <div class="px-4 border-b border-slate-100 flex flex-wrap items-center gap-1">
+                        <button onclick="switchCustTab('history')" id="custTab-history" type="button" class="h-14 px-4 border-b-[3px] inline-flex items-center gap-2 transition">
+                            <i class="fas fa-clock-rotate-left text-xs"></i><span class="sm-card-title">ប្រវត្តិការទិញ</span>
+                        </button>
+                        <button onclick="switchCustTab('documents')" id="custTab-documents" type="button" class="h-14 px-4 border-b-[3px] inline-flex items-center gap-2 transition">
+                            <i class="fas fa-folder-open text-xs"></i><span class="sm-card-title">ឯកសារ</span>
+                        </button>
+                        <button onclick="switchCustTab('info')" id="custTab-info" type="button" class="h-14 px-4 border-b-[3px] inline-flex items-center gap-2 transition">
+                            <i class="fas fa-address-card text-xs"></i><span class="sm-card-title">ព័ត៌មានទូទៅ</span>
+                        </button>
+                    </div>
+
+                    <!-- ប្រវត្តិការទិញ -->
+                    <div id="custPanel-history">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 text-slate-500 border-b border-slate-100">
+                                    <tr>
+                                        <th class="sm-th py-3.5 px-4">លេខវិក្កយបត្រ</th>
+                                        <th class="sm-th py-3.5 px-4">កាលបរិច្ឆេទ</th>
+                                        <th class="sm-th py-3.5 px-4">ផុតកំណត់ទូទាត់</th>
+                                        <th class="sm-th py-3.5 px-4">ស្ថានភាព</th>
+                                        <th class="sm-th py-3.5 px-4 text-right">ទឹកប្រាក់សរុប</th>
+                                        <th class="sm-th py-3.5 px-4 text-right">នៅជំពាក់</th>
+                                        <th class="sm-th py-3.5 px-4 text-right">សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                            </table>
+                        </div>
+                        <div id="historyEmpty" class="hidden py-14 px-6 text-center">
+                            <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-receipt text-2xl"></i>
+                            </div>
+                            <h3 class="sm-card-title text-slate-700">មិនទាន់មានការទិញទេ</h3>
+                            <p class="sm-card-sub text-slate-500 mt-1">ចេញវិក្កយបត្រដំបូងជូនអតិថិជននេះ ដើម្បីចាប់ផ្តើមប្រវត្តិ។</p>
+                        </div>
+                    </div>
+
+                    <!-- ឯកសារ -->
+                    <div id="custPanel-documents" class="hidden">
+                        <div id="docPills" class="px-4 py-2.5 flex flex-wrap items-center gap-2 border-b border-slate-100"></div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 text-slate-500 border-b border-slate-100">
+                                    <tr>
+                                        <th class="sm-th py-3.5 px-4">ប្រភេទ</th>
+                                        <th class="sm-th py-3.5 px-4">លេខឯកសារ</th>
+                                        <th class="sm-th py-3.5 px-4">កាលបរិច្ឆេទ</th>
+                                        <th class="sm-th py-3.5 px-4">ស្ថានភាព</th>
+                                        <th class="sm-th py-3.5 px-4 text-right">ទឹកប្រាក់សរុប</th>
+                                        <th class="sm-th py-3.5 px-4 text-right">សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="docBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                            </table>
+                        </div>
+                        <div id="docEmpty" class="hidden py-14 px-6 text-center">
+                            <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-folder-open text-2xl"></i>
+                            </div>
+                            <h3 class="sm-card-title text-slate-700">គ្មានឯកសារក្នុងតម្រងនេះទេ</h3>
+                        </div>
+                    </div>
+
+                    <!-- ព័ត៌មានទូទៅ -->
+                    <div id="custPanel-info" class="hidden p-5">
+                        <div id="infoGrid" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-0"></div>
+                        <div class="mt-5 pt-4 border-t border-slate-100">
+                            <a id="infoEditLink" href="edit-customer.html" class="sm-badge font-semibold text-[#1e3a5f] hover:underline inline-flex items-center gap-1.5">
+                                <i class="fas fa-pen text-[11px]"></i> កែប្រែព័ត៌មានអតិថិជន
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex flex-wrap items-center gap-2">
-                    <a href="edit-customer.html" id="editCustBtn" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-2 transition cursor-pointer">
-                        <i class="fas fa-pen-to-square text-slate-400"></i>
-                        <span>កែប្រែព័ត៌មាន</span>
-                    </a>
-                    <a href="../quotes/create-quote.html" id="quoteCustBtn" class="h-10 px-4 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition">
-                        <i class="fas fa-file-plus text-xs"></i>
-                        <span>បង្កើតសម្រង់តម្លៃ</span>
-                    </a>
-                </div>
+
             </div>
-
-                <!-- Customer Hero KPI Cards -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-                        <div class="text-slate-500 text-xs font-medium">បំណុលត្រូវទារ (AR ជំពាក់)</div>
-                        <div class="text-2xl font-bold text-rose-600 mt-1 tabular-nums font-mono" id="custArBalance">$0.00</div>
-                        <div class="mt-2 text-[11px] text-slate-400" id="custArStatus">មិនទាន់មានបំណុលហួសកាលកំណត់</div>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-                        <div class="text-slate-500 text-xs font-medium">ទំហំឥណទាន (Credit Limit)</div>
-                        <div class="text-2xl font-bold text-slate-900 mt-1 tabular-nums font-mono" id="custCreditLimit">$10,000.00</div>
-                        <div class="w-full bg-slate-100 rounded-full h-1.5 mt-3 overflow-hidden">
-                            <div id="creditUsageBar" class="bg-emerald-500 h-1.5 rounded-full" style="width: 25%"></div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-                        <div class="text-slate-500 text-xs font-medium">លក្ខខណ្ឌទូទាត់ (Terms)</div>
-                        <div class="text-2xl font-bold text-slate-900 mt-1 tabular-nums" id="custTerms">30 ថ្ងៃ</div>
-                        <div class="mt-2 text-[11px] text-slate-400">ឥណទានពាណិជ្ជកម្មស្តង់ដារ</div>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-                        <div class="text-slate-500 text-xs font-medium">កាលបរិច្ឆេទក្លាយជាដៃគូ</div>
-                        <div class="text-2xl font-bold text-slate-900 mt-1" id="custSince">12/03/2024</div>
-                        <div class="mt-2 text-[11px] text-emerald-600 font-semibold">អតិថិជនសកម្ម</div>
-                    </div>
-                </div>
-
-                <!-- Tabs Bar -->
-                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-                    <div class="border-b border-slate-200 px-6 flex items-center gap-6">
-                        <button onclick="switchCustTab('invoices')" id="tabBtn-invoices" class="h-12 border-b-2 border-slate-800 text-slate-900 text-xs font-bold flex items-center gap-2 transition cursor-pointer">
-                            <i class="fas fa-receipt text-slate-600"></i>
-                            <span>វិក្កយបត្រ & សម្រង់តម្លៃ</span>
-                        </button>
-                        <button onclick="switchCustTab('info')" id="tabBtn-info" class="h-12 border-b-2 border-transparent text-slate-500 hover:text-slate-800 text-xs font-medium flex items-center gap-2 transition cursor-pointer">
-                            <i class="fas fa-address-card text-slate-400"></i>
-                            <span>ព័ត៌មានទំនាក់ទំនង & អាសយដ្ឋាន</span>
-                        </button>
-                    </div>
-
-                    <!-- TAB 1: Documents -->
-                    <div id="tabContent-invoices" class="p-6 space-y-6">
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-sm font-bold text-slate-900">ប្រវត្តិវិក្កយបត្រ (Invoices)</h3>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left text-xs">
-                                    <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
-                                        <tr>
-                                            <th class="py-2.5 px-3">លេខវិក្កយបត្រ</th>
-                                            <th class="py-2.5 px-3">កាលបរិច្ឆេទចេញ</th>
-                                            <th class="py-2.5 px-3">កាលកំណត់</th>
-                                            <th class="py-2.5 px-3 text-right">ទឹកប្រាក់សរុប</th>
-                                            <th class="py-2.5 px-3 text-right">ប្រាក់នៅសល់</th>
-                                            <th class="py-2.5 px-3 text-center">ស្ថានភាព</th>
-                                            <th class="py-2.5 px-3 text-right">សកម្មភាព</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="custInvoicesBody" class="divide-y divide-slate-100 font-medium text-slate-700">
-                                        <!-- Rendered by JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="space-y-4 pt-4 border-t border-slate-100">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-sm font-bold text-slate-900">ប្រវត្តិសម្រង់តម្លៃ (Quotes)</h3>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left text-xs">
-                                    <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
-                                        <tr>
-                                            <th class="py-2.5 px-3">លេខសម្រង់តម្លៃ</th>
-                                            <th class="py-2.5 px-3">កាលបរិច្ឆេទ</th>
-                                            <th class="py-2.5 px-3">សុពលភាពដល់</th>
-                                            <th class="py-2.5 px-3 text-right">បញ្ចុះតម្លៃ</th>
-                                            <th class="py-2.5 px-3 text-right">ទឹកប្រាក់សរុប</th>
-                                            <th class="py-2.5 px-3 text-center">ស្ថានភាព</th>
-                                            <th class="py-2.5 px-3 text-right">សកម្មភាព</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="custQuotesBody" class="divide-y divide-slate-100 font-medium text-slate-700">
-                                        <!-- Rendered by JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- TAB 2: Contact Info -->
-                    <div id="tabContent-info" class="p-6 hidden space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-3 text-xs">
-                                <h4 class="font-bold text-slate-900 border-b border-slate-200 pb-2">ព័ត៌មានទំនាក់ទំនងចម្បង</h4>
-                                <div><span class="text-slate-400">បុគ្គលទំនាក់ទំនង៖</span> <span class="font-bold text-slate-800" id="infoContact">-</span></div>
-                                <div><span class="text-slate-400">លេខទូរស័ព្ទ៖</span> <span class="font-mono font-bold text-slate-800" id="infoPhone">-</span></div>
-                                <div><span class="text-slate-400">អ៊ីមែល៖</span> <span class="text-slate-800" id="infoEmail">-</span></div>
-                            </div>
-                            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-3 text-xs">
-                                <h4 class="font-bold text-slate-900 border-b border-slate-200 pb-2">អាសយដ្ឋានក្រុមហ៊ុន</h4>
-                                <div><span class="text-slate-400">ទីតាំង៖</span> <span class="text-slate-800 leading-relaxed block mt-1" id="infoAddress">-</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
+        </main>
     </div>
 
-    <!-- Scripts -->
     <script src="../../../shared/scripts/ui-components.js"></script>
     <script src="../../../shared/data/seed.js"></script>
     <script src="../../../shared/scripts/status-meta.js"></script>
@@ -177,99 +131,272 @@
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
-        let currentCust = null;
+        let cust = null;
+        let activeTab = 'history';
+        let docFilter = 'all';
+
+        const TAB_ACTIVE = 'h-14 px-4 border-b-[3px] border-[#1e3a5f] text-[#1e3a5f] font-semibold inline-flex items-center gap-2 transition';
+        const TAB_IDLE = 'h-14 px-4 border-b-[3px] border-transparent text-slate-500 hover:text-slate-700 inline-flex items-center gap-2 transition';
 
         function switchCustTab(tab) {
-            const btnInv = document.getElementById('tabBtn-invoices');
-            const btnInfo = document.getElementById('tabBtn-info');
-            const cntInv = document.getElementById('tabContent-invoices');
-            const cntInfo = document.getElementById('tabContent-info');
-
-            if (tab === 'invoices') {
-                btnInv.className = 'h-12 border-b-2 border-slate-800 text-slate-900 text-xs font-bold flex items-center gap-2 transition cursor-pointer';
-                btnInfo.className = 'h-12 border-b-2 border-transparent text-slate-500 hover:text-slate-800 text-xs font-medium flex items-center gap-2 transition cursor-pointer';
-                cntInv.classList.remove('hidden');
-                cntInfo.classList.add('hidden');
-            } else {
-                btnInfo.className = 'h-12 border-b-2 border-slate-800 text-slate-900 text-xs font-bold flex items-center gap-2 transition cursor-pointer';
-                btnInv.className = 'h-12 border-b-2 border-transparent text-slate-500 hover:text-slate-800 text-xs font-medium flex items-center gap-2 transition cursor-pointer';
-                cntInfo.classList.remove('hidden');
-                cntInv.classList.add('hidden');
-            }
+            activeTab = tab;
+            closeAllFloatingDropdowns();
+            ['history', 'documents', 'info'].forEach(t => {
+                document.getElementById('custTab-' + t).className = activeTab === t ? TAB_ACTIVE : TAB_IDLE;
+                document.getElementById('custPanel-' + t).classList.toggle('hidden', activeTab !== t);
+            });
         }
 
-        function loadCustomer() {
-            const urlParams = new URLSearchParams(window.location.search);
-            currentCust = getCustomer(urlParams.get('id')) || listCustomers()[0];
+        /* ===== ប័ណ្ណសម្គាល់ ===== */
 
-            if (!currentCust) return;
+        function renderProfile(card) {
+            const tel = String(cust.phone).replace(/\s/g, '');
+            document.getElementById('profileCard').innerHTML = `
+                <div class="flex flex-wrap items-start gap-4">
+                    <div class="w-16 h-16 rounded-2xl bg-[#1e3a5f] text-white flex items-center justify-center text-2xl font-semibold flex-shrink-0">
+                        ${customerInitial(cust.name)}
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h2 class="sm-card-title text-slate-800 text-[20px]">${cust.name}</h2>
+                            <span class="sm-badge px-2.5 py-0.5 rounded-full border ${tierTone(cust.tier)}">${tierLabel(cust.tier)}</span>
+                            <span class="sm-badge px-2.5 py-0.5 rounded-full border ${card.lastOrder && daysBetween(card.lastOrder) <= 90
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                : 'bg-slate-50 text-slate-600 border-slate-200'}">${card.lastOrder && daysBetween(card.lastOrder) <= 90 ? 'អតិថិជនសកម្ម' : 'មិនសូវសកម្ម'}</span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-x-5 gap-y-1 mt-2">
+                            <a href="tel:${tel}" class="sm-td-sub text-slate-600 hover:text-[#1e3a5f] inline-flex items-center gap-2">
+                                <i class="fas fa-phone text-slate-300 text-[11px]"></i><span class="sm-figure">${cust.phone}</span>
+                            </a>
+                            ${cust.email
+                                ? `<a href="mailto:${cust.email}" class="sm-td-sub text-slate-600 hover:text-[#1e3a5f] inline-flex items-center gap-2">
+                                       <i class="fas fa-envelope text-slate-300 text-[11px]"></i>${cust.email}</a>`
+                                : ''}
+                            <span class="sm-td-sub text-slate-600 inline-flex items-center gap-2">
+                                <i class="fas fa-user text-slate-300 text-[11px]"></i>${cust.contact}
+                            </span>
+                            ${cust.address
+                                ? `<span class="sm-td-sub text-slate-600 inline-flex items-center gap-2">
+                                       <i class="fas fa-location-dot text-slate-300 text-[11px]"></i>${cust.address}</span>`
+                                : ''}
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 flex-shrink-0 no-print">
+                        <a href="edit-customer.html?id=${cust.id}" class="sm-badge px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition inline-flex items-center gap-2">
+                            <i class="fas fa-pen text-[11px]"></i> កែប្រែ
+                        </a>
+                        <a href="../quotes/create-quote.html?customer=${cust.id}" class="sm-badge px-4 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition inline-flex items-center gap-2">
+                            <i class="fas fa-file-circle-plus text-[11px]"></i> សម្រង់ថ្មី
+                        </a>
+                        <a href="../invoices/create-invoice.html?customer=${cust.id}" class="sm-badge px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold shadow-sm transition inline-flex items-center gap-2">
+                            <i class="fas fa-receipt text-[11px]"></i> វិក្កយបត្រថ្មី
+                        </a>
+                    </div>
+                </div>`;
+        }
 
-            document.getElementById('portalTitle').innerText = currentCust.name;
-            setPortalSubtitle(`កូដអតិថិជន៖ ${currentCust.code}`);
-            document.getElementById('custCreditLimit').innerText = fmtUSD(currentCust.creditLimit);
-            document.getElementById('custTerms').innerText = `${currentCust.paymentTerms} ថ្ងៃ`;
-            document.getElementById('custSince').innerText = fmtKhDate(currentCust.since);
+        /* ===== តួលេខសង្ខេប ===== */
 
-            document.getElementById('editCustBtn').href = `edit-customer.html?id=${currentCust.id}`;
-            document.getElementById('quoteCustBtn').href = `../quotes/create-quote.html?customer=${currentCust.id}`;
+        function statCard(label, value, tone, sub, extra) {
+            return `<div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
+                <p class="sm-eyebrow text-slate-400">${label}</p>
+                <p class="sm-kpi-value ${tone} sm-figure mt-1.5">${value}</p>
+                ${extra || `<p class="sm-kpi-sub text-slate-500 mt-1">${sub}</p>`}
+            </div>`;
+        }
 
-            document.getElementById('infoContact').innerText = currentCust.contact;
-            document.getElementById('infoPhone').innerText = currentCust.phone;
-            document.getElementById('infoEmail').innerText = currentCust.email || 'គ្មាន';
-            document.getElementById('infoAddress').innerText = currentCust.address;
+        function renderStats(card) {
+            const usageTone = card.usage > 90 ? '#f43f5e' : card.usage >= 70 ? '#f59e0b' : '#10b981';
+            const creditExtra = cust.creditLimit
+                ? `<div class="sm-rail mt-2.5" style="height:6px"><span style="width:${card.usage}%;background-color:${usageTone}"></span></div>
+                   <p class="sm-kpi-sub text-slate-500 mt-1.5">ប្រើ ${fmtPercent(card.usage, 0)} នៃ ${fmtUSD(cust.creditLimit)}</p>`
+                : '<p class="sm-kpi-sub text-slate-500 mt-1">មិនមានពិដានឥណទាន — ទូទាត់សាច់ប្រាក់</p>';
 
-            const badge = code => statusBadge(code);
-            const cell = 'py-2.5 px-3';
+            document.getElementById('statRow').innerHTML =
+                statCard('ចំនួនការទិញសរុប', `${card.orderCount}`, 'text-slate-700',
+                    card.lastOrder ? `ទិញចុងក្រោយ ${fmtKhDate(card.lastOrder)}` : 'មិនទាន់មានការទិញ') +
+                statCard('បំណុលនៅជំពាក់', fmtUSD(card.debt), card.debt > 0 ? 'text-rose-600' : 'text-emerald-600',
+                    card.overdueCount ? `ហួសកាលកំណត់ ${card.overdueCount} ច្បាប់ · ${fmtUSD(card.overdueAmount)}` : 'គ្មានវិក្កយបត្រហួសកាលកំណត់') +
+                statCard('ពិដានឥណទាន', fmtUSD(cust.creditLimit), 'text-slate-700', '', creditExtra) +
+                statCard('លក្ខខណ្ឌទូទាត់',
+                    cust.paymentTerms ? `${cust.paymentTerms} ថ្ងៃ` : 'សាច់ប្រាក់',
+                    'text-slate-700', `អតិថិជនតាំងពី ${fmtKhDate(cust.since)}`);
+        }
 
-            // វិក្កយបត្ររបស់អតិថិជននេះ
-            const custInvoices = listInvoices().filter(inv => inv.customerId === currentCust.id)
-                .sort((a, b) => new Date(b.date) - new Date(a.date));
-            const invBody = document.getElementById('custInvoicesBody');
-            if (custInvoices.length === 0) {
-                invBody.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-slate-400">មិនទាន់មានវិក្កយបត្រសម្រាប់អតិថិជននេះឡើយ</td></tr>`;
-            } else {
-                invBody.innerHTML = custInvoices.map(inv => {
-                    const st = invoiceState(inv);
-                    return `
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="${cell} font-mono font-bold text-slate-800"><a href="../invoices/view-invoice.html?id=${inv.id}" class="hover:underline">${inv.id}</a></td>
-                            <td class="${cell} text-slate-600">${fmtKhDate(inv.date)}</td>
-                            <td class="${cell} text-slate-600">${fmtKhDate(inv.dueDate)}</td>
-                            <td class="${cell} text-right font-bold text-slate-800 font-mono tabular-nums">${fmtUSD(st.totals.grandTotal)}</td>
-                            <td class="${cell} text-right font-bold ${st.due > 0 ? 'text-rose-600' : 'text-slate-500'} font-mono tabular-nums">${fmtUSD(st.due)}</td>
-                            <td class="${cell} text-center">${badge(st.key)}</td>
-                            <td class="${cell} text-right">
-                                <a href="../invoices/view-invoice.html?id=${inv.id}" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px]">មើល</a>
-                            </td>
-                        </tr>`;
-                }).join('');
+        /* ===== ប្រវត្តិការទិញ ===== */
+
+        function rowMenu(menuId, eyebrow, docId, items) {
+            return `
+                <button onclick="toggleRowActionMenu(event, '${menuId}')" type="button" aria-label="សកម្មភាព"
+                    class="w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-slate-700 border border-slate-200/70 inline-flex items-center justify-center transition">
+                    <i class="fas fa-ellipsis-vertical text-sm"></i>
+                </button>
+                <div id="${menuId}" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 text-left">
+                    <div class="px-3 py-2 mb-1 rounded-xl bg-slate-50 border border-slate-100">
+                        <p class="sm-td-sub text-slate-400">${eyebrow}</p>
+                        <p class="sm-value text-slate-700 sm-figure">${docId}</p>
+                    </div>
+                    ${items.join('')}
+                </div>`;
+        }
+
+        function menuLink(href, icon, text) {
+            return `<a href="${href}" class="sm-row-menu-item flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition">
+                <span class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0"><i class="fas ${icon} text-[11px]"></i></span>
+                ${text}
+            </a>`;
+        }
+
+        function myInvoices() {
+            return listInvoices().filter(i => i.customerId === cust.id).sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+
+        function myQuotes() {
+            return listQuotes().filter(q => q.customerId === cust.id).sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+
+        function renderHistory() {
+            const rows = myInvoices();
+            const body = document.getElementById('historyBody');
+            const empty = document.getElementById('historyEmpty');
+            if (!rows.length) {
+                body.innerHTML = '';
+                body.closest('.overflow-x-auto').classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
             }
+            body.closest('.overflow-x-auto').classList.remove('hidden');
+            empty.classList.add('hidden');
 
-            const totalDue = customerDebt(currentCust.id);
-            document.getElementById('custArBalance').innerText = fmtUSD(totalDue);
-            const usagePercent = currentCust.creditLimit ? Math.min(Math.round((totalDue / currentCust.creditLimit) * 100), 100) : 0;
-            document.getElementById('creditUsageBar').style.width = `${usagePercent}%`;
-
-            // សម្រង់តម្លៃរបស់អតិថិជននេះ
-            const custQuotes = listQuotes().filter(q => q.customerId === currentCust.id)
-                .sort((a, b) => new Date(b.date) - new Date(a.date));
-            const qBody = document.getElementById('custQuotesBody');
-            if (custQuotes.length === 0) {
-                qBody.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-slate-400">មិនទាន់មានសម្រង់តម្លៃសម្រាប់អតិថិជននេះឡើយ</td></tr>`;
-            } else {
-                qBody.innerHTML = custQuotes.map(q => `
+            body.innerHTML = rows.map(inv => {
+                const st = invoiceState(inv);
+                const items = [menuLink(`../invoices/view-invoice.html?id=${inv.id}`, 'fa-eye', 'មើលលម្អិត និងបោះពុម្ព')];
+                if (inv.quoteId) items.push(menuLink(`../quotes/view-quote.html?id=${inv.quoteId}`, 'fa-file-lines', `មើលសម្រង់តម្លៃ ${inv.quoteId}`));
+                return `
                     <tr class="hover:bg-slate-50 transition">
-                        <td class="${cell} font-mono font-bold text-slate-800"><a href="../quotes/view-quote.html?id=${q.id}" class="hover:underline">${q.id}</a></td>
-                        <td class="${cell} text-slate-600">${fmtKhDate(q.date)}</td>
-                        <td class="${cell} text-slate-600">${fmtKhDate(q.validUntil)}</td>
-                        <td class="${cell} text-right text-slate-700">${q.discountPercent}%</td>
-                        <td class="${cell} text-right font-bold text-slate-800 font-mono tabular-nums">${fmtUSD(docTotals(q).grandTotal)}</td>
-                        <td class="${cell} text-center">${badge(q.status)}</td>
-                        <td class="${cell} text-right">
-                            <a href="../quotes/view-quote.html?id=${q.id}" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px]">មើល</a>
-                        </td>
-                    </tr>`).join('');
+                        <td class="sm-td-strong py-3.5 px-4 sm-figure">${inv.id}</td>
+                        <td class="sm-td py-3.5 px-4 text-slate-500 sm-figure">${fmtKhDate(inv.date)}</td>
+                        <td class="sm-td py-3.5 px-4 ${st.key === 'OVERDUE' ? 'text-rose-600 font-semibold' : 'text-slate-500'} sm-figure">${fmtKhDate(inv.dueDate)}</td>
+                        <td class="py-3.5 px-4">${statusBadge(st.key)}</td>
+                        <td class="sm-td-strong py-3.5 px-4 text-right sm-figure">${fmtUSD(st.totals.grandTotal)}</td>
+                        <td class="sm-td-strong py-3.5 px-4 text-right sm-figure ${st.due > 0 ? 'text-rose-600' : 'text-emerald-600'}">${fmtUSD(st.due)}</td>
+                        <td class="py-3.5 px-4 text-right">${rowMenu('histMenu-' + inv.id, 'សកម្មភាពលើវិក្កយបត្រ', inv.id, items)}</td>
+                    </tr>`;
+            }).join('');
+        }
+
+        /* ===== ឯកសារ ===== */
+
+        const DOC_PILLS = [
+            { id: 'all', label: 'ទាំងអស់' },
+            { id: 'quote', label: 'សម្រង់តម្លៃ' },
+            { id: 'invoice', label: 'វិក្កយបត្រ' }
+        ];
+
+        function pickDocFilter(id) {
+            docFilter = id;
+            renderDocs();
+        }
+
+        function renderDocs() {
+            const quotes = myQuotes().map(q => ({
+                kind: 'quote', id: q.id, date: q.date, status: q.status,
+                total: docTotals(q).grandTotal, href: `../quotes/view-quote.html?id=${q.id}`
+            }));
+            const invoices = myInvoices().map(i => ({
+                kind: 'invoice', id: i.id, date: i.date, status: invoiceState(i).key,
+                total: invoiceState(i).totals.grandTotal, href: `../invoices/view-invoice.html?id=${i.id}`
+            }));
+            const all = quotes.concat(invoices);
+
+            document.getElementById('docPills').innerHTML = DOC_PILLS.map(p => {
+                const count = p.id === 'all' ? all.length : all.filter(d => d.kind === p.id).length;
+                return `<button onclick="pickDocFilter('${p.id}')" type="button"
+                    class="sm-badge px-3.5 py-1.5 rounded-xl transition ${docFilter === p.id
+                        ? 'bg-[#1e3a5f] text-white font-semibold shadow-sm'
+                        : 'text-slate-600 hover:bg-slate-100 font-medium'}">${p.label} (${count})</button>`;
+            }).join('');
+
+            const rows = all
+                .filter(d => docFilter === 'all' || d.kind === docFilter)
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            const body = document.getElementById('docBody');
+            const empty = document.getElementById('docEmpty');
+            if (!rows.length) {
+                body.innerHTML = '';
+                body.closest('.overflow-x-auto').classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
             }
+            body.closest('.overflow-x-auto').classList.remove('hidden');
+            empty.classList.add('hidden');
+
+            body.innerHTML = rows.map(d => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="py-3.5 px-4">
+                        <span class="sm-badge px-2.5 py-0.5 rounded-full border ${d.kind === 'quote'
+                            ? 'bg-sky-50 text-sky-700 border-sky-200'
+                            : 'bg-emerald-50 text-emerald-700 border-emerald-200'}">${d.kind === 'quote' ? 'សម្រង់តម្លៃ' : 'វិក្កយបត្រ'}</span>
+                    </td>
+                    <td class="sm-td-strong py-3.5 px-4 sm-figure">${d.id}</td>
+                    <td class="sm-td py-3.5 px-4 text-slate-500 sm-figure">${fmtKhDate(d.date)}</td>
+                    <td class="py-3.5 px-4">${statusBadge(d.status)}</td>
+                    <td class="sm-td-strong py-3.5 px-4 text-right sm-figure">${fmtUSD(d.total)}</td>
+                    <td class="py-3.5 px-4 text-right">
+                        ${rowMenu('docMenu-' + d.id, 'សកម្មភាពលើឯកសារ', d.id, [menuLink(d.href, 'fa-eye', 'មើលលម្អិត')])}
+                    </td>
+                </tr>`).join('');
+        }
+
+        /* ===== ព័ត៌មានទូទៅ ===== */
+
+        function infoRow(label, value) {
+            return `<div class="flex items-baseline justify-between gap-4 py-2.5 border-b border-slate-100">
+                <span class="sm-td-sub text-slate-500 flex-shrink-0">${label}</span>
+                <span class="sm-td text-slate-700 text-right">${value || 'មិនបានបញ្ចូល'}</span>
+            </div>`;
+        }
+
+        function renderInfo(card) {
+            document.getElementById('infoGrid').innerHTML =
+                infoRow('លេខកូដអតិថិជន', `<span class="sm-figure">${cust.code}</span>`) +
+                infoRow('ឈ្មោះអតិថិជន', cust.name) +
+                infoRow('អ្នកទាក់ទង', cust.contact) +
+                infoRow('លេខទូរស័ព្ទ', `<span class="sm-figure">${cust.phone}</span>`) +
+                infoRow('អ៊ីមែល', cust.email) +
+                infoRow('អាសយដ្ឋាន', cust.address) +
+                infoRow('កម្រិតអតិថិជន', tierLabel(cust.tier)) +
+                infoRow('លក្ខខណ្ឌទូទាត់', cust.paymentTerms ? `ជំពាក់ ${cust.paymentTerms} ថ្ងៃ` : 'ទូទាត់សាច់ប្រាក់ភ្លាម') +
+                infoRow('ពិដានឥណទាន', `<span class="sm-figure">${fmtUSD(cust.creditLimit)}</span>`) +
+                infoRow('អតិថិជនតាំងពី', `<span class="sm-figure">${fmtKhDate(cust.since)}</span>`) +
+                infoRow('បុគ្គលិកទទួលបន្ទុក', CURRENT_REP.name) +
+                infoRow('ចំនួនការទិញ', `<span class="sm-figure">${card.orderCount}</span> វិក្កយបត្រ`);
+
+            document.getElementById('infoEditLink').href = `edit-customer.html?id=${cust.id}`;
+        }
+
+        /* ===== ការផ្ទុក ===== */
+
+        function loadCustomer() {
+            const id = new URLSearchParams(location.search).get('id');
+            cust = getCustomer(id) || listCustomers()[0];
+            if (!cust) {
+                showToast('រកមិនឃើញអតិថិជននេះក្នុងបញ្ជីរបស់លោកអ្នកទេ', 'error');
+                return;
+            }
+
+            const card = customerCards().find(c => c.id === cust.id);
+            setPortalTitle(cust.name);
+            setPortalSubtitle(`លេខកូដ ${cust.code} · ${tierLabel(cust.tier)}`);
+
+            renderProfile(card);
+            renderStats(card);
+            renderHistory();
+            renderDocs();
+            renderInfo(card);
+            switchCustTab(activeTab);
+            updatePortalBadges();
         }
 
         window.onStoreChanged = loadCustomer;

@@ -118,6 +118,121 @@ const seActions = {
     requestCreditIncrease: (customerId, requestedLimit, reason) => BMS_STORE.actions.requestCreditIncrease(customerId, requestedLimit, reason, CURRENT_USER_ID)
 };
 
+/* ===== វិសាលភាពខែបច្ចុប្បន្ន =====
+   ផ្ទាំងការងារមិនមានតម្រងកាលបរិច្ឆេទទេ (ឯកសាររចនាលេខ 04 ផ្នែក 3.1)
+   គ្រប់តួលេខគិតលើខែបច្ចុប្បន្ន ចាប់ពីថ្ងៃទី 1 ដល់ថ្ងៃនេះ។ */
+
+function monthRange(monthsBack) {
+    const back = monthsBack || 0;
+    const start = new Date(BMS_TODAY.getFullYear(), BMS_TODAY.getMonth() - back, 1);
+    const end = back === 0
+        ? new Date(BMS_TODAY)
+        : new Date(BMS_TODAY.getFullYear(), BMS_TODAY.getMonth() - back + 1, 0);
+    return { start, end };
+}
+
+/* ===== អតិថិជនសម្រាប់ផ្ទាំងកាត =====
+   បន្ថែមបំណុល ការប្រើប្រាស់ឥណទាន និងកាលបរិច្ឆេទទិញចុងក្រោយ ទៅលើការបង្ហាញអតិថិជន។
+   គ្មានថ្លៃដើម ឬកម្រិតចំណេញត្រូវបានគណនានៅទីនេះឡើយ។ */
+
+function customerCards() {
+    const invs = listInvoices();
+    return listCustomers().map(c => {
+        const mine = invs.filter(i => i.customerId === c.id && i.status !== 'CANCELLED');
+        const debt = mine.reduce((sum, i) => sum + invoiceState(i).due, 0);
+        const overdue = mine.filter(i => invoiceState(i).key === 'OVERDUE');
+        const overdueAmount = overdue.reduce((sum, i) => sum + invoiceState(i).due, 0);
+        const last = mine.map(i => i.date).sort().pop() || '';
+        return {
+            ...c,
+            debt,
+            overdueCount: overdue.length,
+            overdueAmount,
+            orderCount: mine.length,
+            lastOrder: last,
+            usage: c.creditLimit ? Math.min((debt / c.creditLimit) * 100, 100) : 0,
+            overLimit: c.creditLimit > 0 && debt > c.creditLimit
+        };
+    });
+}
+
+/* អក្សរដើមសម្រាប់រូបតំណាងអតិថិជន (ព្យាង្គដំបូងនៃពាក្យចុងក្រោយដែលមានន័យ) */
+function customerInitial(name) {
+    const words = String(name || '').trim().split(/\s+/).filter(Boolean);
+    const word = words.length > 1 ? words[words.length - 1] : (words[0] || '?');
+    return Array.from(word)[0] || '?';
+}
+
+/* ===== បញ្ជីទូរស័ព្ទតាមដានថ្ងៃនេះ (ឯកសាររចនាលេខ 04 ផ្នែក 3.1 ផ្នែក គ) =====
+   តម្រៀប៖ អតិថិជនជំពាក់ហួសកាលកំណត់មុន (ទឹកប្រាក់ច្រើនទៅតិច) បន្ទាប់មកកិច្ចការតាមដានតាមកាលវិភាគ។ */
+
+function callList(limit) {
+    const rows = [];
+    const seen = {};
+
+    listInvoices().map(i => ({ i, s: invoiceState(i) }))
+        .filter(x => x.s.key === 'OVERDUE')
+        .sort((a, b) => b.s.due - a.s.due)
+        .forEach(x => {
+            const c = getCustomer(x.i.customerId);
+            if (!c || seen[c.id]) return;
+            seen[c.id] = true;
+            rows.push({
+                customer: c,
+                reason: 'AR_OVERDUE',
+                reasonLabel: 'បំណុលហួសកាលកំណត់',
+                tone: 'rose',
+                amount: x.s.due,
+                detail: `${x.i.id} · យឺត ${x.s.overdueDays} ថ្ងៃ`,
+                href: `${getRoleRoot()}/invoices/view-invoice.html?id=${x.i.id}`
+            });
+        });
+
+    followUps().filter(f => f.urgency !== 'upcoming').forEach(f => {
+        if (!f.customer || seen[f.customer.id]) return;
+        seen[f.customer.id] = true;
+        rows.push({
+            customer: f.customer,
+            reason: f.urgency === 'overdue' ? 'FOLLOW_LATE' : 'FOLLOW_TODAY',
+            reasonLabel: f.urgency === 'overdue' ? `កិច្ចការតាមដានយឺត ${f.late} ថ្ងៃ` : 'កិច្ចការតាមដានថ្ងៃនេះ',
+            tone: f.urgency === 'overdue' ? 'amber' : 'sky',
+            amount: 0,
+            detail: `${f.refId} · ${f.note}`,
+            href: f.type === 'quote' ? `${getRoleRoot()}/quotes/view-quote.html?id=${f.refId}` : ''
+        });
+    });
+
+    return limit ? rows.slice(0, limit) : rows;
+}
+
+/* លេខទូរស័ព្ទបិទបាំងមួយផ្នែក — បង្ហាញពេញនៅពេលចុចប៊ូតុងទូរស័ព្ទ */
+function maskedPhone(phone) {
+    const digits = String(phone || '');
+    if (digits.length < 5) return digits;
+    return digits.slice(0, digits.length - 4).replace(/\d/g, '•') + digits.slice(-4);
+}
+
+/* ===== សម្រង់តម្លៃដែលត្រូវការសកម្មភាពពីខ្ញុំ (ឯកសាររចនាលេខ 04 ផ្នែក 3.1 ផ្នែក ឃ) =====
+   រួមទាំងរង់ចាំអនុម័ត បដិសេធត្រូវកែ អនុម័តរួចត្រូវផ្ញើ និងអតិថិជនព្រមរួចត្រូវបំប្លែង។ */
+
+const SE_ACTION_HINT = {
+    PENDING_APPROVAL: { label: 'រង់ចាំការអនុម័ត', tone: 'amber', cta: '' },
+    REJECTED: { label: 'ត្រូវកែតាមមតិអ្នកគ្រប់គ្រង', tone: 'rose', cta: 'edit' },
+    APPROVED: { label: 'ត្រូវផ្ញើជូនអតិថិជន', tone: 'sky', cta: 'send' },
+    ACCEPTED_BY_CUSTOMER: { label: 'អតិថិជនព្រមព្រៀង — ត្រូវបំប្លែង', tone: 'emerald', cta: 'convert' }
+};
+
+function quotesNeedingAction(limit) {
+    const order = ['REJECTED', 'ACCEPTED_BY_CUSTOMER', 'APPROVED', 'PENDING_APPROVAL'];
+    const rows = listQuotes()
+        .filter(q => SE_ACTION_HINT[q.status])
+        .sort((a, b) => {
+            const d = order.indexOf(a.status) - order.indexOf(b.status);
+            return d !== 0 ? d : new Date(b.date) - new Date(a.date);
+        });
+    return limit ? rows.slice(0, limit) : rows;
+}
+
 /* ===== សូចនាករផ្ទាល់ខ្លួន ===== */
 
 function myMetrics(range) {
@@ -272,7 +387,7 @@ function portalNotifications() {
             tone: 'danger',
             title: `វិក្កយបត្រហួសកាលកំណត់ ${overdue.length} ច្បាប់`,
             note: `សរុប ${fmtUSD(total)} · យឺតបំផុត ${c ? c.name : ''} ${overdue[0].s.overdueDays} ថ្ងៃ`,
-            href: `${getRoleRoot()}/invoices/invoices.html`
+            href: `${getRoleRoot()}/quotes/quotes.html?tab=invoices&status=OVERDUE`
         });
     }
 

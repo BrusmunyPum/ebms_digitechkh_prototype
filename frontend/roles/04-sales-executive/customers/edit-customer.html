@@ -3,123 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>កែប្រែព័ត៌មានអតិថិជន — eBMS v2</title>
+    <title>DIGITECHKH - កែប្រែព័ត៌មានអតិថិជន</title>
+    <link rel="icon" type="image/png" href="../../../shared/assets/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../../../shared/styles/portal.css">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        primary: '#1e3a5f',
-                        'primary-dark': '#142842',
-                        accent: '#10b981'
-                    },
-                    fontFamily: {
-                        sans: ['"Kantumruy Pro"', 'sans-serif']
-                    }
+                    colors: { primary: "#1e3a5f", 'primary-dark': "#142842", accent: "#0ea5e9" },
+                    fontFamily: { sans: ["'Kantumruy Pro'", "sans-serif"] }
                 }
             }
-        };
+        }
     </script>
+    <link rel="stylesheet" href="../../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../../shared/styles/portal.css">
 </head>
-<body class="bg-slate-50 font-sans text-slate-800 antialiased" data-portal="sePortal" data-role-root="../" data-active="customers">
-    <div class="flex h-screen overflow-hidden">
-        <div id="sidebarHost"></div>
+<body id="sePortal" data-role-root=".." data-active="customers" class="bg-slate-50 font-sans text-gray-800 text-[16px] flex h-screen overflow-hidden">
 
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-            <!-- Header (72px aligned) -->
+    <div id="sidebarHost"></div>
+
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
         <div id="headerHost" data-title="កែប្រែព័ត៌មានអតិថិជន"
-                 data-subtitle="ធ្វើបច្ចុប្បន្នភាពព័ត៌មានក្រុមហ៊ុន និងអាសយដ្ឋានទំនាក់ទំនង"
-                 data-back="customers.html"></div>
+             data-subtitle="ធ្វើបច្ចុប្បន្នភាពទំនាក់ទំនង កម្រិតអតិថិជន និងពិដានឥណទាន"
+             data-back="customers.html"></div>
 
-            <!-- Main Content Area -->
-            <main class="flex-1 overflow-y-auto p-6">
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-6">
             <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
-            <div class="w-full max-w-4xl flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
-                <div class="flex flex-wrap items-center gap-2">
-                    <button type="button" onclick="history.back()" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition cursor-pointer">
-                        បោះបង់
-                    </button>
-                    <button type="button" onclick="saveCustomerEdit()" class="h-10 px-5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition cursor-pointer">
-                        <i class="fas fa-save text-xs"></i>
-                        <span>រក្សាទុកការកែប្រែ</span>
-                    </button>
-                </div>
+            <div class="w-full flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
+                <a id="cancelBtn" href="customers.html" class="sm-badge px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition">បោះបង់</a>
+                <button onclick="saveCustomerEdit()" type="button" class="sm-badge px-5 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition inline-flex items-center gap-2">
+                    <i class="fas fa-floppy-disk"></i> <span>រក្សាទុកការកែប្រែ</span>
+                </button>
             </div>
 
-                <form id="editCustForm" onsubmit="event.preventDefault(); saveCustomerEdit();" class="max-w-4xl space-y-6">
-                    <!-- Section 1: Basic Info -->
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
-                        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
-                            <i class="fas fa-building text-slate-500"></i>
-                            <span>ព័ត៌មានក្រុមហ៊ុន & ចំណាត់ថ្នាក់</span>
-                        </h3>
+            <div class="w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1.5">ឈ្មោះក្រុមហ៊ុន / អតិថិជន <span class="text-rose-500">*</span></label>
-                                <input type="text" id="custNameInput" required class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1.5">កម្រិតអតិថិជន (Tier) <span class="text-rose-500">*</span></label>
-                                <select id="custTierSelect" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-500">
-                                    <option value="retail">អតិថិជនរាយ</option>
-                                    <option value="wholesale">អតិថិជនដុំ</option>
-                                    <option value="vip">តំណាងចែកចាយ · VIP</option>
-                                </select>
-                            </div>
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+                        <h3 class="sm-card-title text-slate-700 border-b border-slate-100 pb-3">ព័ត៌មានទូទៅ</h3>
+
+                        <div>
+                            <label class="sm-label text-slate-600 block mb-1.5">ឈ្មោះអតិថិជន ឬក្រុមហ៊ុន <span class="text-rose-500">*</span></label>
+                            <input id="fName" type="text"
+                                class="sm-td w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-[#1e3a5f] transition">
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1.5">កម្រិតឥណទាន (Credit Limit USD)</label>
-                                <input type="number" id="custCreditLimitInput" step="100" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-500 font-mono">
+                                <label class="sm-label text-slate-600 block mb-1.5">ឈ្មោះអ្នកទាក់ទង <span class="text-rose-500">*</span></label>
+                                <input id="fContact" type="text"
+                                    class="sm-td w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-[#1e3a5f] transition">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1.5">លក្ខខណ្ឌទូទាត់ (ថ្ងៃ)</label>
-                                <input type="number" id="custTermsInput" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-500 font-mono">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Section 2: Contact Info -->
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
-                        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
-                            <i class="fas fa-user-tie text-slate-500"></i>
-                            <span>ព័ត៌មានទំនាក់ទំនង & ទីតាំង</span>
-                        </h3>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1.5">បុគ្គលទំនាក់ទំនង <span class="text-rose-500">*</span></label>
-                                <input type="text" id="custContactInput" required class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1.5">លេខទូរស័ព្ទ <span class="text-rose-500">*</span></label>
-                                <input type="text" id="custPhoneInput" required class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-500 font-mono">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1.5">អ៊ីមែល</label>
-                                <input type="email" id="custEmailInput" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-500">
+                                <label class="sm-label text-slate-600 block mb-1.5">លេខទូរស័ព្ទ <span class="text-rose-500">*</span></label>
+                                <input id="fPhone" type="text"
+                                    class="sm-td w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-[#1e3a5f] transition">
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-slate-600 mb-1.5">អាសយដ្ឋានលម្អិត</label>
-                            <textarea id="custAddressInput" rows="3" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-500"></textarea>
+                            <label class="sm-label text-slate-600 block mb-1.5">អ៊ីមែល</label>
+                            <input id="fEmail" type="text"
+                                class="sm-td w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-[#1e3a5f] transition">
+                        </div>
+
+                        <div>
+                            <label class="sm-label text-slate-600 block mb-1.5">អាសយដ្ឋានដឹកជញ្ជូន</label>
+                            <textarea id="fAddress" rows="2"
+                                class="sm-td w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-[#1e3a5f] transition resize-none"></textarea>
                         </div>
                     </div>
-                </form>
-            </main>
-        </div>
+
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm space-y-4">
+                        <h3 class="sm-card-title text-slate-700 border-b border-slate-100 pb-3">កម្រិតអតិថិជន និងលក្ខខណ្ឌឥណទាន</h3>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="sm-label text-slate-600 block mb-1.5">កម្រិតអតិថិជន <span class="text-rose-500">*</span></label>
+                                <div id="tierPickerHost" class="relative"></div>
+                            </div>
+                            <div>
+                                <label class="sm-label text-slate-600 block mb-1.5">លក្ខខណ្ឌទូទាត់</label>
+                                <div id="termsPickerHost" class="relative"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="sm-label text-slate-600 block mb-1.5">ពិដានឥណទានអនុញ្ញាត</label>
+                            <div class="relative">
+                                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 sm-td text-slate-400">$</span>
+                                <input id="fCredit" type="number" min="0" step="100" oninput="renderCreditHint()"
+                                    class="sm-td w-full pl-8 pr-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-[#1e3a5f] transition">
+                            </div>
+                            <p id="creditHint" class="sm-kpi-sub text-slate-500 mt-1.5"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
+                        <h3 class="sm-card-title text-slate-700 border-b border-slate-100 pb-3 mb-3">កំណត់ត្រាបច្ចុប្បន្ន</h3>
+                        <div id="recordSummary" class="space-y-2.5"></div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
+                        <h3 class="sm-card-title text-slate-700 border-b border-slate-100 pb-3 mb-3">តម្លៃលក់តាមកម្រិត</h3>
+                        <p class="sm-card-sub text-slate-500 mb-3">កម្រិតដែលលោកអ្នកជ្រើសរើស នឹងកំណត់តម្លៃឯកតាដោយស្វ័យប្រវត្តិ ពេលបង្កើតសម្រង់តម្លៃ។</p>
+                        <div id="tierPreview" class="space-y-2"></div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-sky-50 border border-sky-200 flex items-start gap-2.5">
+                        <i class="fas fa-circle-info text-sky-600 text-sm mt-0.5 flex-shrink-0"></i>
+                        <p id="creditPolicyNote" class="sm-card-sub text-sky-800"></p>
+                    </div>
+                </div>
+
+            </div>
+        </main>
     </div>
 
-    <!-- Scripts -->
     <script src="../../../shared/scripts/ui-components.js"></script>
     <script src="../../../shared/data/seed.js"></script>
     <script src="../../../shared/scripts/status-meta.js"></script>
@@ -127,45 +134,182 @@
     <script src="../data.js"></script>
     <script src="../../../shared/scripts/portal.js"></script>
     <script>
+        const TERM_OPTIONS = [
+            { value: 0, label: 'ទូទាត់សាច់ប្រាក់ភ្លាម' },
+            { value: 15, label: 'ជំពាក់ 15 ថ្ងៃ' },
+            { value: 30, label: 'ជំពាក់ 30 ថ្ងៃ' },
+            { value: 45, label: 'ជំពាក់ 45 ថ្ងៃ' },
+            { value: 60, label: 'ជំពាក់ 60 ថ្ងៃ' }
+        ];
+
+        const CREDIT_SELF_LIMIT = BMS_STORE.settings().creditSelfLimit || 10000;
+
         let editCust = null;
+        let editTier = 'retail';
+        let editTerms = 30;
 
-        function loadCustomerForm() {
-            const urlParams = new URLSearchParams(window.location.search);
-            editCust = getCustomer(urlParams.get('id')) || listCustomers()[0];
+        /* ===== ជម្រើសផ្ទាល់ខ្លួន — មិនប្រើ select ដើមរបស់កម្មវិធីរុករក (ស្តង់ដារលេខ 4) ===== */
 
-            if (!editCust) return;
-
-            document.getElementById('portalTitle').innerText = `កែប្រែព័ត៌មាន — ${editCust.name}`;
-            document.getElementById('custNameInput').value = editCust.name;
-            document.getElementById('custTierSelect').value = editCust.tier;
-            document.getElementById('custCreditLimitInput').value = editCust.creditLimit;
-            document.getElementById('custTermsInput').value = editCust.paymentTerms;
-            document.getElementById('custContactInput').value = editCust.contact;
-            document.getElementById('custPhoneInput').value = editCust.phone;
-            document.getElementById('custEmailInput').value = editCust.email || '';
-            document.getElementById('custAddressInput').value = editCust.address;
+        function renderTierPicker() {
+            const options = Object.keys(TIER_LABEL).map(k => ({ value: k, label: TIER_LABEL[k] }));
+            document.getElementById('tierPickerHost').innerHTML = `
+                <button onclick="toggleRowActionMenu(event, 'tierPickerMenu')" type="button"
+                    class="w-full flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition text-left">
+                    <span class="sm-td text-slate-700">${TIER_LABEL[editTier]}</span>
+                    <i class="fas fa-chevron-down text-[10px] text-slate-400 flex-shrink-0"></i>
+                </button>
+                <div id="tierPickerMenu" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 text-left">
+                    <div class="px-3 py-2 mb-1 rounded-xl bg-slate-50 border border-slate-100">
+                        <p class="sm-td-sub text-slate-400">ជ្រើសរើសកម្រិតអតិថិជន</p>
+                    </div>
+                    ${options.map(o => `
+                        <button onclick="pickEditTier('${o.value}')" type="button" class="sm-row-menu-item w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition text-left">
+                            <span>${o.label}</span>
+                            ${o.value === editTier ? '<i class="fas fa-check text-[11px] text-emerald-600"></i>' : ''}
+                        </button>`).join('')}
+                </div>`;
         }
 
-        function saveCustomerEdit() {
+        function pickEditTier(value) {
+            editTier = value;
+            closeAllFloatingDropdowns();
+            renderTierPicker();
+            renderTierPreview();
+        }
+
+        function renderTermsPicker() {
+            const active = TERM_OPTIONS.find(o => o.value === editTerms) || { label: `ជំពាក់ ${editTerms} ថ្ងៃ` };
+            document.getElementById('termsPickerHost').innerHTML = `
+                <button onclick="toggleRowActionMenu(event, 'termsPickerMenu')" type="button"
+                    class="w-full flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition text-left">
+                    <span class="sm-td text-slate-700">${active.label}</span>
+                    <i class="fas fa-chevron-down text-[10px] text-slate-400 flex-shrink-0"></i>
+                </button>
+                <div id="termsPickerMenu" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 text-left">
+                    <div class="px-3 py-2 mb-1 rounded-xl bg-slate-50 border border-slate-100">
+                        <p class="sm-td-sub text-slate-400">ជ្រើសរើសលក្ខខណ្ឌទូទាត់</p>
+                    </div>
+                    ${TERM_OPTIONS.map(o => `
+                        <button onclick="pickEditTerms(${o.value})" type="button" class="sm-row-menu-item w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition text-left">
+                            <span>${o.label}</span>
+                            ${o.value === editTerms ? '<i class="fas fa-check text-[11px] text-emerald-600"></i>' : ''}
+                        </button>`).join('')}
+                </div>`;
+        }
+
+        function pickEditTerms(value) {
+            editTerms = value;
+            closeAllFloatingDropdowns();
+            renderTermsPicker();
+        }
+
+        function renderTierPreview() {
+            document.getElementById('tierPreview').innerHTML = listProducts().slice(0, 4).map(p => `
+                <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <span class="sm-td-sub text-slate-600 truncate">${p.name}</span>
+                    <span class="sm-value text-slate-700 sm-figure flex-shrink-0">${fmtUSD(p.price[editTier])}</span>
+                </div>`).join('');
+        }
+
+        function renderCreditHint() {
+            const value = parseFloat(document.getElementById('fCredit').value) || 0;
+            const hint = document.getElementById('creditHint');
+            if (editCust && value > editCust.creditLimit) {
+                hint.textContent = `ការបង្កើនពិដានទៅ ${fmtUSD(value)} ត្រូវការការអនុម័តពី${CURRENT_REP.manager} មុននឹងចូលជាធរមាន`;
+                hint.className = 'sm-kpi-sub text-amber-700 font-semibold mt-1.5';
+            } else if (value > 0) {
+                hint.textContent = `អតិថិជននេះអាចទិញជំពាក់បានរហូតដល់ ${fmtUSD(value)}`;
+                hint.className = 'sm-kpi-sub text-slate-500 mt-1.5';
+            } else {
+                hint.textContent = `ពិដាន ${fmtUSD(0)} មានន័យថាអតិថិជនត្រូវទូទាត់សាច់ប្រាក់ភ្លាមៗ`;
+                hint.className = 'sm-kpi-sub text-slate-500 mt-1.5';
+            }
+        }
+
+        /* ===== កំណត់ត្រាបច្ចុប្បន្ន — គ្រប់តួលេខទាញពីឃ្លាំងទិន្នន័យ ===== */
+
+        function summaryRow(label, value, tone) {
+            return `<div class="flex items-baseline justify-between gap-3">
+                <span class="sm-td-sub text-slate-500">${label}</span>
+                <span class="sm-value ${tone || 'text-slate-700'} sm-figure flex-shrink-0">${value}</span>
+            </div>`;
+        }
+
+        function renderRecordSummary() {
+            const card = customerCards().find(c => c.id === editCust.id);
+            const debt = card ? card.debt : 0;
+            document.getElementById('recordSummary').innerHTML =
+                summaryRow('លេខកូដអតិថិជន', editCust.code) +
+                summaryRow('អតិថិជនតាំងពី', fmtKhDate(editCust.since)) +
+                summaryRow('ចំនួនការទិញ', `${card ? card.orderCount : 0} វិក្កយបត្រ`) +
+                summaryRow('បំណុលនៅជំពាក់', fmtUSD(debt), debt > 0 ? 'text-rose-600' : 'text-emerald-600');
+        }
+
+        function loadCustomerForm() {
+            const id = new URLSearchParams(location.search).get('id');
+            editCust = getCustomer(id) || listCustomers()[0];
+
+            if (!editCust) {
+                showToast('រកមិនឃើញអតិថិជននេះក្នុងបញ្ជីរបស់លោកអ្នកទេ', 'error');
+                return;
+            }
+
+            setPortalTitle(`កែប្រែព័ត៌មាន — ${editCust.name}`);
+            setPortalSubtitle(`លេខកូដ ${editCust.code}`);
+            setPortalBackHref(`view-customer.html?id=${editCust.id}`);
+            document.getElementById('cancelBtn').href = `view-customer.html?id=${editCust.id}`;
+            document.getElementById('creditPolicyNote').textContent =
+                `ការបន្ថយពិដានឥណទានចូលជាធរមានភ្លាម។ រាល់ការបង្កើនត្រូវផ្ញើជាសំណើទៅ${CURRENT_REP.manager} ជាមុនសិន ហើយពិដានចុះឈ្មោះថ្មីអតិបរមាគឺ ${fmtUSD(CREDIT_SELF_LIMIT)}។`;
+
+            document.getElementById('fName').value = editCust.name;
+            document.getElementById('fContact').value = editCust.contact;
+            document.getElementById('fPhone').value = editCust.phone;
+            document.getElementById('fEmail').value = editCust.email || '';
+            document.getElementById('fAddress').value = editCust.address || '';
+            document.getElementById('fCredit').value = editCust.creditLimit;
+
+            editTier = editCust.tier;
+            editTerms = editCust.paymentTerms;
+
+            renderTierPicker();
+            renderTermsPicker();
+            renderTierPreview();
+            renderCreditHint();
+            renderRecordSummary();
+            updatePortalBadges();
+        }
+
+        async function saveCustomerEdit() {
             if (!editCust) return;
-            const name = document.getElementById('custNameInput').value.trim();
+            const name = document.getElementById('fName').value.trim();
+            const contact = document.getElementById('fContact').value.trim();
+            const phone = document.getElementById('fPhone').value.trim();
+            const credit = parseFloat(document.getElementById('fCredit').value) || 0;
+
             if (!name) return showToast('សូមបញ្ចូលឈ្មោះអតិថិជន ឬក្រុមហ៊ុន', 'error');
+            if (!contact) return showToast('សូមបញ្ចូលឈ្មោះអ្នកទាក់ទង', 'error');
+            if (!phone) return showToast('សូមបញ្ចូលលេខទូរស័ព្ទ', 'error');
+
+            // ការបង្កើនពិដានឥណទានតែងតែក្លាយជាសំណើ (ការបន្ថយធ្វើភ្លាម) — ដូចច្បាប់ក្នុងឃ្លាំងទិន្នន័យ
+            if (credit > editCust.creditLimit) {
+                const ok = await showCustomConfirm({
+                    title: 'បញ្ជាក់ការបង្កើនពិដានឥណទាន',
+                    message: `ពិដានឥណទាននឹងកើនពី ${fmtUSD(editCust.creditLimit)} ទៅ ${fmtUSD(credit)}។ ព័ត៌មានផ្សេងទៀតរក្សាទុកភ្លាម ចំណែកពិដានឥណទាននឹងផ្ញើទៅ${CURRENT_REP.manager} ដើម្បីអនុម័តជាមុនសិន។ តើបន្តមែនទេ?`,
+                    confirmText: 'រក្សាទុក',
+                    cancelText: 'បោះបង់'
+                });
+                if (!ok) return;
+            }
+
             const res = seActions.updateCustomer(editCust.id, {
-                name,
-                tier: document.getElementById('custTierSelect').value,
-                creditLimit: parseFloat(document.getElementById('custCreditLimitInput').value) || 0,
-                paymentTerms: parseInt(document.getElementById('custTermsInput').value) || 0,
-                contact: document.getElementById('custContactInput').value.trim(),
-                phone: document.getElementById('custPhoneInput').value.trim(),
-                email: document.getElementById('custEmailInput').value.trim(),
-                address: document.getElementById('custAddressInput').value.trim()
+                name, contact, phone, tier: editTier, paymentTerms: editTerms, creditLimit: credit,
+                email: document.getElementById('fEmail').value.trim(),
+                address: document.getElementById('fAddress').value.trim()
             });
             if (!res.ok) return showToast(res.error, 'error');
 
-            showToast(`បានរក្សាទុកព័ត៌មានអតិថិជន ${name} ដោយជោគជ័យ` + (res.creditRequested ? ' · សំណើបង្កើនពិដានឥណទានបានផ្ញើទៅអ្នកគ្រប់គ្រង' : ''), 'success');
-            setTimeout(() => {
-                window.location.href = `view-customer.html?id=${editCust.id}`;
-            }, 700);
+            showToast(`បានរក្សាទុកព័ត៌មានអតិថិជន ${name}` + (res.creditRequested ? ' · សំណើពិដានឥណទានបានផ្ញើទៅអ្នកគ្រប់គ្រង' : ''), 'success');
+            setTimeout(() => { window.location.href = `view-customer.html?id=${editCust.id}`; }, 900);
         }
 
         document.addEventListener('DOMContentLoaded', loadCustomerForm);

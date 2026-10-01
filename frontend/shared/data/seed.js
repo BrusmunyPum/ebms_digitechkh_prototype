@@ -10,7 +10,7 @@
    • បច្ចុប្បន្នផ្ទុកតែដែនផ្នែកលក់ (អ្នកប្រើ អតិថិជន ទំនិញ សម្រង់តម្លៃ វិក្កយបត្រ)។
      ដែនលទ្ធកម្ម ឃ្លាំង និងគណនេយ្យ នឹងបន្ថែមតាមជំហាន 4 ទៅ 6 នៃផែនទីផ្លូវ (ឯកសារ 22)។ */
 
-const BMS_SCHEMA_VERSION = 2;
+const BMS_SCHEMA_VERSION = 3;
 
 function bmsBuildSeed(today) {
     const pad = n => String(n).padStart(2, '0');
@@ -453,6 +453,8 @@ function bmsBuildSeed(today) {
             whtServices: 0.15,
             exchangeRate: 4100,
             discountSelfLimit: 5.0,
+            /* ពិដានឥណទានដែលបុគ្គលិកលក់កំណត់បានដោយខ្លួនឯង — លើសនេះត្រូវការការអនុម័ត */
+            creditSelfLimit: 10000,
             monthlyTarget: 50000,
             /* កម្រិតអនុម័តសម្រង់តម្លៃ (ឯកសារ 16 ផ្នែក A1) */
             quotationLimits: { SM: 5000, GM: 20000 },

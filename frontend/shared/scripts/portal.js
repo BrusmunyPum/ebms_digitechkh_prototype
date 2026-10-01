@@ -44,16 +44,15 @@ const PORTAL_CONFIGS = {
         sidebarV2: true,
         title: 'ច្រកបុគ្គលិកលក់',
         roleName: 'បុគ្គលិកប្រតិបត្តិផ្នែកលក់',
-        roleIcon: 'mdi:briefcase-account-outline',
+        roleIcon: 'mdi:account-tie-outline',
         userInitials: 'សស',
         userName: 'សៅ សុខា',
         userRole: 'បុគ្គលិកប្រតិបត្តិផ្នែកលក់',
         policyNote: 'សម្រង់តម្លៃទាំងអស់ត្រូវអនុម័តដោយអ្នកគ្រប់គ្រងផ្នែកលក់មុន។ វិក្កយបត្រដែលបញ្ចុះតម្លៃលើសពី 5.0% ត្រូវចេញតាមសម្រង់តម្លៃ។ ថ្លៃដើមទិញត្រូវលាក់ 100%។',
         nav: [
-            { id: 'dashboard', label: 'ផ្ទាំងការងារ', icon: 'mdi:chart-pie', href: 'dashboard.html' },
+            { id: 'dashboard', label: 'ផ្ទាំងការងារ', icon: 'mdi:briefcase-account-outline', href: 'dashboard.html' },
             { id: 'customers', label: 'អតិថិជនរបស់ខ្ញុំ', icon: 'mdi:account-multiple-outline', href: 'customers/customers.html' },
-            { id: 'quotes', label: 'សម្រង់តម្លៃ', icon: 'mdi:file-document-edit-outline', href: 'quotes/quotes.html', badge: true },
-            { id: 'invoices', label: 'វិក្កយបត្រ', icon: 'mdi:receipt-text-outline', href: 'invoices/invoices.html', alertBadge: true }
+            { id: 'documents', label: 'ឯកសារលក់', icon: 'mdi:file-document-edit-outline', href: 'quotes/quotes.html', badge: true, alertBadge: true }
         ]
     },
     posPortal: {
@@ -298,12 +297,15 @@ function renderPortalSidebarV2(host, cfg, roleRoot, activeId, sharedRoot) {
 
     const navHtml = cfg.nav.map(item => {
         const isActive = item.id === activeId;
+        // ធាតុមួយអាចមានផ្លាកពីរ៖ ជួរដេករង់ចាំ (ក្រហម) និងការព្រមាន (លឿង)
         let badgeHtml = '';
         if (item.badge) {
-            badgeHtml = '<span id="navQueueBadge" class="sb-badge sm-badge bg-rose-500 text-white px-2 py-0.5 rounded-full flex-shrink-0 hidden">0</span>';
-        } else if (item.alertBadge) {
-            badgeHtml = '<span id="navAlertBadge" class="sb-badge sm-badge bg-amber-500 text-white px-2 py-0.5 rounded-full flex-shrink-0 hidden">0</span>';
+            badgeHtml += '<span id="navQueueBadge" class="sb-badge sm-badge bg-rose-500 text-white px-2 py-0.5 rounded-full flex-shrink-0 hidden">0</span>';
         }
+        if (item.alertBadge) {
+            badgeHtml += '<span id="navAlertBadge" class="sb-badge sm-badge bg-amber-500 text-white px-2 py-0.5 rounded-full flex-shrink-0 hidden">0</span>';
+        }
+        if (badgeHtml) badgeHtml = `<span class="flex items-center gap-1 flex-shrink-0">${badgeHtml}</span>`;
         return `
             <a href="${roleRoot}/${item.href}" ${isActive ? 'aria-current="page"' : ''}
                class="sb-nav-item relative flex items-center justify-between gap-2 p-3 rounded-xl transition-all whitespace-nowrap ${isActive
@@ -543,9 +545,9 @@ function renderPortalHeader() {
 
             <div class="flex items-center gap-1.5 flex-shrink-0">
                 <!-- Dark Mode Toggle Button -->
-                <button onclick="toggleDarkMode()" type="button" aria-label="ប្តូរទម្រង់ពណ៌ (Dark/Light Mode)" id="darkModeToggleBtn"
+                <button onclick="toggleDarkMode()" type="button" aria-label="ប្តូររវាងទម្រង់ភ្លឺ និងទម្រង់ងងឹត" id="darkModeToggleBtn"
                     class="w-10 h-10 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition cursor-pointer"
-                    title="ប្តូរ Dark / Light Mode">
+                    title="ប្តូររវាងទម្រង់ភ្លឺ និងទម្រង់ងងឹត">
                     <iconify-icon id="darkModeIcon" icon="mdi:weather-night" class="text-xl"></iconify-icon>
                 </button>
 
@@ -594,10 +596,12 @@ function renderPortalSidebar() {
         const isActive = item.id === activeId;
         let badgeHtml = '';
         if (item.badge) {
-            badgeHtml = '<span id="navQueueBadge" class="sm-badge bg-rose-500 text-white px-2 py-0.5 rounded-full flex-shrink-0">0</span>';
-        } else if (item.alertBadge) {
-            badgeHtml = '<span id="navAlertBadge" class="sm-badge bg-amber-500 text-white px-2 py-0.5 rounded-full flex-shrink-0">0</span>';
+            badgeHtml += '<span id="navQueueBadge" class="sm-badge bg-rose-500 text-white px-2 py-0.5 rounded-full flex-shrink-0">0</span>';
         }
+        if (item.alertBadge) {
+            badgeHtml += '<span id="navAlertBadge" class="sm-badge bg-amber-500 text-white px-2 py-0.5 rounded-full flex-shrink-0">0</span>';
+        }
+        if (badgeHtml) badgeHtml = `<span class="flex items-center gap-1 flex-shrink-0">${badgeHtml}</span>`;
         return `
             <a href="${roleRoot}/${item.href}" class="${isActive ? NAV_ACTIVE_CLASS : NAV_IDLE_CLASS}">
                 <span class="flex items-center min-w-0">

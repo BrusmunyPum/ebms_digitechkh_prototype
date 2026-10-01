@@ -10,7 +10,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -30,82 +29,92 @@
 
     <div class="flex-1 flex flex-col h-full overflow-hidden">
         <div id="headerHost" data-title="ផ្ទាំងការងាររបស់ខ្ញុំ"
-             data-subtitle="សូមស្វាគមន៍ សៅ សុខា · តាមដានគោលដៅ សម្រង់តម្លៃ និងការប្រមូលប្រាក់"></div>
+             data-subtitle="គោលដៅខែនេះ អ្នកដែលត្រូវទាក់ទង និងឯកសារដែលត្រូវចាត់ការ"></div>
 
         <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 px-4 md:px-6 py-4">
 
-            <div class="w-full space-y-5">
+            <div class="w-full space-y-6">
 
-                <div class="bg-white rounded-2xl p-3 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-filter text-slate-400 text-xs"></i>
-                        <span class="sm-label text-slate-600">ទិន្នន័យក្នុងកំឡុងពេល</span>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <div id="dateFilterHost" class="flex items-center"></div>
-                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
-                        <div class="flex flex-wrap items-center gap-2 no-print">
-                            <a href="quotes/create-quote.html" class="sm-badge hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0f2b5c] hover:bg-[#0a1d3f] text-white font-semibold shadow-sm transition">
-                                <i class="fas fa-plus"></i> បង្កើតសម្រង់តម្លៃ
+                <!-- តំបន់ទី 1 — បន្ទះគោលដៅ និងសកម្មភាពដំបូងពីរ
+                     ប៊ូតុងទាំងពីរដាក់លើផ្ទៃងងឹត ដើម្បីឱ្យវាលេចធ្លោជាងអ្វីៗទាំងអស់លើទំព័រ -->
+                <section class="rounded-2xl bg-[#1e3a5f] text-white overflow-hidden shadow-sm">
+                    <div class="px-6 pt-6 pb-5 grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+
+                        <div class="lg:col-span-3 min-w-0">
+                            <p id="heroGreeting" class="sm-eyebrow text-white/50"></p>
+                            <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 mt-1.5">
+                                <div class="min-w-0">
+                                    <p id="heroSold" class="sm-hero-value text-white"></p>
+                                    <p id="heroTarget" class="sm-card-sub text-white/60 mt-1"></p>
+                                </div>
+                                <div class="text-right flex-shrink-0">
+                                    <p id="heroPercent" class="sm-hero-value"></p>
+                                    <p id="heroCompare" class="sm-card-sub text-white/60 mt-1"></p>
+                                </div>
+                            </div>
+                            <div class="sm-rail bg-white/15 mt-5"><span id="heroRail" style="width:0%"></span></div>
+                        </div>
+
+                        <!-- សកម្មភាពដំបូងពីរ — ធំជាងគេ និងនៅលើគេ -->
+                        <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <a href="quotes/create-quote.html"
+                               class="min-h-[72px] rounded-xl bg-white text-[#1e3a5f] hover:bg-slate-100 transition flex items-center gap-3 px-4 py-3 shadow-sm">
+                                <span class="w-10 h-10 rounded-xl bg-[#1e3a5f] text-white flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-file-circle-plus"></i>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="sm-value block leading-tight">បង្កើតសម្រង់តម្លៃថ្មី</span>
+                                    <span class="sm-card-sub block text-[#1e3a5f]/60 mt-0.5">ត្រូវអនុម័តមុនផ្ញើ</span>
+                                </span>
+                            </a>
+                            <a href="invoices/create-invoice.html"
+                               class="min-h-[72px] rounded-xl bg-emerald-500 text-white hover:bg-emerald-600 transition flex items-center gap-3 px-4 py-3 shadow-sm">
+                                <span class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-receipt"></i>
+                                </span>
+                                <span class="min-w-0">
+                                    <span class="sm-value block leading-tight text-white">ចេញវិក្កយបត្រថ្មី</span>
+                                    <span class="sm-card-sub block text-white/70 mt-0.5">ចេញបានភ្លាម មិនត្រូវអនុម័ត</span>
+                                </span>
                             </a>
                         </div>
                     </div>
-                </div>
 
-                <div id="kpiRow" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+                    <!-- តួលេខរងបែងចែកដោយបន្ទាត់ — មិនមែនកាតដាច់ដោយឡែក -->
+                    <div id="heroStats" class="grid grid-cols-1 sm:grid-cols-3 border-t border-white/10"></div>
+                </section>
 
-                <!-- Quota + Commission -->
-                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-                        <div>
-                            <h3 class="sm-card-title text-slate-700">គោលដៅលក់ផ្ទាល់ខ្លួន</h3>
-                            <p id="quotaSubtitle" class="sm-card-sub text-slate-500"></p>
+                <!-- តំបន់ទី 2 — ឯកសារដែលរង់ចាំសកម្មភាពពីខ្ញុំ -->
+                <section id="actionStrip" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden"></section>
+
+                <div class="grid grid-cols-1 xl:grid-cols-5 gap-6">
+
+                    <!-- តំបន់ទី 3 — បញ្ជីទូរស័ព្ទតាមដាន -->
+                    <section class="xl:col-span-3 bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                        <div class="px-5 pt-5 pb-3 flex flex-wrap items-baseline justify-between gap-2">
+                            <div>
+                                <p class="sm-eyebrow text-slate-400">អ្នកដែលត្រូវទាក់ទងថ្ងៃនេះ</p>
+                                <p id="callSub" class="sm-card-sub text-slate-500 mt-1"></p>
+                            </div>
+                            <a href="customers/customers.html" class="sm-badge font-semibold text-[#1e3a5f] hover:underline inline-flex items-center gap-1 flex-shrink-0">
+                                អតិថិជនរបស់ខ្ញុំ <i class="fas fa-arrow-right text-[10px]"></i>
+                            </a>
                         </div>
-                        <span id="quotaBadge" class="sm-badge px-3 py-1 rounded-full border"></span>
-                    </div>
-                    <div class="w-full h-3 rounded-full bg-slate-100 overflow-hidden">
-                        <div id="quotaBar" class="h-full bg-[#1e3a5f] rounded-full transition-all" style="width: 0%"></div>
-                    </div>
-                    <div id="quotaStats" class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4"></div>
-                </div>
+                        <div id="callRows" class="divide-y divide-slate-100 border-t border-slate-100"></div>
+                    </section>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                    <!-- Follow-ups -->
-                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden lg:col-span-1 order-2 lg:order-1">
-                        <div class="p-4 border-b border-slate-100 flex items-center gap-2">
-                            <i class="fas fa-bell text-amber-500 text-sm"></i>
-                            <h3 class="sm-card-title text-slate-700">ការរំលឹកតាមដានអតិថិជន</h3>
+                    <!-- តំបន់ទី 4 — ប្រាក់ត្រូវប្រមូល -->
+                    <section class="xl:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                        <div class="px-5 pt-5 pb-3 flex flex-wrap items-baseline justify-between gap-2">
+                            <div>
+                                <p class="sm-eyebrow text-slate-400">ប្រាក់ត្រូវប្រមូល</p>
+                                <p class="sm-card-sub text-slate-500 mt-1">តម្រៀបតាមភាពយឺតបំផុត</p>
+                            </div>
+                            <span id="collectPill" class="sm-badge font-semibold flex-shrink-0"></span>
                         </div>
-                        <div id="followUpList" class="divide-y divide-slate-100 max-h-[420px] overflow-y-auto scrollbar-hide"></div>
-                    </div>
+                        <div id="collectRows" class="divide-y divide-slate-100 border-t border-slate-100"></div>
+                    </section>
 
-                    <!-- Weekly chart -->
-                    <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm lg:col-span-2 order-1 lg:order-2">
-                        <div class="mb-3">
-                            <h3 class="sm-card-title text-slate-700">ការលក់ប្រចាំសប្តាហ៍របស់ខ្ញុំ</h3>
-                            <p class="sm-card-sub text-slate-500">ទឹកប្រាក់វិក្កយបត្រដែលបានចេញក្នុងខែនេះ</p>
-                        </div>
-                        <div id="weeklyChart" class="w-full h-64"></div>
-                    </div>
-                </div>
-
-                <!-- Recent documents -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 flex items-center justify-between gap-2">
-                            <h3 class="sm-card-title text-slate-700">សម្រង់តម្លៃថ្មីៗ</h3>
-                            <a href="quotes/quotes.html" class="sm-badge font-semibold text-[#1e3a5f] hover:underline">មើលទាំងអស់</a>
-                        </div>
-                        <div id="recentQuotes" class="divide-y divide-slate-100"></div>
-                    </div>
-
-                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 flex items-center justify-between gap-2">
-                            <h3 class="sm-card-title text-slate-700">វិក្កយបត្រត្រូវតាមដានការទូទាត់</h3>
-                            <a href="invoices/invoices.html" class="sm-badge font-semibold text-[#1e3a5f] hover:underline">មើលទាំងអស់</a>
-                        </div>
-                        <div id="recentInvoices" class="divide-y divide-slate-100"></div>
-                    </div>
                 </div>
 
             </div>
@@ -119,179 +128,309 @@
     <script src="data.js"></script>
     <script src="../../shared/scripts/portal.js"></script>
     <script>
-        function kpiCard(opts) {
-            return `
-                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
-                    <div class="flex items-center justify-between mb-2 gap-2">
-                        <span class="sm-kpi-label text-slate-500">${opts.label}</span>
-                        <div class="w-9 h-9 rounded-xl bg-${opts.tone}-50 text-${opts.tone}-600 flex items-center justify-center flex-shrink-0">
-                            <i class="fas ${opts.icon} text-sm"></i>
-                        </div>
-                    </div>
-                    <h3 class="sm-kpi-value text-slate-700">${opts.value}</h3>
-                    <p class="sm-kpi-sub ${opts.subTone || 'text-slate-500'} mt-1">${opts.sub}</p>
-                </div>`;
+        /* ផ្ទាំងការងារបែប "សកម្មភាពមុនគេ" — គ្មានគំនូសតាង គ្មានតម្រងកាលបរិច្ឆេទ
+           (ឯកសាររចនាលេខ 04 ផ្នែក 3.1)។ គ្រប់តួលេខគិតលើខែបច្ចុប្បន្នតែប៉ុណ្ណោះ។ */
+
+        const KH_MONTH = ['មករា', 'កុម្ភៈ', 'មីនា', 'មេសា', 'ឧសភា', 'មិថុនា',
+            'កក្កដា', 'សីហា', 'កញ្ញា', 'តុលា', 'វិច្ឆិកា', 'ធ្នូ'];
+
+        function railColor(percent) {
+            if (percent >= 100) return '#10b981';
+            if (percent >= 80) return '#f59e0b';
+            return '#f43f5e';
         }
 
-        function renderKpis(m) {
-            document.getElementById('kpiRow').innerHTML =
-                kpiCard({
-                    label: 'ចំណូលលក់របស់ខ្ញុំ', icon: 'fa-chart-line', tone: 'emerald',
-                    value: fmtUSD(m.revenue),
-                    sub: `${m.invoiceCount} វិក្កយបត្រ · សម្រេច ${fmtPercent(m.quotaPercent)} នៃគោលដៅ`,
-                    subTone: 'text-emerald-600 font-semibold'
+        function textTone(percent) {
+            if (percent >= 100) return 'text-emerald-600';
+            if (percent >= 80) return 'text-amber-600';
+            return 'text-rose-600';
+        }
+
+        /* ===== តំបន់ទី 1 ===== */
+
+        function heroStat(opts) {
+            const tag = opts.href ? 'a' : 'div';
+            const attrs = opts.href
+                ? `href="${opts.href}" class="block px-6 py-4 hover:bg-white/5 transition group"`
+                : 'class="px-6 py-4"';
+            return `<${tag} ${attrs}>
+                <p class="sm-eyebrow text-white/45">${opts.label}</p>
+                <p class="sm-value text-white sm-figure mt-1.5 flex items-baseline gap-1.5">
+                    <span class="sm-kpi-value ${opts.tone || 'text-white'}">${opts.value}</span>
+                    <span class="sm-kpi-unit text-white/50">${opts.unit || ''}</span>
+                </p>
+                <p class="sm-card-sub ${opts.subTone || 'text-white/55'} mt-0.5">
+                    ${opts.sub}${opts.href ? ' <i class="fas fa-arrow-right text-[10px] ml-0.5 opacity-0 group-hover:opacity-100 transition"></i>' : ''}
+                </p>
+            </${tag}>`;
+        }
+
+        function renderHero(m, prev) {
+            const first = CURRENT_REP.name.trim().split(/\s+/).pop();
+            document.getElementById('heroGreeting').textContent =
+                `ជំរាបសួរ ${first} · ថ្ងៃទី ${BMS_TODAY.getDate()} ខែ${KH_MONTH[BMS_TODAY.getMonth()]} ឆ្នាំ ${BMS_TODAY.getFullYear()}`;
+
+            document.getElementById('heroSold').textContent = fmtUSD(m.revenue);
+
+            if (!m.target) {
+                document.getElementById('heroTarget').textContent =
+                    'គោលដៅប្រចាំខែមិនទាន់កំណត់ — សូមទាក់ទង' + CURRENT_REP.manager;
+            } else {
+                document.getElementById('heroTarget').textContent =
+                    `គោលដៅខែនេះ ${fmtUSD(m.target)} · នៅខ្វះ ${fmtUSD(Math.max(m.target - m.revenue, 0))}`;
+            }
+
+            const pctEl = document.getElementById('heroPercent');
+            pctEl.textContent = m.target ? fmtPercent(m.quotaPercent) : '—';
+            pctEl.className = 'sm-hero-value ' + (m.quotaPercent >= 100 ? 'text-emerald-300'
+                : m.quotaPercent >= 80 ? 'text-amber-300' : 'text-rose-300');
+
+            // ដើមខែ តួលេខខែនេះនៅតិច — បង្ហាញលទ្ធផលខែមុនជាចំណុចប្រៀបធៀប
+            document.getElementById('heroCompare').textContent =
+                `នៃគោលដៅ · ខែមុនសម្រេច ${fmtUSD(prev.revenue)}`;
+
+            const rail = document.getElementById('heroRail');
+            rail.style.width = Math.min(m.quotaPercent, 100) + '%';
+            rail.style.backgroundColor = railColor(m.quotaPercent);
+
+            document.getElementById('heroStats').innerHTML =
+                heroStat({
+                    label: 'ប្រាក់ដែលខ្ញុំប្រមូលបាន',
+                    value: fmtUSD(m.collected),
+                    sub: `ក្នុងចំណោមវិក្កយបត្រ ${m.invoiceCount} ច្បាប់ខែនេះ`
                 }) +
-                `<a href="quotes/quotes.html" class="block bg-white rounded-2xl p-5 border-2 border-amber-200 shadow-sm bg-amber-50/20 hover:border-amber-300 transition">
-                    <div class="flex items-center justify-between mb-2 gap-2">
-                        <span class="sm-kpi-label text-amber-700 font-semibold">សម្រង់តម្លៃរង់ចាំការអនុម័ត</span>
-                        <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-hourglass-half text-sm"></i>
-                        </div>
-                    </div>
-                    <h3 class="sm-kpi-value text-amber-700">${m.pendingCount} <span class="sm-kpi-unit text-amber-600">សំណើ</span></h3>
-                    <p class="sm-kpi-sub text-amber-700 font-semibold mt-1">រង់ចាំ ${CURRENT_REP.manager} សម្រេច</p>
-                </a>` +
-                kpiCard({
-                    label: 'ប្រាក់ត្រូវប្រមូល', icon: 'fa-hand-holding-dollar', tone: 'blue',
-                    value: fmtUSD(m.receivable),
-                    sub: m.overdueAmount > 0 ? `ក្នុងនោះ ${fmtUSD(m.overdueAmount)} ហួសកាលកំណត់` : 'គ្មានបំណុលហួសកាលកំណត់',
-                    subTone: m.overdueAmount > 0 ? 'text-rose-600 font-semibold' : 'text-emerald-600 font-semibold'
+                heroStat({
+                    label: `កម្រៃជើងសារប៉ាន់ស្មាន · ${fmtPercent(CURRENT_REP.commissionRate)}`,
+                    value: fmtUSD(m.commission),
+                    tone: 'text-emerald-300',
+                    sub: 'គិតលើប្រាក់ដែលប្រមូលបានជាក់ស្តែង'
                 }) +
-                kpiCard({
-                    label: 'អត្រាបិទការលក់', icon: 'fa-bullseye', tone: 'purple',
+                heroStat({
+                    label: 'អត្រាបិទការលក់',
                     value: fmtPercent(m.winRate),
-                    sub: `${m.convertedCount} ក្នុងចំណោម ${m.quoteCount} សម្រង់តម្លៃ`
+                    sub: `បំប្លែងបាន ${m.convertedCount} ក្នុងចំណោម ${m.quoteCount} សម្រង់តម្លៃ`,
+                    href: 'quotes/quotes.html'
                 });
         }
 
-        function renderQuota(m) {
-            const pct = Math.min(m.quotaPercent, 100);
-            const tone = m.quotaPercent >= 100 ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                : m.quotaPercent >= 70 ? 'bg-blue-50 text-blue-700 border-blue-200'
-                : 'bg-amber-50 text-amber-700 border-amber-200';
+        /* ===== តំបន់ទី 2 — ឯកសារត្រូវចាត់ការ ===== */
 
-            document.getElementById('quotaSubtitle').textContent =
-                `គោលដៅប្រចាំខែ ${fmtUSD(m.target)} · សម្រេចបាន ${fmtUSD(m.revenue)}`;
-            const badge = document.getElementById('quotaBadge');
-            badge.textContent = `សម្រេច ${fmtPercent(m.quotaPercent)}`;
-            badge.className = `sm-badge px-3 py-1 rounded-full border ${tone}`;
-            document.getElementById('quotaBar').style.width = pct + '%';
+        const ACTION_TONE = {
+            amber: { rail: '#f59e0b', text: 'text-amber-700', chip: 'bg-amber-50 text-amber-700 border-amber-200' },
+            rose: { rail: '#f43f5e', text: 'text-rose-700', chip: 'bg-rose-50 text-rose-700 border-rose-200' },
+            sky: { rail: '#0ea5e9', text: 'text-sky-700', chip: 'bg-sky-50 text-sky-700 border-sky-200' },
+            emerald: { rail: '#10b981', text: 'text-emerald-700', chip: 'bg-emerald-50 text-emerald-700 border-emerald-200' }
+        };
 
-            document.getElementById('quotaStats').innerHTML = `
-                <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                    <span class="sm-kpi-sub text-slate-500 block">នៅខ្វះដើម្បីសម្រេចគោលដៅ</span>
-                    <span class="sm-value text-slate-700">${fmtUSD(Math.max(m.target - m.revenue, 0))}</span>
+        function actionCta(q) {
+            if (SE_ACTION_HINT[q.status].cta === 'send') {
+                return `<button onclick="sendQuote('${q.id}')" type="button"
+                    class="sm-badge px-3.5 py-2 rounded-xl bg-[#1e3a5f] hover:bg-[#142842] text-white font-semibold transition inline-flex items-center gap-1.5 flex-shrink-0">
+                    <i class="fas fa-paper-plane text-[11px]"></i> ផ្ញើជូនអតិថិជន
+                </button>`;
+            }
+            if (SE_ACTION_HINT[q.status].cta === 'convert') {
+                return `<a href="invoices/create-invoice.html?from=${q.id}"
+                    class="sm-badge px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition inline-flex items-center gap-1.5 flex-shrink-0">
+                    <i class="fas fa-file-invoice-dollar text-[11px]"></i> បំប្លែងជាវិក្កយបត្រ
+                </a>`;
+            }
+            if (SE_ACTION_HINT[q.status].cta === 'edit') {
+                return `<a href="quotes/edit-quote.html?id=${q.id}"
+                    class="sm-badge px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition inline-flex items-center gap-1.5 flex-shrink-0">
+                    <i class="fas fa-pen text-[11px]"></i> កែតាមមតិ
+                </a>`;
+            }
+            return `<a href="quotes/view-quote.html?id=${q.id}"
+                class="sm-badge px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition inline-flex items-center gap-1.5 flex-shrink-0">
+                <i class="fas fa-eye text-[11px]"></i> ពិនិត្យ
+            </a>`;
+        }
+
+        function renderActionStrip() {
+            const rows = quotesNeedingAction(6);
+            const host = document.getElementById('actionStrip');
+
+            if (!rows.length) {
+                host.innerHTML = `
+                    <div class="px-6 py-10 text-center">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-check text-xl"></i>
+                        </div>
+                        <p class="sm-card-title text-slate-700">គ្មានឯកសាររង់ចាំសកម្មភាពពីលោកអ្នកទេ</p>
+                        <p class="sm-card-sub text-slate-500 mt-1">ចាប់ផ្តើមឱកាសថ្មីដោយបង្កើតសម្រង់តម្លៃខាងលើ។</p>
+                    </div>`;
+                return;
+            }
+
+            const total = quotesNeedingAction().length;
+            host.innerHTML = `
+                <div class="px-5 pt-5 pb-3 flex flex-wrap items-baseline justify-between gap-2">
+                    <div>
+                        <p class="sm-eyebrow text-slate-400">ឯកសារត្រូវចាត់ការ</p>
+                        <p class="sm-card-sub text-slate-500 mt-1">តម្រៀបតាមអ្វីដែលរាំងស្ទះលំហូរលក់មុនគេ</p>
+                    </div>
+                    <a href="quotes/quotes.html" class="sm-badge font-semibold text-[#1e3a5f] hover:underline inline-flex items-center gap-1 flex-shrink-0">
+                        ឯកសារលក់ទាំង ${total} <i class="fas fa-arrow-right text-[10px]"></i>
+                    </a>
                 </div>
-                <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                    <span class="sm-kpi-sub text-slate-500 block">ប្រាក់ដែលខ្ញុំប្រមូលបាន</span>
-                    <span class="sm-value text-slate-700">${fmtUSD(m.collected)}</span>
-                </div>
-                <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-100">
-                    <span class="sm-kpi-sub text-emerald-700 block">កម្រៃជើងសារប៉ាន់ស្មាន ${fmtPercent(CURRENT_REP.commissionRate)}</span>
-                    <span class="sm-value text-emerald-700">${fmtUSD(m.commission)}</span>
+                <div class="divide-y divide-slate-100 border-t border-slate-100">
+                    ${rows.map(q => {
+                        const hint = SE_ACTION_HINT[q.status];
+                        const t = ACTION_TONE[hint.tone];
+                        const c = getCustomer(q.customerId);
+                        const exp = quoteExpiry(q);
+                        const reason = q.status === 'REJECTED' && q.rejectionReason
+                            ? `មតិ៖ ${q.rejectionReason}`
+                            : q.status === 'PENDING_APPROVAL'
+                                ? `រង់ចាំ${APPROVAL_LEVEL_LABEL[q.pendingLevel]}សម្រេច`
+                                : exp.label;
+                        return `
+                        <div class="sm-worklist-row px-5 py-3.5 flex flex-wrap items-center gap-x-4 gap-y-2" style="border-left-color:${t.rail}">
+                            <div class="min-w-0 flex-1">
+                                <p class="sm-value text-slate-700 truncate">${c ? c.name : q.customerId}</p>
+                                <p class="sm-td-sub text-slate-500 mt-0.5 truncate">
+                                    <span class="sm-figure">${q.id}</span> · ${reason}
+                                </p>
+                            </div>
+                            <span class="sm-badge px-2.5 py-1 rounded-full border ${t.chip} flex-shrink-0">${hint.label}</span>
+                            <p class="sm-value text-slate-700 sm-figure w-24 text-right flex-shrink-0">${fmtUSD(docTotals(q).grandTotal)}</p>
+                            ${actionCta(q)}
+                        </div>`;
+                    }).join('')}
                 </div>`;
         }
 
-        function renderFollowUps() {
-            const rows = followUps();
-            const iconOf = { quote: 'fa-file-lines', payment: 'fa-money-bill-wave', lead: 'fa-user-plus' };
-            const toneOf = {
-                overdue: { box: 'bg-rose-100 text-rose-600', label: 'text-rose-600 font-semibold' },
-                today: { box: 'bg-amber-100 text-amber-600', label: 'text-amber-600 font-semibold' },
-                upcoming: { box: 'bg-slate-100 text-slate-500', label: 'text-slate-500' }
-            };
+        async function sendQuote(id) {
+            const q = getQuote(id);
+            const cust = getCustomer(q.customerId);
+            const ok = await showCustomConfirm({
+                title: 'ផ្ញើជូនអតិថិជន',
+                message: `តើលោកអ្នកពិតជាផ្ញើសម្រង់តម្លៃ ${id} ទឹកប្រាក់ ${fmtUSD(docTotals(q).grandTotal)} ជូន ${cust.name} មែនទេ?`,
+                confirmText: 'ផ្ញើជូនអតិថិជន',
+                cancelText: 'បោះបង់'
+            });
+            if (!ok) return;
+            const res = seActions.sendQuotation(id);
+            showToast(res.ok ? `បានផ្ញើសម្រង់តម្លៃ ${id} ជូន ${cust.name}` : res.error, res.ok ? 'success' : 'error');
+        }
 
-            document.getElementById('followUpList').innerHTML = rows.map(f => {
-                const t = toneOf[f.urgency];
-                const when = f.urgency === 'overdue' ? `ហួស ${f.late} ថ្ងៃ`
-                    : f.urgency === 'today' ? 'ត្រូវធ្វើថ្ងៃនេះ'
-                    : `នៅសល់ ${Math.abs(f.late)} ថ្ងៃ`;
-                return `
-                    <div class="p-4 flex items-start gap-3">
-                        <div class="w-9 h-9 rounded-xl ${t.box} flex items-center justify-center flex-shrink-0">
-                            <i class="fas ${iconOf[f.type]} text-xs"></i>
+        /* ===== តំបន់ទី 3 — បញ្ជីទូរស័ព្ទ ===== */
+
+        const CALL_TONE = {
+            rose: 'bg-rose-50 text-rose-700 border-rose-200',
+            amber: 'bg-amber-50 text-amber-700 border-amber-200',
+            sky: 'bg-sky-50 text-sky-700 border-sky-200'
+        };
+
+        /* លេខទូរស័ព្ទបង្ហាញពេញនៅពេលចុច — ការពារការមើលឃើញដោយចៃដន្យលើអេក្រង់រួម */
+        function revealPhone(elId, phone) {
+            const el = document.getElementById(elId);
+            if (el) el.textContent = phone;
+        }
+
+        function renderCallList() {
+            const rows = callList(8);
+            const all = callList();
+            document.getElementById('callSub').textContent = rows.length
+                ? `${all.length} អតិថិជន · បំណុលហួសកាលកំណត់មុនគេ`
+                : 'មិនមានការហៅតាមដានថ្ងៃនេះទេ';
+
+            const host = document.getElementById('callRows');
+            if (!rows.length) {
+                host.innerHTML = `
+                    <div class="px-5 py-10 text-center">
+                        <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-mug-hot text-xl"></i>
                         </div>
-                        <div class="min-w-0 flex-1">
-                            <p class="sm-td text-slate-700 truncate">${f.customer.name}</p>
-                            <p class="sm-td-sub text-slate-500 mt-0.5">${f.note}</p>
-                            <p class="sm-td-sub ${t.label} mt-1">${f.refId} · ${when}</p>
-                        </div>
+                        <p class="sm-card-title text-slate-700">មិនមានការហៅតាមដានថ្ងៃនេះ</p>
+                        <p class="sm-card-sub text-slate-500 mt-1">អតិថិជនទាំងអស់ទូទាត់ទាន់ពេល។</p>
                     </div>`;
+                return;
+            }
+
+            host.innerHTML = rows.map((r, idx) => {
+                const phoneId = 'callPhone-' + idx;
+                const tel = String(r.customer.phone || '').replace(/\s/g, '');
+                return `
+                <div class="px-5 py-3.5 flex flex-wrap items-center gap-x-4 gap-y-2">
+                    <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0 font-semibold">
+                        ${customerInitial(r.customer.name)}
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p class="sm-value text-slate-700 truncate">${r.customer.name}</p>
+                        <p class="sm-td-sub text-slate-500 mt-0.5 truncate">
+                            <span id="${phoneId}" class="sm-figure">${maskedPhone(r.customer.phone)}</span> · ${r.detail}
+                        </p>
+                    </div>
+                    <span class="sm-badge px-2.5 py-1 rounded-full border ${CALL_TONE[r.tone]} flex-shrink-0">${r.reasonLabel}</span>
+                    ${r.amount > 0
+                        ? `<p class="sm-value text-rose-600 sm-figure w-24 text-right flex-shrink-0">${fmtUSD(r.amount)}</p>`
+                        : '<span class="w-24 flex-shrink-0"></span>'}
+                    <a href="tel:${tel}" onclick="revealPhone('${phoneId}', '${r.customer.phone}')"
+                       class="sm-badge px-3.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 font-semibold transition inline-flex items-center gap-1.5 flex-shrink-0">
+                        <i class="fas fa-phone text-[11px]"></i> ខល
+                    </a>
+                </div>`;
             }).join('');
         }
 
-        function renderRecent() {
-            const quotes = listQuotes().sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 4);
-            document.getElementById('recentQuotes').innerHTML = quotes.map(q => {
-                const cust = getCustomer(q.customerId);
-                const exp = quoteExpiry(q);
-                return `
-                    <a href="quotes/view-quote.html?id=${q.id}" class="p-4 flex items-center justify-between gap-3 hover:bg-slate-50 transition">
-                        <div class="min-w-0">
-                            <p class="sm-td text-slate-700 truncate">${cust.name}</p>
-                            <p class="sm-td-sub text-slate-400">${q.id} · ${exp.label}</p>
-                        </div>
-                        <div class="text-right flex-shrink-0">
-                            <p class="sm-td-strong text-slate-700">${fmtUSD(docTotals(q).grandTotal)}</p>
-                            <span class="mt-1 inline-block">${statusBadge(q.status)}</span>
-                        </div>
-                    </a>`;
-            }).join('');
+        /* ===== តំបន់ទី 4 — ប្រាក់ត្រូវប្រមូល ===== */
 
-            const invs = listInvoices()
-                .filter(i => !['PAID', 'CANCELLED'].includes(invoiceState(i).key))
-                .sort((a, b) => invoiceState(b).overdueDays - invoiceState(a).overdueDays)
-                .slice(0, 4);
-            document.getElementById('recentInvoices').innerHTML = invs.map(inv => {
-                const cust = getCustomer(inv.customerId);
-                const st = invoiceState(inv);
+        function renderCollect(m) {
+            const rows = listInvoices()
+                .map(i => ({ i, s: invoiceState(i) }))
+                .filter(x => x.s.due > 0 && x.s.key !== 'CANCELLED')
+                .sort((a, b) => b.s.overdueDays - a.s.overdueDays)
+                .slice(0, 6);
+
+            const pill = document.getElementById('collectPill');
+            pill.textContent = fmtUSD(m.receivable);
+            pill.className = 'sm-badge font-semibold flex-shrink-0 ' + (m.overdueAmount > 0 ? 'text-rose-600' : 'text-slate-600');
+
+            const host = document.getElementById('collectRows');
+            if (!rows.length) {
+                host.innerHTML = `
+                    <div class="px-5 py-10 text-center">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-sack-dollar text-xl"></i>
+                        </div>
+                        <p class="sm-card-title text-slate-700">គ្មានប្រាក់នៅជំពាក់ទេ</p>
+                        <p class="sm-card-sub text-slate-500 mt-1">វិក្កយបត្រទាំងអស់ត្រូវបានទូទាត់ពេញ។</p>
+                    </div>`;
+                return;
+            }
+
+            host.innerHTML = rows.map(x => {
+                const c = getCustomer(x.i.customerId);
+                const late = x.s.key === 'OVERDUE';
                 return `
-                    <a href="invoices/view-invoice.html?id=${inv.id}" class="p-4 flex items-center justify-between gap-3 hover:bg-slate-50 transition">
-                        <div class="min-w-0">
-                            <p class="sm-td text-slate-700 truncate">${cust.name}</p>
-                            <p class="sm-td-sub text-slate-400">${inv.id} · ផុតកំណត់ ${fmtKhDate(inv.dueDate)}</p>
-                        </div>
-                        <div class="text-right flex-shrink-0">
-                            <p class="sm-td-strong text-slate-700">${fmtUSD(st.due)}</p>
-                            <span class="mt-1 inline-block">${statusBadge(st.key)}</span>
-                        </div>
-                    </a>`;
+                <a href="invoices/view-invoice.html?id=${x.i.id}"
+                   class="sm-worklist-row px-5 py-3.5 flex items-center gap-3 hover:bg-slate-50 transition"
+                   style="border-left-color:${late ? '#f43f5e' : 'transparent'}">
+                    <div class="min-w-0 flex-1">
+                        <p class="sm-value text-slate-700 truncate">${c ? c.name : x.i.customerId}</p>
+                        <p class="sm-td-sub ${late ? 'text-rose-600 font-semibold' : 'text-slate-500'} mt-0.5">
+                            <span class="sm-figure">${x.i.id}</span> · ${late ? `យឺត ${x.s.overdueDays} ថ្ងៃ` : `នៅសល់ ${Math.abs(x.s.overdueDays)} ថ្ងៃ`}
+                        </p>
+                    </div>
+                    <p class="sm-value ${late ? 'text-rose-600' : 'text-slate-700'} sm-figure flex-shrink-0">${fmtUSD(x.s.due)}</p>
+                </a>`;
             }).join('');
         }
 
         function renderDashboard() {
-            const m = myMetrics(getSelectedRange());
-            renderKpis(m);
-            renderQuota(m);
-            renderFollowUps();
-            renderRecent();
+            const m = myMetrics(monthRange());
+            renderHero(m, myMetrics(monthRange(1)));
+            renderActionStrip();
+            renderCallList();
+            renderCollect(m);
             updatePortalBadges();
         }
 
-        window.onDateRangeApplied = renderDashboard;
         window.onStoreChanged = renderDashboard;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderDateRangePicker('dateFilterHost');
-            renderDashboard();
-
-            const el = document.getElementById('weeklyChart');
-            if (el) {
-                const chart = echarts.init(el);
-                chart.setOption({
-                    tooltip: { trigger: 'axis', textStyle: { fontFamily: 'Kantumruy Pro' } },
-                    grid: { top: '12%', left: '3%', right: '4%', bottom: '10%', containLabel: true },
-                    xAxis: { type: 'category', data: weeklySales().map(w => w.week), axisLabel: { fontFamily: 'Kantumruy Pro' } },
-                    yAxis: { type: 'value', axisLabel: { fontFamily: 'Kantumruy Pro' } },
-                    series: [{
-                        name: 'ការលក់', type: 'bar',
-                        data: weeklySales().map(w => w.actual),
-                        itemStyle: { color: '#1e3a5f', borderRadius: [6, 6, 0, 0] }
-                    }]
-                });
-                window.addEventListener('resize', () => chart.resize());
-            }
-        });
+        document.addEventListener('DOMContentLoaded', renderDashboard);
     </script>
 </body>
 </html>
