@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGITECHKH - ស្នើសុំប្តូរទំនិញ</title>
+    <link rel="icon" type="image/png" href="../../shared/assets/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="../../shared/assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1e3a5f",
+                        'primary-dark': "#142842",
+                        accent: "#0ea5e9",
+                    },
+                    fontFamily: {
+                        sans: ["'Kantumruy Pro'", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../shared/styles/portal.css">
+    <style>
+        .cs-figure { font-variant-numeric: tabular-nums; }
+    </style>
+</head>
+
+<body id="csPortal" data-active="orders-lookup" class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col md:flex-row overflow-x-hidden">
+
+    <!-- របារចំហៀង -->
+    <div id="sidebarHost"></div>
+
+    <!-- ផ្ទៃមាតិកាចម្បង -->
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+
+        <!-- ក្បាលទំព័រ -->
+        <div id="headerHost" data-title="ស្នើសុំប្តូរទំនិញ"
+             data-subtitle="បញ្ជូនសំណើប្តូរ ឬជួសជុលទំនិញទៅកាន់ផ្នែកឃ្លាំង"
+             data-back="orders-lookup.html"></div>
+
+        <!-- មាតិកាខាងក្នុង -->
+        <main class="p-4 sm:p-6 flex-1 w-full">
+            <div id="rmaBody" class="w-full"></div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../shared/scripts/ui-components.js"></script>
+    <script src="data.js"></script>
+    <script src="../../shared/scripts/portal.js"></script>
+    <script>
+        const INVOICE_ID = new URLSearchParams(window.location.search).get('invoice') || '';
+
+        const RMA_FORM = { sku: '', qty: 1, reason: '', description: '' };
+
+        const RMA_REASONS = [
+            'ទំនិញខូចខាតពេលដឹកជញ្ជូន',
+            'ទំនិញមានបញ្ហាបច្ចេកទេសពីរោងចក្រ',
+            'បញ្ជូនទំនិញខុសម៉ូឌែល',
+            'ទំនិញមិនគ្រប់ចំនួន',
+            'មូលហេតុផ្សេងៗ'
+        ];
+
+        function render() {
+            const host = document.getElementById('rmaBody');
+            const order = csOrder(INVOICE_ID);
+
+            if (!order) {
+                host.innerHTML = `
+                    <div class="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
+                        <i class="fas fa-file-circle-question text-4xl mb-3 text-slate-300"></i>
+                        <p class="text-sm font-medium text-slate-500">រកមិនឃើញវិក្កយបត្រនេះទេ</p>
+                        <a href="orders-lookup.html" class="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-semibold transition">
+                            <i class="fas fa-arrow-left text-[10px]"></i> ត្រឡប់ទៅទំព័រស្វែងរក
+                        </a>
+                    </div>`;
+                return;
+            }
+
+            if (!RMA_FORM.sku) RMA_FORM.sku = order.items[0].sku;
+            if (!RMA_FORM.reason) RMA_FORM.reason = RMA_REASONS[0];
+
+            const item = order.items.find(i => i.sku === RMA_FORM.sku) || order.items[0];
+            if (RMA_FORM.qty > item.qty) RMA_FORM.qty = item.qty;
+
+            host.innerHTML = `
+                <div class="flex flex-wrap items-center justify-end gap-2 mb-5">
+                    <a href="orders-lookup.html?query=${encodeURIComponent(order.invoiceId)}"
+                       class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition flex items-center">
+                        បោះបង់
+                    </a>
+                    <button onclick="submitRma()" type="button"
+                        class="h-10 px-5 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-semibold flex items-center gap-2 shadow-sm transition">
+                        <i class="fas fa-paper-plane text-[10px]"></i> បញ្ជូនសំណើទៅឃ្លាំង
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+                    <div class="xl:col-span-2 space-y-5">
+
+                        <!-- ជ្រើសរើសមុខទំនិញ -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+                            <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2 pb-3 border-b border-slate-100">
+                                <i class="fas fa-box-open text-sky-600"></i> ជ្រើសរើសមុខទំនិញដែលស្នើសុំប្តូរ
+                            </h3>
+                            <div class="space-y-2">
+                                ${order.items.map(i => {
+                                    const on = i.sku === RMA_FORM.sku;
+                                    return `
+                                    <button onclick="pickItem('${i.sku}')" type="button"
+                                        class="w-full text-left px-4 py-3 rounded-xl border transition flex items-center justify-between gap-3 ${
+                                            on ? 'border-sky-400 bg-sky-50' : 'border-slate-200 bg-slate-50 hover:bg-slate-100'}">
+                                        <span class="min-w-0">
+                                            <span class="block text-xs font-medium ${on ? 'text-sky-900' : 'text-slate-700'}">${i.name}</span>
+                                            <span class="block text-[11px] ${on ? 'text-sky-700' : 'text-slate-500'} cs-figure">${i.sku} · បានទិញ ${i.qty} · ${csMoney(i.unitPrice)}</span>
+                                        </span>
+                                        ${on ? '<i class="fas fa-circle-check text-sky-600 text-sm flex-shrink-0"></i>' : ''}
+                                    </button>`;
+                                }).join('')}
+                            </div>
+
+                            <div class="pt-4 border-t border-slate-100">
+                                <label class="block text-xs font-medium text-slate-600 mb-2">ចំនួនដែលស្នើសុំប្តូរ</label>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="stepQty(-1)" type="button"
+                                        class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                                        <i class="fas fa-minus text-xs"></i>
+                                    </button>
+                                    <span class="w-16 h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-sm font-semibold text-slate-700 cs-figure">
+                                        ${RMA_FORM.qty}
+                                    </span>
+                                    <button onclick="stepQty(1)" type="button"
+                                        class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                                        <i class="fas fa-plus text-xs"></i>
+                                    </button>
+                                    <span class="text-[11px] text-slate-400 ml-2 cs-figure">អតិបរមា ${item.qty}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- មូលហេតុ និងការបរិយាយ -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+                            <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2 pb-3 border-b border-slate-100">
+                                <i class="fas fa-clipboard-question text-sky-600"></i> មូលហេតុ និងការបរិយាយ
+                            </h3>
+
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 mb-1.5">មូលហេតុនៃការប្តូរ <span class="text-rose-500">*</span></label>
+                                <div id="reasonHost" class="relative w-full"></div>
+                            </div>
+
+                            <div>
+                                <label for="rmaDescription" class="block text-xs font-medium text-slate-600 mb-1.5">បរិយាយលម្អិតអំពីបញ្ហា <span class="text-rose-500">*</span></label>
+                                <textarea id="rmaDescription" rows="4" oninput="RMA_FORM.description = this.value"
+                                    placeholder="បញ្ជាក់ពីស្ថានភាពជាក់ស្តែងរបស់ទំនិញ..."
+                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs placeholder-slate-400 focus:outline-none focus:border-sky-500 resize-none">${RMA_FORM.description}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ព័ត៌មានវិក្កយបត្រ -->
+                    <div class="space-y-5">
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-3">
+                            <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2 pb-3 border-b border-slate-100">
+                                <i class="fas fa-file-invoice text-sky-600"></i> វិក្កយបត្រពាក់ព័ន្ធ
+                            </h3>
+                            <div class="space-y-2 text-[11px]">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-slate-500">លេខវិក្កយបត្រ</span>
+                                    <span class="font-medium text-slate-700 cs-figure">${order.invoiceId}</span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-slate-500">កាលបរិច្ឆេទ</span>
+                                    <span class="font-medium text-slate-700 cs-figure">${order.date}</span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-slate-500">អតិថិជន</span>
+                                    <span class="font-medium text-slate-700 text-right">${order.customerName}</span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-slate-500">លេខទូរស័ព្ទ</span>
+                                    <a href="tel:${order.phone.replace(/\s/g, '')}" class="font-medium text-sky-700 hover:underline cs-figure">${order.phone}</a>
+                                </div>
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-slate-500">ការដឹកជញ្ជូន</span>
+                                    <span class="font-medium text-slate-700">${(CS_DELIVERY_STATUS[order.deliveryStatus] || {}).label || ''}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-amber-50 rounded-2xl border border-amber-200 p-4">
+                            <p class="text-[11px] text-amber-900 leading-relaxed">
+                                <i class="fas fa-circle-info mr-1 text-amber-600"></i>
+                                សំណើប្តូរទំនិញនឹងត្រូវបញ្ជូនទៅកាន់អ្នកគ្រប់គ្រងឃ្លាំងដើម្បីពិនិត្យទំនិញ
+                                និងបញ្ចេញទំនិញថ្មីជំនួស។ សំណើនេះមិនកែប្រែទឹកប្រាក់
+                                ឬស្ថានភាពទូទាត់លើវិក្កយបត្រឡើយ។
+                            </p>
+                        </div>
+                    </div>
+                </div>`;
+
+            renderReasonPicker();
+        }
+
+        /* ម៉ឺនុយជ្រើសរើសផ្ទាល់ខ្លួន — មិនប្រើធាតុជ្រើសរើសដើមរបស់កម្មវិធីរុករក */
+        function renderReasonPicker() {
+            document.getElementById('reasonHost').innerHTML = `
+                <button onclick="toggleRowActionMenu(event, 'reasonMenu')" type="button"
+                    class="w-full flex items-center justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 hover:bg-slate-100 transition text-left">
+                    <span class="text-xs font-medium text-slate-700 truncate">${RMA_FORM.reason}</span>
+                    <i class="fas fa-chevron-down text-[10px] text-slate-400 flex-shrink-0"></i>
+                </button>
+                <div id="reasonMenu" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 text-left">
+                    <div class="px-3 py-2 mb-1 rounded-xl bg-slate-50 border border-slate-100">
+                        <p class="text-[11px] text-slate-400 font-medium">ជ្រើសរើសមូលហេតុនៃការប្តូរ</p>
+                    </div>
+                    ${RMA_REASONS.map(r => `
+                        <button onclick="pickReason('${r}')" type="button"
+                            class="w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition text-left text-xs">
+                            <span>${r}</span>
+                            ${r === RMA_FORM.reason ? '<i class="fas fa-check text-[11px] text-emerald-600"></i>' : ''}
+                        </button>`).join('')}
+                </div>`;
+        }
+
+        function pickReason(r) {
+            RMA_FORM.reason = r;
+            closeAllFloatingDropdowns();
+            renderReasonPicker();
+        }
+
+        function pickItem(sku) {
+            RMA_FORM.sku = sku;
+            RMA_FORM.qty = 1;
+            render();
+        }
+
+        function stepQty(delta) {
+            const order = csOrder(INVOICE_ID);
+            const item = order.items.find(i => i.sku === RMA_FORM.sku);
+            const next = RMA_FORM.qty + delta;
+            if (next < 1 || next > item.qty) return;
+            RMA_FORM.qty = next;
+            render();
+        }
+
+        async function submitRma() {
+            const res = csActions.requestRma({
+                invoiceId: INVOICE_ID,
+                sku: RMA_FORM.sku,
+                qty: RMA_FORM.qty,
+                reason: RMA_FORM.reason,
+                description: RMA_FORM.description
+            });
+
+            if (!res.ok) { showToast(res.error, 'error'); return; }
+
+            showToast(`បានបញ្ជូនសំណើ ${res.rma.id} ទៅកាន់ផ្នែកឃ្លាំងដោយជោគជ័យ`, 'success');
+            setTimeout(() => {
+                window.location.href = `orders-lookup.html?query=${encodeURIComponent(INVOICE_ID)}`;
+            }, 900);
+        }
+
+        document.addEventListener('DOMContentLoaded', render);
+    </script>
+</body>
+
+</html>

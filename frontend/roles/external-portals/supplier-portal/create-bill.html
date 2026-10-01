@@ -119,11 +119,7 @@
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1.5">យោងការបញ្ជាទិញ (PO) <span class="text-rose-500">*</span></label>
-                            <select id="poSelect" onchange="handlePOChange()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-primary font-medium cursor-pointer">
-                                <option value="PO-2026-0045" data-amount="3325.00" data-desc="ការបញ្ជាទិញគ្រឿងបន្លាស់កុំព្យូទ័រ និងសម្ភារៈការិយាល័យ">PO-2026-0045 ($3325.00)</option>
-                                <option value="PO-2026-0044" data-amount="3377.00" data-desc="ការបញ្ជាទិញអេក្រង់កុំព្យូទ័រ Dell UltraSharp">PO-2026-0044 ($3377.00)</option>
-                                <option value="PO-2026-0041" data-amount="2090.00" data-desc="ការបញ្ជាទិញអង្គចងចាំ RAM DDR5">PO-2026-0041 ($2090.00)</option>
-                            </select>
+                            <div id="poSelect" data-bms-select class="w-full font-medium" data-onchange="handlePOChange()" data-options='[{"value": "PO-2026-0045", "label": "PO-2026-0045 ($3325.00)"}, {"value": "PO-2026-0044", "label": "PO-2026-0044 ($3377.00)"}, {"value": "PO-2026-0041", "label": "PO-2026-0041 ($2090.00)"}]'></div>
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1.5">កាលបរិច្ឆេទចេញវិក្កយបត្រ <span class="text-rose-500">*</span></label>

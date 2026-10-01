@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGITECHKH - ព័ត៌មានលម្អិតសំណើ</title>
+    <link rel="icon" type="image/png" href="../../shared/assets/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="../../shared/assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1e3a5f",
+                        'primary-dark': "#142842",
+                        accent: "#0ea5e9",
+                    },
+                    fontFamily: {
+                        sans: ["'Kantumruy Pro'", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../shared/styles/portal.css">
+    <style>
+        .cs-figure { font-variant-numeric: tabular-nums; }
+        @keyframes csPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.45; }
+        }
+        .cs-sla-risk, .cs-sla-breach { animation: csPulse 1.8s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce) {
+            .cs-sla-risk, .cs-sla-breach { animation: none; }
+        }
+    </style>
+</head>
+
+<body id="csPortal" data-active="dashboard" class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col md:flex-row overflow-x-hidden">
+
+    <!-- របារចំហៀង -->
+    <div id="sidebarHost"></div>
+
+    <!-- ផ្ទៃមាតិកាចម្បង -->
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+
+        <!-- ក្បាលទំព័រ -->
+        <div id="headerHost" data-title="ព័ត៌មានលម្អិតសំណើ"
+             data-subtitle="ឆ្លើយតបអតិថិជន កត់ត្រាផ្ទៃក្នុង និងបិទបញ្ចប់សំណើ"
+             data-back="dashboard.html"></div>
+
+        <!-- មាតិកាខាងក្នុង -->
+        <main class="p-4 sm:p-6 flex-1 w-full">
+            <div id="ticketBody" class="w-full space-y-5"></div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../shared/scripts/ui-components.js"></script>
+    <script src="data.js"></script>
+    <script src="../../shared/scripts/portal.js"></script>
+    <script>
+        const TICKET_ID = new URLSearchParams(window.location.search).get('id') || '';
+
+        function slaBadge(sla) {
+            if (sla.level === 'done') {
+                return `<span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 text-[11px] font-semibold">${sla.label}</span>`;
+            }
+            const icon = sla.level === 'breach' ? 'fa-triangle-exclamation' : 'fa-stopwatch';
+            const text = sla.level === 'breach' ? csClock(-sla.remaining) : csClock(sla.remaining);
+            const anim = sla.level === 'ok' ? '' : ` cs-sla-${sla.level}`;
+            return `<span class="px-2.5 py-1 rounded-lg bg-${sla.tone}-50 text-${sla.tone}-700 border border-${sla.tone}-200 text-[11px] font-semibold inline-flex items-center gap-1.5${anim}">
+                <i class="fas ${icon} text-[10px]"></i><span class="cs-figure">${text}</span> ${sla.label}
+            </span>`;
+        }
+
+        function render() {
+            const host = document.getElementById('ticketBody');
+            const t = csTicket(TICKET_ID);
+
+            if (!t) {
+                host.innerHTML = `
+                    <div class="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
+                        <i class="fas fa-file-circle-question text-4xl mb-3 text-slate-300"></i>
+                        <p class="text-sm font-medium text-slate-500">រកមិនឃើញសំណើនេះទេ</p>
+                        <a href="dashboard.html" class="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-semibold transition">
+                            <i class="fas fa-arrow-left text-[10px]"></i> ត្រឡប់ទៅផ្ទាំងសេវាកម្ម
+                        </a>
+                    </div>`;
+                return;
+            }
+
+            const sla = csSla(t);
+            const cat = CS_CATEGORY[t.category] || CS_CATEGORY.general;
+            const st = CS_TICKET_STATUS[t.status] || CS_TICKET_STATUS.pending;
+            const pr = CS_PRIORITY[t.priority] || CS_PRIORITY.normal;
+            const order = t.relatedInvoice ? csOrder(t.relatedInvoice) : null;
+            const resolved = t.status === 'resolved';
+
+            host.innerHTML = `
+                <!-- សេចក្តីសង្ខេបសំណើ -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+                    <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                        <div class="min-w-0">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <h2 class="text-base font-semibold text-slate-800 cs-figure">${t.id}</h2>
+                                <span class="px-2 py-0.5 rounded-full bg-${cat.tone}-50 text-${cat.tone}-700 border border-${cat.tone}-200 text-[11px] font-semibold">
+                                    <i class="fas ${cat.icon} mr-1"></i>${cat.label}
+                                </span>
+                                <span class="px-2 py-0.5 rounded-full bg-${pr.tone}-100 text-${pr.tone}-700 text-[11px] font-semibold">${pr.label}</span>
+                                <span class="px-2.5 py-1 rounded-full bg-${st.tone}-50 text-${st.tone}-700 border border-${st.tone}-200 text-[11px] font-semibold">
+                                    <i class="fas ${st.icon} mr-1"></i>${st.label}
+                                </span>
+                                ${slaBadge(sla)}
+                            </div>
+                            <p class="text-sm font-medium text-slate-700 mt-2">${t.subject}</p>
+                        </div>
+                        <a href="create-note.html?invoice=${encodeURIComponent(t.relatedInvoice || '')}&customer=${encodeURIComponent(t.customerName)}&phone=${encodeURIComponent(t.phone)}"
+                           class="px-4 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold transition flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap">
+                            <i class="fas fa-note-sticky"></i> បង្កើតសំណើថ្មី
+                        </a>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-4 border-t border-slate-100">
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                            <p class="text-[11px] text-slate-500 font-medium">អតិថិជន</p>
+                            <p class="text-xs font-medium text-slate-700 mt-0.5">${t.customerName}</p>
+                            <a href="tel:${t.phone.replace(/\s/g, '')}" class="text-[11px] text-sky-700 hover:underline cs-figure">
+                                <i class="fas fa-phone mr-1"></i>${t.phone}
+                            </a>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                            <p class="text-[11px] text-slate-500 font-medium">វិក្កយបត្រពាក់ព័ន្ធ</p>
+                            ${t.relatedInvoice
+                                ? `<a href="orders-lookup.html?query=${encodeURIComponent(t.relatedInvoice)}" class="text-xs font-medium text-sky-700 hover:underline cs-figure mt-0.5 inline-block">${t.relatedInvoice}</a>
+                                   <p class="text-[11px] text-slate-500 cs-figure">${order ? csMoney(order.grandTotal) + ' · ' + order.date : 'រកមិនឃើញកំណត់ត្រា'}</p>`
+                                : `<p class="text-xs text-slate-400 mt-0.5">គ្មាន</p>`}
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                            <p class="text-[11px] text-slate-500 font-medium">ប្រភពទំនាក់ទំនង</p>
+                            <p class="text-xs font-medium text-slate-700 mt-0.5">${CS_CHANNEL[t.channel] || ''}</p>
+                            <p class="text-[11px] text-slate-500">បើក ${csRelative(t.openedAt)}</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                            <p class="text-[11px] text-slate-500 font-medium">ភ្នាក់ងារទទួលបន្ទុក</p>
+                            <p class="text-xs font-medium text-slate-700 mt-0.5">${t.agent || 'មិនទាន់ចាត់តាំង'}</p>
+                            <p class="text-[11px] text-slate-500 cs-figure">កាលកំណត់ ${pr.slaMinutes} នាទី</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+                    <!-- ប្រវត្តិការឆ្លើយឆ្លង -->
+                    <div class="xl:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+                        <div class="p-5 border-b border-slate-200">
+                            <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                                <i class="fas fa-comments text-sky-600"></i> ប្រវត្តិការឆ្លើយឆ្លងជាមួយអតិថិជន
+                            </h3>
+                        </div>
+                        <div id="chatHistory" class="p-5 space-y-3 flex-1 max-h-[420px] overflow-y-auto bg-slate-50/50">
+                            ${t.messages.length ? t.messages.map(m => `
+                                <div class="flex ${m.sender === 'customer' ? 'justify-start' : 'justify-end'}">
+                                    <div class="max-w-[80%] rounded-2xl px-3.5 py-2.5 text-xs ${
+                                        m.sender === 'customer'
+                                            ? 'bg-white border border-slate-200 text-slate-700'
+                                            : 'bg-sky-600 text-white'}">
+                                        <p class="leading-relaxed">${m.text}</p>
+                                        <span class="text-[10px] ${m.sender === 'customer' ? 'text-slate-400' : 'text-sky-100'} block mt-1 text-right cs-figure">
+                                            ${csFmtDateTime(m.at)}
+                                        </span>
+                                    </div>
+                                </div>`).join('')
+                                : `<p class="text-center text-xs text-slate-400 py-8">មិនទាន់មានសារឡើយ</p>`}
+                        </div>
+                        <div class="p-5 border-t border-slate-200">
+                            ${resolved
+                                ? `<p class="text-xs text-slate-500 text-center py-2">
+                                       <i class="fas fa-lock mr-1"></i>សំណើនេះបានបិទរួចហើយ — សូមបើកឡើងវិញមុននឹងឆ្លើយតប
+                                   </p>`
+                                : `<label for="replyInput" class="block text-xs font-medium text-slate-600 mb-1.5">ឆ្លើយតបទៅកាន់អតិថិជន</label>
+                                   <div class="flex gap-2">
+                                       <input type="text" id="replyInput" placeholder="វាយសារឆ្លើយតបជូនអតិថិជន..."
+                                           onkeydown="if(event.key==='Enter'){event.preventDefault();sendReply();}"
+                                           class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs placeholder-slate-400 focus:outline-none focus:border-sky-500">
+                                       <button onclick="sendReply()" type="button"
+                                           class="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold transition flex items-center gap-1.5 whitespace-nowrap">
+                                           <i class="fas fa-paper-plane text-[10px]"></i> ផ្ញើសារ
+                                       </button>
+                                   </div>`}
+                        </div>
+                    </div>
+
+                    <!-- កំណត់ចំណាំផ្ទៃក្នុង និងសកម្មភាព -->
+                    <div class="space-y-5">
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-3">
+                            <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                                <i class="fas fa-lock text-slate-500"></i> កំណត់ចំណាំផ្ទៃក្នុង
+                            </h3>
+                            <p class="text-[11px] text-slate-400">អតិថិជនមិនឃើញផ្នែកនេះទេ</p>
+                            <textarea id="internalNoteInput" rows="5" placeholder="កត់ត្រាព័ត៌មានសម្របសម្រួលជាមួយក្រុមអ្នកដឹក ឬឃ្លាំង..."
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs placeholder-slate-400 focus:outline-none focus:border-sky-500">${t.internalNotes || ''}</textarea>
+                            <button onclick="saveNote()" type="button"
+                                class="w-full px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition">
+                                រក្សាទុកកំណត់ចំណាំ
+                            </button>
+                        </div>
+
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-2.5">
+                            <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                                <i class="fas fa-wand-magic-sparkles text-sky-600"></i> សកម្មភាព
+                            </h3>
+                            ${resolved
+                                ? `<button onclick="changeStatus('in_progress')" type="button"
+                                       class="w-full px-4 py-2.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 text-xs font-semibold transition flex items-center justify-center gap-2">
+                                       <i class="fas fa-rotate-left text-[10px]"></i> បើកសំណើឡើងវិញ
+                                   </button>`
+                                : `<button onclick="changeStatus('in_progress')" type="button"
+                                       class="w-full px-4 py-2.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 text-xs font-semibold transition flex items-center justify-center gap-2">
+                                       <i class="fas fa-arrows-rotate text-[10px]"></i> ដាក់ជាកំពុងដោះស្រាយ
+                                   </button>
+                                   <button onclick="changeStatus('resolved')" type="button"
+                                       class="w-full px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition flex items-center justify-center gap-2">
+                                       <i class="fas fa-check text-[10px]"></i> បិទបញ្ចប់សំណើ
+                                   </button>`}
+                            ${t.relatedInvoice ? `
+                                <a href="create-rma.html?invoice=${encodeURIComponent(t.relatedInvoice)}"
+                                   class="w-full px-4 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold transition flex items-center justify-center gap-2">
+                                    <i class="fas fa-rotate-left text-[10px]"></i> ស្នើសុំប្តូរទំនិញ
+                                </a>` : ''}
+                        </div>
+
+                        <div class="bg-slate-50 rounded-2xl border border-slate-200 p-4">
+                            <p class="text-[11px] text-slate-500 leading-relaxed">
+                                <i class="fas fa-circle-info mr-1 text-slate-400"></i>
+                                ផ្នែកបម្រើអតិថិជនមិនអាចកែតម្លៃ ចំនួនទំនិញ ឬស្ថានភាពទូទាត់បានឡើយ។
+                                រាល់ការកែប្រែទិន្នន័យហិរញ្ញវត្ថុត្រូវធ្វើឡើងដោយផ្នែកពាក់ព័ន្ធ។
+                            </p>
+                        </div>
+                    </div>
+                </div>`;
+
+            const chat = document.getElementById('chatHistory');
+            if (chat) chat.scrollTop = chat.scrollHeight;
+        }
+
+        function sendReply() {
+            const input = document.getElementById('replyInput');
+            const res = csActions.reply(TICKET_ID, input ? input.value : '');
+            if (!res.ok) { showToast(res.error, 'error'); return; }
+            showToast('បានផ្ញើសារឆ្លើយតបជូនអតិថិជន', 'success');
+            render();
+        }
+
+        function saveNote() {
+            const box = document.getElementById('internalNoteInput');
+            const res = csActions.saveInternalNote(TICKET_ID, box ? box.value : '');
+            if (!res.ok) { showToast(res.error, 'error'); return; }
+            showToast('បានរក្សាទុកកំណត់ចំណាំផ្ទៃក្នុង', 'success');
+        }
+
+        async function changeStatus(status) {
+            if (status === 'resolved') {
+                const ok = await showCustomConfirm({
+                    title: 'បិទបញ្ចប់សំណើ',
+                    message: `តើលោកអ្នកប្រាកដថាបានដោះស្រាយសំណើ ${TICKET_ID} រួចរាល់ហើយមែនទេ?`,
+                    confirmText: 'បិទបញ្ចប់'
+                });
+                if (!ok) return;
+            }
+            const note = document.getElementById('internalNoteInput');
+            const res = csActions.setTicketStatus(TICKET_ID, status, note ? note.value : undefined);
+            if (!res.ok) { showToast(res.error, 'error'); return; }
+            showToast(`បានកែស្ថានភាពសំណើ ${TICKET_ID} ជា «${CS_TICKET_STATUS[status].label}»`, 'success');
+            render();
+        }
+
+        /**
+         * នាឡិកាកាលកំណត់ឆ្លើយតបត្រូវរាប់ថយក្រោយជាបន្តបន្ទាប់
+         * ប៉ុន្តែមិនត្រូវសាងទំព័រឡើងវិញពេលភ្នាក់ងារកំពុងវាយអក្សរទេ
+         * ព្រោះវានឹងលុបអក្សរដែលមិនទាន់បានរក្សាទុក
+         */
+        function isTyping() {
+            const el = document.activeElement;
+            if (!el) return false;
+            return ['INPUT', 'TEXTAREA'].includes((el.tagName || '').toUpperCase());
+        }
+
+        setInterval(() => { if (!isTyping()) render(); }, 60000);
+        window.onStoreChanged = () => { if (!isTyping()) render(); };
+
+        document.addEventListener('DOMContentLoaded', render);
+    </script>
+</body>
+
+</html>

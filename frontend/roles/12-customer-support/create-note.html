@@ -1,165 +1,316 @@
 <!DOCTYPE html>
 <html lang="km">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>បង្កើតកំណត់ហេតុបម្រើអតិថិជន — eBMS v2</title>
+    <title>DIGITECHKH - បង្កើតសំណើជំនួយ</title>
+    <link rel="icon" type="image/png" href="../../shared/assets/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="../../shared/assets/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../../shared/styles/portal.css">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#0284c7',
-                        'primary-dark': '#0369a1'
+                        primary: "#1e3a5f",
+                        'primary-dark': "#142842",
+                        accent: "#0ea5e9",
                     },
                     fontFamily: {
-                        sans: ['"Kantumruy Pro"', 'sans-serif']
+                        sans: ["'Kantumruy Pro'", "sans-serif"],
                     }
                 }
             }
-        };
+        }
     </script>
+    <link rel="stylesheet" href="../../shared/styles/custom.css">
+    <link rel="stylesheet" href="../../shared/styles/portal.css">
+    <style>
+        .cs-figure { font-variant-numeric: tabular-nums; }
+    </style>
 </head>
-<body class="bg-slate-50 font-sans text-slate-800 antialiased" data-portal="csPortal" data-role-root="./" data-active="dashboard">
-    <div class="flex h-screen overflow-hidden">
-        <div id="sidebarHost"></div>
 
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-            <!-- Header (72px aligned) -->
-        <div id="headerHost" data-title="បង្កើតកំណត់ហេតុសេវាកម្ម (Support Ticket)"
-                 data-subtitle="កត់ត្រាសំណួរ បណ្តឹង ឬសំណើជំនួយពីអតិថិជន"
-                 data-back="dashboard.html"></div>
+<body id="csPortal" data-active="dashboard" class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col md:flex-row overflow-x-hidden">
 
-            <!-- Main Content Form -->
-            <main class="flex-1 overflow-y-auto p-6">
-            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
-            <div class="w-full max-w-4xl flex flex-wrap items-center justify-end gap-2 mb-4 no-print">
-                <div class="flex flex-wrap items-center gap-2">
-                    <button type="button" onclick="history.back()" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition cursor-pointer">
-                        បោះបង់
-                    </button>
-                    <button type="button" onclick="submitSupportNote()" class="h-10 px-5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-medium flex items-center gap-2 shadow-sm transition cursor-pointer">
-                        <i class="fas fa-paper-plane text-xs"></i>
-                        <span>រក្សាទុក និងបញ្ជូនសំណើ</span>
-                    </button>
-                </div>
+    <!-- របារចំហៀង -->
+    <div id="sidebarHost"></div>
+
+    <!-- ផ្ទៃមាតិកាចម្បង -->
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
+
+        <!-- ក្បាលទំព័រ -->
+        <div id="headerHost" data-title="បង្កើតសំណើជំនួយ"
+             data-subtitle="កត់ត្រាសំណួរ បណ្តឹង ឬសំណើជំនួយពីអតិថិជន"
+             data-back="dashboard.html"></div>
+
+        <!-- មាតិកាខាងក្នុង -->
+        <main class="p-4 sm:p-6 flex-1 w-full">
+
+            <!-- របារសកម្មភាពទំព័រ -->
+            <div class="w-full flex flex-wrap items-center justify-end gap-2 mb-5 no-print">
+                <a href="dashboard.html"
+                   class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition flex items-center">
+                    បោះបង់
+                </a>
+                <button type="button" onclick="submitTicket()"
+                    class="h-10 px-5 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-semibold flex items-center gap-2 shadow-sm transition">
+                    <i class="fas fa-paper-plane text-[10px]"></i>
+                    <span>រក្សាទុក និងបញ្ជូនសំណើ</span>
+                </button>
             </div>
 
-                <form id="noteForm" onsubmit="event.preventDefault(); submitSupportNote();" class="max-w-4xl space-y-6">
-                    <!-- Customer & Order Section -->
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
-                        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
-                            <i class="fas fa-user-headset text-sky-600"></i>
-                            <span>ព័ត៌មានអតិថិជន & វិក្កយបត្រពាក់ព័ន្ធ</span>
+            <form id="noteForm" onsubmit="event.preventDefault(); submitTicket();" class="w-full grid grid-cols-1 xl:grid-cols-3 gap-5">
+
+                <div class="xl:col-span-2 space-y-5">
+
+                    <!-- ព័ត៌មានអតិថិជន -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <i class="fas fa-user text-sky-600"></i>
+                            <span>ព័ត៌មានអតិថិជន និងវិក្កយបត្រពាក់ព័ន្ធ</span>
                         </h3>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1.5">ឈ្មោះអតិថិជន <span class="text-rose-500">*</span></label>
-                                <input type="text" id="ticketCustomer" required placeholder="ឧ. អ៊ុច វ៉ាន់ដា" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-sky-500">
+                                <label for="ticketCustomer" class="block text-xs font-medium text-slate-600 mb-1.5">ឈ្មោះអតិថិជន <span class="text-rose-500">*</span></label>
+                                <input type="text" id="ticketCustomer" required placeholder="ឧ. អ៊ុច វ៉ាន់ដា"
+                                    class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-sky-500">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1.5">លេខទូរស័ព្ទ <span class="text-rose-500">*</span></label>
-                                <input type="text" id="ticketPhone" required placeholder="ឧ. 012 345 678" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-sky-500 font-mono">
+                                <label for="ticketPhone" class="block text-xs font-medium text-slate-600 mb-1.5">លេខទូរស័ព្ទ <span class="text-rose-500">*</span></label>
+                                <input type="tel" id="ticketPhone" required placeholder="ឧ. 012 345 678" oninput="onPhoneInput()"
+                                    class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-sky-500 cs-figure">
+                                <p id="phoneMatch" class="hidden text-[11px] text-emerald-700 mt-1.5"></p>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1.5">លេខវិក្កយបត្រ (បើមាន)</label>
-                                <input type="text" id="ticketInvoice" placeholder="ឧ. INV-2026-0891" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-sky-500 font-mono">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1.5">ប្រភពទំនាក់ទំនង</label>
-                                <select id="ticketChannel" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-sky-500">
-                                    <option value="telegram">តេឡេក្រាម (Telegram)</option>
-                                    <option value="call">ទូរស័ព្ទផ្ទាល់ (Hotline)</option>
-                                    <option value="facebook">ទំព័រហ្វេសប៊ុក (Facebook Page)</option>
-                                    <option value="walk_in">មកជួបផ្ទាល់ (Walk-in)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1.5">កម្រិតអាទិភាព</label>
-                                <select id="ticketPriority" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-sky-500">
-                                    <option value="normal">ធម្មតា (SLA 60 នាទី)</option>
-                                    <option value="urgent" selected>បន្ទាន់ (SLA 30 នាទី)</option>
-                                    <option value="critical">បន្ទាន់ខ្លាំង (SLA 15 នាទី)</option>
-                                </select>
-                            </div>
+                        <div>
+                            <label for="ticketInvoice" class="block text-xs font-medium text-slate-600 mb-1.5">លេខវិក្កយបត្រ</label>
+                            <input type="text" id="ticketInvoice" placeholder="ឧ. INV-2026-0891" oninput="onInvoiceInput()"
+                                class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-sky-500 cs-figure">
+                            <p id="invoiceMatch" class="hidden text-[11px] mt-1.5"></p>
                         </div>
                     </div>
 
-                    <!-- Ticket Subject & Details -->
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
-                        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                    <!-- ខ្លឹមសារសំណើ -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-3">
                             <i class="fas fa-comment-dots text-sky-600"></i>
                             <span>ខ្លឹមសារសំណើ និងកំណត់ហេតុដោះស្រាយ</span>
                         </h3>
 
                         <div>
-                            <label class="block text-xs font-medium text-slate-600 mb-1.5">ប្រភេទសំណើ / បណ្តឹង <span class="text-rose-500">*</span></label>
-                            <select id="ticketCategory" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-sky-500">
-                                <option value="delivery">សាកសួរទីតាំងដឹកជញ្ជូន / តាមដានអ្នកដឹក</option>
-                                <option value="exchange">ស្នើសុំប្តូរទំនិញថ្មី (ទំនិញខូចខាតពេលដឹក)</option>
-                                <option value="invoice">ស្នើសុំចម្លងវិក្កយបត្រពន្ធ</option>
-                                <option value="pricing">សាកសួរតម្លៃ និងលក្ខខណ្ឌធានា</option>
-                                <option value="other">សំណើផ្សេងៗ</option>
-                            </select>
+                            <label for="ticketSubject" class="block text-xs font-medium text-slate-600 mb-1.5">ចំណងជើងសង្ខេប <span class="text-rose-500">*</span></label>
+                            <input type="text" id="ticketSubject" required placeholder="ឧ. អតិថិជនសួរនាំអំពីម៉ោងមកដល់របស់ឡានដឹកទំនិញ"
+                                class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-sky-500">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-slate-600 mb-1.5">ចំណងជើងសង្ខេប <span class="text-rose-500">*</span></label>
-                            <input type="text" id="ticketSubject" required placeholder="ឧ. អតិថិជនសួរនាំអំពីម៉ោងមកដល់របស់ឡានដឹកទំនិញ" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-sky-500">
+                            <label for="ticketMessage" class="block text-xs font-medium text-slate-600 mb-1.5">សារដើមពីអតិថិជន</label>
+                            <textarea id="ticketMessage" rows="3" placeholder="កត់ត្រាពាក្យសម្តីរបស់អតិថិជនតាមដែលអាចធ្វើបាន..."
+                                class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-sky-500 resize-none"></textarea>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-medium text-slate-600 mb-1.5">កំណត់ហេតុលម្អិត & សកម្មភាពដោះស្រាយបឋម</label>
-                            <textarea id="ticketNotes" rows="4" placeholder="កត់ត្រាព័ត៌មានដែលបានឆ្លើយតបជូនអតិថិជន និងការបញ្ជូនបន្តទៅកាន់ផ្នែកពាក់ព័ន្ធ..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-sky-500"></textarea>
+                            <label for="ticketNotes" class="block text-xs font-medium text-slate-600 mb-1.5">កំណត់ចំណាំផ្ទៃក្នុង</label>
+                            <textarea id="ticketNotes" rows="3" placeholder="កត់ត្រាសកម្មភាពដោះស្រាយបឋម និងការបញ្ជូនបន្តទៅផ្នែកពាក់ព័ន្ធ..."
+                                class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-sky-500 resize-none"></textarea>
+                            <p class="text-[11px] text-slate-400 mt-1.5"><i class="fas fa-lock mr-1"></i>អតិថិជនមិនឃើញផ្នែកនេះទេ</p>
                         </div>
                     </div>
-                </form>
-            </main>
-        </div>
+                </div>
+
+                <!-- ចំណាត់ថ្នាក់សំណើ -->
+                <div class="space-y-5">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <i class="fas fa-tags text-sky-600"></i>
+                            <span>ចំណាត់ថ្នាក់សំណើ</span>
+                        </h3>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1.5">ប្រភពទំនាក់ទំនង</label>
+                            <div id="channelHost" class="relative w-full"></div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1.5">ប្រភេទសំណើ</label>
+                            <div id="categoryHost" class="relative w-full"></div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-2">កម្រិតអាទិភាព</label>
+                            <div id="priorityHost" class="space-y-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-sky-50 rounded-2xl border border-sky-200 p-4">
+                        <p class="text-[11px] text-sky-900 leading-relaxed">
+                            <i class="fas fa-circle-info mr-1 text-sky-600"></i>
+                            កាលកំណត់ឆ្លើយតបត្រូវបានគណនាដោយស្វ័យប្រវត្តិតាមកម្រិតអាទិភាព
+                            ហើយនាឡិការាប់ថយក្រោយចាប់ផ្តើមភ្លាមនៅពេលរក្សាទុក។
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </main>
     </div>
 
     <!-- Scripts -->
+    <script src="../../shared/scripts/ui-components.js"></script>
     <script src="data.js"></script>
     <script src="../../shared/scripts/portal.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const inv = urlParams.get('invoice');
-            const cust = urlParams.get('customer');
-            const phone = urlParams.get('phone');
+        const FORM = { channel: 'call', category: 'general', priority: 'normal' };
 
-            if (inv) document.getElementById('ticketInvoice').value = inv;
-            if (cust) document.getElementById('ticketCustomer').value = decodeURIComponent(cust);
-            if (phone) document.getElementById('ticketPhone').value = decodeURIComponent(phone);
-        });
+        /* ===== ម៉ឺនុយជ្រើសរើសផ្ទាល់ខ្លួន ===== */
 
-        function submitSupportNote() {
-            const cust = document.getElementById('ticketCustomer').value.trim();
-            const phone = document.getElementById('ticketPhone').value.trim();
-            const subject = document.getElementById('ticketSubject').value.trim();
-
-            if (!cust || !phone || !subject) {
-                showToast('សូមបំពេញព័ត៌មានចាំបាច់ (ឈ្មោះ, លេខទូរស័ព្ទ, ចំណងជើង)', 'error');
-                return;
+        const PICKERS = {
+            channel: {
+                host: 'channelHost',
+                label: 'ជ្រើសរើសប្រភពទំនាក់ទំនង',
+                options: Object.keys(CS_CHANNEL).map(k => ({ value: k, label: CS_CHANNEL[k] }))
+            },
+            category: {
+                host: 'categoryHost',
+                label: 'ជ្រើសរើសប្រភេទសំណើ',
+                options: Object.keys(CS_CATEGORY).map(k => ({ value: k, label: CS_CATEGORY[k].label }))
             }
+        };
 
-            const nextId = `TCK-2026-08${Math.floor(Math.random() * 90) + 10}`;
-            showToast(`បានបង្កើតសំបុត្របណ្តឹង ${nextId} និងជូនដំណឹងទៅកាន់ផ្នែកពាក់ព័ន្ធដោយជោគជ័យ`, 'success');
-
-            setTimeout(() => {
-                window.location.href = 'dashboard.html';
-            }, 800);
+        function renderPicker(key) {
+            const cfg = PICKERS[key];
+            const active = cfg.options.find(o => o.value === FORM[key]) || cfg.options[0];
+            document.getElementById(cfg.host).innerHTML = `
+                <button onclick="toggleRowActionMenu(event, '${key}Menu')" type="button"
+                    class="w-full flex items-center justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 hover:bg-slate-100 transition text-left">
+                    <span class="text-xs font-medium text-slate-700 truncate">${active.label}</span>
+                    <i class="fas fa-chevron-down text-[10px] text-slate-400 flex-shrink-0"></i>
+                </button>
+                <div id="${key}Menu" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 text-left">
+                    <div class="px-3 py-2 mb-1 rounded-xl bg-slate-50 border border-slate-100">
+                        <p class="text-[11px] text-slate-400 font-medium">${cfg.label}</p>
+                    </div>
+                    ${cfg.options.map(o => `
+                        <button onclick="pickOption('${key}', '${o.value}')" type="button"
+                            class="w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition text-left text-xs">
+                            <span>${o.label}</span>
+                            ${o.value === FORM[key] ? '<i class="fas fa-check text-[11px] text-emerald-600"></i>' : ''}
+                        </button>`).join('')}
+                </div>`;
         }
+
+        function pickOption(key, value) {
+            FORM[key] = value;
+            closeAllFloatingDropdowns();
+            renderPicker(key);
+        }
+
+        /* កម្រិតអាទិភាពបង្ហាញជាប៊ូតុង ព្រោះកាលកំណត់ឆ្លើយតបត្រូវតែមើលឃើញភ្លាម */
+        function renderPriority() {
+            document.getElementById('priorityHost').innerHTML = Object.keys(CS_PRIORITY).map(k => {
+                const p = CS_PRIORITY[k];
+                const on = FORM.priority === k;
+                return `
+                <button onclick="pickPriority('${k}')" type="button"
+                    class="w-full px-3 py-2.5 rounded-xl border transition flex items-center justify-between gap-2 ${
+                        on ? 'border-sky-400 bg-sky-50' : 'border-slate-200 bg-slate-50 hover:bg-slate-100'}">
+                    <span class="text-xs font-medium ${on ? 'text-sky-900' : 'text-slate-700'}">${p.label}</span>
+                    <span class="flex items-center gap-2">
+                        <span class="text-[11px] ${on ? 'text-sky-700' : 'text-slate-500'} cs-figure">${p.slaMinutes} នាទី</span>
+                        ${on ? '<i class="fas fa-circle-check text-sky-600 text-xs"></i>' : ''}
+                    </span>
+                </button>`;
+            }).join('');
+        }
+
+        function pickPriority(k) {
+            FORM.priority = k;
+            renderPriority();
+        }
+
+        /* ===== ជំនួយបំពេញទម្រង់ ===== */
+
+        function onPhoneInput() {
+            const raw = document.getElementById('ticketPhone').value.replace(/\s/g, '');
+            const hint = document.getElementById('phoneMatch');
+            if (raw.length < 6) { hint.classList.add('hidden'); return; }
+
+            const found = getCustomerSupportData().customers
+                .find(c => c.phone.replace(/\s/g, '') === raw);
+            if (found) {
+                hint.textContent = `ត្រូវនឹងអតិថិជន ${found.name} · បញ្ជាទិញ ${found.totalOrders} ដង`;
+                hint.classList.remove('hidden');
+                const nameBox = document.getElementById('ticketCustomer');
+                if (!nameBox.value.trim()) nameBox.value = found.name;
+            } else {
+                hint.classList.add('hidden');
+            }
+        }
+
+        function onInvoiceInput() {
+            const id = document.getElementById('ticketInvoice').value.trim();
+            const hint = document.getElementById('invoiceMatch');
+            if (id.length < 4) { hint.classList.add('hidden'); return; }
+
+            const order = csOrder(id);
+            if (order) {
+                hint.textContent = `${order.customerName} · ${order.date} · ${csMoney(order.grandTotal)}`;
+                hint.className = 'text-[11px] text-emerald-700 mt-1.5';
+                const nameBox = document.getElementById('ticketCustomer');
+                const phoneBox = document.getElementById('ticketPhone');
+                if (!nameBox.value.trim()) nameBox.value = order.customerName;
+                if (!phoneBox.value.trim()) phoneBox.value = order.phone;
+            } else {
+                hint.textContent = 'រកមិនឃើញវិក្កយបត្រនេះក្នុងប្រព័ន្ធ';
+                hint.className = 'text-[11px] text-amber-700 mt-1.5';
+            }
+            hint.classList.remove('hidden');
+        }
+
+        /* ===== រក្សាទុក ===== */
+
+        function submitTicket() {
+            const res = csActions.createTicket({
+                customerName: document.getElementById('ticketCustomer').value,
+                phone: document.getElementById('ticketPhone').value,
+                subject: document.getElementById('ticketSubject').value,
+                relatedInvoice: document.getElementById('ticketInvoice').value,
+                firstMessage: document.getElementById('ticketMessage').value.trim(),
+                internalNotes: document.getElementById('ticketNotes').value,
+                channel: FORM.channel,
+                category: FORM.category,
+                priority: FORM.priority
+            });
+
+            if (!res.ok) { showToast(res.error, 'error'); return; }
+
+            showToast(`បានបង្កើតសំណើ ${res.ticket.id} ដោយជោគជ័យ`, 'success');
+            setTimeout(() => {
+                window.location.href = `view-ticket.html?id=${encodeURIComponent(res.ticket.id)}`;
+            }, 900);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            Object.keys(PICKERS).forEach(renderPicker);
+            renderPriority();
+
+            // បំពេញពីតំណដែលមកពីទំព័រផ្សេង
+            const p = new URLSearchParams(window.location.search);
+            const inv = p.get('invoice');
+            const cust = p.get('customer');
+            const phone = p.get('phone');
+
+            if (inv) { document.getElementById('ticketInvoice').value = inv; onInvoiceInput(); }
+            if (cust) document.getElementById('ticketCustomer').value = cust;
+            if (phone) { document.getElementById('ticketPhone').value = phone; onPhoneInput(); }
+        });
     </script>
 </body>
+
 </html>

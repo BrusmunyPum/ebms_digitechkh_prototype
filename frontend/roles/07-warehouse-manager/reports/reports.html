@@ -50,20 +50,14 @@
                             <button onclick="setDateRange('year')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-800 transition">ឆ្នាំនេះ</button>
                         </div>
 
-                        <select id="reportWhFilter" onchange="refreshCharts()" class="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none">
-                            <option value="all">គ្រប់ឃ្លាំងទាំងអស់</option>
-                            <option value="WH-01">ឃ្លាំងកណ្តាល (ភ្នំពេញ)</option>
-                            <option value="WH-02">ឃ្លាំងសាខាទួលគោក</option>
-                            <option value="WH-03">ឃ្លាំងសាខាសៀមរាប</option>
-                            <option value="WH-04">ឃ្លាំងសាខាបាត់ដំបង</option>
-                        </select>
+                        <div id="reportWhFilter" data-bms-select data-onchange="refreshCharts()" data-options='[{"value": "all", "label": "គ្រប់ឃ្លាំងទាំងអស់"}, {"value": "WH-01", "label": "ឃ្លាំងកណ្តាល (ភ្នំពេញ)"}, {"value": "WH-02", "label": "ឃ្លាំងសាខាទួលគោក"}, {"value": "WH-03", "label": "ឃ្លាំងសាខាសៀមរាប"}, {"value": "WH-04", "label": "ឃ្លាំងសាខាបាត់ដំបង"}]'></div>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
                         <div class="text-xs text-slate-500">
                             អាប់ដេតចុងក្រោយ៖ <span class="font-medium text-slate-700">28 កញ្ញា 2026 · 10:00</span>
                         </div>
-                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
+                        <span class="w-px h-6 bg-slate-200 hidden sm:!block"></span>
                         <div class="flex flex-wrap items-center gap-2 no-print">
                             <button onclick="showToast('បានទាញយករបាយការណ៍ជា PDF រួចរាល់', 'success')" class="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-2 transition cursor-pointer">
                                 <i class="fas fa-file-pdf text-rose-500"></i>

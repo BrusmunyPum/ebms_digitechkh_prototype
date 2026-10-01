@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIGITECHKH - តាមដានស្ថានភាពដឹកជញ្ជូន</title>
+    <title>DIGITECHKH - តាមដានការដឹកជញ្ជូន</title>
     <link rel="icon" type="image/png" href="../../shared/assets/favicon.png">
     <link rel="shortcut icon" type="image/png" href="../../shared/assets/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,6 +30,23 @@
     </script>
     <link rel="stylesheet" href="../../shared/styles/custom.css">
     <link rel="stylesheet" href="../../shared/styles/portal.css">
+    <style>
+        .cs-figure { font-variant-numeric: tabular-nums; }
+
+        /* ក្តារជួរឈរ — ជង់លើគ្នានៅអេក្រង់តូច រៀបជាជួរឈរនៅអេក្រង់ធំ */
+        .cs-board {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: 1fr;
+        }
+        @media (min-width: 1024px) {
+            .cs-board { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        .cs-col-body {
+            max-height: calc(100vh - 360px);
+            overflow-y: auto;
+        }
+    </style>
 </head>
 
 <body id="csPortal" data-active="delivery-status" class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col md:flex-row overflow-x-hidden">
@@ -41,71 +58,39 @@
     <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
 
         <!-- ក្បាលទំព័រ -->
-        <div id="headerHost" data-title="តាមដានស្ថានភាពដឹកជញ្ជូនជាក់ស្តែង"
-             data-subtitle="មើលដំណាក់កាលធ្វើដំណើររបស់កញ្ចប់ និងព័ត៌មានទំនាក់ទំនងអ្នកដឹក"></div>
+        <div id="headerHost" data-title="តាមដានការដឹកជញ្ជូន"
+             data-subtitle="មើលដំណាក់កាលកញ្ចប់ ទាក់ទងអ្នកដឹក និងរាយការណ៍បញ្ហាដឹកជញ្ជូន"></div>
 
         <!-- មាតិកាខាងក្នុង -->
-        <main class="p-4 sm:p-6 space-y-6 flex-1">
-            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
-            <div class="w-full flex flex-wrap items-center justify-end gap-2 no-print">
+        <main class="p-4 sm:p-6 space-y-5 flex-1 w-full">
+
+            <!-- របារត្រង -->
+            <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
                 <div class="flex flex-wrap items-center gap-2">
-                    <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-sky-50 border border-sky-200 text-sky-800 text-xs font-semibold">
-                        <span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
-                        <span>ប្រព័ន្ធតាមដានអ្នកដឹក: សកម្ម</span>
+                    <div id="rangeTabs" class="flex items-center gap-1 p-1 rounded-xl bg-slate-100"></div>
+                    <div id="driverHost" class="relative w-full sm:w-56"></div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="relative flex-1 xl:w-72">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="deliverySearch" oninput="renderBoard()" placeholder="ស្វែងរកលេខកញ្ចប់ វិក្កយបត្រ ឬអតិថិជន..."
+                            class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs placeholder-slate-400 focus:outline-none focus:border-sky-500">
                     </div>
                 </div>
-            </div>
+            </section>
 
+            <!-- ផ្លាកសង្ខេប -->
+            <section id="summaryBadges" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></section>
 
-            <!-- កាតសង្ខេប -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-slate-500 font-medium">កញ្ចប់កំពុងធ្វើដំណើរលើផ្លូវ</p>
-                        <h3 class="text-2xl font-bold text-sky-600 mt-1" id="inTransitCount">2</h3>
-                        <p class="text-[11px] text-slate-400 mt-0.5">ភ្នំពេញ និងខេត្ត</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl">
-                        <i class="fas fa-truck-moving"></i>
-                    </div>
-                </div>
+            <!-- ក្តារតាមដាន -->
+            <section id="board" class="cs-board"></section>
 
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-slate-500 font-medium">បានប្រគល់ជូនជោគជ័យ</p>
-                        <h3 class="text-2xl font-bold text-emerald-600 mt-1" id="deliveredCount">1</h3>
-                        <p class="text-[11px] text-slate-400 mt-0.5">ក្នុងរយៈពេល 24 ម៉ោងចុងក្រោយ</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
-                        <i class="fas fa-house-circle-check"></i>
-                    </div>
-                </div>
-
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-slate-500 font-medium">អ្នកដឹកជញ្ជូនកំពុងបំពេញការងារ</p>
-                        <h3 class="text-2xl font-bold text-indigo-600 mt-1">3 នាក់</h3>
-                        <p class="text-[11px] text-slate-400 mt-0.5">រថយន្ត 2 + ម៉ូតូ 1</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
-                        <i class="fas fa-motorcycle"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- បញ្ជីកញ្ចប់ដឹកជញ្ជូន (Tracking Cards with Stepper) -->
-            <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                        <i class="fas fa-route text-sky-600"></i>
-                        <span>ដំណើរការដឹកជញ្ជូនជាក់ស្តែងតាមកញ្ចប់នីមួយៗ</span>
-                    </h3>
-                </div>
-
-                <div id="deliveriesContainer" class="space-y-4">
-                    <!-- Dynamic Delivery Stepper Cards -->
-                </div>
-            </div>
+            <!-- កន្លែងរង់ចាំផែនទីតាមដាន -->
+            <section class="rounded-2xl border-2 border-dashed border-slate-300 bg-white/60 p-8 flex flex-col items-center justify-center text-center" style="min-height: 180px;">
+                <i class="fas fa-map-location-dot text-3xl text-slate-300 mb-3"></i>
+                <p class="text-sm font-medium text-slate-500">ផែនទីតាមដានការដឹកជញ្ជូន</p>
+                <p class="text-xs text-slate-400 mt-1">នឹងមានក្នុងកំណែបន្ទាប់</p>
+            </section>
 
         </main>
     </div>
@@ -115,132 +100,419 @@
     <script src="data.js"></script>
     <script src="../../shared/scripts/portal.js"></script>
     <script>
-        function updateDeliveryCounts() {
-            const data = getCustomerSupportData();
-            const inTransit = data.deliveries.filter(d => d.currentStage < 4).length;
-            const delivered = data.deliveries.filter(d => d.currentStage === 4).length;
+        let currentRange = 'today';
+        let currentDriver = '';
 
-            document.getElementById('inTransitCount').textContent = inTransit;
-            document.getElementById('deliveredCount').textContent = delivered;
-        }
+        /* ===== របារត្រង ===== */
 
-        function renderDeliveries() {
-            const data = getCustomerSupportData();
-            const container = document.getElementById('deliveriesContainer');
-            if (!container) return;
-
-            container.innerHTML = data.deliveries.map(del => {
-                const stages = [
-                    { num: 1, label: 'បានវេចខ្ចប់' },
-                    { num: 2, label: 'ចេញពីឃ្លាំង' },
-                    { num: 3, label: 'កំពុងធ្វើដំណើរ' },
-                    { num: 4, label: 'បានប្រគល់ជូន' }
-                ];
-
-                const stepperHtml = stages.map((s, idx) => {
-                    const isDone = del.currentStage >= s.num;
-                    const isCurrent = del.currentStage === s.num;
-                    return `
-                        <div class="flex-1 flex flex-col items-center relative ${idx < stages.length - 1 ? 'after:content-[\'\'] after:absolute after:top-4 after:left-1/2 after:w-full after:h-0.5 ' + (del.currentStage > s.num ? 'after:bg-emerald-500' : 'after:bg-slate-200') : ''}">
-                            <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs z-10 transition shadow-sm ${
-                                isDone ? (isCurrent ? 'bg-sky-600 text-white ring-4 ring-sky-100' : 'bg-emerald-500 text-white') : 'bg-slate-100 text-slate-400 border border-slate-200'
-                            }">
-                                ${isDone && !isCurrent ? '<i class="fas fa-check"></i>' : s.num}
-                            </div>
-                            <span class="text-[11px] font-semibold mt-2 text-center ${isCurrent ? 'text-sky-700 font-bold' : (isDone ? 'text-slate-700' : 'text-slate-400')}">
-                                ${s.label}
-                            </span>
-                        </div>
-                    `;
-                }).join('');
-
-                return `
-                    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-6 hover:border-slate-300 transition">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
-                            <div class="flex items-center gap-3">
-                                <div class="w-12 h-12 rounded-2xl ${del.currentStage === 4 ? 'bg-emerald-50 text-emerald-600' : 'bg-sky-50 text-sky-600'} flex items-center justify-center font-bold text-lg">
-                                    <i class="fas ${del.currentStage === 4 ? 'fa-box-check' : 'fa-truck-fast'}"></i>
-                                </div>
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <h3 class="text-base font-bold text-slate-800">${del.trackingCode}</h3>
-                                        <span class="font-mono text-xs text-sky-700 font-semibold">(${del.invoiceId})</span>
-                                        ${del.currentStage === 4 ? 
-                                            '<span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold">ជោគជ័យ</span>' : 
-                                            '<span class="px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-700 text-xs font-semibold animate-pulse">កំពុងដឹក</span>'}
-                                    </div>
-                                    <p class="text-xs text-slate-500 mt-0.5">
-                                        <i class="fas fa-user mr-1 text-slate-400"></i> ${del.customerName} (${del.phone}) &bull; <i class="fas fa-location-dot ml-1 mr-1 text-slate-400"></i> ${del.destination}
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2 self-end sm:self-center">
-                                <a href="tel:${del.driverPhone}" class="px-3.5 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer">
-                                    <i class="fas fa-phone"></i> ខលអ្នកដឹក
-                                </a>
-                                ${del.currentStage < 4 ? `
-                                    <button onclick="advanceDeliveryStage('${del.trackingCode}')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
-                                        <i class="fas fa-forward-step"></i> បន្ទាប់
-                                    </button>
-                                ` : ''}
-                            </div>
-                        </div>
-
-                        <!-- Stepper Progress Bar -->
-                        <div class="py-2 px-4 bg-slate-50/60 rounded-2xl border border-slate-100">
-                            <div class="flex items-center justify-between w-full">
-                                ${stepperHtml}
-                            </div>
-                        </div>
-
-                        <!-- Driver Info and Last Updates -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-sm">
-                                    <i class="fas fa-id-badge"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-slate-800">${del.driverName} (${del.driverPhone})</p>
-                                    <p class="text-slate-500 mt-0.5"><i class="fas fa-truck-pickup mr-1 text-slate-400"></i> ${del.vehicle}</p>
-                                </div>
-                            </div>
-
-                            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
-                                <div>
-                                    <p class="text-slate-500 font-medium">បច្ចុប្បន្នភាពចុងក្រោយ:</p>
-                                    <p class="font-semibold text-slate-800 mt-0.5">${del.lastUpdated}</p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-slate-500 font-medium">ម៉ោងរំពឹងមកដល់:</p>
-                                    <p class="font-bold text-emerald-700 mt-0.5">${del.estimatedArrival}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
+        function renderRangeTabs() {
+            const tabs = [
+                { id: 'today', label: 'ថ្ងៃនេះ' },
+                { id: 'week', label: 'សប្តាហ៍នេះ' }
+            ];
+            document.getElementById('rangeTabs').innerHTML = tabs.map(t => {
+                const on = t.id === currentRange;
+                return `<button onclick="setRange('${t.id}')" type="button"
+                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition whitespace-nowrap ${
+                        on ? 'bg-white text-sky-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}">
+                    ${t.label}</button>`;
             }).join('');
         }
 
-        function advanceDeliveryStage(trackingCode) {
-            const data = getCustomerSupportData();
-            const del = data.deliveries.find(d => d.trackingCode === trackingCode);
-            if (del && del.currentStage < 4) {
-                del.currentStage += 1;
-                if (del.currentStage === 4) {
-                    del.estimatedArrival = 'បានប្រគល់រួចរាល់';
-                    del.lastUpdated = 'ទើបតែប្រគល់ជូនអតិថិជន';
-                } else if (del.currentStage === 3) {
-                    del.lastUpdated = 'កំពុងធ្វើដំណើរជិតដល់ទីតាំងអតិថិជន';
-                }
-                saveCustomerSupportData(data);
-                showToast(`បានកែសម្រួលដំណាក់កាលកញ្ចប់ ${trackingCode} ទៅជា «${del.stageLabels[del.currentStage - 1]}»`, 'success');
-                updateDeliveryCounts();
-                renderDeliveries();
-            }
+        function setRange(id) {
+            currentRange = id;
+            renderRangeTabs();
+            renderBoard();
         }
 
+        function renderDriverPicker() {
+            const drivers = csDrivers();
+            const active = currentDriver || 'អ្នកដឹកទាំងអស់';
+            document.getElementById('driverHost').innerHTML = `
+                <button onclick="toggleRowActionMenu(event, 'driverMenu')" type="button"
+                    class="w-full flex items-center justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 hover:bg-slate-100 transition text-left">
+                    <span class="text-xs font-medium text-slate-700 truncate">
+                        <i class="fas fa-id-badge mr-1.5 text-slate-400"></i>${active}
+                    </span>
+                    <i class="fas fa-chevron-down text-[10px] text-slate-400 flex-shrink-0"></i>
+                </button>
+                <div id="driverMenu" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 text-left">
+                    <div class="px-3 py-2 mb-1 rounded-xl bg-slate-50 border border-slate-100">
+                        <p class="text-[11px] text-slate-400 font-medium">ត្រងតាមអ្នកដឹកជញ្ជូន</p>
+                    </div>
+                    <button onclick="pickDriver('')" type="button"
+                        class="w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition text-left text-xs">
+                        <span>អ្នកដឹកទាំងអស់</span>
+                        ${currentDriver === '' ? '<i class="fas fa-check text-[11px] text-emerald-600"></i>' : ''}
+                    </button>
+                    ${drivers.map(d => `
+                        <button onclick="pickDriver('${d.name}')" type="button"
+                            class="w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition text-left text-xs">
+                            <span class="min-w-0 truncate">${d.name} <span class="text-slate-400 cs-figure">${d.phone}</span></span>
+                            ${currentDriver === d.name ? '<i class="fas fa-check text-[11px] text-emerald-600"></i>' : ''}
+                        </button>`).join('')}
+                </div>`;
+        }
+
+        function pickDriver(name) {
+            currentDriver = name;
+            closeAllFloatingDropdowns();
+            renderDriverPicker();
+            renderBoard();
+        }
+
+        /* ===== ការត្រងទិន្នន័យ ===== */
+
+        /**
+         * «ថ្ងៃនេះ» មានន័យថាថ្ងៃប្រតិទិននេះ មិនមែន 24 ម៉ោងចុងក្រោយទេ
+         * ព្រោះអ្នកប្រើចុចពាក្យនេះដើម្បីមើលការងារថ្ងៃនេះ មិនមែនការងារម្សិលមិញរសៀលឡើយ
+         */
+        function inRange(d) {
+            const stamp = new Date(d.dispatchedAt || d.lastUpdated).getTime();
+            const start = new Date();
+            start.setHours(0, 0, 0, 0);
+            if (currentRange === 'today') return stamp >= start.getTime();
+            start.setDate(start.getDate() - 6);
+            return stamp >= start.getTime();
+        }
+
+        function visibleDeliveries() {
+            const q = (document.getElementById('deliverySearch')?.value || '').trim().toLowerCase();
+            return csDeliveries().filter(d => {
+                if (!inRange(d)) return false;
+                if (currentDriver && d.driverName !== currentDriver) return false;
+                if (!q) return true;
+                return d.trackingCode.toLowerCase().includes(q) ||
+                    d.invoiceId.toLowerCase().includes(q) ||
+                    d.customerName.toLowerCase().includes(q) ||
+                    d.phone.replace(/\s/g, '').includes(q.replace(/\s/g, ''));
+            });
+        }
+
+        /* ===== ផ្លាកសង្ខេប ===== */
+
+        function renderSummary() {
+            const list = visibleDeliveries();
+            const n = s => list.filter(d => d.status === s).length;
+            const cards = [
+                { key: 'preparing', count: n('preparing') },
+                { key: 'out', count: n('out') },
+                { key: 'delivered', count: n('delivered') },
+                { key: 'failed', count: n('failed') }
+            ];
+            document.getElementById('summaryBadges').innerHTML = cards.map(c => {
+                const m = CS_DELIVERY_STATUS[c.key];
+                return `
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3">
+                    <span class="w-10 h-10 rounded-xl bg-${m.tone}-50 text-${m.tone}-600 flex items-center justify-center flex-shrink-0">
+                        <i class="fas ${m.icon}"></i>
+                    </span>
+                    <span class="min-w-0">
+                        <span class="block text-xl font-semibold text-slate-800 cs-figure">${c.count}</span>
+                        <span class="block text-[11px] text-slate-500 truncate">${m.label}</span>
+                    </span>
+                </div>`;
+            }).join('');
+        }
+
+        /* ===== កាតកញ្ចប់ដឹកជញ្ជូន ===== */
+
+        function deliveryCard(d) {
+            const m = CS_DELIVERY_STATUS[d.status];
+            const tel = d.driverPhone.replace(/\s/g, '');
+
+            // កាតដែលប្រគល់រួចបង្ហាញបែបសង្ខេប ព្រោះគ្មានសកម្មភាពអ្វីត្រូវធ្វើទៀតទេ
+            if (d.status === 'delivered') {
+                return `
+                    <div class="bg-white rounded-xl border border-slate-200 p-3.5">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs font-semibold text-slate-700 cs-figure">${d.trackingCode}</span>
+                            <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-semibold">
+                                <i class="fas fa-check mr-1"></i>${m.label}
+                            </span>
+                        </div>
+                        <p class="text-xs font-medium text-slate-700 mt-1.5 truncate">${d.customerName}</p>
+                        <p class="text-[11px] text-slate-500 mt-1 cs-figure">
+                            ប្រគល់ជូន ${csFmtTime(d.deliveredAt)} ដោយ ${d.driverName}
+                        </p>
+                    </div>`;
+            }
+
+            const actions = [];
+            actions.push(`
+                <a href="tel:${tel}" aria-label="ខលទៅអ្នកដឹក ${d.driverName}"
+                   class="flex-1 px-2.5 py-2 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 text-[11px] font-semibold transition flex items-center justify-center gap-1.5">
+                    <i class="fas fa-phone text-[10px]"></i> ខលអ្នកដឹក
+                </a>`);
+
+            if (d.status === 'out') {
+                actions.push(`
+                    <button onclick="markFailed('${d.trackingCode}')" type="button"
+                        class="flex-1 px-2.5 py-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-[11px] font-semibold transition flex items-center justify-center gap-1.5">
+                        <i class="fas fa-triangle-exclamation text-[10px]"></i> រាយការណ៍បញ្ហា
+                    </button>`);
+            }
+
+            if (d.status === 'failed') {
+                actions.push(`
+                    <button onclick="reschedule('${d.trackingCode}')" type="button"
+                        class="flex-1 px-2.5 py-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-[11px] font-semibold transition flex items-center justify-center gap-1.5">
+                        <i class="fas fa-calendar-day text-[10px]"></i> ដឹកជញ្ជូនឡើងវិញ
+                    </button>`);
+            }
+
+            return `
+                <div class="bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-sm transition p-3.5 space-y-2.5">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-xs font-semibold text-slate-700 cs-figure">${d.trackingCode}</span>
+                        <a href="orders-lookup.html?query=${encodeURIComponent(d.invoiceId)}"
+                           class="px-2 py-0.5 rounded-lg bg-slate-50 border border-slate-200 text-[10px] font-semibold text-sky-700 hover:bg-sky-50 transition cs-figure">
+                            ${d.invoiceId}
+                        </a>
+                    </div>
+
+                    <div>
+                        <p class="text-xs font-medium text-slate-700 truncate">${d.customerName}</p>
+                        <p class="text-[11px] text-slate-500 mt-0.5">
+                            <i class="fas fa-location-dot mr-1 text-slate-400"></i>${d.district}, ${d.province}
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500 pt-2 border-t border-slate-100">
+                        <span><i class="fas fa-id-badge mr-1 text-slate-400"></i>${d.driverName}</span>
+                        <span class="cs-figure">${d.driverPhone}</span>
+                        <span class="cs-figure"><i class="fas fa-boxes-stacked mr-1 text-slate-400"></i>${d.itemsCount} មុខ</span>
+                    </div>
+
+                    ${d.status === 'out' ? `
+                        <div class="flex items-center justify-between gap-2 text-[11px] px-2.5 py-1.5 rounded-lg bg-sky-50 text-sky-800">
+                            <span class="cs-figure"><i class="fas fa-truck-fast mr-1"></i>ចេញ ${csFmtTime(d.dispatchedAt)}</span>
+                            <span class="cs-figure">រំពឹងដល់ ${csFmtTime(d.estimatedArrival)}</span>
+                        </div>` : ''}
+
+                    ${d.status === 'preparing' ? `
+                        <div class="text-[11px] px-2.5 py-1.5 rounded-lg bg-slate-50 text-slate-600 cs-figure">
+                            <i class="fas fa-box-open mr-1"></i>រំពឹងចេញដំណើរ ${csFmtTime(d.estimatedArrival)}
+                        </div>` : ''}
+
+                    ${d.status === 'failed' ? `
+                        <div class="text-[11px] px-2.5 py-1.5 rounded-lg bg-rose-50 text-rose-800">
+                            <i class="fas fa-circle-exclamation mr-1"></i>${d.failureReason}
+                            ${d.note ? `<span class="block text-rose-700/80 mt-0.5">${d.note}</span>` : ''}
+                            ${d.rescheduledDate ? `<span class="block font-semibold mt-1 cs-figure">គ្រោងដឹកវិញ ${d.rescheduledDate}</span>` : ''}
+                        </div>` : ''}
+
+                    <div class="flex items-center gap-2">${actions.join('')}</div>
+                </div>`;
+        }
+
+        function column(cfg, items) {
+            return `
+                <div class="rounded-2xl border border-slate-200 ${cfg.bg} flex flex-col overflow-hidden">
+                    <div class="px-4 py-3 border-b border-slate-200 bg-white/70 flex items-center justify-between gap-2 flex-shrink-0">
+                        <h3 class="text-xs font-semibold text-slate-700 flex items-center gap-2">
+                            <i class="fas ${cfg.icon} text-${cfg.tone}-600"></i>${cfg.label}
+                        </h3>
+                        <span class="px-2 py-0.5 rounded-full bg-${cfg.tone}-100 text-${cfg.tone}-700 text-[11px] font-semibold cs-figure">${items.length}</span>
+                    </div>
+                    <div class="cs-col-body p-3 space-y-3">
+                        ${items.length
+                            ? items.map(deliveryCard).join('')
+                            : `<p class="text-center text-[11px] text-slate-400 py-8">គ្មានកញ្ចប់ក្នុងជួរនេះ</p>`}
+                    </div>
+                </div>`;
+        }
+
+        function renderBoard() {
+            renderSummary();
+            const list = visibleDeliveries();
+            const by = s => list.filter(d => d.status === s);
+
+            const preparing = by('preparing');
+            const out = by('out');
+            const failed = by('failed');
+            const delivered = by('delivered');
+
+            // ជួរទី 3 ផ្សំរវាងកញ្ចប់បរាជ័យ (ត្រូវការសកម្មភាព) និងកញ្ចប់ប្រគល់រួច
+            const finished = failed.concat(delivered);
+
+            document.getElementById('board').innerHTML =
+                column({ label: 'កំពុងរៀបចំវេចខ្ចប់', icon: 'fa-box-open', tone: 'slate', bg: 'bg-slate-50' }, preparing) +
+                column({ label: 'កំពុងដឹកជញ្ជូន', icon: 'fa-truck-fast', tone: 'sky', bg: 'bg-sky-50/50' }, out) +
+                column({ label: 'បញ្ចប់ និងមានបញ្ហា', icon: 'fa-flag-checkered', tone: 'emerald', bg: 'bg-emerald-50/40' }, finished);
+        }
+
+        /* ===== សកម្មភាព ===== */
+
+        /**
+         * ប្រអប់បញ្ជាក់ផ្ទាល់ខ្លួន — មួយជំហានតែប៉ុណ្ណោះ
+         * មូលហេតុជាកាតព្វកិច្ច ហើយកំណត់ចំណាំមិនចាំបាច់
+         * មិនប្រើធាតុជ្រើសរើសដើម ឬប្រអប់បញ្ជាក់ដើមរបស់កម្មវិធីរុករកឡើយ
+         */
+        function failurePrompt(d) {
+            return new Promise(resolve => {
+                let picked = '';
+                const host = document.createElement('div');
+                host.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9998] flex items-center justify-center p-4';
+                host.innerHTML = `
+                    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden">
+                        <div class="px-5 py-4 border-b border-slate-100">
+                            <h3 class="text-sm font-semibold text-slate-800">រាយការណ៍ការដឹកមិនជោគជ័យ</h3>
+                            <p class="text-[11px] text-slate-500 mt-0.5 cs-figure">${d.trackingCode} · ${d.customerName} · ${d.district}</p>
+                        </div>
+                        <div class="p-5 space-y-4 max-h-[60vh] overflow-y-auto">
+                            <div>
+                                <p class="text-xs font-medium text-slate-600 mb-2">មូលហេតុ <span class="text-rose-500">*</span></p>
+                                <div class="space-y-1.5">
+                                    ${CS_FAILURE_REASONS.map((r, i) => `
+                                        <button data-reason="${i}" type="button"
+                                            class="cs-reason w-full text-left px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs text-slate-700 hover:bg-sky-50 hover:border-sky-300 transition flex items-center justify-between gap-2">
+                                            <span>${r}</span>
+                                            <i class="fas fa-check text-[11px] text-emerald-600 opacity-0"></i>
+                                        </button>`).join('')}
+                                </div>
+                                <p data-error class="hidden text-[11px] text-rose-600 mt-1.5">សូមជ្រើសរើសមូលហេតុជាមុនសិន</p>
+                            </div>
+                            <div>
+                                <label for="csFailNote" class="block text-xs font-medium text-slate-600 mb-1.5">កំណត់ចំណាំបន្ថែម</label>
+                                <textarea id="csFailNote" rows="2" placeholder="ឧ. ខលទូរស័ព្ទ 3 ដងមិនទទួល..."
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs placeholder-slate-400 focus:outline-none focus:border-sky-500 resize-none"></textarea>
+                            </div>
+                            <p class="text-[11px] text-slate-400 leading-relaxed">
+                                <i class="fas fa-circle-info mr-1"></i>សកម្មភាពនេះប្តូរតែស្ថានភាពដឹកជញ្ជូន និងជូនដំណឹងទៅឃ្លាំងប៉ុណ្ណោះ
+                                មិនប៉ះពាល់កំណត់ត្រាហិរញ្ញវត្ថុឡើយ។
+                            </p>
+                        </div>
+                        <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2.5">
+                            <button data-cancel type="button" class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-medium transition">បោះបង់</button>
+                            <button data-ok type="button" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition">បញ្ជាក់</button>
+                        </div>
+                    </div>`;
+
+                const done = v => { host.remove(); resolve(v); };
+                const err = host.querySelector('[data-error]');
+
+                host.querySelectorAll('.cs-reason').forEach(b => {
+                    b.addEventListener('click', () => {
+                        picked = CS_FAILURE_REASONS[Number(b.dataset.reason)];
+                        err.classList.add('hidden');
+                        host.querySelectorAll('.cs-reason').forEach(o => {
+                            const on = o === b;
+                            o.className = `cs-reason w-full text-left px-3 py-2.5 rounded-xl border text-xs transition flex items-center justify-between gap-2 ${
+                                on ? 'border-sky-400 bg-sky-50 text-sky-800' : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-sky-50 hover:border-sky-300'}`;
+                            o.querySelector('i').style.opacity = on ? '1' : '0';
+                        });
+                    });
+                });
+
+                host.querySelector('[data-ok]').addEventListener('click', () => {
+                    if (!picked) { err.classList.remove('hidden'); return; }
+                    done({ reason: picked, note: host.querySelector('#csFailNote').value.trim() });
+                });
+                host.querySelector('[data-cancel]').addEventListener('click', () => done(null));
+                host.addEventListener('click', e => { if (e.target === host) done(null); });
+                document.body.appendChild(host);
+            });
+        }
+
+        async function markFailed(code) {
+            const d = csDelivery(code);
+            if (!d) return;
+
+            const out = await failurePrompt(d);
+            if (!out) return;
+
+            const res = csActions.markFailed(code, out.reason, out.note);
+            if (!res.ok) { showToast(res.error, 'error'); return; }
+            showToast(`បានរាយការណ៍ថាកញ្ចប់ ${code} ដឹកមិនជោគជ័យ និងបានជូនដំណឹងទៅឃ្លាំង`, 'success');
+            renderBoard();
+        }
+
+        /** ប្រអប់គ្រោងដឹកជញ្ជូនឡើងវិញ — ប្រើប្រអប់កាលបរិច្ឆេទ មិនមែនប្រអប់អក្សរទេ */
+        function reschedulePrompt(d) {
+            return new Promise(resolve => {
+                const tomorrow = new Date(Date.now() + 24 * 60 * 60000);
+                const p = n => String(n).padStart(2, '0');
+                const def = `${tomorrow.getFullYear()}-${p(tomorrow.getMonth() + 1)}-${p(tomorrow.getDate())}`;
+                const min = csFmtDate(new Date().toISOString());
+
+                const host = document.createElement('div');
+                host.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9998] flex items-center justify-center p-4';
+                host.innerHTML = `
+                    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden">
+                        <div class="px-5 py-4 border-b border-slate-100">
+                            <h3 class="text-sm font-semibold text-slate-800">គ្រោងដឹកជញ្ជូនឡើងវិញ</h3>
+                            <p class="text-[11px] text-slate-500 mt-0.5 cs-figure">${d.trackingCode} · ${d.customerName}</p>
+                        </div>
+                        <div class="p-5 space-y-4">
+                            <div>
+                                <label for="csReDate" class="block text-xs font-medium text-slate-600 mb-1.5">ថ្ងៃដឹកជញ្ជូនថ្មី <span class="text-rose-500">*</span></label>
+                                <input type="date" id="csReDate" value="${def}" min="${min}"
+                                    class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-sky-500 cs-figure">
+                                <p data-error class="hidden text-[11px] text-rose-600 mt-1.5">សូមជ្រើសរើសថ្ងៃដឹកជញ្ជូនថ្មី</p>
+                            </div>
+                            <div>
+                                <label for="csReNote" class="block text-xs font-medium text-slate-600 mb-1.5">កំណត់ចំណាំ</label>
+                                <textarea id="csReNote" rows="2" placeholder="ឧ. អតិថិជនស្នើឲ្យដឹកនៅពេលរសៀល..."
+                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs placeholder-slate-400 focus:outline-none focus:border-sky-500 resize-none">${d.note || ''}</textarea>
+                            </div>
+                            <p class="text-[11px] text-slate-400 leading-relaxed">
+                                <i class="fas fa-circle-info mr-1"></i>ការកត់ត្រានេះមិនចាត់តាំងអ្នកដឹកថ្មី
+                                ហើយមិនបង្កើតបញ្ជាដឹកជញ្ជូនថ្មីទេ — ជាការងាររបស់ផ្នែកឃ្លាំង។
+                            </p>
+                        </div>
+                        <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2.5">
+                            <button data-cancel type="button" class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-medium transition">បោះបង់</button>
+                            <button data-ok type="button" class="px-4 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-semibold transition">រក្សាទុក</button>
+                        </div>
+                    </div>`;
+
+                const done = v => { host.remove(); resolve(v); };
+                host.querySelector('[data-ok]').addEventListener('click', () => {
+                    const when = host.querySelector('#csReDate').value;
+                    if (!when) { host.querySelector('[data-error]').classList.remove('hidden'); return; }
+                    done({ when, note: host.querySelector('#csReNote').value.trim() });
+                });
+                host.querySelector('[data-cancel]').addEventListener('click', () => done(null));
+                host.addEventListener('click', e => { if (e.target === host) done(null); });
+                document.body.appendChild(host);
+            });
+        }
+
+        async function reschedule(code) {
+            const d = csDelivery(code);
+            if (!d) return;
+
+            const out = await reschedulePrompt(d);
+            if (!out) return;
+
+            const res = csActions.reschedule(code, out.when, out.note);
+            if (!res.ok) { showToast(res.error, 'error'); return; }
+            showToast(`បានកត់ត្រាថ្ងៃដឹកជញ្ជូនឡើងវិញសម្រាប់កញ្ចប់ ${code}`, 'success');
+            renderBoard();
+        }
+
+        /* ===== ដំណើរការទំព័រ ===== */
+
+        function render() {
+            renderRangeTabs();
+            renderDriverPicker();
+            renderBoard();
+        }
+
+        // ធ្វើបច្ចុប្បន្នភាពរៀងរាល់ 2 នាទី ដើម្បីទទួលព័ត៌មានថ្មីពីអ្នកដឹក
+        setInterval(() => {
+            const typing = ['INPUT', 'TEXTAREA'].includes((document.activeElement?.tagName || '').toUpperCase());
+            if (!typing) renderBoard();
+        }, 120000);
+
+        window.onStoreChanged = renderBoard;
+
         document.addEventListener('DOMContentLoaded', () => {
-            updateDeliveryCounts();
-            renderDeliveries();
+            // ទទួលការត្រងពីតំណនៅផ្ទាំងសេវាកម្ម
+            const status = new URLSearchParams(window.location.search).get('status');
+            if (status === 'failed') currentRange = 'week';
+            render();
         });
     </script>
 </body>

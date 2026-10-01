@@ -54,13 +54,13 @@
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
                         <div id="dateFilterHost" class="flex items-center"></div>
-                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
+                        <span class="w-px h-6 bg-slate-200 hidden sm:!block"></span>
                         <div class="flex flex-wrap items-center gap-2 no-print">
-                            <a href="purchase-orders/purchase-orders.html" class="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 font-medium text-xs transition">
+                            <a href="purchase-orders/purchase-orders.html" class="hidden sm:!inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 font-medium text-xs transition">
                                 <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
                                 <span>រង់ចាំទទួលទំនិញ: 4</span>
                             </a>
-                            <a href="vendor-bills/vendor-bills.html" class="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-medium text-xs transition">
+                            <a href="vendor-bills/vendor-bills.html" class="hidden sm:!inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-medium text-xs transition">
                                 <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
                                 <span>ត្រូវផ្ទៀងផ្ទាត់: 3</span>
                             </a>
@@ -257,7 +257,7 @@
             if (!host) return;
             host.innerHTML = `
                 <div class="flex items-center gap-2">
-                    <span class="text-xs text-slate-400 hidden sm:inline">កាលបរិច្ឆេទ:</span>
+                    <span class="text-xs text-slate-400 hidden sm:!inline">កាលបរិច្ឆេទ:</span>
                     <button type="button" class="h-9 px-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs rounded-xl flex items-center gap-2 shadow-sm transition-all focus:outline-none cursor-pointer">
                         <i class="fas fa-calendar-days text-primary text-xs"></i>
                         <span class="font-medium text-slate-800">ខែនេះ (1 កញ្ញា - 30 កញ្ញា)</span>

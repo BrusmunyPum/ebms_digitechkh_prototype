@@ -63,18 +63,11 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-medium text-slate-600 mb-1.5">ឃ្លាំងដែលត្រូវកែតម្រូវ <span class="text-rose-500">*</span></label>
-                                    <select id="adjWh" onchange="onAdjustmentProductChange()" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400">
-                                        <option value="WH-01">ឃ្លាំងកណ្តាល (ភ្នំពេញ)</option>
-                                        <option value="WH-02">ឃ្លាំងសាខាទួលគោក</option>
-                                        <option value="WH-03">ឃ្លាំងសាខាសៀមរាប</option>
-                                        <option value="WH-04">ឃ្លាំងសាខាបាត់ដំបង</option>
-                                    </select>
+                                    <div id="adjWh" data-bms-select class="w-full" data-onchange="onAdjustmentProductChange()" data-options='[{"value": "WH-01", "label": "ឃ្លាំងកណ្តាល (ភ្នំពេញ)"}, {"value": "WH-02", "label": "ឃ្លាំងសាខាទួលគោក"}, {"value": "WH-03", "label": "ឃ្លាំងសាខាសៀមរាប"}, {"value": "WH-04", "label": "ឃ្លាំងសាខាបាត់ដំបង"}]'></div>
                                 </div>
                                 <div>
                                     <label class="block text-xs font-medium text-slate-600 mb-1.5">ជ្រើសរើសមុខទំនិញ (SKU) <span class="text-rose-500">*</span></label>
-                                    <select id="adjSku" onchange="onAdjustmentProductChange()" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400">
-                                        <!-- Rendered by JS -->
-                                    </select>
+                                    <div id="adjSku" data-bms-select data-placeholder="ជ្រើសរើសមុខទំនិញ..." data-onchange="onAdjustmentProductChange()"></div>
                                 </div>
                             </div>
 
@@ -96,13 +89,7 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-medium text-slate-600 mb-1.5">ប្រភេទមូលហេតុ <span class="text-rose-500">*</span></label>
-                                    <select id="adjReason" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400">
-                                        <option value="damaged">ខូចខាតពេលលើកដាក់ / ដឹកជញ្ជូន</option>
-                                        <option value="count_error">កំហុសរាប់ស្តុកជុំមុន</option>
-                                        <option value="expired">ផុតកំណត់កាលបរិច្ឆេទប្រើប្រាស់</option>
-                                        <option value="sample_loss">ដកជាគំរូតាំងបង្ហាញអតិថិជន</option>
-                                        <option value="other">មូលហេតុផ្សេងៗ</option>
-                                    </select>
+                                    <div id="adjReason" data-bms-select class="w-full" data-options='[{"value": "damaged", "label": "ខូចខាតពេលលើកដាក់ / ដឹកជញ្ជូន"}, {"value": "count_error", "label": "កំហុសរាប់ស្តុកជុំមុន"}, {"value": "expired", "label": "ផុតកំណត់កាលបរិច្ឆេទប្រើប្រាស់"}, {"value": "sample_loss", "label": "ដកជាគំរូតាំងបង្ហាញអតិថិជន"}, {"value": "other", "label": "មូលហេតុផ្សេងៗ"}]'></div>
                                 </div>
                                 <div>
                                     <label class="block text-xs font-medium text-slate-600 mb-1.5">អ្នករាយការណ៍</label>
@@ -164,8 +151,9 @@
 
         function initSkuOptions() {
             const products = getProducts();
-            const sel = document.getElementById('adjSku');
-            sel.innerHTML = products.map(p => `<option value="${p.sku}">${p.sku} - ${p.name}</option>`).join('');
+            bmsSetSelectOptions('adjSku',
+                products.map(p => ({ value: p.sku, label: `${p.sku} - ${p.name}` })),
+                'ជ្រើសរើសមុខទំនិញ...');
             onAdjustmentProductChange();
         }
 

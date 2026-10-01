@@ -64,21 +64,11 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-medium text-slate-600 mb-1.5">ពីឃ្លាំងដើម (From) <span class="text-rose-500">*</span></label>
-                                    <select id="fromWh" onchange="onWarehouseChange()" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400">
-                                        <option value="WH-01">ឃ្លាំងកណ្តាល (ភ្នំពេញ)</option>
-                                        <option value="WH-02">ឃ្លាំងសាខាទួលគោក</option>
-                                        <option value="WH-03">ឃ្លាំងសាខាសៀមរាប</option>
-                                        <option value="WH-04">ឃ្លាំងសាខាបាត់ដំបង</option>
-                                    </select>
+                                    <div id="fromWh" data-bms-select class="w-full" data-onchange="onWarehouseChange()" data-options='[{"value": "WH-01", "label": "ឃ្លាំងកណ្តាល (ភ្នំពេញ)"}, {"value": "WH-02", "label": "ឃ្លាំងសាខាទួលគោក"}, {"value": "WH-03", "label": "ឃ្លាំងសាខាសៀមរាប"}, {"value": "WH-04", "label": "ឃ្លាំងសាខាបាត់ដំបង"}]'></div>
                                 </div>
                                 <div>
                                     <label class="block text-xs font-medium text-slate-600 mb-1.5">ទៅកាន់ឃ្លាំងគោលដៅ (To) <span class="text-rose-500">*</span></label>
-                                    <select id="toWh" onchange="onWarehouseChange()" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400">
-                                        <option value="WH-02" selected>ឃ្លាំងសាខាទួលគោក</option>
-                                        <option value="WH-01">ឃ្លាំងកណ្តាល (ភ្នំពេញ)</option>
-                                        <option value="WH-03">ឃ្លាំងសាខាសៀមរាប</option>
-                                        <option value="WH-04">ឃ្លាំងសាខាបាត់ដំបង</option>
-                                    </select>
+                                    <div id="toWh" data-bms-select class="w-full" data-onchange="onWarehouseChange()" data-value="WH-02" data-options='[{"value": "WH-02", "label": "ឃ្លាំងសាខាទួលគោក"}, {"value": "WH-01", "label": "ឃ្លាំងកណ្តាល (ភ្នំពេញ)"}, {"value": "WH-03", "label": "ឃ្លាំងសាខាសៀមរាប"}, {"value": "WH-04", "label": "ឃ្លាំងសាខាបាត់ដំបង"}]'></div>
                                 </div>
                             </div>
 
@@ -198,9 +188,7 @@
 
             row.innerHTML = `
                 <td class="py-2.5 px-3">
-                    <select onchange="onProductSelect(${rowCount})" id="prodSelect-${rowCount}" class="w-full h-9 px-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 focus:bg-white focus:outline-none">
-                        ${products.map(p => `<option value="${p.sku}" ${p.sku === initialSku ? 'selected' : ''}>${p.sku} - ${p.name}</option>`).join('')}
-                    </select>
+                    <div id="prodSelect-${rowCount}" data-bms-select data-placeholder="ជ្រើសរើសមុខទំនិញ..." data-onchange="onProductSelect(${rowCount})"></div>
                 </td>
                 <td class="py-2.5 px-3 text-right font-mono font-bold text-slate-700 tabular-nums" id="onHand-${rowCount}">0</td>
                 <td class="py-2.5 px-3 text-right">
@@ -215,6 +203,11 @@
             `;
 
             tbody.appendChild(row);
+            initBmsSelects(row);
+            bmsSetSelectOptions(`prodSelect-${rowCount}`,
+                products.map(p => ({ value: p.sku, label: `${p.sku} - ${p.name}` })),
+                'ជ្រើសរើសមុខទំនិញ...');
+            if (initialSku) bmsSetSelect(`prodSelect-${rowCount}`, initialSku);
             onProductSelect(rowCount);
             updateSummary();
         }

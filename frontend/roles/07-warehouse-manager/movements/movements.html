@@ -45,7 +45,7 @@
                     <span id="tabCount-transfers" class="px-2 py-0.5 rounded-full text-[11px] bg-slate-100 text-slate-700 font-medium">0</span>
                 </button>
                 <button onclick="switchTab('adjustments')" id="tabBtn-adjustments" class="h-12 border-b-2 border-transparent text-slate-500 hover:text-slate-700 text-sm font-medium flex items-center gap-2 px-1 transition cursor-pointer">
-                    <i class="fas fa-tune text-slate-400"></i>
+                    <i class="fas fa-sliders text-slate-400"></i>
                     <span>ការកែតម្រូវស្តុក</span>
                     <span id="tabCount-adjustments" class="px-2 py-0.5 rounded-full text-[11px] bg-amber-100 text-amber-800 font-semibold">0</span>
                 </button>
@@ -78,12 +78,7 @@
                                 <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                                 <input type="text" id="transferSearch" onkeyup="filterTransfers()" placeholder="ស្វែងរកតាមលេខប័ណ្ណ, ឃ្លាំង, អ្នកបើកបរ..." class="w-full h-10 pl-9 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400 transition">
                             </div>
-                            <select id="transferStatusFilter" onchange="filterTransfers()" class="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-slate-400">
-                                <option value="all">គ្រប់ស្ថានភាព</option>
-                                <option value="pending_approval">រង់ចាំអនុម័ត</option>
-                                <option value="in_transit">កំពុងដឹកជញ្ជូន</option>
-                                <option value="completed">បានបញ្ចប់</option>
-                            </select>
+                            <div id="transferStatusFilter" data-bms-select data-onchange="filterTransfers()" data-options='[{"value": "all", "label": "គ្រប់ស្ថានភាព"}, {"value": "pending_approval", "label": "រង់ចាំអនុម័ត"}, {"value": "in_transit", "label": "កំពុងដឹកជញ្ជូន"}, {"value": "completed", "label": "បានបញ្ចប់"}]'></div>
                         </div>
                     </div>
 
@@ -118,13 +113,7 @@
                                 <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                                 <input type="text" id="adjSearch" onkeyup="filterAdjustments()" placeholder="ស្វែងរកតាមលេខប័ណ្ណ, SKU, មូលហេតុ..." class="w-full h-10 pl-9 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400 transition">
                             </div>
-                            <select id="adjStatusFilter" onchange="filterAdjustments()" class="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-slate-400">
-                                <option value="all">គ្រប់ស្ថានភាព</option>
-                                <option value="pending_approval">រង់ចាំ WM អនុម័ត (≤ $200)</option>
-                                <option value="escalated_gm">បញ្ជូនទៅ GM (> $200)</option>
-                                <option value="approved">បានអនុម័ត</option>
-                                <option value="rejected">បានបដិសេធ</option>
-                            </select>
+                            <div id="adjStatusFilter" data-bms-select data-onchange="filterAdjustments()" data-options='[{"value": "all", "label": "គ្រប់ស្ថានភាព"}, {"value": "pending_approval", "label": "រង់ចាំ WM អនុម័ត (≤ $200)"}, {"value": "escalated_gm", "label": "បញ្ជូនទៅ GM (> $200)"}, {"value": "approved", "label": "បានអនុម័ត"}, {"value": "rejected", "label": "បានបដិសេធ"}]'></div>
                         </div>
                     </div>
 

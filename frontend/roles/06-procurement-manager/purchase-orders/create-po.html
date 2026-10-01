@@ -72,9 +72,7 @@
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1.5">អ្នកផ្គត់ផ្គង់ <span class="text-rose-500">*</span></label>
-                            <select id="supplierSelect" onchange="updateSupplierTerms()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-primary font-medium cursor-pointer">
-                                <option value="">-- ជ្រើសរើសអ្នកផ្គត់ផ្គង់ --</option>
-                            </select>
+                            <div id="supplierSelect" data-bms-select class="w-full font-medium" data-onchange="updateSupplierTerms()" data-options='[{"value": "", "label": "-- ជ្រើសរើសអ្នកផ្គត់ផ្គង់ --"}]'></div>
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1.5">កាលបរិច្ឆេទចេញបញ្ជាទិញ <span class="text-rose-500">*</span></label>
@@ -89,11 +87,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs pt-1">
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1.5">ឃ្លាំងទទួលទំនិញ <span class="text-rose-500">*</span></label>
-                            <select id="warehouseSelect" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 outline-none focus:border-primary font-medium cursor-pointer">
-                                <option value="ឃ្លាំងកណ្តាលឫស្សីកែវ (WH-01)">ឃ្លាំងកណ្តាលឫស្សីកែវ (WH-01)</option>
-                                <option value="ឃ្លាំងចាក់អង្រែក្រោម (WH-02)">ឃ្លាំងចាក់អង្រែក្រោម (WH-02)</option>
-                                <option value="ឃ្លាំងទួលគោក (WH-03)">ឃ្លាំងទួលគោក (WH-03)</option>
-                            </select>
+                            <div id="warehouseSelect" data-bms-select class="w-full font-medium" data-options='[{"value": "ឃ្លាំងកណ្តាលឫស្សីកែវ (WH-01)", "label": "ឃ្លាំងកណ្តាលឫស្សីកែវ (WH-01)"}, {"value": "ឃ្លាំងចាក់អង្រែក្រោម (WH-02)", "label": "ឃ្លាំងចាក់អង្រែក្រោម (WH-02)"}, {"value": "ឃ្លាំងទួលគោក (WH-03)", "label": "ឃ្លាំងទួលគោក (WH-03)"}]'></div>
                         </div>
                         <div>
                             <label class="block font-semibold text-slate-700 mb-1.5">លក្ខខណ្ឌទូទាត់</label>
@@ -206,18 +200,18 @@
             tr.id = `row-${rowCount}`;
             tr.className = 'hover:bg-slate-50/50';
 
-            const itemOptions = store.catalogItems.map(item => `
-                <option value="${item.sku}" data-price="${item.costPrice}" data-unit="${item.unit}" ${item.sku === defaultSku ? 'selected' : ''}>
-                    ${item.name} (${item.sku})
-                </option>
-            `).join('');
+            const itemOptions = store.catalogItems.map(item => ({
+                value: item.sku,
+                label: `${item.name} (${item.sku})`,
+                name: item.name,
+                price: item.costPrice,
+                unit: item.unit
+            }));
 
             tr.innerHTML = `
                 <td class="py-2.5 px-3 text-center text-slate-400 font-medium">${tbody.children.length + 1}</td>
                 <td class="py-2.5 px-3">
-                    <select class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs outline-none focus:border-primary font-medium item-sku" onchange="handleItemChange(${rowCount})">
-                        ${itemOptions}
-                    </select>
+                    <div id="itemSku-${rowCount}" data-bms-select data-onchange="handleItemChange(${rowCount})" class="item-sku"></div>
                 </td>
                 <td class="py-2.5 px-3 text-center">
                     <input type="number" min="1" value="${defaultQty}" class="w-20 text-center bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs outline-none focus:border-primary font-medium item-qty" oninput="calculateTotals()">
@@ -234,6 +228,9 @@
                 </td>
             `;
             tbody.appendChild(tr);
+            initBmsSelects(tr);
+            bmsSetSelectOptions(`itemSku-${rowCount}`, itemOptions);
+            if (defaultSku) bmsSetSelect(`itemSku-${rowCount}`, defaultSku);
             handleItemChange(rowCount);
         }
 
@@ -254,9 +251,10 @@
             const tr = document.getElementById(`row-${rowId}`);
             if (!tr) return;
             const select = tr.querySelector('.item-sku');
-            const selectedOpt = select.options[select.selectedIndex];
-            const price = parseFloat(selectedOpt.getAttribute('data-price') || 0);
-            const unit = selectedOpt.getAttribute('data-unit') || 'គ្រឿង';
+            if (!select) return;
+            const selectedOpt = bmsSelectedOption(select.id) || {};
+            const price = parseFloat(selectedOpt.price || 0);
+            const unit = selectedOpt.unit || 'គ្រឿង';
 
             tr.querySelector('.item-unit').innerText = unit;
             tr.querySelector('.item-price').value = price.toFixed(2);
@@ -304,8 +302,9 @@
             let subtotal = 0;
             rows.forEach((tr, i) => {
                 const select = tr.querySelector('.item-sku');
+                if (!select) return;
                 const sku = select.value;
-                const name = select.options[select.selectedIndex].text.split(' (')[0];
+                const name = (bmsSelectedOption(select.id) || {}).name || '';
                 const qty = parseFloat(tr.querySelector('.item-qty').value || 0);
                 const unit = tr.querySelector('.item-unit').innerText;
                 const costPrice = parseFloat(tr.querySelector('.item-price').value || 0);

@@ -62,9 +62,7 @@
 
                             <div>
                                 <label class="block text-xs font-medium text-slate-600 mb-1.5">ក្រុមហ៊ុន <span class="text-rose-500">*</span></label>
-                                <select id="subTenant" onchange="onTenantChange()" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-500">
-                                    <!-- Rendered by JS -->
-                                </select>
+                                <div id="subTenant" data-bms-select data-placeholder="ជ្រើសរើសអតិថិជន..." data-onchange="onTenantChange()"></div>
                             </div>
                         </div>
 
@@ -135,19 +133,11 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-medium text-slate-600 mb-1.5">រយៈពេលជាវ (Duration)</label>
-                                    <select id="subDuration" onchange="calculateSubTotal()" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-500">
-                                        <option value="6">6 ខែ (ពាក់កណ្តាលឆ្នាំ)</option>
-                                        <option value="12" selected>12 ខែ (1 ឆ្នាំ — បញ្ចុះតម្លៃ 10%)</option>
-                                        <option value="24">24 ខែ (2 ឆ្នាំ — បញ្ចុះតម្លៃ 20%)</option>
-                                    </select>
+                                    <div id="subDuration" data-bms-select class="w-full" data-onchange="calculateSubTotal()" data-value="12" data-options='[{"value": "6", "label": "6 ខែ (ពាក់កណ្តាលឆ្នាំ)"}, {"value": "12", "label": "12 ខែ (1 ឆ្នាំ — បញ្ចុះតម្លៃ 10%)"}, {"value": "24", "label": "24 ខែ (2 ឆ្នាំ — បញ្ចុះតម្លៃ 20%)"}]'></div>
                                 </div>
                                 <div>
                                     <label class="block text-xs font-medium text-slate-600 mb-1.5">វិធីសាស្ត្រទូទាត់</label>
-                                    <select id="subPaymentMethod" class="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-500">
-                                        <option value="khqr">Bakong KHQR (ទូទាត់ភ្លាមៗ)</option>
-                                        <option value="bank">ផ្ទេរប្រាក់តាមធនាគារ (Bank Transfer)</option>
-                                        <option value="cash">សាច់ប្រាក់ផ្ទាល់ (Cash Invoice)</option>
-                                    </select>
+                                    <div id="subPaymentMethod" data-bms-select class="w-full" data-options='[{"value": "khqr", "label": "Bakong KHQR (ទូទាត់ភ្លាមៗ)"}, {"value": "bank", "label": "ផ្ទេរប្រាក់តាមធនាគារ (Bank Transfer)"}, {"value": "cash", "label": "សាច់ប្រាក់ផ្ទាល់ (Cash Invoice)"}]'></div>
                                 </div>
                             </div>
                         </div>
@@ -202,8 +192,9 @@
 
         function initTenants() {
             const tenants = getTenants();
-            const sel = document.getElementById('subTenant');
-            sel.innerHTML = tenants.map(t => `<option value="${t.id}">${t.nameKh} (${t.id})</option>`).join('');
+            bmsSetSelectOptions('subTenant',
+                tenants.map(t => ({ value: t.id, label: `${t.nameKh} (${t.id})` })),
+                'ជ្រើសរើសអតិថិជន...');
             calculateSubTotal();
         }
 

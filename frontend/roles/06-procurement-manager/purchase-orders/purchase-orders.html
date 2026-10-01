@@ -58,28 +58,17 @@
                         </div>
 
                         <!-- Status Filter -->
-                        <select id="statusFilter" onchange="applyFilters()" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 outline-none focus:border-primary font-medium cursor-pointer">
-                            <option value="">ស្ថានភាពទាំងអស់</option>
-                            <option value="sent">បានផ្ញើ (Sent)</option>
-                            <option value="received">បានទទួល (Received)</option>
-                            <option value="matched">បានផ្គូផ្គង (Matched)</option>
-                            <option value="draft">សេចក្តីព្រាង (Draft)</option>
-                        </select>
+                        <div id="statusFilter" data-bms-select class="font-medium" data-onchange="applyFilters()" data-options='[{"value": "", "label": "ស្ថានភាពទាំងអស់"}, {"value": "sent", "label": "បានផ្ញើ (Sent)"}, {"value": "received", "label": "បានទទួល (Received)"}, {"value": "matched", "label": "បានផ្គូផ្គង (Matched)"}, {"value": "draft", "label": "សេចក្តីព្រាង (Draft)"}]'></div>
 
                         <!-- 3-Way Match Filter -->
-                        <select id="matchFilter" onchange="applyFilters()" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 outline-none focus:border-primary font-medium cursor-pointer">
-                            <option value="">ការផ្ទៀងផ្ទាត់ 3-Way ទាំងអស់</option>
-                            <option value="matched">ត្រូវគ្នា 100%</option>
-                            <option value="pending_grn">រង់ចាំទំនិញចូល (GRN)</option>
-                            <option value="pending_bill">រង់ចាំវិក្កយបត្រ (Bill)</option>
-                        </select>
+                        <div id="matchFilter" data-bms-select class="font-medium" data-onchange="applyFilters()" data-options='[{"value": "", "label": "ការផ្ទៀងផ្ទាត់ 3-Way ទាំងអស់"}, {"value": "matched", "label": "ត្រូវគ្នា 100%"}, {"value": "pending_grn", "label": "រង់ចាំទំនិញចូល (GRN)"}, {"value": "pending_bill", "label": "រង់ចាំវិក្កយបត្រ (Bill)"}]'></div>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
                         <div class="flex items-center gap-2">
                             <span class="text-xs text-slate-400">សរុប: <strong id="totalCount" class="text-slate-700">0</strong> កំណត់ត្រា</span>
                         </div>
-                        <span class="w-px h-6 bg-slate-200 hidden sm:block"></span>
+                        <span class="w-px h-6 bg-slate-200 hidden sm:!block"></span>
                         <div class="flex flex-wrap items-center gap-2 no-print">
                             <a href="create-po.html" class="px-4 py-2 rounded-xl bg-primary hover:bg-[#142842] text-white font-medium text-xs flex items-center gap-2 shadow-sm transition">
                                 <i class="fas fa-plus"></i>

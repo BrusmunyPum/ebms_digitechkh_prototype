@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIGITECHKH - ផ្ទាំងគ្រប់គ្រងសំណើ និងបណ្តឹងអតិថិជន</title>
+    <title>DIGITECHKH - ផ្ទាំងសេវាកម្មអតិថិជន</title>
     <link rel="icon" type="image/png" href="../../shared/assets/favicon.png">
     <link rel="shortcut icon" type="image/png" href="../../shared/assets/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,6 +30,30 @@
     </script>
     <link rel="stylesheet" href="../../shared/styles/custom.css">
     <link rel="stylesheet" href="../../shared/styles/portal.css">
+    <style>
+        /* ប្រអប់ស្វែងរកធំ — ធាតុសំខាន់បំផុតនៃតួនាទីនេះ */
+        #heroSearchInput {
+            height: 56px;
+            border: 2px solid #0ea5e9;
+            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.18);
+        }
+        #heroSearchInput:focus {
+            box-shadow: 0 4px 24px rgba(14, 165, 233, 0.32);
+        }
+
+        /* នាឡិកាកាលកំណត់ឆ្លើយតប — លោតដើម្បីបង្ហាញភាពបន្ទាន់ */
+        @keyframes csPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.45; }
+        }
+        .cs-sla-risk, .cs-sla-breach { animation: csPulse 1.8s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce) {
+            .cs-sla-risk, .cs-sla-breach { animation: none; }
+        }
+
+        /* តួលេខនាឡិកា — ទទឹងថេរ ដើម្បីកុំឲ្យរំកិលពេលរាប់ថយក្រោយ */
+        .cs-figure { font-variant-numeric: tabular-nums; }
+    </style>
 </head>
 
 <body id="csPortal" data-active="dashboard" class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col md:flex-row overflow-x-hidden">
@@ -41,167 +65,100 @@
     <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
 
         <!-- ក្បាលទំព័រ -->
-        <div id="headerHost" data-title="ផ្ទាំងគ្រប់គ្រងសេវាអតិថិជន"
-             data-subtitle="ឆ្លើយតបសំណួរអតិថិជន ដោះស្រាយបណ្តឹង និងតាមដានកម្រិតសេវាឆ្លើយតប"></div>
+        <div id="headerHost" data-title="ផ្ទាំងសេវាកម្មអតិថិជន"
+             data-subtitle="ស្វែងរកវិក្កយបត្រ ឆ្លើយតបសំណើ និងតាមដានកាលកំណត់ឆ្លើយតប"></div>
 
         <!-- មាតិកាខាងក្នុង -->
-        <main class="p-4 sm:p-6 space-y-6 flex-1">
-            <!-- របារសកម្មភាពទំព័រ — ដកចេញពីក្បាលទំព័រ ដើម្បីរក្សាក្បាលទំព័រឲ្យស្អាត -->
-            <div class="w-full flex flex-wrap items-center justify-end gap-2 no-print">
-                <div class="flex flex-wrap items-center gap-2">
-                    <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                        <span>ប្រព័ន្ធជំនួយគាំទ្រ: អនឡាញ</span>
+        <main class="p-4 sm:p-6 space-y-6 flex-1 w-full">
+
+            <!-- ប្រអប់ស្វែងរកធំ -->
+            <section class="w-full">
+                <div class="relative">
+                    <i class="fas fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-sky-500 text-base pointer-events-none"></i>
+                    <input type="text" id="heroSearchInput" autocomplete="off"
+                        oninput="onHeroInput()" onkeydown="onHeroKey(event)" onfocus="onHeroInput()"
+                        placeholder="ស្វែងរកលេខវិក្កយបត្រ លេខទូរស័ព្ទ ឬឈ្មោះអតិថិជន..."
+                        class="w-full bg-white text-slate-800 placeholder-slate-400 rounded-xl pl-14 pr-32 text-base font-medium outline-none transition">
+                    <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+                        <kbd class="hidden sm:!inline-flex items-center px-2 py-1 rounded-lg bg-slate-100 border border-slate-200 text-[11px] font-semibold text-slate-500 cs-figure">/</kbd>
+                        <span class="hidden md:!inline text-[11px] text-slate-400">ដើម្បីស្វែងរក</span>
                     </div>
+
+                    <!-- បញ្ជីលទ្ធផលរហ័ស -->
+                    <div id="heroResults" class="hidden absolute left-0 right-0 top-[62px] z-40 bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 max-h-[420px] overflow-y-auto"></div>
                 </div>
-            </div>
+            </section>
 
-
-            <!-- កាតសង្ខេប KPIs -->
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-slate-500 font-medium">សំណើរង់ចាំដោះស្រាយ</p>
-                        <h3 class="text-2xl font-bold text-amber-600 mt-1" id="tckPendingCount">1</h3>
-                        <p class="text-[11px] text-slate-400 mt-0.5">រយៈពេលឆ្លើយតបជាមធ្យម 25 នាទី</p>
+            <!-- កាតសង្ខេបស្ថានភាពការងារ -->
+            <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="text-xs text-slate-500 font-medium">សំណើមិនទាន់បិទ</p>
+                        <h3 class="text-2xl font-semibold text-slate-800 mt-1 cs-figure" id="kpiOpen">0</h3>
+                        <p class="text-[11px] text-slate-400 mt-0.5" id="kpiOpenSub">រង់ចាំឆ្លើយ 0</p>
                     </div>
-                    <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
-                        <i class="fas fa-hourglass-start"></i>
-                    </div>
-                </div>
-
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-slate-500 font-medium">កំពុងដំណើរការដោះស្រាយ</p>
-                        <h3 class="text-2xl font-bold text-sky-600 mt-1" id="tckProgressCount">1</h3>
-                        <p class="text-[11px] text-slate-400 mt-0.5">រង់ចាំឃ្លាំងប្តូរទំនិញថ្មី</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl">
-                        <i class="fas fa-arrows-rotate"></i>
+                    <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl flex-shrink-0">
+                        <i class="fas fa-inbox"></i>
                     </div>
                 </div>
 
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-slate-500 font-medium">បានដោះស្រាយជោគជ័យ</p>
-                        <h3 class="text-2xl font-bold text-emerald-600 mt-1" id="tckResolvedCount">1</h3>
-                        <p class="text-[11px] text-slate-400 mt-0.5">អត្រាពេញចិត្ត 98%</p>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="text-xs text-slate-500 font-medium">ហួសកាលកំណត់ឆ្លើយតប</p>
+                        <h3 class="text-2xl font-semibold mt-1 cs-figure" id="kpiBreach">0</h3>
+                        <p class="text-[11px] text-slate-400 mt-0.5" id="kpiBreachSub">ជិតដល់កាលកំណត់ 0</p>
                     </div>
-                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl flex-shrink-0">
+                        <i class="fas fa-stopwatch"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="text-xs text-slate-500 font-medium">កញ្ចប់កំពុងដឹកជញ្ជូន</p>
+                        <h3 class="text-2xl font-semibold text-slate-800 mt-1 cs-figure" id="kpiTransit">0</h3>
+                        <p class="text-[11px] text-slate-400 mt-0.5" id="kpiTransitSub">កំពុងរៀបចំ 0</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl flex-shrink-0">
+                        <i class="fas fa-truck-fast"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="text-xs text-slate-500 font-medium">បានដោះស្រាយថ្ងៃនេះ</p>
+                        <h3 class="text-2xl font-semibold text-emerald-600 mt-1 cs-figure" id="kpiResolved">0</h3>
+                        <p class="text-[11px] text-slate-400 mt-0.5" id="kpiResolvedSub">ឆ្លើយតបជាមធ្យម 0 នាទី</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl flex-shrink-0">
                         <i class="fas fa-circle-check"></i>
                     </div>
                 </div>
+            </section>
 
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-slate-500 font-medium">រយៈពេលឆ្លើយតបដំបូង</p>
-                        <h3 class="text-2xl font-bold text-indigo-600 mt-1">4.2 នាទី</h3>
-                        <p class="text-[11px] text-emerald-600 mt-0.5"><i class="fas fa-arrow-down"></i> លឿនជាងស្តង់ដារ 50%</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- បញ្ជីសំបុត្របណ្តឹង -->
-            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div class="flex items-center gap-2">
-                        <button onclick="filterTicketStatus('all')" class="tck-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-primary text-white" data-status="all">ទាំងអស់</button>
-                        <button onclick="filterTicketStatus('pending')" class="tck-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="pending">រង់ចាំឆ្លើយ</button>
-                        <button onclick="filterTicketStatus('in_progress')" class="tck-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="in_progress">កំពុងដោះស្រាយ</button>
-                        <button onclick="filterTicketStatus('resolved')" class="tck-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-status="resolved">បានបញ្ចប់</button>
-                    </div>
+            <!-- ផ្នែក ក — បញ្ជីសំណើរង់ចាំដោះស្រាយ -->
+            <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-5 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div id="ticketTabs" class="flex items-center gap-2 overflow-x-auto scrollbar-hide"></div>
                     <div class="flex items-center gap-3">
-                        <div class="relative w-full sm:w-64">
-                            <i class="fas fa-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-                            <input type="text" id="searchTicket" oninput="renderTickets()" placeholder="ស្វែងរកតាមលេខសំណើ ឬអតិថិជន..."
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:border-primary">
+                        <div class="relative flex-1 lg:w-64">
+                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" id="searchTicket" oninput="renderTickets()" placeholder="ត្រងក្នុងបញ្ជីសំណើ..."
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs placeholder-slate-400 focus:outline-none focus:border-sky-500">
                         </div>
-                        <button onclick="openNewTicketModal()" class="px-4 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm cursor-pointer whitespace-nowrap">
-                            <i class="fas fa-plus"></i> បង្កើតសំណើថ្មី
-                        </button>
+                        <a href="create-note.html" class="px-4 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-semibold transition flex items-center gap-1.5 shadow-sm whitespace-nowrap">
+                            <i class="fas fa-plus"></i> <span class="hidden sm:!inline">បង្កើតសំណើថ្មី</span>
+                        </a>
                     </div>
                 </div>
 
-                <div id="ticketsContainer" class="p-5 space-y-4">
-                    <!-- Dynamic Ticket Cards -->
-                </div>
-            </div>
+                <div id="ticketsContainer" class="p-5 space-y-3"></div>
+            </section>
+
+            <!-- ផ្នែក ខ — ការដឹកជញ្ជូនមានបញ្ហា -->
+            <section id="deliveryAlertSection"></section>
 
         </main>
-    </div>
-
-    <!-- Modal ពិនិត្យ និងឆ្លើយតបសំណើ -->
-    <div id="ticketModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-2xl overflow-hidden">
-            <div class="p-6 bg-gradient-to-r from-[#0f2b5c] to-[#1e3a5f] text-white flex items-center justify-between">
-                <div>
-                    <h3 class="text-base font-bold flex items-center gap-2">
-                        <i class="fas fa-ticket text-sky-300"></i>
-                        <span id="ticketModalId">TCK-2026-081</span>
-                    </h3>
-                    <p class="text-xs text-sky-200 mt-0.5" id="ticketModalCustomer">អតិថិជន: អ៊ុច វ៉ាន់ដា (012 345 678)</p>
-                </div>
-                <button onclick="closeTicketModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer">
-                    <i class="fas fa-xmark text-sm"></i>
-                </button>
-            </div>
-            <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
-                <!-- Info snippet -->
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
-                    <div class="flex justify-between">
-                        <span class="text-slate-500">ប្រធានបទ:</span>
-                        <span class="font-bold text-slate-800" id="ticketModalSubject">-</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-slate-500">វិក្កយបត្រពាក់ព័ន្ធ:</span>
-                        <span class="font-mono font-bold text-sky-700" id="ticketModalInvoice">-</span>
-                    </div>
-                </div>
-
-                <!-- Chat history -->
-                <div>
-                    <h4 class="text-xs font-bold text-slate-700 mb-2">ប្រវត្តិការឆ្លើយឆ្លងជាមួយអតិថិជន</h4>
-                    <div id="ticketChatHistory" class="space-y-2 p-3 bg-slate-50 rounded-2xl border border-slate-200 max-h-48 overflow-y-auto">
-                        <!-- Dynamic chat messages -->
-                    </div>
-                </div>
-
-                <!-- Reply input -->
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">ឆ្លើយតបទៅកាន់អតិថិជន</label>
-                    <div class="flex gap-2">
-                        <input type="text" id="replyInput" placeholder="វាយសារឆ្លើយតបជូនអតិថិជន..."
-                            class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-primary">
-                        <button onclick="sendTicketReply()" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold transition cursor-pointer">
-                            ផ្ញើសារ
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Internal Notes -->
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">កំណត់ចំណាំផ្ទៃក្នុងក្រុមការងារ</label>
-                    <textarea id="internalNoteInput" rows="2" placeholder="កត់ត្រាព័ត៌មានសម្របសម្រួលជាមួយក្រុមអ្នកដឹក ឬឃ្លាំង..."
-                        class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs focus:outline-none focus:border-primary"></textarea>
-                </div>
-            </div>
-            <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <button onclick="setTicketStatus('in_progress')" class="px-3 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-semibold transition cursor-pointer">
-                        ដាក់កំពុងដោះស្រាយ
-                    </button>
-                    <button onclick="setTicketStatus('resolved')" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition cursor-pointer">
-                        <i class="fas fa-check mr-1"></i> បិទបញ្ចប់សំណើ
-                    </button>
-                </div>
-                <button onclick="closeTicketModal()" class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium text-xs transition cursor-pointer">
-                    បិទ
-                </button>
-            </div>
-        </div>
     </div>
 
     <!-- Scripts -->
@@ -210,190 +167,322 @@
     <script src="../../shared/scripts/portal.js"></script>
     <script>
         let currentTicketFilter = 'all';
-        let activeTicketId = null;
 
-        function updateTicketCounts() {
-            const data = getCustomerSupportData();
-            const pending = data.tickets.filter(t => t.status === 'pending').length;
-            const progress = data.tickets.filter(t => t.status === 'in_progress').length;
-            const resolved = data.tickets.filter(t => t.status === 'resolved').length;
+        /* ===== ប្រអប់ស្វែងរកធំ ===== */
 
-            document.getElementById('tckPendingCount').textContent = pending;
-            document.getElementById('tckProgressCount').textContent = progress;
-            document.getElementById('tckResolvedCount').textContent = resolved;
+        function onHeroInput() {
+            const q = (document.getElementById('heroSearchInput').value || '').trim();
+            const box = document.getElementById('heroResults');
+            if (q.length < 2) {
+                box.classList.add('hidden');
+                box.innerHTML = '';
+                return;
+            }
+
+            const res = csSearch(q, 5);
+            if (res.total === 0) {
+                box.innerHTML = `
+                    <div class="px-4 py-8 text-center text-slate-400">
+                        <i class="fas fa-file-circle-question text-3xl mb-2 text-slate-300"></i>
+                        <p class="text-xs">គ្មានលទ្ធផល — សូមពិនិត្យម្តងទៀត</p>
+                    </div>`;
+                box.classList.remove('hidden');
+                return;
+            }
+
+            let html = '';
+
+            if (res.orders.length) {
+                html += `<p class="px-3 pt-2 pb-1.5 text-[11px] font-semibold text-slate-400">វិក្កយបត្រ</p>`;
+                html += res.orders.map(o => {
+                    const st = CS_DELIVERY_STATUS[o.deliveryStatus] || CS_DELIVERY_STATUS.preparing;
+                    return `
+                    <a href="orders-lookup.html?query=${encodeURIComponent(o.invoiceId)}"
+                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition">
+                        <span class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-file-invoice text-xs"></i>
+                        </span>
+                        <span class="min-w-0 flex-1">
+                            <span class="flex items-center gap-2">
+                                <span class="text-xs font-semibold text-slate-700 cs-figure">${o.invoiceId}</span>
+                                <span class="px-2 py-0.5 rounded-full bg-${st.tone}-50 text-${st.tone}-700 border border-${st.tone}-200 text-[10px] font-semibold">${st.label}</span>
+                            </span>
+                            <span class="block text-[11px] text-slate-500 truncate">${o.customerName} · ${o.date}</span>
+                        </span>
+                        <span class="text-xs font-semibold text-slate-600 cs-figure flex-shrink-0">${csMoney(o.grandTotal)}</span>
+                    </a>`;
+                }).join('');
+            }
+
+            if (res.customers.length) {
+                if (res.orders.length) html += `<div class="my-1.5 border-t border-slate-100"></div>`;
+                html += `<p class="px-3 pt-1 pb-1.5 text-[11px] font-semibold text-slate-400">អតិថិជន</p>`;
+                html += res.customers.map(c => `
+                    <a href="orders-lookup.html?query=${encodeURIComponent(c.phone)}"
+                       class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition">
+                        <span class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-user text-xs"></i>
+                        </span>
+                        <span class="min-w-0 flex-1">
+                            <span class="block text-xs font-semibold text-slate-700 truncate">${c.name}</span>
+                            <span class="block text-[11px] text-slate-500 cs-figure">${c.phone} · បញ្ជាទិញចុងក្រោយ ${c.lastOrder}</span>
+                        </span>
+                        <span class="text-[11px] text-slate-400 flex-shrink-0 cs-figure">${c.totalOrders} ដង</span>
+                    </a>`).join('');
+            }
+
+            html += `
+                <div class="mt-1.5 pt-1.5 border-t border-slate-100">
+                    <a href="orders-lookup.html?query=${encodeURIComponent(q)}"
+                       class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-semibold text-sky-700 hover:bg-sky-50 transition">
+                        មើលលទ្ធផលទាំងអស់ (${res.total}) <i class="fas fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>`;
+
+            box.innerHTML = html;
+            box.classList.remove('hidden');
+        }
+
+        function onHeroKey(e) {
+            if (e.key === 'Enter') {
+                const q = (document.getElementById('heroSearchInput').value || '').trim();
+                if (q) window.location.href = `orders-lookup.html?query=${encodeURIComponent(q)}`;
+            } else if (e.key === 'Escape') {
+                document.getElementById('heroResults').classList.add('hidden');
+                e.target.blur();
+            }
+        }
+
+        /* ===== កាតសង្ខេប ===== */
+
+        function renderKpis() {
+            const t = csTicketCounts();
+            const d = csDeliveryCounts();
+
+            document.getElementById('kpiOpen').textContent = t.pending + t.in_progress;
+            document.getElementById('kpiOpenSub').textContent = `រង់ចាំឆ្លើយ ${t.pending} · កំពុងដោះស្រាយ ${t.in_progress}`;
+
+            const breach = document.getElementById('kpiBreach');
+            breach.textContent = t.breached;
+            breach.className = `text-2xl font-semibold mt-1 cs-figure ${t.breached > 0 ? 'text-rose-600' : 'text-slate-800'}`;
+            document.getElementById('kpiBreachSub').textContent = `ជិតដល់កាលកំណត់ ${t.atRisk}`;
+
+            document.getElementById('kpiTransit').textContent = d.out;
+            document.getElementById('kpiTransitSub').textContent = `កំពុងរៀបចំ ${d.preparing} · មានបញ្ហា ${d.failed}`;
+
+            // គណនាពីកំណត់ត្រាពិត មិនមែនលេខសន្មត
+            const today = csFmtDate(new Date().toISOString());
+            const closed = (getCustomerSupportData().tickets || [])
+                .filter(x => x.status === 'resolved' && x.resolvedAt && csFmtDate(x.resolvedAt) === today);
+            document.getElementById('kpiResolved').textContent = closed.length;
+
+            const avg = closed.length
+                ? Math.round(closed.reduce((s, x) =>
+                    s + (new Date(x.resolvedAt).getTime() - new Date(x.openedAt).getTime()) / 60000, 0) / closed.length)
+                : 0;
+            document.getElementById('kpiResolvedSub').textContent = closed.length
+                ? `ដោះស្រាយជាមធ្យម ${avg} នាទី`
+                : 'មិនទាន់មានសំណើបិទថ្ងៃនេះ';
+        }
+
+        /* ===== បញ្ជីសំណើ ===== */
+
+        function renderTabs() {
+            const c = csTicketCounts();
+            const tabs = [
+                { id: 'all', label: 'ទាំងអស់', count: c.all },
+                { id: 'pending', label: 'រង់ចាំឆ្លើយ', count: c.pending },
+                { id: 'in_progress', label: 'កំពុងដោះស្រាយ', count: c.in_progress },
+                { id: 'resolved', label: 'បានដោះស្រាយ', count: c.resolved }
+            ];
+            document.getElementById('ticketTabs').innerHTML = tabs.map(t => {
+                const on = t.id === currentTicketFilter;
+                return `<button onclick="filterTicketStatus('${t.id}')" type="button"
+                    class="px-3.5 py-2 rounded-xl text-xs font-semibold transition whitespace-nowrap flex-shrink-0 ${
+                        on ? 'bg-primary text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">
+                    ${t.label} <span class="cs-figure ${on ? 'text-sky-200' : 'text-slate-400'}">(${t.count})</span>
+                </button>`;
+            }).join('');
         }
 
         function filterTicketStatus(status) {
             currentTicketFilter = status;
-            document.querySelectorAll('.tck-tab').forEach(tab => {
-                const isMatch = tab.dataset.status === status;
-                tab.className = isMatch ?
-                    'tck-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-primary text-white' :
-                    'tck-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200';
-            });
+            renderTabs();
             renderTickets();
         }
 
+        function slaBadge(sla) {
+            if (sla.level === 'done') {
+                return `<span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-500 text-[11px] font-semibold">${sla.label}</span>`;
+            }
+            const icon = sla.level === 'breach' ? 'fa-triangle-exclamation' : 'fa-stopwatch';
+            const text = sla.level === 'breach' ? csClock(-sla.remaining) : csClock(sla.remaining);
+            const anim = sla.level === 'ok' ? '' : ` cs-sla-${sla.level}`;
+            return `<span aria-label="${sla.label}"
+                class="px-2.5 py-1 rounded-lg bg-${sla.tone}-50 text-${sla.tone}-700 border border-${sla.tone}-200 text-[11px] font-semibold inline-flex items-center gap-1.5${anim}">
+                <i class="fas ${icon} text-[10px]"></i><span class="cs-figure">${text}</span>
+            </span>`;
+        }
+
         function renderTickets() {
-            const data = getCustomerSupportData();
             const search = (document.getElementById('searchTicket')?.value || '').trim().toLowerCase();
             const container = document.getElementById('ticketsContainer');
             if (!container) return;
 
-            let list = data.tickets;
-            if (currentTicketFilter !== 'all') {
-                list = list.filter(t => t.status === currentTicketFilter);
-            }
+            let list = csTickets(currentTicketFilter);
             if (search) {
-                list = list.filter(t => t.id.toLowerCase().includes(search) || t.customerName.toLowerCase().includes(search) || t.phone.includes(search) || t.subject.toLowerCase().includes(search));
+                list = list.filter(t =>
+                    t.id.toLowerCase().includes(search) ||
+                    t.customerName.toLowerCase().includes(search) ||
+                    t.phone.replace(/\s/g, '').includes(search.replace(/\s/g, '')) ||
+                    t.subject.toLowerCase().includes(search));
             }
 
             if (list.length === 0) {
                 container.innerHTML = `
                     <div class="text-center py-12 text-slate-400">
-                        <i class="fas fa-ticket-simple text-4xl mb-3 text-slate-300"></i>
-                        <p class="text-sm">មិនមានសំណើតាមលក្ខខណ្ឌនេះឡើយ</p>
+                        <i class="fas fa-inbox text-4xl mb-3 text-slate-300"></i>
+                        <p class="text-sm">គ្មានសំណើតាមលក្ខខណ្ឌនេះឡើយ</p>
                     </div>`;
                 return;
             }
 
             container.innerHTML = list.map(t => {
-                let statusBadge = '';
-                if (t.status === 'pending') {
-                    statusBadge = '<span class="px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold"><i class="fas fa-clock mr-1"></i> រង់ចាំឆ្លើយ</span>';
-                } else if (t.status === 'in_progress') {
-                    statusBadge = '<span class="px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200 text-xs font-semibold"><i class="fas fa-arrows-rotate mr-1"></i> កំពុងដោះស្រាយ</span>';
-                } else {
-                    statusBadge = '<span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold"><i class="fas fa-circle-check mr-1"></i> បានបញ្ចប់</span>';
-                }
-
-                let priorityBadge = '';
-                if (t.priority.includes('Critical') || t.priority.includes('បន្ទាន់ខ្លាំង')) {
-                    priorityBadge = '<span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[10px] font-bold">បន្ទាន់ខ្លាំង</span>';
-                } else if (t.priority.includes('High') || t.priority.includes('បន្ទាន់')) {
-                    priorityBadge = '<span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold">បន្ទាន់</span>';
-                } else {
-                    priorityBadge = '<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold">ធម្មតា</span>';
-                }
+                const sla = csSla(t);
+                const cat = CS_CATEGORY[t.category] || CS_CATEGORY.general;
+                const st = CS_TICKET_STATUS[t.status] || CS_TICKET_STATUS.pending;
+                const pr = CS_PRIORITY[t.priority] || CS_PRIORITY.normal;
+                const edge = sla.level === 'breach' ? 'border-l-4 border-l-rose-400'
+                    : (sla.level === 'risk' ? 'border-l-4 border-l-amber-400' : 'border-l-4 border-l-transparent');
 
                 return `
-                    <div class="p-5 bg-white rounded-2xl border border-slate-200 hover:border-slate-300 transition shadow-sm space-y-3">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center font-bold text-sm">
-                                    <i class="fas fa-ticket"></i>
+                    <div class="p-4 bg-white rounded-2xl border border-slate-200 ${edge} hover:border-slate-300 hover:shadow-sm transition">
+                        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                            <div class="min-w-0 flex-1">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="text-xs font-semibold text-slate-700 cs-figure">${t.id}</span>
+                                    <span class="px-2 py-0.5 rounded-full bg-${cat.tone}-50 text-${cat.tone}-700 border border-${cat.tone}-200 text-[10px] font-semibold">
+                                        <i class="fas ${cat.icon} mr-1"></i>${cat.label}
+                                    </span>
+                                    <span class="px-2 py-0.5 rounded-full bg-${pr.tone}-100 text-${pr.tone}-700 text-[10px] font-semibold">${pr.label}</span>
+                                    ${slaBadge(sla)}
                                 </div>
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <h4 class="text-sm font-bold text-slate-800">${t.id}</h4>
-                                        ${priorityBadge}
-                                        <span class="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-600 text-[10px] font-semibold">${t.channel}</span>
-                                    </div>
-                                    <p class="text-xs font-semibold text-slate-800 mt-0.5">${t.subject}</p>
+                                <p class="text-sm font-medium text-slate-700 mt-1.5">${t.subject}</p>
+                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px] text-slate-500">
+                                    <span><i class="fas fa-user mr-1 text-slate-400"></i>${t.customerName}</span>
+                                    <a href="tel:${t.phone.replace(/\s/g, '')}" class="text-sky-700 hover:underline cs-figure"><i class="fas fa-phone mr-1 text-slate-400"></i>${t.phone}</a>
+                                    ${t.relatedInvoice ? `<a href="orders-lookup.html?query=${encodeURIComponent(t.relatedInvoice)}" class="text-sky-700 hover:underline cs-figure"><i class="fas fa-receipt mr-1 text-slate-400"></i>${t.relatedInvoice}</a>` : ''}
+                                    <span><i class="fas fa-comment-dots mr-1 text-slate-400"></i>${CS_CHANNEL[t.channel] || ''}</span>
+                                    <span><i class="fas fa-clock mr-1 text-slate-400"></i>${csRelative(t.openedAt)}</span>
+                                    <span><i class="fas fa-headset mr-1 text-slate-400"></i>${t.agent || 'មិនទាន់ចាត់តាំង'}</span>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-3 self-end sm:self-center">
-                                ${statusBadge}
-                                <button onclick="openTicketModal('${t.id}')" class="px-4 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-semibold transition shadow-sm flex items-center gap-1.5 cursor-pointer">
-                                    <i class="fas fa-eye"></i> មើល & ឆ្លើយតប
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs text-slate-500">
-                            <div class="flex items-center gap-3">
-                                <span><i class="fas fa-user mr-1 text-slate-400"></i> ${t.customerName} (${t.phone})</span>
-                                <span>&bull;</span>
-                                <span class="font-mono text-sky-700"><i class="fas fa-receipt mr-1 text-slate-400"></i> ${t.relatedInvoice}</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-slate-400"><i class="fas fa-calendar mr-1"></i> ${t.createdAt}</span>
+                            <div class="flex items-center gap-2 flex-shrink-0 self-end sm:self-start">
+                                <span class="px-2.5 py-1 rounded-full bg-${st.tone}-50 text-${st.tone}-700 border border-${st.tone}-200 text-[11px] font-semibold whitespace-nowrap">
+                                    <i class="fas ${st.icon} mr-1"></i>${st.label}
+                                </span>
+                                <a href="view-ticket.html?id=${encodeURIComponent(t.id)}"
+                                   class="px-3.5 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-semibold transition shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                                    មើល <i class="fas fa-arrow-right text-[10px]"></i>
+                                </a>
                             </div>
                         </div>
                     </div>`;
             }).join('');
         }
 
-        function openTicketModal(id) {
-            const data = getCustomerSupportData();
-            const ticket = data.tickets.find(t => t.id === id);
-            if (!ticket) return;
+        /* ===== ផ្នែក ខ — ការដឹកជញ្ជូនមានបញ្ហា ===== */
 
-            activeTicketId = id;
-            document.getElementById('ticketModalId').textContent = ticket.id;
-            document.getElementById('ticketModalCustomer').textContent = `អតិថិជន: ${ticket.customerName} (${ticket.phone})`;
-            document.getElementById('ticketModalSubject').textContent = ticket.subject;
-            document.getElementById('ticketModalInvoice').textContent = ticket.relatedInvoice;
-            document.getElementById('internalNoteInput').value = ticket.internalNotes || '';
+        function renderDeliveryAlerts() {
+            const host = document.getElementById('deliveryAlertSection');
+            const list = csProblemDeliveries(5);
+            const all = csProblemDeliveries();
 
-            const chatContainer = document.getElementById('ticketChatHistory');
-            chatContainer.innerHTML = ticket.messages.map(m => `
-                <div class="flex ${m.sender === 'customer' ? 'justify-start' : 'justify-end'}">
-                    <div class="max-w-[80%] rounded-2xl p-2.5 text-xs ${m.sender === 'customer' ? 'bg-white border border-slate-200 text-slate-800' : 'bg-sky-600 text-white'}">
-                        <p>${m.text}</p>
-                        <span class="text-[9px] ${m.sender === 'customer' ? 'text-slate-400' : 'text-sky-200'} block mt-1 text-right">${m.time}</span>
+            if (list.length === 0) {
+                host.innerHTML = `
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl px-5 py-4 flex items-center gap-3">
+                        <span class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-circle-check"></i>
+                        </span>
+                        <p class="text-xs font-medium text-emerald-800">គ្មានបញ្ហាការដឹកជញ្ជូនក្នុងរយៈពេល 48 ម៉ោងចុងក្រោយ</p>
+                    </div>`;
+                return;
+            }
+
+            host.innerHTML = `
+                <div class="bg-rose-50/60 border border-rose-200 border-l-4 border-l-rose-500 rounded-2xl p-5 space-y-3">
+                    <div class="flex items-center justify-between gap-3">
+                        <h3 class="text-sm font-semibold text-rose-900 flex items-center gap-2">
+                            <i class="fas fa-truck-ramp-box text-rose-600"></i>
+                            ការដឹកជញ្ជូនមានបញ្ហា
+                            <span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[11px] font-semibold cs-figure">${all.length}</span>
+                        </h3>
+                        <a href="delivery-status.html?status=failed" class="text-xs font-semibold text-rose-700 hover:text-rose-900 whitespace-nowrap">
+                            មើលទាំងអស់ <i class="fas fa-arrow-right text-[10px]"></i>
+                        </a>
                     </div>
-                </div>
-            `).join('');
-
-            const modal = document.getElementById('ticketModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                        ${list.map(d => `
+                            <div class="bg-white rounded-xl border border-rose-100 p-3.5">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-xs font-semibold text-slate-700 cs-figure">${d.trackingCode}</span>
+                                    <a href="orders-lookup.html?query=${encodeURIComponent(d.invoiceId)}" class="text-[11px] font-semibold text-sky-700 hover:underline cs-figure">${d.invoiceId}</a>
+                                </div>
+                                <p class="text-xs font-medium text-slate-700 mt-1.5">${d.customerName}</p>
+                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-[11px] text-slate-500">
+                                    <span><i class="fas fa-location-dot mr-1 text-slate-400"></i>${d.district}, ${d.province}</span>
+                                    <span><i class="fas fa-id-badge mr-1 text-slate-400"></i>${d.driverName}</span>
+                                    <span><i class="fas fa-clock mr-1 text-slate-400"></i>${csRelative(d.lastUpdated)}</span>
+                                </div>
+                                <p class="mt-2 px-2.5 py-1.5 rounded-lg bg-rose-50 text-rose-800 text-[11px] font-medium">
+                                    <i class="fas fa-circle-exclamation mr-1"></i>${d.failureReason}
+                                    ${d.rescheduledDate ? ` · គ្រោងដឹកវិញ ${d.rescheduledDate}` : ''}
+                                </p>
+                            </div>`).join('')}
+                    </div>
+                </div>`;
         }
 
-        function closeTicketModal() {
-            const modal = document.getElementById('ticketModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            activeTicketId = null;
-        }
+        /* ===== ដំណើរការទំព័រ ===== */
 
-        function sendTicketReply() {
-            const input = document.getElementById('replyInput');
-            const text = (input?.value || '').trim();
-            if (!text || !activeTicketId) return;
-
-            const data = getCustomerSupportData();
-            const ticket = data.tickets.find(t => t.id === activeTicketId);
-            if (ticket) {
-                ticket.messages.push({
-                    sender: 'support',
-                    text: text,
-                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                });
-                ticket.status = 'in_progress';
-                saveCustomerSupportData(data);
-                input.value = '';
-                showToast('បានផ្ញើសារឆ្លើយតបជូនអតិថិជនជោគជ័យ!', 'success');
-                openTicketModal(activeTicketId);
-                updateTicketCounts();
-                renderTickets();
-            }
-        }
-
-        function setTicketStatus(newStatus) {
-            if (!activeTicketId) return;
-            const data = getCustomerSupportData();
-            const ticket = data.tickets.find(t => t.id === activeTicketId);
-            if (ticket) {
-                ticket.status = newStatus;
-                ticket.internalNotes = document.getElementById('internalNoteInput')?.value || ticket.internalNotes;
-                saveCustomerSupportData(data);
-                showToast(`ស្ថានភាពសំណើ ${ticket.id} ត្រូវបានកែប្រែជាជោគជ័យ!`, 'success');
-                closeTicketModal();
-                updateTicketCounts();
-                renderTickets();
-            }
-        }
-
-        function openNewTicketModal() {
-            showToast('មុខងារបង្កើតសំណើរហ័សពីការខលចូល', 'info');
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            updateTicketCounts();
+        function render() {
+            renderKpis();
+            renderTabs();
             renderTickets();
+            renderDeliveryAlerts();
+        }
+
+        // បិទបញ្ជីលទ្ធផលរហ័ស ពេលចុចនៅខាងក្រៅ
+        document.addEventListener('click', (e) => {
+            const box = document.getElementById('heroResults');
+            const input = document.getElementById('heroSearchInput');
+            if (!box || box.classList.contains('hidden')) return;
+            if (!box.contains(e.target) && e.target !== input) box.classList.add('hidden');
         });
+
+        // ផ្លូវកាត់គ្រាប់ចុច «/» ដើម្បីចូលទៅប្រអប់ស្វែងរក
+        document.addEventListener('keydown', (e) => {
+            const typing = ['INPUT', 'TEXTAREA'].includes((e.target.tagName || '').toUpperCase());
+            if (e.key === '/' && !typing) {
+                e.preventDefault();
+                document.getElementById('heroSearchInput').focus();
+            } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                document.getElementById('heroSearchInput').focus();
+            }
+        });
+
+        // នាឡិកាកាលកំណត់ឆ្លើយតបត្រូវរាប់ថយក្រោយជាបន្តបន្ទាប់
+        setInterval(() => {
+            renderKpis();
+            renderTabs();
+            renderTickets();
+        }, 60000);
+
+        // ធ្វើបច្ចុប្បន្នភាពពេលផ្ទាំងផ្សេងកែទិន្នន័យ
+        window.onStoreChanged = render;
+
+        document.addEventListener('DOMContentLoaded', render);
     </script>
 </body>
 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIGITECHKH - ស្វែងរកវិក្កយបត្រ និងបញ្ជាទិញ</title>
+    <title>DIGITECHKH - ស្វែងរកវិក្កយបត្រ</title>
     <link rel="icon" type="image/png" href="../../shared/assets/favicon.png">
     <link rel="shortcut icon" type="image/png" href="../../shared/assets/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,6 +30,15 @@
     </script>
     <link rel="stylesheet" href="../../shared/styles/custom.css">
     <link rel="stylesheet" href="../../shared/styles/portal.css">
+    <style>
+        .cs-figure { font-variant-numeric: tabular-nums; }
+        #lookupInput {
+            height: 56px;
+            border: 2px solid #0ea5e9;
+            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.18);
+        }
+        #lookupInput:focus { box-shadow: 0 4px 24px rgba(14, 165, 233, 0.32); }
+    </style>
 </head>
 
 <body id="csPortal" data-active="orders-lookup" class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col md:flex-row overflow-x-hidden">
@@ -41,88 +50,32 @@
     <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
 
         <!-- ក្បាលទំព័រ -->
-        <div id="headerHost" data-title="ស្វែងរកវិក្កយបត្រ និងបញ្ជាទិញ"
-             data-subtitle="ស្វែងរកតាមលេខទូរស័ព្ទអតិថិជន លេខវិក្កយបត្រ ឬឈ្មោះហាង"></div>
+        <div id="headerHost" data-title="ស្វែងរកវិក្កយបត្រ"
+             data-subtitle="ស្វែងរកតាមលេខវិក្កយបត្រ លេខទូរស័ព្ទ ឬឈ្មោះអតិថិជន"></div>
 
         <!-- មាតិកាខាងក្នុង -->
-        <main class="p-4 sm:p-6 space-y-6 flex-1">
+        <main class="p-4 sm:p-6 space-y-5 flex-1 w-full">
 
-            <!-- ប្រអប់ស្វែងរកធំរហ័ស -->
-            <div class="bg-gradient-to-r from-[#1e3a5f] to-[#142842] text-white p-6 rounded-3xl shadow-lg border border-slate-700">
-                <div class="max-w-2xl mx-auto text-center space-y-3">
-                    <h3 class="text-lg font-bold">ឧបករណ៍ស្វែងរកវិក្កយបត្រ និងព័ត៌មានកុម្ម៉ង់ទូទាំងប្រព័ន្ធ</h3>
-                    <p class="text-xs text-sky-200 font-light">បញ្ចូលលេខទូរស័ព្ទ (ឧ. 012 345 678), លេខវិក្កយបត្រ (INV-...) ឬឈ្មោះអតិថិជន</p>
-                    <div class="relative">
-                        <i class="fas fa-search absolute left-4 top-3.5 text-slate-400 text-sm"></i>
-                        <input type="text" id="universalSearch" oninput="handleSearch()" placeholder="វាយលេខទូរស័ព្ទ, លេខ INV-2026-..., ឬឈ្មោះហាង..."
-                            class="w-full bg-white text-slate-800 placeholder:text-slate-400 rounded-2xl pl-11 pr-28 py-3 text-sm focus:outline-none focus:ring-4 focus:ring-sky-400/30 shadow-inner font-medium">
-                        <button onclick="handleSearch()" class="absolute right-2 top-2 px-4 py-1.5 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-semibold transition cursor-pointer">
-                            ស្វែងរក
-                        </button>
-                    </div>
+            <!-- ប្រអប់ស្វែងរក -->
+            <section class="w-full">
+                <div class="relative">
+                    <i class="fas fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-sky-500 text-base pointer-events-none"></i>
+                    <input type="text" id="lookupInput" autocomplete="off"
+                        oninput="onInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();runSearch();}"
+                        placeholder="ស្វែងរកលេខវិក្កយបត្រ លេខទូរស័ព្ទ ឬឈ្មោះអតិថិជន..."
+                        class="w-full bg-white text-slate-800 placeholder-slate-400 rounded-xl pl-14 pr-28 text-base font-medium outline-none transition">
+                    <button onclick="runSearch()" type="button"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-semibold transition">
+                        ស្វែងរក
+                    </button>
                 </div>
-            </div>
+                <p class="text-[11px] text-slate-400 mt-2 ml-1">សូមវាយយ៉ាងតិច 2 តួអក្សរ</p>
+            </section>
 
-            <!-- លទ្ធផលនៃការស្វែងរក -->
-            <div id="searchResultsContainer" class="space-y-4">
-                <!-- Dynamic Results -->
-            </div>
+            <!-- តំបន់លទ្ធផល -->
+            <section id="resultsArea" class="w-full"></section>
 
         </main>
-    </div>
-
-    <!-- Modal ស្នើសុំប្តូរទំនិញ -->
-    <div id="rmaModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-xl overflow-hidden">
-            <div class="p-6 bg-gradient-to-r from-[#0f2b5c] to-[#1e3a5f] text-white flex items-center justify-between">
-                <div>
-                    <h3 class="text-base font-bold flex items-center gap-2">
-                        <i class="fas fa-rotate-left text-sky-300"></i>
-                        <span>ស្នើសុំប្តូរទំនិញ ឬជួសជុល</span>
-                    </h3>
-                    <p class="text-xs text-sky-200 mt-0.5" id="rmaModalSubtitle">វិក្កយបត្រ INV-2026-0891</p>
-                </div>
-                <button onclick="closeRMAModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer">
-                    <i class="fas fa-xmark text-sm"></i>
-                </button>
-            </div>
-            <div class="p-6 space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">ជ្រើសរើសទំនិញដែលស្នើសុំប្តូរ</label>
-                    <select id="rmaItemSelect" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-primary">
-                        <!-- Dynamic Options -->
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">មូលហេតុនៃការប្តូរ</label>
-                    <select id="rmaReasonSelect" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-primary">
-                        <option value="damaged">ទំនិញខូចខាតពេលដឹកជញ្ជូន</option>
-                        <option value="defect">ទំនិញមានបញ្ហាបច្ចេកទេសពីរោងចក្រ</option>
-                        <option value="wrong_item">បញ្ជូនទំនិញខុសម៉ូឌែល</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">បរិយាយលម្អិតអំពីបញ្ហា</label>
-                    <textarea id="rmaDescription" rows="3" placeholder="បញ្ជាក់ពីស្ថានភាពជាក់ស្តែងរបស់ទំនិញ..."
-                        class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs focus:outline-none focus:border-primary"></textarea>
-                </div>
-
-                <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-xs flex items-center gap-2">
-                    <i class="fas fa-info-circle text-amber-600"></i>
-                    <span>សំណើប្តូរទំនិញនឹងត្រូវបញ្ជូនទៅកាន់អ្នកគ្រប់គ្រងឃ្លាំងដើម្បីពិនិត្យទំនិញ និងបញ្ចេញទំនិញថ្មីជំនួស។</span>
-                </div>
-            </div>
-            <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                <button onclick="closeRMAModal()" class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium text-xs transition cursor-pointer">
-                    ថយក្រោយ
-                </button>
-                <button onclick="submitRMARequest()" class="px-5 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white font-semibold text-xs transition shadow-sm cursor-pointer flex items-center gap-1.5">
-                    <i class="fas fa-paper-plane"></i> បញ្ជូនសំណើប្តូរទំនិញ
-                </button>
-            </div>
-        </div>
     </div>
 
     <!-- Scripts -->
@@ -130,158 +83,360 @@
     <script src="data.js"></script>
     <script src="../../shared/scripts/portal.js"></script>
     <script>
-        let activeRMAInvoice = null;
+        let selectedCustomerId = '';
+        let expandedInvoice = '';
+        let searchTimer = null;
 
-        function handleSearch() {
-            const query = (document.getElementById('universalSearch')?.value || '').trim().toLowerCase();
-            const data = getCustomerSupportData();
-            const container = document.getElementById('searchResultsContainer');
-            if (!container) return;
+        function query() {
+            return (document.getElementById('lookupInput').value || '').trim();
+        }
 
-            let list = data.orders;
-            if (query) {
-                list = list.filter(o => 
-                    o.invoiceId.toLowerCase().includes(query) ||
-                    o.orderNo.toLowerCase().includes(query) ||
-                    o.customerName.toLowerCase().includes(query) ||
-                    o.phone.includes(query) ||
-                    o.items.some(i => i.name.toLowerCase().includes(query) || i.sku.toLowerCase().includes(query))
-                );
-            }
+        function onInput() {
+            // ពន្យារពេលបន្តិច ដើម្បីកុំឲ្យសាងលទ្ធផលឡើងវិញគ្រប់តួអក្សរ
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(runSearch, 300);
+        }
 
-            if (list.length === 0) {
-                container.innerHTML = `
-                    <div class="bg-white rounded-3xl border border-slate-200 p-12 text-center text-slate-400 shadow-sm">
-                        <i class="fas fa-search-minus text-4xl mb-3 text-slate-300"></i>
-                        <p class="text-sm font-medium">រកមិនឃើញវិក្កយបត្រ ឬបញ្ជាទិញដែលត្រូវគ្នានឹងពាក្យស្វែងរកឡើយ</p>
-                    </div>`;
+        function syncUrl() {
+            const q = query();
+            const url = q ? `?query=${encodeURIComponent(q)}` : window.location.pathname;
+            history.replaceState(null, '', url);
+        }
+
+        /* ===== គូសផ្ទាំងលទ្ធផល ===== */
+
+        function runSearch() {
+            syncUrl();
+            const q = query();
+            const host = document.getElementById('resultsArea');
+
+            if (q.length < 2) {
+                host.innerHTML = emptyPrompt();
                 return;
             }
 
-            container.innerHTML = list.map(order => {
-                let deliveryBadge = '';
-                if (order.deliveryStatus === 'delivered') {
-                    deliveryBadge = '<span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold"><i class="fas fa-check-double mr-1"></i> បានប្រគល់ជូន</span>';
-                } else if (order.deliveryStatus === 'out_for_delivery') {
-                    deliveryBadge = '<span class="px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200 text-xs font-semibold"><i class="fas fa-truck-fast mr-1"></i> កំពុងធ្វើដំណើរលើផ្លូវ</span>';
-                } else {
-                    deliveryBadge = '<span class="px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold"><i class="fas fa-box-archive mr-1"></i> បានចេញពីឃ្លាំង</span>';
-                }
+            const res = csSearch(q, 50);
 
-                const itemsHtml = order.items.map(item => `
-                    <tr class="hover:bg-slate-50/80 transition">
-                        <td class="py-2.5 px-3 text-xs font-mono font-bold text-sky-700">${item.sku}</td>
-                        <td class="py-2.5 px-3 text-xs font-medium text-slate-800">${item.name}</td>
-                        <td class="py-2.5 px-3 text-xs font-bold text-center text-slate-700">${item.qty}</td>
-                        <td class="py-2.5 px-3 text-xs font-semibold text-right text-slate-700">$${item.unitPrice.toFixed(2)}</td>
-                        <td class="py-2.5 px-3 text-xs font-bold text-right text-slate-900">$${item.total.toFixed(2)}</td>
-                    </tr>
-                `).join('');
+            // ប្រមូលអតិថិជនពីលទ្ធផលទាំងពីរក្រុម
+            const ids = {};
+            res.customers.forEach(c => ids[c.id] = true);
+            res.orders.forEach(o => { if (o.customerId) ids[o.customerId] = true; });
+            const matched = Object.keys(ids).map(csCustomer).filter(Boolean);
+
+            if (matched.length === 0) {
+                host.innerHTML = noResults();
+                return;
+            }
+
+            // បើមានអតិថិជនតែម្នាក់ ជ្រើសរើសដោយស្វ័យប្រវត្តិ
+            if (!matched.some(c => c.id === selectedCustomerId)) {
+                selectedCustomerId = matched[0].id;
+                expandedInvoice = '';
+            }
+
+            // បើស្វែងរកដោយលេខវិក្កយបត្រជាក់លាក់ ត្រូវបើកកាតនោះភ្លាម
+            const exact = res.orders.find(o => o.invoiceId.toLowerCase() === q.toLowerCase());
+            if (exact) {
+                selectedCustomerId = exact.customerId;
+                expandedInvoice = exact.invoiceId;
+            }
+
+            host.innerHTML = `
+                <div class="grid grid-cols-1 xl:grid-cols-4 gap-5">
+                    <div class="xl:col-span-1 space-y-3">${customerPanel(matched)}</div>
+                    <div class="xl:col-span-3">${orderPanel()}</div>
+                </div>`;
+        }
+
+        function emptyPrompt() {
+            return `
+                <div class="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
+                    <i class="fas fa-magnifying-glass text-4xl mb-3 text-slate-300"></i>
+                    <p class="text-sm font-medium text-slate-600">ចាប់ផ្តើមស្វែងរក</p>
+                    <p class="text-xs text-slate-400 mt-1.5">វាយលេខវិក្កយបត្រ លេខទូរស័ព្ទ ឬឈ្មោះអតិថិជនក្នុងប្រអប់ខាងលើ</p>
+                </div>`;
+        }
+
+        function noResults() {
+            return `
+                <div class="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
+                    <i class="fas fa-file-circle-question text-4xl mb-3 text-slate-300"></i>
+                    <p class="text-sm font-medium text-slate-600">គ្មានលទ្ធផល — សូមពិនិត្យម្តងទៀត</p>
+                    <p class="text-xs text-slate-400 mt-1.5">សាកល្បងស្វែងរកតាមលេខទូរស័ព្ទ ឬឈ្មោះអតិថិជនជំនួសវិញ</p>
+                </div>`;
+        }
+
+        /* ===== ផ្ទាំងអតិថិជន ===== */
+
+        function initials(name) {
+            const parts = String(name).trim().split(/\s+/);
+            return (parts[0] || '').slice(0, 1) + (parts[1] || '').slice(0, 1);
+        }
+
+        function customerPanel(list) {
+            const head = list.length > 1
+                ? `<p class="text-[11px] font-semibold text-slate-400 px-1">អតិថិជនត្រូវគ្នា ${list.length}</p>`
+                : '';
+
+            return head + list.map(c => {
+                const on = c.id === selectedCustomerId;
+                const orders = csOrders().filter(o => o.customerId === c.id);
+                const spend = orders.reduce((s, o) => s + o.grandTotal, 0);
 
                 return `
-                    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-5 hover:border-slate-300 transition">
-                        <!-- Top Order Info -->
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
-                            <div class="flex items-center gap-3">
-                                <div class="w-12 h-12 rounded-2xl bg-[#1e3a5f] text-white flex items-center justify-center font-bold text-lg shadow-sm">
-                                    <i class="fas fa-file-invoice-dollar"></i>
-                                </div>
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <h3 class="text-base font-bold text-slate-800">${order.invoiceId}</h3>
-                                        <span class="text-xs font-mono text-slate-500">(${order.orderNo})</span>
-                                        <span class="px-2.5 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200 text-xs font-semibold">${order.paymentStatus}</span>
-                                    </div>
-                                    <p class="text-xs text-slate-500 mt-0.5">
-                                        <i class="fas fa-calendar mr-1 text-slate-400"></i> ${order.date} &bull; អ្នកលក់: <span class="font-medium text-slate-700">${order.salesRep}</span>
-                                    </p>
-                                </div>
+                <div class="bg-white rounded-2xl border ${on ? 'border-sky-400 ring-2 ring-sky-100' : 'border-slate-200'} shadow-sm overflow-hidden transition">
+                    <button onclick="pickCustomer('${c.id}')" type="button" class="w-full text-left p-4 hover:bg-slate-50 transition">
+                        <div class="flex items-center gap-3">
+                            <span class="w-11 h-11 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center text-sm font-semibold flex-shrink-0">
+                                ${initials(c.name)}
+                            </span>
+                            <span class="min-w-0 flex-1">
+                                <span class="block text-xs font-medium text-slate-700 truncate">${c.name}</span>
+                                <span class="block text-[11px] text-slate-500 cs-figure">${c.id}</span>
+                            </span>
+                            ${on ? '<i class="fas fa-circle-check text-sky-600 text-sm flex-shrink-0"></i>' : ''}
+                        </div>
+                    </button>
+
+                    ${on ? `
+                    <div class="px-4 pb-4 space-y-3">
+                        <a href="tel:${c.phone.replace(/\s/g, '')}"
+                           class="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-800 text-xs font-semibold transition">
+                            <i class="fas fa-phone text-[10px]"></i><span class="cs-figure">${c.phone}</span>
+                        </a>
+
+                        <div class="space-y-2 pt-3 border-t border-slate-100 text-[11px]">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-slate-500">អតិថិជនតាំងពី</span>
+                                <span class="font-medium text-slate-700 cs-figure">${c.since}</span>
                             </div>
-                            <div class="flex items-center gap-3 self-end sm:self-center">
-                                ${deliveryBadge}
-                                <button onclick="openRMAModal('${order.invoiceId}')" class="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer">
-                                    <i class="fas fa-rotate-left"></i> ស្នើសុំប្តូរទំនិញ
-                                </button>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-slate-500">ការបញ្ជាទិញសរុប</span>
+                                <span class="font-medium text-slate-700 cs-figure">${c.totalOrders} ដង</span>
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-slate-500">បញ្ជាទិញចុងក្រោយ</span>
+                                <span class="font-medium text-slate-700 cs-figure">${c.lastOrder}</span>
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-slate-500">ទឹកប្រាក់ក្នុងប្រព័ន្ធ</span>
+                                <span class="font-medium text-slate-700 cs-figure">${csMoney(spend)}</span>
                             </div>
                         </div>
 
-                        <!-- Customer & Delivery Metadata -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50/70 p-4 rounded-2xl border border-slate-100 text-xs">
-                            <div class="space-y-1.5">
-                                <p class="text-slate-500 font-medium"><i class="fas fa-user mr-1 text-slate-400"></i> ព័ត៌មានអតិថិជន:</p>
-                                <p class="font-bold text-slate-800">${order.customerName} (<a href="tel:${order.phone}" class="text-sky-700 hover:underline font-mono">${order.phone}</a>)</p>
-                                <p class="text-slate-600 leading-relaxed"><i class="fas fa-location-dot mr-1 text-slate-400"></i> ${order.address}</p>
-                            </div>
-                            <div class="space-y-1.5">
-                                <p class="text-slate-500 font-medium"><i class="fas fa-truck mr-1 text-slate-400"></i> អ្នកដឹកជញ្ជូន:</p>
-                                <p class="font-bold text-slate-800">${order.driverName}</p>
-                                <p class="text-slate-600"><i class="fas fa-id-card mr-1 text-slate-400"></i> យានយន្ត: ${order.vehiclePlate}</p>
-                            </div>
-                        </div>
-
-                        <!-- Item Table -->
-                        <div class="overflow-x-auto rounded-xl border border-slate-100">
-                            <table class="w-full text-left">
-                                <thead class="bg-slate-100/70 text-slate-600 text-[11px] font-bold uppercase tracking-wider">
-                                    <tr>
-                                        <th class="py-2 px-3">កូដមុខទំនិញ</th>
-                                        <th class="py-2 px-3">ឈ្មោះមុខទំនិញ</th>
-                                        <th class="py-2 px-3 text-center">ចំនួន</th>
-                                        <th class="py-2 px-3 text-right">តម្លៃរាយ</th>
-                                        <th class="py-2 px-3 text-right">សរុប</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100 bg-white">
-                                    ${itemsHtml}
-                                </tbody>
-                                <tfoot class="bg-slate-50 font-bold text-xs">
-                                    <tr>
-                                        <td colspan="4" class="py-2.5 px-3 text-right text-slate-600">សរុបទឹកប្រាក់វិក្កយបត្ររួម:</td>
-                                        <td class="py-2.5 px-3 text-right text-emerald-700 font-mono text-sm">$${order.grandTotal.toFixed(2)}</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>`;
+                        <a href="create-note.html?customer=${encodeURIComponent(c.name)}&phone=${encodeURIComponent(c.phone)}"
+                           class="w-full px-3 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold transition flex items-center justify-center gap-2">
+                            <i class="fas fa-note-sticky text-[10px]"></i> បង្កើតសំណើជំនួយ
+                        </a>
+                    </div>` : ''}
+                </div>`;
             }).join('');
         }
 
-        function openRMAModal(invoiceId) {
-            const data = getCustomerSupportData();
-            const order = data.orders.find(o => o.invoiceId === invoiceId);
-            if (!order) return;
-
-            activeRMAInvoice = order;
-            document.getElementById('rmaModalSubtitle').textContent = `វិក្កយបត្រលេខ ${order.invoiceId} (${order.customerName})`;
-            const select = document.getElementById('rmaItemSelect');
-            select.innerHTML = order.items.map(i => `
-                <option value="${i.sku}">${i.name} (ចំនួន: ${i.qty})</option>
-            `).join('');
-
-            const modal = document.getElementById('rmaModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+        function pickCustomer(id) {
+            selectedCustomerId = id;
+            expandedInvoice = '';
+            runSearch();
         }
 
-        function closeRMAModal() {
-            const modal = document.getElementById('rmaModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            activeRMAInvoice = null;
+        /* ===== ផ្ទាំងបញ្ជីវិក្កយបត្រ ===== */
+
+        function orderPanel() {
+            const orders = csOrders().filter(o => o.customerId === selectedCustomerId);
+            const c = csCustomer(selectedCustomerId);
+
+            if (!orders.length) {
+                return `
+                    <div class="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
+                        <i class="fas fa-receipt text-4xl mb-3 text-slate-300"></i>
+                        <p class="text-sm font-medium text-slate-600">អតិថិជននេះមិនទាន់មានវិក្កយបត្រក្នុងប្រព័ន្ធឡើយ</p>
+                    </div>`;
+            }
+
+            return `
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between gap-3">
+                        <h3 class="text-sm font-semibold text-slate-800">
+                            វិក្កយបត្ររបស់ ${c ? c.name : ''}
+                            <span class="ml-1 px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-semibold cs-figure">${orders.length}</span>
+                        </h3>
+                        <span class="text-[11px] text-slate-400">ថ្មីបំផុតនៅខាងលើ</span>
+                    </div>
+                    <div class="divide-y divide-slate-100">
+                        ${orders.map(orderRow).join('')}
+                    </div>
+                </div>`;
         }
 
-        function submitRMARequest() {
-            if (!activeRMAInvoice) return;
-            const itemSku = document.getElementById('rmaItemSelect').value;
-            const reason = document.getElementById('rmaReasonSelect').value;
-            const desc = document.getElementById('rmaDescription').value;
+        function orderRow(o) {
+            const st = CS_DELIVERY_STATUS[o.deliveryStatus] || CS_DELIVERY_STATUS.preparing;
+            const paid = o.paymentStatus === 'បានទូទាត់';
+            const open = o.invoiceId === expandedInvoice;
 
-            showToast(`សំណើប្តូរទំនិញសម្រាប់វិក្កយបត្រ ${activeRMAInvoice.invoiceId} ត្រូវបានបញ្ជូនទៅឃ្លាំងជោគជ័យ!`, 'success');
-            closeRMAModal();
+            return `
+                <div>
+                    <button onclick="toggleOrder('${o.invoiceId}')" type="button"
+                        class="w-full px-5 py-4 hover:bg-slate-50 transition text-left flex flex-col sm:flex-row sm:items-center gap-3">
+                        <span class="flex items-center gap-3 min-w-0 flex-1">
+                            <span class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-chevron-${open ? 'up' : 'down'} text-[10px]"></i>
+                            </span>
+                            <span class="min-w-0">
+                                <span class="block text-xs font-semibold text-slate-700 cs-figure">${o.invoiceId}</span>
+                                <span class="block text-[11px] text-slate-500 cs-figure">${o.date} · ${o.orderNo}</span>
+                            </span>
+                        </span>
+                        <span class="flex items-center gap-2 flex-shrink-0 flex-wrap">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+                                paid ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'}">
+                                ${o.paymentStatus}
+                            </span>
+                            <span class="px-2 py-0.5 rounded-full bg-${st.tone}-50 text-${st.tone}-700 border border-${st.tone}-200 text-[10px] font-semibold">
+                                <i class="fas ${st.icon} mr-1"></i>${st.label}
+                            </span>
+                            <span class="text-sm font-semibold text-slate-700 cs-figure w-24 text-right">${csMoney(o.grandTotal)}</span>
+                        </span>
+                    </button>
+                    ${open ? orderDetail(o) : ''}
+                </div>`;
         }
+
+        function toggleOrder(id) {
+            expandedInvoice = expandedInvoice === id ? '' : id;
+            runSearch();
+        }
+
+        function orderDetail(o) {
+            const st = CS_DELIVERY_STATUS[o.deliveryStatus] || CS_DELIVERY_STATUS.preparing;
+            const del = o.deliveryId ? csDelivery(o.deliveryId) : null;
+            const notes = csNotesFor(o.invoiceId);
+            const rma = csRmaFor(o.invoiceId);
+
+            return `
+                <div class="px-5 pb-5 bg-slate-50/60 border-t border-slate-100 space-y-4 pt-4">
+
+                    <!-- មុខទំនិញ — បង្ហាញតែប៉ុណ្ណោះ មិនអាចកែបានឡើយ -->
+                    <div class="rounded-xl border border-slate-200 overflow-hidden bg-white">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-100/70 text-slate-600 text-[11px] font-semibold">
+                                <tr>
+                                    <th class="py-2.5 px-3">កូដមុខទំនិញ</th>
+                                    <th class="py-2.5 px-3">ឈ្មោះមុខទំនិញ</th>
+                                    <th class="py-2.5 px-3 text-center">ចំនួន</th>
+                                    <th class="py-2.5 px-3 text-right">តម្លៃឯកតា</th>
+                                    <th class="py-2.5 px-3 text-right">សរុប</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                ${o.items.map(i => `
+                                    <tr>
+                                        <td class="py-2.5 px-3 text-xs font-medium text-sky-700 cs-figure">${i.sku}</td>
+                                        <td class="py-2.5 px-3 text-xs font-medium text-slate-700">${i.name}</td>
+                                        <td class="py-2.5 px-3 text-xs text-center text-slate-600 cs-figure">${i.qty}</td>
+                                        <td class="py-2.5 px-3 text-xs text-right text-slate-600 cs-figure">${csMoney(i.unitPrice)}</td>
+                                        <td class="py-2.5 px-3 text-xs text-right font-medium text-slate-700 cs-figure">${csMoney(i.total)}</td>
+                                    </tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- សេចក្តីសង្ខេបទឹកប្រាក់ តាមលំដាប់ស្តង់ដារ -->
+                    <div class="flex justify-end">
+                        <div class="w-full sm:w-72 space-y-1.5 text-xs">
+                            <div class="flex items-center justify-between gap-3">
+                                <span class="text-slate-500">សរុបរង</span>
+                                <span class="font-medium text-slate-700 cs-figure">${csMoney(o.subtotal)}</span>
+                            </div>
+                            <div class="flex items-center justify-between gap-3">
+                                <span class="text-slate-500">បញ្ចុះតម្លៃពិសេស</span>
+                                <span class="font-medium text-slate-700 cs-figure">${csMoney(o.discount)}</span>
+                            </div>
+                            <div class="flex items-center justify-between gap-3">
+                                <span class="text-slate-500">អាករលើតម្លៃបន្ថែម 10%</span>
+                                <span class="font-medium text-slate-700 cs-figure">${csMoney(o.vat)}</span>
+                            </div>
+                            <div class="flex items-center justify-between gap-3 pt-2 border-t border-slate-200">
+                                <span class="font-semibold text-slate-700">សរុបត្រូវបង់</span>
+                                <span class="text-sm font-semibold text-slate-800 cs-figure">${csMoney(o.grandTotal)}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ការទូទាត់ និងការដឹកជញ្ជូន -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="p-3.5 rounded-xl bg-white border border-slate-200 space-y-1.5 text-[11px]">
+                            <p class="text-slate-500 font-medium"><i class="fas fa-wallet mr-1 text-slate-400"></i>ការទូទាត់</p>
+                            <p class="text-xs font-medium text-slate-700">${o.paymentStatus} · ${o.paymentMethod}</p>
+                            <p class="text-slate-500">អ្នកលក់ទទួលបន្ទុក ${o.salesRep}</p>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-white border border-slate-200 space-y-1.5 text-[11px]">
+                            <p class="text-slate-500 font-medium"><i class="fas fa-truck mr-1 text-slate-400"></i>ការដឹកជញ្ជូន</p>
+                            <p class="text-xs font-medium text-slate-700">
+                                ${st.label}${del ? ` · ${del.driverName}` : ''}
+                            </p>
+                            ${del ? `
+                                <p class="text-slate-500 cs-figure">${del.trackingCode} · ${del.district}, ${del.province}</p>
+                                ${del.status === 'delivered' ? `<p class="text-slate-500 cs-figure">ប្រគល់ជូន ${csFmtDateTime(del.deliveredAt)}</p>` : ''}
+                                ${del.status === 'failed' ? `<p class="text-rose-700 font-medium">${del.failureReason}</p>` : ''}
+                                <a href="delivery-status.html" class="inline-block text-sky-700 hover:underline font-medium">តាមដានការដឹកជញ្ជូន</a>
+                            ` : '<p class="text-slate-400">គ្មានកំណត់ត្រាដឹកជញ្ជូន</p>'}
+                        </div>
+                    </div>
+
+                    <!-- អាសយដ្ឋានដឹកជញ្ជូន -->
+                    <div class="p-3.5 rounded-xl bg-white border border-slate-200 text-[11px]">
+                        <p class="text-slate-500 font-medium mb-1"><i class="fas fa-location-dot mr-1 text-slate-400"></i>អាសយដ្ឋានដឹកជញ្ជូន</p>
+                        <p class="text-slate-600 leading-relaxed">${o.address}</p>
+                    </div>
+
+                    ${rma.length ? `
+                    <div class="p-3.5 rounded-xl bg-orange-50 border border-orange-200 space-y-2">
+                        <p class="text-[11px] text-orange-800 font-semibold"><i class="fas fa-rotate-left mr-1"></i>សំណើប្តូរទំនិញ</p>
+                        ${rma.map(r => `
+                            <div class="text-[11px] text-orange-900">
+                                <span class="font-semibold cs-figure">${r.id}</span> · ${r.itemName}
+                                <span class="cs-figure">(${r.qty})</span> · ${r.reason}
+                                <span class="block text-orange-800/80">${r.status} · ${csRelative(r.createdAt)}</span>
+                            </div>`).join('')}
+                    </div>` : ''}
+
+                    <!-- កំណត់ចំណាំគាំទ្រ -->
+                    <div class="p-3.5 rounded-xl bg-white border border-slate-200 space-y-2.5">
+                        <p class="text-[11px] text-slate-500 font-medium"><i class="fas fa-note-sticky mr-1 text-slate-400"></i>កំណត់ចំណាំគាំទ្រ</p>
+                        ${notes.length
+                            ? notes.map(n => `
+                                <div class="text-[11px] p-2.5 rounded-lg bg-slate-50 border border-slate-100">
+                                    <p class="text-slate-700 leading-relaxed">${n.content}</p>
+                                    <p class="text-slate-400 mt-1 cs-figure">${n.agent} · ${csFmtDateTime(n.createdAt)}</p>
+                                </div>`).join('')
+                            : '<p class="text-[11px] text-slate-400">មិនទាន់មានកំណត់ចំណាំឡើយ</p>'}
+                    </div>
+
+                    <!-- សកម្មភាពដែលអនុញ្ញាត -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <a href="create-note.html?invoice=${encodeURIComponent(o.invoiceId)}&customer=${encodeURIComponent(o.customerName)}&phone=${encodeURIComponent(o.phone)}"
+                           class="px-3.5 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 text-xs font-semibold transition flex items-center gap-1.5">
+                            <i class="fas fa-note-sticky text-[10px]"></i> បន្ថែមកំណត់ចំណាំ
+                        </a>
+                        <a href="create-rma.html?invoice=${encodeURIComponent(o.invoiceId)}"
+                           class="px-3.5 py-2 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 text-xs font-semibold transition flex items-center gap-1.5">
+                            <i class="fas fa-rotate-left text-[10px]"></i> ស្នើសុំប្តូរទំនិញ
+                        </a>
+                        <p class="text-[11px] text-slate-400 ml-auto">
+                            <i class="fas fa-lock mr-1"></i>ទិន្នន័យវិក្កយបត្រជាការបង្ហាញតែប៉ុណ្ណោះ
+                        </p>
+                    </div>
+                </div>`;
+        }
+
+        /* ===== ដំណើរការទំព័រ ===== */
+
+        window.onStoreChanged = runSearch;
 
         document.addEventListener('DOMContentLoaded', () => {
-            handleSearch();
+            const q = new URLSearchParams(window.location.search).get('query');
+            if (q) document.getElementById('lookupInput').value = q;
+            runSearch();
         });
     </script>
 </body>

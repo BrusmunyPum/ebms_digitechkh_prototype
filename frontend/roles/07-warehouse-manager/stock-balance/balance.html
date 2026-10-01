@@ -78,32 +78,13 @@
                             </div>
                             
                             <!-- Category Filter -->
-                            <select id="balanceCategoryFilter" onchange="filterBalanceTable()" class="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-slate-400">
-                                <option value="all">គ្រប់ប្រភេទទាំងអស់</option>
-                                <option value="computer">កុំព្យូទ័រ</option>
-                                <option value="monitor">អេក្រង់</option>
-                                <option value="printer">ម៉ាស៊ីនបោះពុម្ព</option>
-                                <option value="accessory">គ្រឿងបន្លាស់</option>
-                                <option value="furniture">គ្រឿងសង្ហារិម</option>
-                            </select>
+                            <div id="balanceCategoryFilter" data-bms-select data-onchange="filterBalanceTable()" data-options='[{"value": "all", "label": "គ្រប់ប្រភេទទាំងអស់"}, {"value": "computer", "label": "កុំព្យូទ័រ"}, {"value": "monitor", "label": "អេក្រង់"}, {"value": "printer", "label": "ម៉ាស៊ីនបោះពុម្ព"}, {"value": "accessory", "label": "គ្រឿងបន្លាស់"}, {"value": "furniture", "label": "គ្រឿងសង្ហារិម"}]'></div>
 
                             <!-- Warehouse Location Filter -->
-                            <select id="balanceWhFilter" onchange="filterBalanceTable()" class="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-slate-400">
-                                <option value="all">គ្រប់ឃ្លាំងទាំងអស់ (សរុប)</option>
-                                <option value="WH-01">ឃ្លាំងកណ្តាល (ភ្នំពេញ)</option>
-                                <option value="WH-02">ឃ្លាំងសាខាទួលគោក</option>
-                                <option value="WH-03">ឃ្លាំងសាខាសៀមរាប</option>
-                                <option value="WH-04">ឃ្លាំងសាខាបាត់ដំបង</option>
-                            </select>
+                            <div id="balanceWhFilter" data-bms-select data-onchange="filterBalanceTable()" data-options='[{"value": "all", "label": "គ្រប់ឃ្លាំងទាំងអស់ (សរុប)"}, {"value": "WH-01", "label": "ឃ្លាំងកណ្តាល (ភ្នំពេញ)"}, {"value": "WH-02", "label": "ឃ្លាំងសាខាទួលគោក"}, {"value": "WH-03", "label": "ឃ្លាំងសាខាសៀមរាប"}, {"value": "WH-04", "label": "ឃ្លាំងសាខាបាត់ដំបង"}]'></div>
 
                             <!-- Stock Status Filter -->
-                            <select id="balanceStatusFilter" onchange="filterBalanceTable()" class="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-slate-400">
-                                <option value="all">គ្រប់ស្ថានភាពស្តុក</option>
-                                <option value="ok">ស្តុកគ្រប់គ្រាន់</option>
-                                <option value="low">ស្តុកទាប</option>
-                                <option value="critical">កម្រិតអាសន្ន</option>
-                                <option value="out">អស់ពីស្តុក</option>
-                            </select>
+                            <div id="balanceStatusFilter" data-bms-select data-onchange="filterBalanceTable()" data-options='[{"value": "all", "label": "គ្រប់ស្ថានភាពស្តុក"}, {"value": "ok", "label": "ស្តុកគ្រប់គ្រាន់"}, {"value": "low", "label": "ស្តុកទាប"}, {"value": "critical", "label": "កម្រិតអាសន្ន"}, {"value": "out", "label": "អស់ពីស្តុក"}]'></div>
                         </div>
                         <div class="text-xs text-slate-500 font-medium" id="balanceResultCount">
                             បង្ហាញ 0 មុខទំនិញ
@@ -154,14 +135,7 @@
                                 <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                                 <input type="text" id="catalogSearch" onkeyup="filterCatalogTable()" placeholder="ស្វែងរកតាម SKU, ឈ្មោះទំនិញ, Barcode..." class="w-full h-10 pl-9 pr-4 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:bg-white focus:outline-none focus:border-slate-400 transition">
                             </div>
-                            <select id="catalogCategoryFilter" onchange="filterCatalogTable()" class="h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:outline-none focus:border-slate-400">
-                                <option value="all">គ្រប់ប្រភេទទាំងអស់</option>
-                                <option value="computer">កុំព្យូទ័រ</option>
-                                <option value="monitor">អេក្រង់</option>
-                                <option value="printer">ម៉ាស៊ីនបោះពុម្ព</option>
-                                <option value="accessory">គ្រឿងបន្លាស់</option>
-                                <option value="furniture">គ្រឿងសង្ហារិម</option>
-                            </select>
+                            <div id="catalogCategoryFilter" data-bms-select data-onchange="filterCatalogTable()" data-options='[{"value": "all", "label": "គ្រប់ប្រភេទទាំងអស់"}, {"value": "computer", "label": "កុំព្យូទ័រ"}, {"value": "monitor", "label": "អេក្រង់"}, {"value": "printer", "label": "ម៉ាស៊ីនបោះពុម្ព"}, {"value": "accessory", "label": "គ្រឿងបន្លាស់"}, {"value": "furniture", "label": "គ្រឿងសង្ហារិម"}]'></div>
                         </div>
                         <div class="text-xs text-slate-500 font-medium" id="catalogResultCount">
                             បង្ហាញ 0 ផលិតផល

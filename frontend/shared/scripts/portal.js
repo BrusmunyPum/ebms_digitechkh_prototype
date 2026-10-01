@@ -107,13 +107,13 @@ const PORTAL_CONFIGS = {
         sidebarV2: true,
         title: 'ច្រកបម្រើអតិថិជន',
         roleName: 'ផ្នែកគាំទ្រអតិថិជន',
-        roleIcon: 'mdi:headset',
+        roleIcon: 'mdi:face-agent',
         userInitials: 'លស',
         userName: 'លី ស្រីមុំ',
         userRole: 'ផ្នែកបម្រើអតិថិជន',
         policyNote: 'ឆ្លើយតបសំណួរអតិថិជន, តាមដានអ្នកដឹក និងស្នើសុំប្តូរទំនិញដោយសុវត្ថិភាព។',
         nav: [
-            { id: 'dashboard', label: 'ផ្ទាំងសំណើ', icon: 'mdi:ticket-confirmation-outline', href: 'dashboard.html', badge: true },
+            { id: 'dashboard', label: 'ផ្ទាំងសេវាកម្ម', icon: 'mdi:headset', href: 'dashboard.html', badge: true, alertBadge: true },
             { id: 'orders-lookup', label: 'ស្វែងរកវិក្កយបត្រ', icon: 'mdi:file-document-outline', href: 'orders-lookup.html' },
             { id: 'delivery-status', label: 'តាមដានការដឹកជញ្ជូន', icon: 'mdi:truck-check-outline', href: 'delivery-status.html' }
         ]
@@ -333,7 +333,7 @@ function renderPortalSidebarV2(host, cfg, roleRoot, activeId, sharedRoot) {
                     <span class="sm-nav-note font-medium text-sky-300 uppercase tracking-wider block truncate">${cfg.title}</span>
                 </div>
                 <button onclick="togglePortalSidebar()" type="button" aria-label="បង្រួម ឬពង្រីករបារចំហៀង"
-                    class="sb-collapse-btn relative hidden lg:flex w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 text-sky-200 hover:text-white items-center justify-center transition flex-shrink-0">
+                    class="sb-collapse-btn relative hidden lg:!flex w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 text-sky-200 hover:text-white items-center justify-center transition flex-shrink-0">
                     <iconify-icon id="sbCollapseIcon" icon="${collapsed ? 'mdi:chevron-right' : 'mdi:chevron-left'}" class="text-lg"></iconify-icon>
                     <span class="sb-tip">ពង្រីករបារចំហៀង</span>
                 </button>
@@ -771,7 +771,7 @@ function renderDateRangePicker(hostId) {
 
     host.classList.add('relative');
     host.innerHTML = `
-        <span class="text-xs text-slate-400 hidden sm:inline mr-1.5">កាលបរិច្ឆេទ:</span>
+        <span class="text-xs text-slate-400 hidden sm:!inline mr-1.5">កាលបរិច្ឆេទ:</span>
         <button onclick="toggleDatePicker(event)" class="h-9 px-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs rounded-xl inline-flex items-center gap-2 shadow-sm transition-all focus:outline-none cursor-pointer">
             <i class="fas fa-calendar-days text-primary text-xs"></i>
             <span id="selectedDateLabel" class="font-medium text-slate-800"></span>
@@ -1070,3 +1070,155 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+/* ============================================================================
+   ធាតុជ្រើសរើសផ្ទាល់ខ្លួន (BMS Select) — ជំនួស <select> ដើមរបស់កម្មវិធីរុករក
+   ----------------------------------------------------------------------------
+   ច្បាប់ GEMINI.md §4 ហាមប្រើ <select> ដើម។ សមាសភាគនេះផ្តល់ជម្រើសតែមួយ
+   ដែលប្រើក្នុងគ្រប់ទំព័រទាំងអស់ ដើម្បីកុំឲ្យនីមួយៗសរសេរកូដផ្ទាល់ខ្លួនម្តងទៀត។
+
+   របៀបប្រើក្នុង HTML:
+     <div id="statusFilter" data-bms-select
+          data-placeholder="ទាំងអស់"
+          data-onchange="refreshList()"
+          data-options='[{"value":"all","label":"ទាំងអស់"}]'></div>
+
+   បន្ទាប់ពីចាប់ផ្តើម ធាតុនេះមានលក្ខណសម្បត្តិ .value ដូច <select> ដើម
+   ដូច្នេះកូដចាស់ដែលសរសេរ el.value ឬ el.value = 'x' នៅតែដំណើរការដដែល។
+
+   សម្រាប់ជម្រើសដែលបង្កើតដោយ JavaScript សូមប្រើ៖
+     bmsSetSelectOptions('adjSku', [{ value, label }], 'ជ្រើសរើស...')
+   ========================================================================== */
+
+const BMS_SELECT_STATE = {};
+
+function bmsSelectOptions(hostId) {
+    return (BMS_SELECT_STATE[hostId] || {}).options || [];
+}
+
+/** អត្ថបទដែលត្រូវបង្ហាញលើប៊ូតុង តាមតម្លៃបច្ចុប្បន្ន */
+function bmsSelectLabel(hostId) {
+    const st = BMS_SELECT_STATE[hostId];
+    if (!st) return '';
+    const hit = st.options.find(o => String(o.value) === String(st.value));
+    return hit ? hit.label : (st.placeholder || '');
+}
+
+function bmsRenderSelect(hostId) {
+    const host = document.getElementById(hostId);
+    const st = BMS_SELECT_STATE[hostId];
+    if (!host || !st) return;
+
+    const chosen = st.options.find(o => String(o.value) === String(st.value));
+    const label = chosen ? chosen.label : (st.placeholder || 'ជ្រើសរើស...');
+    const muted = chosen ? 'text-slate-700' : 'text-slate-400';
+    const menuId = `${hostId}__menu`;
+
+    host.innerHTML = `
+        <button type="button" onclick="toggleRowActionMenu(event, '${menuId}')"
+            class="w-full h-full flex items-center justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 hover:bg-slate-100 focus:border-sky-500 outline-none transition text-left">
+            <span class="text-xs font-medium ${muted} truncate">${label}</span>
+            <i class="fas fa-chevron-down text-[10px] text-slate-400 flex-shrink-0 transition-transform"></i>
+        </button>
+        <div id="${menuId}" class="hidden bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 text-left">
+            ${st.title ? `<div class="px-3 py-2 mb-1 rounded-xl bg-slate-50 border border-slate-100">
+                <p class="text-[11px] text-slate-400 font-medium">${st.title}</p>
+            </div>` : ''}
+            ${st.options.length
+                ? st.options.map((o, i) => `
+                    <button type="button" onclick="bmsPickSelect('${hostId}', ${i})"
+                        class="w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-slate-700 hover:bg-slate-50 transition text-left text-xs">
+                        <span class="truncate">${o.label}</span>
+                        ${String(o.value) === String(st.value) ? '<i class="fas fa-check text-[11px] text-emerald-600 flex-shrink-0"></i>' : ''}
+                    </button>`).join('')
+                : '<p class="px-3 py-4 text-center text-[11px] text-slate-400">គ្មានជម្រើស</p>'}
+        </div>`;
+}
+
+function bmsPickSelect(hostId, index) {
+    const st = BMS_SELECT_STATE[hostId];
+    if (!st) return;
+    const opt = st.options[index];
+    if (!opt) return;
+
+    st.value = opt.value;
+    if (typeof closeAllFloatingDropdowns === 'function') closeAllFloatingDropdowns();
+    bmsRenderSelect(hostId);
+
+    const host = document.getElementById(hostId);
+    if (host) host.dispatchEvent(new Event('change', { bubbles: true }));
+    if (st.onChange) st.onChange();
+}
+
+/** កំណត់ជម្រើសថ្មី (សម្រាប់បញ្ជីដែលបង្កើតដោយ JavaScript) */
+function bmsSetSelectOptions(hostId, options, placeholder) {
+    const st = BMS_SELECT_STATE[hostId];
+    if (!st) return;
+    // រក្សាទុកវាលបន្ថែមទាំងអស់ (ឧ. ឯកតា, តម្លៃ) ដើម្បីឲ្យទំព័រអានបានវិញ
+    st.options = (options || []).map(o =>
+        (typeof o === 'string') ? { value: o, label: o } : Object.assign({}, o));
+    if (placeholder !== undefined) st.placeholder = placeholder;
+    // បើតម្លៃចាស់លែងមានក្នុងបញ្ជីថ្មី ត្រូវសម្អាតចោល
+    if (!st.options.some(o => String(o.value) === String(st.value))) st.value = '';
+    bmsRenderSelect(hostId);
+}
+
+/**
+ * ជម្រើសពេញលេញដែលបានជ្រើសរើស — ជំនួស select.options[select.selectedIndex]
+ * ត្រឡប់វត្ថុដើមទាំងមូល ដូច្នេះវាលបន្ថែមដូចជា unit ឬ price នៅតែអានបាន
+ */
+function bmsSelectedOption(hostId) {
+    const st = BMS_SELECT_STATE[hostId];
+    if (!st) return null;
+    return st.options.find(o => String(o.value) === String(st.value)) || null;
+}
+
+function bmsGetSelect(hostId) {
+    return (BMS_SELECT_STATE[hostId] || {}).value || '';
+}
+
+function bmsSetSelect(hostId, value) {
+    const st = BMS_SELECT_STATE[hostId];
+    if (!st) return;
+    st.value = value;
+    bmsRenderSelect(hostId);
+}
+
+/** ចាប់ផ្តើមធាតុជ្រើសរើសទាំងអស់ក្នុងទំព័រ */
+function initBmsSelects(root) {
+    (root || document).querySelectorAll('[data-bms-select]').forEach(host => {
+        if (host.dataset.bmsReady === 'true') return;
+        const id = host.id;
+        if (!id) return;
+
+        let options = [];
+        try {
+            options = JSON.parse(host.dataset.options || '[]');
+        } catch (e) {
+            console.warn(`[bmsSelect] ជម្រើសមិនត្រឹមត្រូវសម្រាប់ #${id}`, e);
+        }
+        options = options.map(o => (typeof o === 'string') ? { value: o, label: o } : o);
+
+        const onchange = host.dataset.onchange || '';
+        BMS_SELECT_STATE[id] = {
+            options,
+            value: host.dataset.value !== undefined ? host.dataset.value : (options[0] ? options[0].value : ''),
+            placeholder: host.dataset.placeholder || '',
+            title: host.dataset.title || '',
+            onChange: onchange ? () => { try { (new Function(onchange))(); } catch (e) { console.error(e); } } : null
+        };
+
+        // ធ្វើឲ្យ .value ដំណើរការដូច <select> ដើម ដើម្បីកុំឲ្យកូដចាស់ខូច
+        Object.defineProperty(host, 'value', {
+            configurable: true,
+            get() { return bmsGetSelect(id); },
+            set(v) { bmsSetSelect(id, v); }
+        });
+
+        host.dataset.bmsReady = 'true';
+        if (!host.classList.contains('relative')) host.classList.add('relative');
+        bmsRenderSelect(id);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => initBmsSelects());
