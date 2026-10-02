@@ -119,6 +119,26 @@ const CS_DELIVERY_STATUS = {
     failed: { label: 'ដឹកមិនជោគជ័យ', tone: 'rose', icon: 'fa-circle-exclamation' }
 };
 
+/**
+ * ដំណាក់កាលដឹកជញ្ជូន — សម្រាប់របារស្ថានភាព (bmsStepper)
+ * ស្ថានភាព «ដឹកមិនជោគជ័យ» ឈប់នៅដំណាក់កាលទី 3 ព្រោះទំនិញមិនបានដល់ដៃអតិថិជន
+ */
+const CS_DELIVERY_STAGES = [
+    { label: 'បានបញ្ជាទិញ', icon: 'fa-file-invoice' },
+    { label: 'កំពុងរៀបចំវេចខ្ចប់', icon: 'fa-box-open' },
+    { label: 'កំពុងដឹកជញ្ជូន', icon: 'fa-truck-fast' },
+    { label: 'បានទទួលទំនិញ', icon: 'fa-house-circle-check' }
+];
+
+/** ដំណាក់កាលបច្ចុប្បន្ន (1-4) តាមស្ថានភាពកញ្ចប់ */
+function csDeliveryStage(status) {
+    if (status === 'preparing') return 2;
+    if (status === 'out') return 3;
+    if (status === 'delivered') return 4;
+    if (status === 'failed') return 3;
+    return 1;
+}
+
 const CS_FAILURE_REASONS = [
     'អតិថិជនមិននៅផ្ទះ',
     'អាសយដ្ឋានមិនត្រឹមត្រូវ',

@@ -38,10 +38,15 @@
     <script src="data.js"></script>
     <script src="../../shared/scripts/portal.js"></script>
     <script>
-        const params = new URLSearchParams(location.search);
-        const receiptId = params.get('receipt') || nextReceiptNumber();
-        const amount = parseFloat(params.get('amount')) || 0;
+        /*
+         * ការលក់ដែលរង់ចាំគឺជាប្រភពតែមួយគត់ — មិនទុកចិត្តលើ URL ទេ
+         * ពីមុន៖ បើកទំព័រនេះដោយគ្មានការលក់ (ចុចត្រឡប់ក្រោយ ឬផ្ទុកឡើងវិញ) បង្ហាញកូដស្កេន $0.00
+         * បម្រុងលេខវិក្កយបត្រទទេ ហើយប៊ូតុង «ទទួលបានប្រាក់» សម្អាតកន្ត្រកដែលកំពុងលក់ចោល
+         */
         const pending = loadPendingPayment();
+        const receiptId = pending ? pending.receiptId : '';
+        const amount = pending ? (Number(pending.pay && pending.pay.khqr) || 0) : 0;
+        const hasPayment = !!pending && amount > 0.005;
 
         let secondsLeft = 300;
         let ticker = null;
@@ -238,7 +243,7 @@
         }
 
         async function confirmPaid() {
-            if (settled) return;
+            if (settled || !hasPayment) return;
             const ok = await showCustomConfirm({
                 title: 'បញ្ជាក់ការទទួលប្រាក់',
                 message: `តើលោកអ្នកបានឃើញការជូនដំណឹងទទួលប្រាក់ ${fmtUSD(amount)} ក្នុងកម្មវិធីបាគងរួចហើយមែនទេ?`,
@@ -288,7 +293,33 @@
             setTimeout(() => { window.location.href = 'pos-terminal.html'; }, 900);
         }
 
+        /* គ្មានការលក់រង់ចាំ — ពន្យល់ ហើយនាំត្រឡប់ទៅផ្ទាំងគិតលុយ ដោយមិនបង្ហាញកូដស្កេន */
+        function renderNoPayment() {
+            setPortalSubtitle(`${SHIFT.terminal} · ${SHIFT.cashier}`);
+            document.getElementById('pageBody').innerHTML = `
+                <div class="w-full flex justify-center py-10">
+                    <div class="w-full sm:w-[440px] bg-white rounded-2xl border border-slate-200 shadow-sm p-8 text-center">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-qrcode text-2xl"></i>
+                        </div>
+                        <h3 class="sm-card-title text-slate-700">គ្មានការទូទាត់រង់ចាំទេ</h3>
+                        <p class="sm-card-sub text-slate-500 mt-2 leading-relaxed">
+                            ទំព័រនេះបើកពីផ្ទាំងគិតលុយ នៅពេលអតិថិជនជ្រើសរើសទូទាត់តាមកូដស្កេនបាគង។
+                            ការលក់នេះប្រហែលជាបានបញ្ចប់ ឬត្រូវបានបោះបង់រួចហើយ។
+                        </p>
+                        <a href="pos-terminal.html"
+                           class="mt-6 inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white sm-value font-semibold transition">
+                            <i class="fas fa-arrow-left"></i> ត្រឡប់ទៅផ្ទាំងគិតលុយ
+                        </a>
+                    </div>
+                </div>`;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            if (!hasPayment) {
+                renderNoPayment();
+                return;
+            }
             renderPage();
             startCountdown();
         });

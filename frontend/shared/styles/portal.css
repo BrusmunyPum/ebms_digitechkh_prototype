@@ -263,6 +263,18 @@
     display: none;
 }
 
+/*
+ * kpi-2up — ជម្រើសចេញពីច្បាប់ «Universal KPI Grid Scaling» ក្នុង custom.css
+ * ច្បាប់នោះបង្ខំក្រឡា KPI ទាំងអស់ឱ្យទៅជួរឈរតែមួយលើទូរស័ព្ទ។ សម្រាប់កាតដែលមានតម្លៃខ្លី
+ * (ឧ. $81.20, 9) ជួរឈរពីរកាត់បន្ថយការរំកិលពាក់កណ្តាល — ដាក់ថ្នាក់នេះតែលើក្រឡាបែបនោះ
+ * ជម្រើសនេះមានភាពជាក់លាក់ (0,4,1) ខ្ពស់ជាងច្បាប់ដើម (0,3,1)
+ */
+@media (max-width: 639px) {
+    main .grid.grid-cols-2.lg\:grid-cols-4.kpi-2up {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
 /* បន្ទាត់សម្គាល់ធាតុសកម្ម */
 .sb-nav-item[aria-current="page"]::before {
     content: '';
@@ -273,8 +285,30 @@
     width: 3px;
     height: 60%;
     border-radius: 0 3px 3px 0;
-    background: #7dd3fc;
+    background: #86EFAC;
 }
+
+/*
+ * ពណ៌របារចំហៀងតាមទម្រង់
+ * ----------------------------------------------------------------------------
+ * របារចំហៀងត្រូវបានរចនាជាពណ៌ខៀវដែន (#1e3a5f) ជាមួយរូបតំណាងពណ៌ខៀវមេឃ
+ * ប៉ុន្តែ custom.css បង្ខំ <aside> ទាំងអស់ឱ្យទៅពណ៌បៃតង (#1b5223) ដោយ !important
+ * ដូច្នេះក្នុងទម្រង់ភ្លឺ យើងឃើញពណ៌ខៀវមេឃលើពណ៌បៃតង ដែលប៉ះទង្គិចគ្នា។
+ * ទម្រង់ភ្លឺ (បៃតង) ប្រើពណ៌ខៀវស្លឹកស្រាល — ទម្រង់ងងឹត (ខៀវដែន) រក្សាពណ៌ខៀវមេឃដដែល
+ */
+#portalSidebar .sb-icon        { color: #A7F3D0; }
+#portalSidebar .sb-text        { color: rgba(255, 255, 255, .84); }
+#portalSidebar .sb-accent      { color: #BBF7D0; }
+#portalSidebar .sb-accent-soft { color: rgba(220, 252, 231, .82); }
+#portalSidebar .sb-avatar      { background: rgba(167, 243, 208, .14); border-color: rgba(167, 243, 208, .32); color: #DCFCE7; }
+#portalSidebar .sb-nav-item[aria-current="page"] .sb-icon { color: #FFFFFF; }
+
+html.dark #portalSidebar .sb-icon        { color: #7DD3FC; }
+html.dark #portalSidebar .sb-text        { color: #E0F2FE; }
+html.dark #portalSidebar .sb-accent      { color: #7DD3FC; }
+html.dark #portalSidebar .sb-accent-soft { color: #BAE6FD; }
+html.dark #portalSidebar .sb-avatar      { background: rgba(14, 165, 233, .2); border-color: rgba(56, 189, 248, .3); color: #E0F2FE; }
+html.dark .sb-nav-item[aria-current="page"]::before { background: #7DD3FC; }
 
 /* ===== ស្តង់ដារបោះពុម្ពឯកសារផ្លូវការ A4 (ស្តង់ដារលេខ 12) ===== */
 .print-footer {

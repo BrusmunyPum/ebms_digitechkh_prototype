@@ -55,10 +55,10 @@
                     <div class="p-4 rounded-2xl bg-sky-50 border border-sky-200 flex items-start gap-3">
                         <i class="fas fa-circle-info text-sky-600 mt-0.5 flex-shrink-0"></i>
                         <p class="sm-card-sub text-sky-900">
-                            ចំណាំ៖ តួលេខខាងក្រោមគឺជាការគណនារបស់ប្រព័ន្ធ — សូមមើលជាមុនសិន មុននឹងរាប់សាច់ប្រាក់ជាក់ស្តែង។
+                            ចំណាំ៖ តួលេខខាងក្រោមគឺជាការគណនារបស់ប្រព័ន្ធ។ សូមពិនិត្យជាមុនសិន មុននឹងរាប់សាច់ប្រាក់ជាក់ស្តែង។
                         </p>
                     </div>
-                    <div id="systemCards" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"></div>
+                    <div id="systemCards" class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4"></div>
                     <div id="topSellerCard" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden"></div>
                 </section>
 
@@ -139,15 +139,10 @@
                             </span>
                         </label>
 
-                        <button id="closeBtn" onclick="closeShift()" type="button"
-                            class="sm-card-title w-full !min-h-[64px] rounded-2xl font-bold transition inline-flex items-center justify-center gap-2">
-                            <i class="fas fa-lock"></i> បញ្ជាក់ និងបិទវេន
-                        </button>
                     </div>
                 </section>
 
                 <!-- របារផ្លាស់ទីជំហាន -->
-                <div id="wizardNav" class="flex flex-wrap items-center justify-between gap-3 no-print"></div>
 
                 <!-- ===== អេក្រង់បន្ទាប់ពីបិទវេន ===== -->
                 <section id="closedScreen" class="hidden space-y-5">
@@ -175,6 +170,14 @@
 
             </div>
         </main>
+
+        <!--
+            របារសកម្មភាពភ្ជាប់នៅបាតអេក្រង់ជានិច្ច — ជាជួរចុងក្រោយនៃជួរឈរមាតិកា នៅក្រៅតំបន់រំកិល
+            មិនប្រើ position: fixed ទេ ព្រោះត្រូវគណនាទទឹងរបារចំហៀង (ពង្រីក/បង្រួម/ថតរអិលលើទូរស័ព្ទ)
+            ការដាក់ក្នុងជួរឈរ flex ធ្វើឱ្យវាតម្រឹមនឹងមាតិកាដោយស្វ័យប្រវត្តិគ្រប់ទំហំអេក្រង់
+        -->
+        <div id="wizardNav" class="flex-shrink-0 bg-white border-t border-slate-200 px-4 md:px-6 lg:px-16 py-3 no-print"
+             style="box-shadow: 0 -6px 16px rgba(15, 23, 42, .05)"></div>
     </div>
 
     <script src="../../shared/scripts/ui-components.js"></script>
@@ -184,10 +187,10 @@
         /* ជំនួយការបិទវេន 4 ជំហាន (ឯកសាររចនាលេខ 05 ផ្នែក 3.3) */
 
         const STEPS = [
-            { n: 1, label: 'ព័ត៌មានប្រព័ន្ធ' },
-            { n: 2, label: 'រាប់ប្រាក់' },
-            { n: 3, label: 'ភាពខុសគ្នា' },
-            { n: 4, label: 'បញ្ជាក់ និងបិទ' }
+            { n: 1, label: 'ព័ត៌មានប្រព័ន្ធ', icon: 'fa-receipt' },
+            { n: 2, label: 'រាប់ប្រាក់', icon: 'fa-coins' },
+            { n: 3, label: 'ភាពខុសគ្នា', icon: 'fa-scale-balanced' },
+            { n: 4, label: 'បញ្ជាក់ និងបិទ', icon: 'fa-lock' }
         ];
 
         const countUSD = {};
@@ -195,30 +198,28 @@
         let step = 1;
         let showRiel = true;
         let closed = false;
+        // រក្សាមូលហេតុ និងការទទួលស្គាល់ — ជំហានទី 3 គូរប្រអប់ឡើងវិញរាល់ពេលចូល
+        // ពីមុន ចុចទៅជំហានទី 4 ហើយត្រឡប់មកវិញ មូលហេតុដែលបានវាយត្រូវលុបបាត់
+        let reasonDraft = '';
+
+        /* អត្ថបទដែលអ្នកប្រើវាយ ត្រូវការពារមុនបញ្ចូលក្នុង HTML វិញ */
+        function escapeText(t) {
+            return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+        let ackDraft = false;
 
         /* ===== របារជំហាន ===== */
 
+        /* ប្រើរបារដំណាក់កាលរួម (bmsStepper ក្នុង portal.js) — រូបតំណាង អក្សរខាងក្រោម */
         function renderStepper() {
-            document.getElementById('stepper').innerHTML = `
-                <div class="flex flex-wrap items-center gap-y-3">
-                    ${STEPS.map((s, i) => {
-                        const done = s.n < step;
-                        const now = s.n === step;
-                        return `
-                        <div class="flex items-center">
-                            <button onclick="goStep(${s.n})" type="button" ${s.n > step ? 'disabled' : ''}
-                                class="px-1 inline-flex items-center gap-2.5 ${s.n > step ? 'cursor-not-allowed' : 'cursor-pointer'}">
-                                <span class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 sm-badge font-bold transition ${done
-                                    ? 'bg-teal-600 text-white'
-                                    : now ? 'bg-teal-600 text-white ring-4 ring-teal-100' : 'bg-slate-100 text-slate-400 border border-slate-200'}">
-                                    ${done ? '<i class="fas fa-check text-xs"></i>' : s.n}
-                                </span>
-                                <span class="sm-badge ${now ? 'text-slate-800 font-semibold' : done ? 'text-slate-600 font-medium' : 'text-slate-400 font-medium'} hidden sm:!inline">${s.label}</span>
-                            </button>
-                            ${i < STEPS.length - 1 ? `<span class="w-6 sm:w-12 h-0.5 mx-2 sm:mx-3 rounded-full ${done ? 'bg-teal-600' : 'bg-slate-200'}"></span>` : ''}
-                        </div>`;
-                    }).join('')}
-                </div>`;
+            bmsStepper('stepper', {
+                steps: STEPS,
+                current: step,
+                variant: 'icon',
+                tone: 'amber',
+                doneTone: 'brand',
+                onStep: n => goStep(n)
+            });
         }
 
         function goStep(n) {
@@ -227,10 +228,31 @@
             paintStep();
         }
 
-        function nextStep() {
+        /*
+         * អ្វីដែលនៅខ្វះមុននឹងបន្តជំហានបន្ទាប់ — ប្រើទាំងប៊ូតុង និងសារក្នុងរបារ
+         * ពីមុន ជំហានទី 3 អនុញ្ញាតឱ្យបន្តដោយគ្មានមូលហេតុ ហើយកំហុសលេចឡើងតែនៅជំហានទី 4
+         * ពេលអ្នកប្រើបានចាកចេញពីប្រអប់មូលហេតុរួចហើយ — ឥឡូវប្រាប់នៅនឹងកន្លែងតែម្តង
+         */
+        function stepBlocker() {
             if (step === 2 && !(totalCountedUSD() + totalCountedKHR())) {
-                return showToast('សូមបញ្ចូលចំនួនសន្លឹកប្រាក់ជាមុនសិន', 'error');
+                return 'រាប់ក្រដាសប្រាក់យ៉ាងហោចណាស់មួយសន្លឹកសិន';
             }
+            if (step === 3) {
+                const v = varianceData();
+                const n = reasonText().length;
+                if (v.level === 'large' && n < 20) return `សូមពន្យល់មូលហេតុ នៅខ្វះ ${20 - n} តួអក្សរទៀត`;
+                if (v.level === 'small' && !acknowledged()) return 'សូមធីកទទួលស្គាល់ភាពខុសគ្នាជាមុនសិន';
+            }
+            if (step === 4) {
+                const st = canClose();
+                if (!st.ok) return st.why;
+            }
+            return '';
+        }
+
+        function nextStep() {
+            const blocker = stepBlocker();
+            if (blocker) return showToast(blocker, 'warning');
             if (step < 4) { step += 1; paintStep(); }
         }
 
@@ -241,33 +263,95 @@
         function paintStep() {
             STEPS.forEach(s => document.getElementById('step-' + s.n).classList.toggle('hidden', s.n !== step));
             renderStepper();
-            renderWizardNav();
             if (step === 1) renderSystemSummary();
             if (step === 3) renderVariance();
             if (step === 4) renderStep4();
+            // គូររបារក្រោយមាតិកាជំហាន — ពីមុនវាត្រូវគូរមុនប្រអប់ធីក «ទទួលស្គាល់» កើតឡើង
+            // ហើយ acknowledged() ចាត់ទុកប្រអប់ដែលមិនទាន់មានថា «បានធីក» ធ្វើឱ្យប៊ូតុងបើកខុស
+            renderWizardNav();
         }
 
         function renderWizardNav() {
             const host = document.getElementById('wizardNav');
+            // បិទវេនរួច = គ្មានជំហានទៀតទេ — លាក់របារទាំងស្រុង មិនទុកជួរទទេនៅបាតអេក្រង់
+            host.style.display = closed ? 'none' : '';
             if (closed) { host.innerHTML = ''; return; }
+
+            const blocker = stepBlocker();
+
+            /*
+             * កណ្តាលរបារមានពីរបន្ទាត់ជានិច្ច — មិនច្រើន មិនតិច — ដើម្បីកុំឲ្យរបារលោតកម្ពស់
+             * ពេលប្តូរជំហាន ឬពេលវាយមូលហេតុ។ បន្ទាត់ទី 1៖ ជំហាន · បន្ទាត់ទី 2៖ ស្ថានភាពតែមួយ
+             * (កាត់អក្សរបើវែង) — ទំហំអក្សរដូចគ្នាគ្រប់ស្ថានភាព ដូច្នេះកម្ពស់មិនប្រែប្រួល
+             */
+            let status = '';
+            let tone = 'text-slate-600';
+            let heading = STEPS[step - 1].label;
+            if (step === 1) {
+                status = 'ពិនិត្យតួលេខប្រព័ន្ធ រួចបន្តទៅរាប់សាច់ប្រាក់';
+            } else if (step === 2) {
+                status = blocker || `រាប់បាន ${fmtUSD(totalCountedUSD())} · ${fmtKHR(totalCountedKHR())}`;
+                tone = blocker ? 'text-amber-700' : 'text-slate-800';
+            } else if (step === 3) {
+                const v = varianceData();
+                const amount = `${DIRECTION_LABEL[v.direction]}${v.level === 'exact' ? '' : ' ' + (v.diff >= 0 ? '+' : '−') + fmtUSD(v.abs)}`;
+                // ពេលជាប់សោ សេចក្តីណែនាំសំខាន់ជាងគេ — ផ្លាស់ទឹកប្រាក់ទៅបន្ទាត់ទី 1
+                // ដើម្បីកុំឲ្យការកាត់អក្សរលើទូរស័ព្ទកាត់លេខ «នៅខ្វះ 20» ចោល
+                if (blocker) heading = amount;
+                status = blocker || amount;
+                tone = blocker ? 'text-amber-700' : varianceTone(v).text;
+            } else {
+                status = blocker || 'រួចរាល់ហើយ សូមចុច «បិទវេន» ដើម្បីបញ្ចប់';
+                tone = blocker ? 'text-amber-700' : 'text-emerald-700';
+            }
+
+            const icon = blocker ? '<i class="fas fa-circle-info mr-1"></i>'
+                : (step === 4 ? '<i class="fas fa-circle-check mr-1"></i>' : '');
+            const center = `
+                <p class="sm-td-sub text-slate-400 leading-5 truncate">ជំហាន ${step} នៃ ${STEPS.length} · ${heading}</p>
+                <p class="sm-td font-semibold leading-6 truncate sm-figure ${tone}">${icon}${status}</p>`;
+
+            // ជំហានទី 1 គ្មានជំហានមុនទេ — ជំនួសប៊ូតុងស្លាប់ដោយផ្លូវត្រឡប់ទៅផ្ទាំងគិតលុយ
+            const left = step === 1
+                ? `<a href="pos-terminal.html"
+                      class="sm-value h-12 px-5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold transition inline-flex items-center gap-2 flex-shrink-0">
+                       <i class="fas fa-arrow-left"></i> ផ្ទាំងគិតលុយ
+                   </a>`
+                : `<button onclick="prevStep()" type="button"
+                      class="sm-value h-12 px-5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold transition inline-flex items-center gap-2 flex-shrink-0">
+                       <i class="fas fa-arrow-left"></i> ថយក្រោយ
+                   </button>`;
+
+            // ប៊ូតុងចម្បងនៅកន្លែងតែមួយជានិច្ច — ជំហានចុងក្រោយក៏មិនលើកលែង
+            const ready = !blocker;
+            const off = 'bg-slate-200 text-slate-400 cursor-not-allowed';
+            const right = step < 4
+                ? `<button onclick="nextStep()" type="button" ${ready ? '' : 'disabled aria-disabled="true"'}
+                      class="sm-value h-12 px-6 rounded-xl font-semibold transition inline-flex items-center gap-2 flex-shrink-0 ${ready
+                          ? 'bg-teal-600 hover:bg-teal-700 text-white shadow-sm' : off}">
+                       ${STEPS[step].label} <i class="fas fa-arrow-right"></i>
+                   </button>`
+                : `<button onclick="closeShift()" type="button" ${ready ? '' : 'disabled aria-disabled="true"'}
+                      class="sm-value h-12 px-6 rounded-xl font-semibold transition inline-flex items-center gap-2 flex-shrink-0 ${ready
+                          ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-sm' : off}">
+                       <i class="fas fa-lock"></i> បិទវេន
+                   </button>`;
+
             host.innerHTML = `
-                <button onclick="prevStep()" type="button" ${step === 1 ? 'disabled' : ''}
-                    class="sm-value px-5 rounded-2xl font-semibold transition inline-flex items-center gap-2 ${step === 1
-                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                        : 'bg-white border border-slate-200 hover:bg-slate-50 text-slate-700'}">
-                    <i class="fas fa-arrow-left"></i> ថយក្រោយ
-                </button>
-                ${step < 4 ? `
-                <button onclick="nextStep()" type="button"
-                    class="sm-value px-6 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-semibold shadow-sm transition inline-flex items-center gap-2">
-                    ${STEPS[step].label} <i class="fas fa-arrow-right"></i>
-                </button>` : '<span></span>'}`;
+                <div class="w-full">
+                    <div class="sm:hidden h-11 flex flex-col justify-center text-center pb-2.5 mb-2.5 border-b border-slate-100 box-content">${center}</div>
+                    <div class="h-12 flex items-center justify-between gap-3">
+                        ${left}
+                        <div class="min-w-0 flex-1 h-12 flex-col justify-center text-center hidden sm:!flex">${center}</div>
+                        ${right}
+                    </div>
+                </div>`;
         }
 
         /* ===== ជំហានទី 1 ===== */
 
         function metricCard(label, value, tone, sub) {
-            return `<div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
+            return `<div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm min-w-0">
                 <p class="sm-eyebrow text-slate-400">${label}</p>
                 <p class="sm-kpi-value ${tone} sm-figure mt-1.5">${value}</p>
                 <p class="sm-kpi-sub text-slate-500 mt-1">${sub}</p>
@@ -307,17 +391,44 @@
 
         /* ===== ជំហានទី 2 ===== */
 
+        /*
+         * ជួររាប់ក្រដាសប្រាក់ — ប៊ូតុង − / + សម្រាប់ចុចរាប់ម្តងមួយសន្លឹកលើអេក្រង់ប៉ះ
+         * ហើយសរុបរងនៃជួរបង្ហាញភ្លាមៗពេលវាយ (oninput) មិនមែនរង់ចាំចាកចេញពីប្រអប់ទេ
+         * ពេលចំនួនស្មើសូន្យ បង្ហាញ «—» ដើម្បីឱ្យជួរឈរសរុបរងមើលទៅមានចេតនា មិនមែនទទេ
+         */
         function noteRow(currency, note, label) {
             const map = currency === 'usd' ? countUSD : countKHR;
+            const step = (delta, icon, aria, skin) => `
+                <button onclick="bumpCount('${currency}', ${note}, ${delta})" type="button" aria-label="${aria} ${label}"
+                    class="w-10 h-10 rounded-xl border ${skin} inline-flex items-center justify-center transition flex-shrink-0">
+                    <i class="fas ${icon} text-xs"></i>
+                </button>`;
+            // ទូរស័ព្ទ៖ សរុបរងនៅក្រោមឈ្មោះក្រដាសប្រាក់ ព្រោះ 316 ភិចសែលមិនគ្រប់សម្រាប់ 4 ជួរឈរ
+            // (ពីមុន «500,000 ៛» បាក់ជា 2 បន្ទាត់) — អេក្រង់ធំ៖ សរុបរងនៅជួរឈរខាងស្តាំ
             return `
-                <div class="flex items-center gap-3">
-                    <span class="sm-value text-slate-700 sm-figure w-24 flex-shrink-0">${label}</span>
-                    <span class="sm-td-sub text-slate-400 flex-shrink-0">×</span>
-                    <input type="number" inputmode="numeric" min="0" step="1" value="${map[note] || ''}" placeholder="0"
-                        onchange="setCount('${currency}', ${note}, this.value)"
-                        class="pos-num sm-td w-20 px-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-center focus:outline-none focus:border-teal-600 transition flex-shrink-0">
-                    <span id="${currency}Line-${note}" class="sm-value text-slate-500 sm-figure flex-1 text-right"></span>
+                <div class="flex items-center gap-3 py-0.5">
+                    <div class="w-24 flex-shrink-0 min-w-0">
+                        <span class="sm-value text-slate-700 sm-figure block whitespace-nowrap">${label}</span>
+                        <span data-line="${currency}-${note}" class="sm:hidden sm-td-sub sm-figure text-slate-300 block whitespace-nowrap">${currency === 'usd' ? fmtUSD(0) : fmtKHR(0)}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 flex-shrink-0 ml-auto sm:ml-0">
+                        ${step(-1, 'fa-minus', 'បន្ថយ', 'border-slate-200 text-slate-500 hover:bg-slate-50')}
+                        <input id="${currency}In-${note}" type="number" inputmode="numeric" min="0" step="1" value="${map[note] || ''}" placeholder="0"
+                            oninput="setCount('${currency}', ${note}, this.value)" aria-label="ចំនួនសន្លឹក ${label}"
+                            class="pos-num sm-value w-16 h-10 px-1 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-center focus:outline-none focus:border-teal-600 focus:bg-white transition">
+                        ${step(1, 'fa-plus', 'បន្ថែម', 'border-teal-200 bg-teal-50 text-teal-700 hover:bg-teal-100')}
+                    </div>
+                    <span data-line="${currency}-${note}" class="hidden sm:!block sm-value sm-figure flex-1 text-right text-slate-300 whitespace-nowrap">${currency === 'usd' ? fmtUSD(0) : fmtKHR(0)}</span>
                 </div>`;
+        }
+
+        function bumpCount(currency, note, delta) {
+            const map = currency === 'usd' ? countUSD : countKHR;
+            const next = Math.max((map[note] || 0) + delta, 0);
+            map[note] = next;
+            const input = document.getElementById(`${currency}In-${note}`);
+            if (input) input.value = next || '';
+            updateLineLabels();
         }
 
         function renderNoteInputs() {
@@ -341,16 +452,19 @@
         }
 
         function updateLineLabels() {
-            USD_NOTES.forEach(n => {
-                const el = document.getElementById('usdLine-' + n);
-                if (el) el.textContent = countUSD[n] ? fmtUSD(n * countUSD[n]) : '';
+            // សរុបរងមានពីរកន្លែង (ទូរស័ព្ទ និងអេក្រង់ធំ) — ធ្វើបច្ចុប្បន្នភាពទាំងពីរ
+            const paint = (key, qty, text) => document.querySelectorAll(`[data-line="${key}"]`).forEach(el => {
+                // ចំនួនសូន្យ៖ បង្ហាញ $0.00 ឬ 0 ៛ ពណ៌ស្រាល ដើម្បីរក្សាជួរឈរ (មិនប្រើសញ្ញា «—» ទេ)
+                el.textContent = qty ? text : (key.startsWith('usd') ? fmtUSD(0) : fmtKHR(0));
+                el.classList.toggle('text-slate-700', !!qty);
+                el.classList.toggle('text-slate-300', !qty);
             });
-            KHR_NOTES.forEach(n => {
-                const el = document.getElementById('khrLine-' + n);
-                if (el) el.textContent = countKHR[n] ? fmtKHR(n * countKHR[n]) : '';
-            });
+            USD_NOTES.forEach(n => paint(`usd-${n}`, countUSD[n], fmtUSD(n * countUSD[n])));
+            KHR_NOTES.forEach(n => paint(`khr-${n}`, countKHR[n], fmtKHR(n * countKHR[n])));
             document.getElementById('usdCounted').textContent = fmtUSD(totalCountedUSD());
             document.getElementById('khrCounted').textContent = fmtKHR(totalCountedKHR());
+            // របារសកម្មភាពបង្ហាញសរុបរាប់បានបច្ចុប្បន្ន — ធ្វើបច្ចុប្បន្នភាពរាល់ពេលរាប់
+            if (step === 2) renderWizardNav();
         }
 
         function totalCountedUSD() {
@@ -396,37 +510,62 @@
                     <div class="min-w-0">
                         <h3 class="sm-card-title ${tone.text}">
                             ${v.level === 'exact' ? 'ត្រឹមត្រូវ! គ្មានភាពខុសគ្នា'
-                                : v.level === 'small' ? `ភាពខុសគ្នាតូច · ${fmtUSD(v.abs)} — សូមត្រួតពិនិត្យ`
-                                : `ភាពខុសគ្នាធំ · ${fmtUSD(v.abs)} — ទាមទារការពន្យល់`}
+                                : v.level === 'small' ? `មានភាពខុសគ្នាតូច ${fmtUSD(v.abs)}៖ សូមត្រួតពិនិត្យឡើងវិញ`
+                                : `មានភាពខុសគ្នាធំ ${fmtUSD(v.abs)}៖ ត្រូវពន្យល់មូលហេតុ`}
                         </h3>
                         <p class="sm-card-sub ${tone.text} mt-1 opacity-90">
                             ${v.level === 'exact' ? 'សាច់ប្រាក់ដែលរាប់បានស្មើនឹងអ្វីដែលប្រព័ន្ធរំពឹងទុក។'
-                                : v.level === 'small' ? `ក្រោម ${fmtUSD(VARIANCE_TOLERANCE)} — លោកអ្នកអាចបន្តបាន ប៉ុន្តែសូមទទួលស្គាល់ជាមុនសិន។`
-                                : `លើស ${fmtUSD(VARIANCE_TOLERANCE)} — ការពន្យល់នឹងត្រូវផ្ញើទៅអ្នកគ្រប់គ្រងទូទៅ និងប្រធានគណនេយ្យ។`}
+                                : v.level === 'small' ? `ទឹកប្រាក់នេះតិចជាង ${fmtUSD(VARIANCE_TOLERANCE)} ដូច្នេះលោកអ្នកអាចបន្តបាន ប៉ុន្តែសូមធីកទទួលស្គាល់ជាមុនសិន។`
+                                : `ទឹកប្រាក់នេះលើស ${fmtUSD(VARIANCE_TOLERANCE)} ដូច្នេះការពន្យល់នឹងត្រូវផ្ញើទៅអ្នកគ្រប់គ្រងទូទៅ និងប្រធានគណនេយ្យ។`}
                         </p>
                     </div>
                 </div>`;
 
-            const row = (label, value, sub, strong) => `
-                <div class="flex items-baseline justify-between gap-3 ${strong ? 'pt-2.5 mt-1 border-t border-slate-200' : ''}">
-                    <span class="${strong ? 'sm-card-title text-slate-700' : 'sm-label text-slate-600'}">${label}</span>
-                    <div class="text-right flex-shrink-0">
-                        <span class="${strong ? 'sm-kpi-value' : 'sm-value'} text-slate-800 sm-figure block">${value}</span>
-                        ${sub ? `<span class="sm-td-sub text-slate-500 sm-figure">${sub}</span>` : ''}
-                    </div>
-                </div>`;
+            /*
+             * តារាងពីររូបិយប័ណ្ណ — ពីមុនលេខរៀលដាក់ក្រោមលេខដុល្លារដោយគ្មានចំណងជើង
+             * មើលទៅដូចការប្តូររូបិយប័ណ្ណ ($200.00 ≠ 400,000 ៛) តែតាមពិតជាថតពីរដាច់ដោយឡែក
+             * ជួរ «ភាពខុសគ្នា» តាមរូបិយប័ណ្ណ ប្រាប់អ្នកគិតលុយភ្លាមថាថតណាខុស
+             */
+            const s = v.summary;
+            const cUSD = totalCountedUSD();
+            const cKHR = totalCountedKHR();
+            const dUSD = cUSD - s.expectedUSD;
+            const dKHR = cKHR - s.expectedKHR;
+            const signed = (n, fmt, eps) => Math.abs(n) <= eps ? fmt(0) : (n > 0 ? '+' : '−') + fmt(Math.abs(n));
+            const diffTone = (n, eps) => Math.abs(n) <= eps ? 'text-emerald-700' : n > 0 ? 'text-amber-700' : 'text-rose-700';
+
+            const tr = (label, usd, khr, opts = {}) => `
+                <tr class="${opts.rule ? 'border-t border-slate-200' : ''}">
+                    <td class="py-2.5 pr-3 ${opts.strong ? 'sm-label text-slate-800 font-semibold' : 'sm-label text-slate-600'}">${label}</td>
+                    <td class="py-2.5 px-3 text-right sm-value sm-figure ${opts.usdTone || 'text-slate-800'}">${usd}</td>
+                    <td class="py-2.5 pl-3 text-right sm-value sm-figure ${opts.khrTone || 'text-slate-800'}">${khr}</td>
+                </tr>`;
 
             document.getElementById('varianceCard').innerHTML = `
-                <h3 class="sm-card-title text-slate-700 border-b border-slate-100 pb-3 mb-3">ការផ្ទៀងផ្ទាត់សាច់ប្រាក់</h3>
-                <div class="space-y-2.5">
-                    ${row('ប្រាក់បើកវេន', fmtUSD(SHIFT.openingFloatUSD), fmtKHR(SHIFT.openingFloatKHR))}
-                    ${row('លក់បានជាសាច់ប្រាក់', fmtUSD(v.summary.usdCash), fmtKHR(v.summary.khrCash))}
-                    ${row('ប្រព័ន្ធរំពឹងទុក', fmtUSD(v.summary.expectedUSD), fmtKHR(v.summary.expectedKHR))}
-                    ${row('រាប់បានជាក់ស្តែង', fmtUSD(totalCountedUSD()), fmtKHR(totalCountedKHR()))}
-                    <div class="flex items-baseline justify-between gap-3 pt-2.5 mt-1 border-t-2 border-slate-200">
-                        <span class="sm-card-title ${tone.text}">${DIRECTION_LABEL[v.direction]}</span>
-                        <span class="sm-kpi-value ${tone.text} sm-figure">${v.diff >= 0 ? '+' : '−'}${fmtUSD(v.abs)}</span>
+                <h3 class="sm-card-title text-slate-700 border-b border-slate-100 pb-3 mb-1">ការផ្ទៀងផ្ទាត់សាច់ប្រាក់</h3>
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-slate-100">
+                            <th class="py-2 pr-3 text-left sm-td-sub text-slate-400 font-medium"></th>
+                            <th class="py-2 px-3 text-right sm-td-sub text-slate-400 font-medium">ថតដុល្លារ</th>
+                            <th class="py-2 pl-3 text-right sm-td-sub text-slate-400 font-medium">ថតរៀល</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tr('ប្រាក់បើកវេន', fmtUSD(SHIFT.openingFloatUSD), fmtKHR(SHIFT.openingFloatKHR))}
+                        ${tr('បូក លក់បានជាសាច់ប្រាក់', fmtUSD(s.usdCash), fmtKHR(s.khrCash))}
+                        ${tr('ប្រព័ន្ធរំពឹងទុក', fmtUSD(s.expectedUSD), fmtKHR(s.expectedKHR), { strong: true, rule: true })}
+                        ${tr('រាប់បានជាក់ស្តែង', fmtUSD(cUSD), fmtKHR(cKHR), { strong: true })}
+                        ${tr('ភាពខុសគ្នា', signed(dUSD, fmtUSD, 0.005), signed(dKHR, fmtKHR, 0.5),
+                            { rule: true, usdTone: diffTone(dUSD, 0.005), khrTone: diffTone(dKHR, 0.5) })}
+                    </tbody>
+                </table>
+                <div class="mt-2 pt-3 border-t-2 border-slate-200 flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="sm-card-title ${tone.text}">${DIRECTION_LABEL[v.direction]}</p>
+                        <p class="sm-td-sub text-slate-400 sm-figure">គិតជាដុល្លារ · អត្រា ${FX_RATE.toLocaleString('en-US')} ៛</p>
                     </div>
+                    <span class="sm-kpi-value ${tone.text} sm-figure flex-shrink-0">${v.level === 'exact' ? fmtUSD(0) : (v.diff >= 0 ? '+' : '−') + fmtUSD(v.abs)}</span>
                 </div>`;
 
             const reason = document.getElementById('varianceReasonCard');
@@ -449,13 +588,13 @@
                 </h3>
                 ${required ? '' : `
                 <label class="flex items-start gap-3 cursor-pointer mb-3">
-                    <input id="ackCheck" type="checkbox" onchange="renderStep4()"
+                    <input id="ackCheck" type="checkbox" ${ackDraft ? 'checked' : ''} onchange="ackDraft = this.checked; renderStep4()"
                         class="!min-h-0 w-5 h-5 mt-0.5 rounded border-slate-300 text-teal-600 focus:ring-teal-500 flex-shrink-0">
-                    <span class="sm-td text-slate-700">ខ្ញុំបានពិនិត្យរួចហើយ — ទទួលស្គាល់ភាពខុសគ្នានេះ</span>
+                    <span class="sm-td text-slate-700">ខ្ញុំបានពិនិត្យរួចហើយ និងទទួលស្គាល់ភាពខុសគ្នានេះ</span>
                 </label>`}
-                <textarea id="varianceNote" rows="4" oninput="renderStep4()"
+                <textarea id="varianceNote" rows="4" oninput="reasonDraft = this.value; renderStep4()"
                     placeholder="ឧទាហរណ៍៖ អាប់ប្រាក់ខុសក្នុងប្រតិបត្តិការមួយ · ក្រដាសប្រាក់រហែក · ទទួលបានក្រដាសប្រាក់ក្លែងក្លាយ..."
-                    class="sm-td w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-teal-600 transition resize-none"></textarea>
+                    class="sm-td w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-teal-600 transition resize-none">${escapeText(reasonDraft)}</textarea>
                 ${required ? '<p id="reasonHint" class="sm-td-sub text-slate-400 mt-1.5"></p>' : ''}`;
             syncReasonHint();
         }
@@ -475,7 +614,7 @@
             if (!hint) return;
             const n = reasonText().length;
             hint.textContent = n >= 20
-                ? `បានបញ្ចូល ${n} តួអក្សរ — គ្រប់គ្រាន់`
+                ? `បានបញ្ចូល ${n} តួអក្សរ គ្រប់គ្រាន់ហើយ`
                 : `ត្រូវការយ៉ាងតិច 20 តួអក្សរ · បានបញ្ចូល ${n}`;
             hint.className = 'sm-td-sub mt-1.5 ' + (n >= 20 ? 'text-emerald-600 font-semibold' : 'text-slate-400');
         }
@@ -522,15 +661,8 @@
                     </div>
                 </div>`;
 
-            const state = canClose();
-            const btn = document.getElementById('closeBtn');
-            btn.disabled = !state.ok;
-            btn.className = `sm-card-title w-full !min-h-[64px] rounded-2xl font-bold transition inline-flex items-center justify-center gap-2 ${state.ok
-                ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-sm'
-                : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`;
-            btn.innerHTML = state.ok
-                ? '<i class="fas fa-lock"></i> បញ្ជាក់ និងបិទវេន'
-                : `<i class="fas fa-circle-info"></i> ${state.why}`;
+            // ប៊ូតុង «បិទវេន» នៅក្នុងរបារសកម្មភាព — ធ្វើបច្ចុប្បន្នភាពរាល់ពេលវាយ ឬធីក
+            renderWizardNav();
         }
 
         function recapRow(label, value, tone) {
@@ -552,7 +684,7 @@
                 message: v.level === 'exact'
                     ? 'សាច់ប្រាក់ត្រឹមត្រូវគត់។ ក្រោយបិទវេន លោកអ្នកមិនអាចលក់ ឬកែប្រែប្រតិបត្តិការបានទៀតឡើយ។'
                     : `មាន${DIRECTION_LABEL[v.direction]} ${fmtUSD(v.abs)}។ របាយការណ៍បិទវេននឹងផ្ញើទៅអ្នកគ្រប់គ្រងទូទៅ និងប្រធានគណនេយ្យ។ ក្រោយបិទវេន លោកអ្នកមិនអាចលក់បានទៀតឡើយ។`,
-                confirmText: 'បាទ/ចាស — បិទវេន',
+                confirmText: 'បិទវេនឥឡូវនេះ',
                 cancelText: 'ទេ',
                 danger: true
             });

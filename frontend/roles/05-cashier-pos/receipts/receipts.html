@@ -58,14 +58,14 @@
                     </a>
                 </div>
 
-                <div id="summaryRow" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+                <div id="summaryRow" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 kpi-2up"></div>
 
                 <div class="bg-white rounded-2xl p-2 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-3">
                     <div id="methodTabs" class="flex flex-wrap items-center gap-2"></div>
-                    <div class="relative pr-1">
+                    <div class="relative pr-1 w-full sm:w-auto">
                         <i class="fas fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                         <input id="searchInput" type="text" oninput="renderReceipts()" placeholder="ស្វែងរកលេខវិក្កយបត្រ ឬឈ្មោះទំនិញ..."
-                            class="sm-td h-9 pl-9 pr-3 w-[220px] max-w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-teal-600 transition">
+                            class="sm-td h-9 pl-9 pr-3 w-full sm:w-[300px] max-w-full rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none focus:border-teal-600 transition">
                     </div>
                 </div>
 
@@ -125,7 +125,7 @@
         function renderSummary() {
             const s = shiftSummary();
             const card = (label, value, tone, sub) => `
-                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm">
+                <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm min-w-0">
                     <span class="sm-kpi-label text-slate-500">${label}</span>
                     <h3 class="sm-kpi-value ${tone} mt-1">${value}</h3>
                     <p class="sm-kpi-sub text-slate-500 mt-1">${sub}</p>

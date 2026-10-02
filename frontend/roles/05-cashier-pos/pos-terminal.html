@@ -40,6 +40,13 @@
         /* គ្រាប់ប្រភេទទំនិញរំកិលផ្តេក ដោយគ្មានរបាររំកិលមើលឃើញ */
         .pos-pills { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
         .pos-pills::-webkit-scrollbar { display: none; }
+        /* គែមរសាត់ — បង្ហាញថាមានប្រភេទលាក់នៅខាងនោះ ដែលអាចអូសមើលបាន */
+        .pos-pills.fade-r { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 56px), transparent);
+                            mask-image: linear-gradient(to right, #000 calc(100% - 56px), transparent); }
+        .pos-pills.fade-l { -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 56px), transparent);
+                            mask-image: linear-gradient(to left, #000 calc(100% - 56px), transparent); }
+        .pos-pills.fade-l.fade-r { -webkit-mask-image: linear-gradient(to right, transparent, #000 56px, #000 calc(100% - 56px), transparent);
+                                   mask-image: linear-gradient(to right, transparent, #000 56px, #000 calc(100% - 56px), transparent); }
 
         /* ក្រឡាទំនិញ — ទទឹងអប្បបរមា 168 ភិចសែល រួចបំពេញតាមទីធ្លាដែលមាន
            ដូច្នេះអេក្រង់ធំបង្ហាញទំនិញបានច្រើនជាង ដោយមិនចាំបាច់រំកិល។
@@ -51,8 +58,11 @@
         .pos-thumb { aspect-ratio: 1 / 1; }
 
         /* ឈ្មោះទំនិញកំណត់ត្រឹម 2 បន្ទាត់ ដើម្បីឱ្យក្រឡាកម្ពស់ស្មើគ្នា */
+        /* បម្រុងទុកពិតប្រាកដ 2 បន្ទាត់ ដើម្បីឱ្យតម្លៃនៅកម្ពស់ដូចគ្នា ទោះឈ្មោះខ្លីឬវែង។
+           ឯកតា lh = កម្ពស់បន្ទាត់ពិតដែលកំពុងប្រើ (portal.css កំណត់ 1.55 ដែលឈ្នះស្ទីលនៅទីនេះ)
+           ដូច្នេះមិនចាំបាច់ទាយលេខ em ទៀតទេ — 3.1em ជាតម្លៃបម្រុងសម្រាប់កម្មវិធីរុករកចាស់ */
         .pos-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-                    overflow: hidden; min-height: 2.6em; }
+                    overflow: hidden; min-height: 3.1em; min-height: 2lh; }
 
         /* ផ្លែបែបភ្លឺពេលបន្ថែមចូលកន្ត្រក */
         @keyframes posFlash { 0% { transform: scale(1); } 45% { transform: scale(0.96); box-shadow: 0 0 0 3px #22d3ee; } 100% { transform: scale(1); } }
@@ -101,7 +111,7 @@
         <div class="flex items-center gap-2 md:gap-4 min-w-0 flex-1 justify-center">
             <span class="hidden md:!inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10">
                 <i class="fas fa-cash-register text-cyan-400 text-xs"></i>
-                <span id="shiftChip" class="sm-badge text-slate-200"></span>
+                <span id="shiftChip" class="sm-badge text-slate-200 whitespace-nowrap"></span>
             </span>
             <span class="hidden sm:!inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10">
                 <i class="fas fa-clock text-cyan-400 text-xs"></i>
@@ -164,12 +174,12 @@
 
         <!-- ===== ផ្ទាំងឆ្វេង — ជ្រើសរើសទំនិញ ===== -->
         <div class="pos-left">
-            <!-- ប្រអប់ស្កេន និងគ្រាប់ប្រភេទនៅជួរតែមួយ៖
-                 ប្រអប់មិនត្រូវការទទឹងពេញអេក្រង់សម្រាប់បាកូដ 13 ខ្ទង់ឡើយ
-                 ហើយការរួមជួរសន្សំកម្ពស់ជូនក្រឡាទំនិញ។
-                 ប៊ូតុង «បន្ថែម» ជាប់នឹងអក្សរ មិនឆ្ងាយដល់គែមអេក្រង់ -->
-            <div class="px-3 md:px-4 pt-3 pb-2.5 flex flex-col lg:flex-row lg:items-center gap-2.5 flex-shrink-0">
-                <div class="relative w-full lg:w-[420px] xl:w-[460px] flex-shrink-0">
+            <!-- ប្រអប់ស្កេន និងគ្រាប់ប្រភេទនៅជួរដាច់ពីគ្នា៖
+                 ពេលរួមជួរ ប្រភេទត្រូវច្របាច់ត្រឹម 170 ភិចសែលលើថេប្លេត (បង្ហាញបានតែ 1 ប្រភេទកន្លះ)
+                 ហើយត្រូវកាត់ចោលលើកុំព្យូទ័រ។ ប្រភេទជាការរុករកចម្បងលើអេក្រង់ប៉ះ
+                 ដូច្នេះវាសមនឹងទទួលបានជួរពេញមួយ ទោះបីត្រូវចំណាយកម្ពស់ 56 ភិចសែលក៏ដោយ -->
+            <div class="px-3 md:px-4 pt-3 pb-2.5 flex flex-col gap-2.5 flex-shrink-0">
+                <div class="relative w-full">
                     <i class="fas fa-barcode absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400 text-lg"></i>
                     <input id="barcodeInput" type="text" autocomplete="off" autofocus
                            onkeydown="if(event.key==='Enter'){event.preventDefault();scanBarcode();}"
@@ -177,7 +187,7 @@
                            placeholder="ស្កេនបាកូដ ឬវាយឈ្មោះទំនិញ..."
                            class="sm-td w-full h-14 pl-12 pr-4 rounded-2xl bg-[#1e293b] border-2 border-white/10 text-white placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:bg-[#223047] transition">
                 </div>
-                <div id="categoryPills" class="pos-pills lg:flex-1 min-w-0"></div>
+                <div id="categoryPills" class="pos-pills w-full min-w-0" onscroll="updatePillFade()"></div>
             </div>
 
             <div class="pos-scroll px-3 md:px-4 pb-24 lg:pb-4">
@@ -202,12 +212,19 @@
         <div id="cartPanel" class="pos-right border-l border-white/10">
 
             <div class="px-4 py-3 border-b border-white/10 flex items-center justify-between gap-2 flex-shrink-0">
-                <div class="min-w-0">
-                    <p class="sm-card-title text-white">កន្ត្រកទំនិញ</p>
-                    <p id="cartMeta" class="sm-td-sub text-slate-400"></p>
+                <div class="flex items-center gap-2 min-w-0">
+                    <!-- ត្រឡប់ពីដំណាក់កាលទូទាត់ទៅកន្ត្រកវិញ — បង្ហាញតែពេលកំពុងទូទាត់ -->
+                    <button id="cartBackBtn" onclick="exitCheckout()" type="button" aria-label="ត្រឡប់ទៅកន្ត្រកទំនិញ" style="display:none"
+                            class="pos-tap-sm rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 inline-flex items-center justify-center transition flex-shrink-0">
+                        <i class="fas fa-arrow-left text-sm"></i>
+                    </button>
+                    <div class="min-w-0">
+                        <p id="cartTitle" class="sm-card-title text-white">កន្ត្រកទំនិញ</p>
+                        <p id="cartMeta" class="sm-td-sub text-slate-400"></p>
+                    </div>
                 </div>
                 <div class="flex items-center gap-1.5 flex-shrink-0">
-                    <button onclick="askClearCart()" type="button" aria-label="សម្អាតកន្ត្រក"
+                    <button id="cartClearBtn" onclick="askClearCart()" type="button" aria-label="សម្អាតកន្ត្រក"
                             class="pos-tap-sm rounded-xl bg-white/5 hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 inline-flex items-center justify-center transition">
                         <i class="fas fa-trash-can text-sm"></i>
                     </button>
@@ -299,6 +316,12 @@
         let pay = { usdCash: 0, khrCash: 0, khqr: 0 };
         let discountPercent = 0;
         let customerId = '';
+        /*
+         * ដំណាក់កាលពីរ៖ false = កំពុងបន្ថែមទំនិញ, true = កំពុងទទួលប្រាក់
+         * ពីមុន ប្រអប់ទូទាត់ទាំងអស់បង្ហាញជាប់ជានិច្ច ហើយយកកម្ពស់ ~560 ភិចសែល
+         * នៅសល់តែ ~110 ភិចសែលសម្រាប់មុខទំនិញ — អ្នកគិតលុយមើលឃើញតែ 1 មុខប៉ុណ្ណោះ
+         */
+        let checkout = false;
         let lastSale = null;
         let searchTimer = null;
         let successTimer = null;
@@ -315,8 +338,9 @@
 
         function renderShiftChip() {
             const d = shiftDuration();
-            document.getElementById('shiftChip').textContent =
-                `${SHIFT.id} · បើកម៉ោង ${fmtTime(SHIFT.openedAt)} · ${d.hours} ម៉ោង ${d.minutes} នាទី`;
+            // ម៉ោងបើកលាក់នៅអេក្រង់តូចជាង xl ដើម្បីកុំឲ្យបន្ទះបាក់ជា 2 បន្ទាត់
+            document.getElementById('shiftChip').innerHTML =
+                `${SHIFT.id}<span class="hidden xl:!inline"> · បើកម៉ោង ${fmtTime(SHIFT.openedAt)}</span> · ${d.hours} ម៉ោង ${d.minutes} នាទី`;
             document.getElementById('receiptCount').textContent = shiftSales().length;
         }
 
@@ -381,6 +405,16 @@
                     <i class="fas ${c.icon} text-xs ${active ? '' : 'opacity-60'}"></i> ${c.label}
                 </button>`;
             }).join('');
+            updatePillFade();
+        }
+
+        /* បង្ហាញគែមរសាត់តែនៅខាងដែលមានប្រភេទលាក់ — គ្មានគែមបើទាំងអស់មើលឃើញ */
+        function updatePillFade() {
+            const el = document.getElementById('categoryPills');
+            if (!el) return;
+            const more = el.scrollWidth - el.clientWidth > 2;
+            el.classList.toggle('fade-l', more && el.scrollLeft > 2);
+            el.classList.toggle('fade-r', more && el.scrollLeft < el.scrollWidth - el.clientWidth - 2);
         }
 
         function pickCategory(id) {
@@ -502,11 +536,13 @@
             const p = getProduct(sku);
             if (remainingStock(sku) <= 0) {
                 if (navigator.vibrate) navigator.vibrate(120);
-                showToast(`${p.name} អស់ស្តុក — មិនអាចបន្ថែមបានទេ`, 'error');
+                showToast(`${p.name} អស់ស្តុកហើយ មិនអាចបន្ថែមបានទេ`, 'error');
                 return false;
             }
             const line = cart.find(l => l.sku === sku);
             if (line) line.qty += 1; else cart.push({ sku, qty: 1 });
+            // បន្ថែមទំនិញពេលកំពុងទូទាត់ = ត្រឡប់ទៅកន្ត្រក ដើម្បីឃើញមុខដែលទើបបន្ថែម
+            checkout = false;
             saveCart(cart);
             flashCard(sku);
             renderCart();
@@ -551,6 +587,7 @@
         }
 
         function resetSale() {
+            checkout = false;
             cart = [];
             pay = { usdCash: 0, khrCash: 0, khqr: 0 };
             discountPercent = 0;
@@ -563,13 +600,23 @@
         function renderCart() {
             const lines = document.getElementById('cartLines');
             const t = saleTotals(cart, discountPercent);
+            if (!cart.length) checkout = false;
 
             document.getElementById('cartMeta').textContent = cart.length
                 ? `${cart.length} មុខទំនិញ · ${t.qty} ឯកតា`
                 : 'មិនទាន់មានទំនិញក្នុងកន្ត្រក';
-
             document.getElementById('fabCount').textContent = t.qty;
             document.getElementById('fabTotal').textContent = fmtUSD(t.gross);
+
+            // ក្បាលផ្ទាំងប្តូរតាមដំណាក់កាល
+            document.getElementById('cartTitle').textContent = checkout ? 'ការទូទាត់' : 'កន្ត្រកទំនិញ';
+            document.getElementById('cartBackBtn').style.display = checkout ? '' : 'none';
+            document.getElementById('cartClearBtn').style.display = checkout ? 'none' : '';
+
+            if (checkout) {
+                renderCheckout(t);
+                return;
+            }
 
             if (!cart.length) {
                 // ផ្ទាំងទទេជាទីធ្លាធំ — បំពេញដោយព័ត៌មានវេនដែលមានប្រយោជន៍
@@ -593,32 +640,40 @@
                         </div>
                     </div>`;
             } else {
+                /*
+                 * ជួរពីរជាន់៖ ឈ្មោះទទួលបានទទឹងពេញ (ពីមុនត្រូវបាក់ជា 4 បន្ទាត់
+                 * ក្បែរប៊ូតុង − / + ធំៗ)។ នៅពេលចំនួនស្មើ 1 ប៊ូតុង − ប្តូរជារូបធុងសំរាម
+                 * ព្រោះការបន្ថយបន្ថែមទៀតនឹងដកមុខនោះចេញ — ឱ្យអ្នកគិតលុយដឹងមុនពេលចុច
+                 */
                 lines.innerHTML = cart.map(l => {
                     const p = getProduct(l.sku);
+                    const last = l.qty === 1;
                     return `
-                        <div class="p-3 flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-xl bg-[#0f172a] border border-white/10 p-1 flex items-center justify-center overflow-hidden flex-shrink-0">
-                                ${productImgHtml(p, 'text-base')}
+                        <div class="px-3 py-2.5 flex gap-3">
+                            <div class="w-11 h-11 mt-0.5 rounded-xl bg-[#0f172a] border border-white/10 p-1 flex items-center justify-center overflow-hidden flex-shrink-0">
+                                ${productImgHtml(p, 'text-sm')}
                             </div>
                             <div class="min-w-0 flex-1">
-                                <p class="sm-td text-slate-100 leading-snug">${p.name}</p>
-                                <p class="sm-td-sub text-slate-400 sm-figure">${fmtUSD(p.price)} · ${p.unit}</p>
-                            </div>
-                            <div class="flex items-center gap-1.5 flex-shrink-0">
-                                <button onclick="changeQty('${l.sku}', -1)" type="button" aria-label="បន្ថយចំនួន"
-                                    class="pos-tap-sm rounded-full border-2 border-cyan-600 text-cyan-300 hover:bg-cyan-600/20 inline-flex items-center justify-center transition">
-                                    <i class="fas fa-minus text-sm"></i>
-                                </button>
-                                <span class="w-10 text-center sm-value text-white sm-figure text-[18px]">${l.qty}</span>
-                                <button onclick="changeQty('${l.sku}', 1)" type="button" aria-label="បន្ថែមចំនួន"
-                                    class="pos-tap-sm rounded-full bg-cyan-600 hover:bg-cyan-500 text-white inline-flex items-center justify-center transition">
-                                    <i class="fas fa-plus text-sm"></i>
-                                </button>
-                            </div>
-                            <div class="text-right flex-shrink-0 w-20">
-                                <p class="sm-value text-white sm-figure">${fmtUSD(lineTotal(l))}</p>
-                                <button onclick="removeLine('${l.sku}')" type="button" aria-label="ដកចេញពីកន្ត្រក"
-                                    class="mt-0.5 sm-td-sub text-slate-400 hover:text-rose-400 transition">ដកចេញ</button>
+                                <div class="flex items-start justify-between gap-3">
+                                    <p class="sm-td text-slate-100 leading-snug line-clamp-2">${p.name}</p>
+                                    <p class="sm-value text-white sm-figure flex-shrink-0">${fmtUSD(lineTotal(l))}</p>
+                                </div>
+                                <div class="flex items-center justify-between gap-2 mt-1">
+                                    <p class="sm-td-sub text-slate-400 sm-figure truncate">${fmtUSD(p.price)} · ${p.unit}</p>
+                                    <div class="flex items-center gap-1 flex-shrink-0">
+                                        <button onclick="changeQty('${l.sku}', -1)" type="button" aria-label="${last ? 'ដកចេញពីកន្ត្រក' : 'បន្ថយចំនួន'}"
+                                            class="pos-tap-sm rounded-xl border inline-flex items-center justify-center transition ${last
+                                                ? 'border-rose-500/40 text-rose-300 hover:bg-rose-500/15'
+                                                : 'border-white/15 text-slate-200 hover:bg-white/10'}">
+                                            <i class="fas ${last ? 'fa-trash-can' : 'fa-minus'} text-xs"></i>
+                                        </button>
+                                        <span class="w-9 text-center sm-value text-white sm-figure">${l.qty}</span>
+                                        <button onclick="changeQty('${l.sku}', 1)" type="button" aria-label="បន្ថែមចំនួន"
+                                            class="pos-tap-sm rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white inline-flex items-center justify-center transition">
+                                            <i class="fas fa-plus text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>`;
                 }).join('');
@@ -626,7 +681,33 @@
 
             renderSaleOptions();
             renderTotals(t);
-            renderPaymentPanel(t);
+            renderChargeButton(t);
+        }
+
+        /* ===== ប្តូររវាងដំណាក់កាល ===== */
+
+        function enterCheckout() {
+            if (!cart.length || !requireOpenShift()) return;
+            checkout = true;
+            renderCart();
+            document.getElementById('cartLines').scrollTop = 0;
+        }
+
+        function exitCheckout() {
+            checkout = false;
+            renderCart();
+        }
+
+        function renderChargeButton(t) {
+            const ready = cart.length > 0;
+            document.getElementById('paymentPanel').innerHTML = `
+                <button onclick="enterCheckout()" type="button" ${ready ? '' : 'disabled'}
+                    class="sm-card-title w-full !min-h-[64px] px-5 rounded-2xl font-bold transition inline-flex items-center justify-between gap-3 ${ready
+                        ? 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-900/40'
+                        : 'bg-white/5 text-slate-600 cursor-not-allowed'}">
+                    <span class="inline-flex items-center gap-2.5"><i class="fas fa-cash-register"></i> គិតលុយ</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>`;
         }
 
         /* ===== អតិថិជនឥណទាន និងការបញ្ចុះតម្លៃ ===== */
@@ -695,26 +776,27 @@
             renderCart();
         }
 
-        /* ===== សង្ខេបហិរញ្ញវត្ថុ ===== */
+        /* ===== សង្ខេបហិរញ្ញវត្ថុ (ដំណាក់កាលកន្ត្រក) ===== */
 
+        /*
+         * ក្នុងដំណាក់កាលកន្ត្រក បង្ហាញតែលេខដែលអ្នកគិតលុយត្រូវប្រាប់អតិថិជន
+         * ការបំបែកអាករ និងតម្លៃមុនអាករ ផ្លាស់ទៅដំណាក់កាលទូទាត់វិញ
+         */
         function renderTotals(t) {
-            const line = (label, value, tone) => `
-                <div class="flex items-baseline justify-between gap-3">
-                    <span class="sm-td-sub text-slate-400">${label}</span>
-                    <span class="sm-td ${tone || 'text-slate-200'} sm-figure">${value}</span>
-                </div>`;
-
-            // កន្ត្រកទទេ៖ បង្ហាញតែជួរសរុបស្ងាត់ៗ — បំបែកលេខសូន្យ 4 ជួរចេញ
             const empty = !cart.length;
-            const breakdown = empty ? '' :
-                line('សរុបរង', fmtUSD(t.list)) +
-                (t.discount > 0.005 ? line(`ការបញ្ចុះតម្លៃ ${t.discountPercent}%`, '− ' + fmtUSD(t.discount), 'text-amber-300') : '') +
-                line('តម្លៃមុនអាករ', fmtUSD(t.net)) +
-                line('អាករលើតម្លៃបន្ថែម 10%', fmtUSD(t.vat));
+            const discountRow = !empty && t.discount > 0.005
+                ? `<div class="flex items-baseline justify-between gap-3">
+                       <span class="sm-td-sub text-slate-400">សរុបរង <span class="sm-figure">${fmtUSD(t.list)}</span></span>
+                       <span class="sm-td text-amber-300 sm-figure">ការបញ្ចុះតម្លៃ ${t.discountPercent}% − ${fmtUSD(t.discount)}</span>
+                   </div>`
+                : '';
 
-            document.getElementById('cartTotals').innerHTML = breakdown +
-                `<div class="flex items-center justify-between gap-3 ${empty ? '' : 'pt-2.5 mt-1.5 border-t border-white/10'}">
-                    <span class="sm-card-title ${empty ? 'text-slate-500' : 'text-white'}">សរុបត្រូវបង់</span>
+            document.getElementById('cartTotals').innerHTML = discountRow + `
+                <div class="flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="sm-card-title ${empty ? 'text-slate-500' : 'text-white'}">សរុបត្រូវបង់</p>
+                        <p class="sm-td-sub text-slate-500">រួមទាំងអាករលើតម្លៃបន្ថែម 10%</p>
+                    </div>
                     <div class="text-right leading-none">
                         <span class="pos-total block ${empty ? 'opacity-40' : ''}">${fmtUSD(t.gross)}</span>
                         <span class="sm-td-sub text-slate-400 sm-figure block mt-1">${fmtKHR(toKHR(t.gross))}</span>
@@ -722,25 +804,49 @@
                 </div>`;
         }
 
-        /* ===== ការទូទាត់ ===== */
+        /* ===== ដំណាក់កាលទូទាត់ ===== */
 
-        function renderPaymentPanel(t) {
-            // កន្ត្រកទទេ៖ បង្ហាញតែប៊ូតុងបិទមួយ ដោយមិនបើកប្រអប់បញ្ចូលប្រាក់
-            // ឱ្យអ្នកគិតលុយវាយលេខដាក់អ្វីដែលមិនទាន់មានឡើយ
-            if (!cart.length) {
-                document.getElementById('paymentPanel').innerHTML = `
-                    <button type="button" disabled
-                        class="sm-card-title w-full !min-h-[64px] rounded-2xl font-bold bg-white/5 text-slate-600 cursor-not-allowed inline-flex items-center justify-center gap-2">
-                        <i class="fas fa-circle-check"></i> បញ្ចប់ការទូទាត់
-                    </button>`;
-                return;
-            }
+        /*
+         * ចំនួនប្រាក់សន្និដ្ឋាន — គ្រប់ចំនួនត្រូវតែគ្រប់ថ្លៃ
+         * ពីមុនប៊ូតុងថេរ $5 $10 $20 ផ្តល់ $5 សម្រាប់ការលក់ $8.95 ដែលមិនគ្រប់ទូទាត់ទេ
+         */
+        function cashSuggestions(due) {
+            const out = [];
+            const add = v => {
+                v = Math.round(v * 100) / 100;
+                if (v > due + 0.005 && !out.some(x => Math.abs(x - v) < 0.005)) out.push(v);
+            };
+            add(Math.ceil(due));
+            add(Math.ceil(due / 5) * 5);
+            add(Math.ceil(due / 10) * 10);
+            [20, 50, 100].forEach(add);
+            return out.sort((x, y) => x - y).slice(0, 4);
+        }
 
+        /* អតិថិជនកម្ពុជាច្រើនបង់ជាប្រាក់រៀល — ក្រដាសប្រាក់ធំៗដែលគ្រប់ថ្លៃ */
+        function rielSuggestions(due) {
+            const k = toKHR(due);
+            const out = [];
+            const add = v => { if (v >= k && !out.includes(v)) out.push(v); };
+            add(Math.ceil(k / 1000) * 1000);
+            add(Math.ceil(k / 5000) * 5000);
+            add(Math.ceil(k / 10000) * 10000);
+            [50000, 100000, 200000].forEach(add);
+            return out.sort((x, y) => x - y).slice(0, 4);
+        }
+
+        function renderCheckout(t) {
             const due = t.gross;
             const paid = paidTotal(pay);
             const remaining = due - paid;
             const change = paid - due;
             const canFinish = remaining <= 0.005;
+
+            const row = (label, value, tone) => `
+                <div class="flex items-baseline justify-between gap-3">
+                    <span class="sm-td-sub text-slate-400">${label}</span>
+                    <span class="sm-td ${tone || 'text-slate-200'} sm-figure">${value}</span>
+                </div>`;
 
             const tender = (key, label, icon, step, placeholder) => `
                 <div>
@@ -749,50 +855,99 @@
                     </label>
                     <input type="number" inputmode="decimal" min="0" step="${step}" value="${pay[key] || ''}" placeholder="${placeholder}"
                         onchange="setPay('${key}', this.value)"
-                        class="pos-num sm-td w-full px-2.5 rounded-xl bg-[#0f172a] border border-white/10 text-white text-right focus:outline-none focus:border-cyan-600 transition">
+                        class="pos-num sm-td w-full px-2.5 rounded-xl bg-[#0f172a] border ${pay[key] > 0.005 ? 'border-cyan-600' : 'border-white/10'} text-white text-right focus:outline-none focus:border-cyan-500 transition">
+                </div>`;
+
+            const chip = (onclick, label, on, accent) => `
+                <button onclick="${onclick}" type="button"
+                    class="sm-badge px-3.5 rounded-xl border font-semibold sm-figure transition ${on
+                        ? 'bg-cyan-600 border-cyan-600 text-white'
+                        : accent
+                            ? 'bg-cyan-600/15 border-cyan-600/50 text-cyan-200 hover:bg-cyan-600/25'
+                            : 'bg-[#0f172a] border-white/10 text-slate-200 hover:border-cyan-600'}">${label}</button>`;
+
+            const usdOnly = pay.khrCash < 0.5 && pay.khqr < 0.005;
+            const khrOnly = pay.usdCash < 0.005 && pay.khqr < 0.005;
+            const exactOn = usdOnly && Math.abs(pay.usdCash - due) < 0.005;
+
+            document.getElementById('cartLines').innerHTML = `
+                <div class="p-4 space-y-4">
+                    <div class="rounded-2xl bg-cyan-500/10 border border-cyan-500/25 p-4 text-center">
+                        <p class="sm-td-sub text-cyan-200">ទឹកប្រាក់ត្រូវទូទាត់</p>
+                        <p class="pos-total mt-1">${fmtUSD(due)}</p>
+                        <p class="sm-td text-slate-300 sm-figure mt-1">${fmtKHR(toKHR(due))}</p>
+                    </div>
+
+                    <div class="space-y-1.5 px-1">
+                        ${row('សរុបរង', fmtUSD(t.list))}
+                        ${t.discount > 0.005 ? row(`ការបញ្ចុះតម្លៃ ${t.discountPercent}%`, '− ' + fmtUSD(t.discount), 'text-amber-300') : ''}
+                        ${row('តម្លៃមុនអាករ', fmtUSD(t.net))}
+                        ${row('អាករលើតម្លៃបន្ថែម 10%', fmtUSD(t.vat))}
+                    </div>
+
+                    <div class="space-y-2">
+                        <p class="sm-td-sub text-slate-400">ប្រាក់ដុល្លារ៖ ចុចម្តងគត់</p>
+                        <div class="flex flex-wrap gap-2">
+                            ${chip("quickPay('exact')", `គត់ ${fmtUSD(due)}`, exactOn)}
+                            ${cashSuggestions(due).map(v => chip(`quickPay(${v})`, '$' + (Number.isInteger(v) ? v : v.toFixed(2)), usdOnly && Math.abs(pay.usdCash - v) < 0.005)).join('')}
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <p class="sm-td-sub text-slate-400">ប្រាក់រៀល៖ ចុចម្តងគត់</p>
+                        <div class="flex flex-wrap gap-2">
+                            ${rielSuggestions(due).map(v => chip(`quickPayRiel(${v})`, fmtKHR(v), khrOnly && Math.abs(pay.khrCash - v) < 0.5)).join('')}
+                        </div>
+                    </div>
+
+                    <button onclick="quickPay('khqr')" type="button"
+                        class="sm-value w-full px-4 rounded-xl bg-cyan-600/15 border border-cyan-600/50 hover:bg-cyan-600/25 text-cyan-100 font-semibold inline-flex items-center justify-center gap-2 transition">
+                        <i class="fas fa-qrcode"></i> ទូទាត់ពេញចំនួនតាមកូដស្កេនបាគង
+                    </button>
+
+                    <div class="pt-3 border-t border-white/10 space-y-2">
+                        <p class="sm-td-sub text-slate-400">ឬបញ្ចូលដោយដៃ៖ អាចបង់ចម្រុះច្រើនរូបិយប័ណ្ណ</p>
+                        <div class="grid grid-cols-3 gap-2">
+                            ${tender('usdCash', 'ដុល្លារ', 'fa-money-bill-wave', '0.01', '0.00')}
+                            ${tender('khrCash', 'រៀល', 'fa-money-bill-1', '100', '0')}
+                            ${tender('khqr', 'បាគង', 'fa-qrcode', '0.01', '0.00')}
+                        </div>
+                    </div>
+                </div>`;
+
+            document.getElementById('saleOptions').innerHTML = '';
+
+            // ស្ថានភាពទូទាត់ — នៅជិតប៊ូតុងបញ្ចប់ ដើម្បីឃើញប្រាក់អាប់មុនពេលចុច
+            const state = paid < 0.005 ? 'idle' : remaining > 0.005 ? 'short' : 'ok';
+            const box = {
+                idle: ['bg-white/5 border-white/10', 'text-slate-400', 'text-slate-200', 'នៅត្រូវទទួល'],
+                short: ['bg-amber-500/10 border-amber-500/30', 'text-amber-200', 'text-amber-200', 'នៅខ្វះ'],
+                ok: ['bg-emerald-500/10 border-emerald-500/30', 'text-emerald-200', 'text-emerald-100', 'ប្រាក់អាប់']
+            }[state];
+
+            document.getElementById('cartTotals').innerHTML = `
+                <div class="p-3 rounded-xl border ${box[0]}">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="sm-label ${box[1]}">${box[3]}</p>
+                            ${paid > 0.005 ? `<p class="sm-td-sub text-slate-400 sm-figure">បានទទួល ${fmtUSD(paid)}</p>` : ''}
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[26px] font-bold leading-none ${box[2]} sm-figure block">
+                                ${fmtUSD(remaining > 0.005 ? remaining : Math.max(change, 0))}
+                            </span>
+                            ${state === 'ok' && change > 0.005
+                                ? `<span class="sm-td-sub text-emerald-300 sm-figure block mt-1">${fmtKHR(toKHR(change))}</span>` : ''}
+                        </div>
+                    </div>
                 </div>`;
 
             document.getElementById('paymentPanel').innerHTML = `
-                <div class="grid grid-cols-3 gap-2">
-                    ${tender('usdCash', 'ដុល្លារ', 'fa-money-bill-wave', '0.01', '0.00')}
-                    ${tender('khrCash', 'រៀល', 'fa-money-bill-1', '100', '0')}
-                    ${tender('khqr', 'បាគង', 'fa-qrcode', '0.01', '0.00')}
-                </div>
-
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="quickPay('exact')" type="button" class="sm-badge px-3.5 rounded-xl bg-[#0f172a] border border-white/10 hover:border-cyan-600 text-slate-200 font-medium transition">គត់</button>
-                    <button onclick="quickPay(5)" type="button" class="sm-badge px-3.5 rounded-xl bg-[#0f172a] border border-white/10 hover:border-cyan-600 text-slate-200 font-medium transition sm-figure">$5</button>
-                    <button onclick="quickPay(10)" type="button" class="sm-badge px-3.5 rounded-xl bg-[#0f172a] border border-white/10 hover:border-cyan-600 text-slate-200 font-medium transition sm-figure">$10</button>
-                    <button onclick="quickPay(20)" type="button" class="sm-badge px-3.5 rounded-xl bg-[#0f172a] border border-white/10 hover:border-cyan-600 text-slate-200 font-medium transition sm-figure">$20</button>
-                    <button onclick="quickPay('khqr')" type="button" class="sm-badge px-3.5 rounded-xl bg-cyan-600/20 border border-cyan-600/50 hover:bg-cyan-600/30 text-cyan-200 font-semibold transition">
-                        <i class="fas fa-qrcode mr-1"></i> បាគងពេញ
-                    </button>
-                </div>
-
-                <div class="p-3 rounded-xl ${paid < 0.005 ? 'bg-white/5 border border-white/10'
-                        : remaining > 0.005 ? 'bg-amber-500/10 border border-amber-500/30'
-                        : 'bg-emerald-500/10 border border-emerald-500/30'}">
-                    <div class="flex items-baseline justify-between gap-3">
-                        <span class="sm-label ${paid < 0.005 ? 'text-slate-400'
-                            : remaining > 0.005 ? 'text-amber-200' : 'text-emerald-200'}">
-                            ${paid < 0.005 ? 'នៅត្រូវទទួល' : remaining > 0.005 ? 'នៅខ្វះ' : 'ប្រាក់អាប់'}
-                        </span>
-                        <div class="text-right">
-                            <span class="sm-value ${paid < 0.005 ? 'text-slate-200'
-                                : remaining > 0.005 ? 'text-amber-200' : 'text-emerald-200'} sm-figure block">
-                                ${fmtUSD(remaining > 0.005 ? remaining : Math.max(change, 0))}
-                            </span>
-                            ${remaining <= 0.005 && change > 0.005
-                                ? `<span class="sm-td-sub text-emerald-300 sm-figure">${fmtKHR(toKHR(change))}</span>` : ''}
-                        </div>
-                    </div>
-                </div>
-
                 <button onclick="finishSale()" type="button" ${canFinish ? '' : 'disabled'}
                     class="sm-card-title w-full !min-h-[64px] rounded-2xl font-bold transition inline-flex items-center justify-center gap-2 ${canFinish
-                        ? 'bg-emerald-500 hover:bg-emerald-400 text-white'
+                        ? 'bg-emerald-500 hover:bg-emerald-400 text-white shadow-lg shadow-emerald-900/40'
                         : 'bg-[#374151] text-slate-500 cursor-not-allowed'}">
-                    <i class="fas fa-circle-check"></i> បញ្ចប់ការទូទាត់
+                    <i class="fas fa-circle-check"></i> ${canFinish && pay.khqr > 0.005 ? 'បន្តទៅស្កេនបាគង' : 'បញ្ចប់ការទូទាត់'}
                 </button>`;
         }
 
@@ -806,7 +961,13 @@
             const due = saleTotals(cart, discountPercent).gross;
             if (mode === 'exact') pay = { usdCash: due, khrCash: 0, khqr: 0 };
             else if (mode === 'khqr') pay = { usdCash: 0, khrCash: 0, khqr: due };
-            else pay = { usdCash: mode, khrCash: 0, khqr: 0 };
+            else pay = { usdCash: Number(mode), khrCash: 0, khqr: 0 };
+            renderCart();
+        }
+
+        function quickPayRiel(amount) {
+            if (!cart.length) return showToast('កន្ត្រកទំនិញនៅទទេ', 'warning');
+            pay = { usdCash: 0, khrCash: Number(amount), khqr: 0 };
             renderCart();
         }
 
@@ -925,6 +1086,15 @@
             tickClock();
             setInterval(tickClock, 1000);
             setInterval(renderShiftChip, 60000);
+            window.addEventListener('resize', updatePillFade);
+            // ទទឹងគ្រាប់ប្រភេទប្តូរពេលពុម្ពអក្សរខ្មែរផ្ទុករួច — ត្រូវវាស់ម្តងទៀត
+            if (document.fonts && document.fonts.ready) document.fonts.ready.then(updatePillFade);
+            window.addEventListener('load', updatePillFade);
+
+            // Esc ពេលកំពុងទូទាត់ = ត្រឡប់ទៅកន្ត្រក (មិនបោះបង់ការលក់ទេ)
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape' && checkout && !document.querySelector('[data-floating-active="true"]')) exitCheckout();
+            });
 
             // លាក់ជម្រើសពេញអេក្រង់ទាំងស្រុង បើកម្មវិធីរុករកមិនគាំទ្រ (ឧទាហរណ៍ សាហ្វារីលើទូរស័ព្ទ)
             // ប្រើ style ដោយផ្ទាល់ ព្រោះថ្នាក់ hidden អាចត្រូវបានឈ្នះដោយថ្នាក់តាមទំហំអេក្រង់

@@ -278,6 +278,11 @@
                         </p>
                     </div>
 
+                    <!-- របារដំណាក់កាលបែបសង្ខេប — កាតក្នុងជួរឈរមានទទឹងតូច -->
+                    <div class="pt-2.5 border-t border-slate-100">
+                        <div id="dstage-${d.trackingCode}"></div>
+                    </div>
+
                     <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500 pt-2 border-t border-slate-100">
                         <span><i class="fas fa-id-badge mr-1 text-slate-400"></i>${d.driverName}</span>
                         <span class="cs-figure">${d.driverPhone}</span>
@@ -340,6 +345,18 @@
                 column({ label: 'កំពុងរៀបចំវេចខ្ចប់', icon: 'fa-box-open', tone: 'slate', bg: 'bg-slate-50' }, preparing) +
                 column({ label: 'កំពុងដឹកជញ្ជូន', icon: 'fa-truck-fast', tone: 'sky', bg: 'bg-sky-50/50' }, out) +
                 column({ label: 'បញ្ចប់ និងមានបញ្ហា', icon: 'fa-flag-checkered', tone: 'emerald', bg: 'bg-emerald-50/40' }, finished);
+
+            // ដំឡើងរបារដំណាក់កាលលើកាតនីមួយៗ (កាតដែលប្រគល់រួចគ្មានរបារនេះទេ)
+            list.filter(d => d.status !== 'delivered').forEach(d => {
+                bmsStepper(`dstage-${d.trackingCode}`, {
+                    steps: CS_DELIVERY_STAGES,
+                    current: csDeliveryStage(d.status),
+                    variant: 'icon',
+                    compact: true,
+                    inProgress: d.status !== 'failed',
+                    tone: d.status === 'failed' ? 'rose' : 'sky'
+                });
+            });
         }
 
         /* ===== សកម្មភាព ===== */

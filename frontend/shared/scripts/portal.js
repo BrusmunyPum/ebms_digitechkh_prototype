@@ -63,11 +63,11 @@ const PORTAL_CONFIGS = {
         userInitials: 'ចម',
         userName: 'ចន្ទ មករា',
         userRole: 'អ្នកគិតលុយលក់រាយ (POS)',
-        policyNote: 'ជាប់សោរត្រឹមវេនថ្ងៃនេះ — មិនអាចរុករកប្រតិបត្តិការ ឬចំណូលពីវេនមុនបានឡើយ។',
+        policyNote: 'ជាប់សោរត្រឹមវេនថ្ងៃនេះ។ មិនអាចរុករកប្រតិបត្តិការ ឬចំណូលពីវេនមុនបានឡើយ។',
         nav: [
             { id: 'pos', label: 'ផ្ទាំងគិតលុយ', icon: 'mdi:point-of-sale', href: 'pos-terminal.html' },
             { id: 'receipts', label: 'វិក្កយបត្រក្នុងវេន', icon: 'mdi:receipt-text-outline', href: 'receipts/receipts.html', badge: true },
-            { id: 'close-shift', label: 'បិទវេន និងរាប់សាច់ប្រាក់', icon: 'mdi:cash-lock-open', href: 'close-shift.html' }
+            { id: 'close-shift', label: 'បិទវេន និងរាប់សាច់ប្រាក់', icon: 'mdi:lock-outline', href: 'close-shift.html' }
         ]
     },
     wmPortal: {
@@ -310,9 +310,9 @@ function renderPortalSidebarV2(host, cfg, roleRoot, activeId, sharedRoot) {
             <a href="${roleRoot}/${item.href}" ${isActive ? 'aria-current="page"' : ''}
                class="sb-nav-item relative flex items-center justify-between gap-2 p-3 rounded-xl transition-all whitespace-nowrap ${isActive
                 ? 'bg-white/15 text-white border border-white/10 shadow-sm'
-                : 'text-sky-100 hover:bg-white/10 hover:text-white border border-transparent'}">
+                : 'sb-text hover:bg-white/10 hover:text-white border border-transparent'}">
                 <span class="flex items-center min-w-0">
-                    <span class="w-6 flex items-center justify-center text-sky-300 flex-shrink-0">
+                    <span class="sb-icon w-6 flex items-center justify-center flex-shrink-0">
                         ${getIconHtml(item.icon)}
                     </span>
                     <span class="ml-3 sm-nav-label truncate sb-expand-only">${item.label}</span>
@@ -330,10 +330,10 @@ function renderPortalSidebarV2(host, cfg, roleRoot, activeId, sharedRoot) {
                 </div>
                 <div class="min-w-0 flex-1 sb-expand-only">
                     <h1 class="text-lg font-semibold tracking-wider whitespace-nowrap text-white">DIGITECHKH</h1>
-                    <span class="sm-nav-note font-medium text-sky-300 uppercase tracking-wider block truncate">${cfg.title}</span>
+                    <span class="sb-accent sm-nav-note font-medium uppercase tracking-wider block truncate">${cfg.title}</span>
                 </div>
                 <button onclick="togglePortalSidebar()" type="button" aria-label="បង្រួម ឬពង្រីករបារចំហៀង"
-                    class="sb-collapse-btn relative hidden lg:!flex w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 text-sky-200 hover:text-white items-center justify-center transition flex-shrink-0">
+                    class="sb-collapse-btn relative hidden lg:!flex w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 sb-accent-soft hover:text-white items-center justify-center transition flex-shrink-0">
                     <iconify-icon id="sbCollapseIcon" icon="${collapsed ? 'mdi:chevron-right' : 'mdi:chevron-left'}" class="text-lg"></iconify-icon>
                     <span class="sb-tip">ពង្រីករបារចំហៀង</span>
                 </button>
@@ -344,14 +344,14 @@ function renderPortalSidebarV2(host, cfg, roleRoot, activeId, sharedRoot) {
 
                 <div class="sb-expand-only pt-4 mt-4 border-t border-white/10">
                     <button onclick="togglePolicyNote()" type="button"
-                        class="w-full flex items-center justify-between gap-2 px-2 py-1.5 rounded-lg text-sky-300 hover:bg-white/5 transition">
+                        class="w-full flex items-center justify-between gap-2 px-2 py-1.5 rounded-lg sb-accent hover:bg-white/5 transition">
                         <span class="sm-nav-note inline-flex items-center gap-1.5">
                             <iconify-icon icon="mdi:shield-check-outline" class="text-base"></iconify-icon>
                             គោលការណ៍សិទ្ធិ
                         </span>
                         <iconify-icon id="sbPolicyIcon" icon="mdi:chevron-down" class="text-base"></iconify-icon>
                     </button>
-                    <div id="sbPolicyBody" class="hidden mt-2 p-3 rounded-xl bg-white/5 border border-white/10 sm-nav-note text-sky-200">
+                    <div id="sbPolicyBody" class="hidden mt-2 p-3 rounded-xl bg-white/5 border border-white/10 sm-nav-note sb-accent-soft">
                         ${cfg.policyNote}
                     </div>
                 </div>
@@ -359,18 +359,18 @@ function renderPortalSidebarV2(host, cfg, roleRoot, activeId, sharedRoot) {
 
             <div class="border-t border-white/10 bg-black/20 p-3 space-y-2">
                 <div class="sb-user relative flex items-center gap-3 px-2 py-1.5 rounded-xl">
-                    <div class="w-9 h-9 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-100 flex items-center justify-center font-semibold text-xs flex-shrink-0">
+                    <div class="w-9 h-9 rounded-full sb-avatar border flex items-center justify-center font-semibold text-xs flex-shrink-0">
                         ${cfg.userInitials}
                     </div>
                     <div class="min-w-0 sb-expand-only">
                         <p class="sm-value text-white truncate">${cfg.userName}</p>
-                        <p class="sm-nav-note text-sky-300 truncate">${cfg.userRole}</p>
+                        <p class="sm-nav-note sb-accent truncate">${cfg.userRole}</p>
                     </div>
                     <span class="sb-tip">${cfg.userName} · ${cfg.userRole}</span>
                 </div>
 
                 <button onclick="handleLogout()" type="button" aria-label="ចាកចេញពីប្រព័ន្ធ"
-                    class="sb-nav-item relative w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white/10 hover:bg-rose-600 text-sky-100 hover:text-white font-semibold transition border border-white/10 shadow-sm cursor-pointer group">
+                    class="sb-nav-item relative w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white/10 hover:bg-rose-600 sb-text hover:text-white font-semibold transition border border-white/10 shadow-sm cursor-pointer group">
                     <iconify-icon icon="mdi:logout" class="text-lg text-rose-300 group-hover:text-white transition-colors"></iconify-icon>
                     <span class="sm-nav-label sb-expand-only">ចាកចេញ</span>
                     <span class="sb-tip">ចាកចេញ</span>
@@ -1222,3 +1222,291 @@ function initBmsSelects(root) {
 }
 
 document.addEventListener('DOMContentLoaded', () => initBmsSelects());
+
+/* ============================================================================
+   របារដំណាក់កាល (BMS Stepper) — បង្ហាញវឌ្ឍនភាព និងស្ថានភាព
+   ----------------------------------------------------------------------------
+   ប្រើសម្រាប់ទាំងទម្រង់ច្រើនជំហាន (ឧ. បិទវេន) និងការតាមដានស្ថានភាព
+   (ឧ. ដំណាក់កាលដឹកជញ្ជូន) ដើម្បីកុំឲ្យទំព័រនីមួយៗសរសេរកូដផ្ទាល់ខ្លួនម្តងទៀត។
+
+   bmsStepper('hostId', {
+       steps:   [{ label: 'ចុះឈ្មោះ', icon: 'fa-user-plus' }, …],
+       current: 2,                 // ជំហានបច្ចុប្បន្ន ចាប់ពី 1
+       variant: 'numbered',        // 'numbered' (លេខ) ឬ 'icon' (រូបតំណាង)
+       tone:    'teal',            // ពណ៌សម្គាល់ជំហានដែលបានបញ្ចប់
+       onStep:  n => goStep(n),    // ទទេ = មិនអាចចុចបាន (សម្រាប់ស្ថានភាព)
+       labelAt: 'side'             // 'side' (ក្បែរ) ឬ 'below' (ខាងក្រោម)
+   });
+   ========================================================================== */
+
+const BMS_STEPPER_STATE = {};
+
+/**
+ * ពណ៌ត្រូវសរសេរជាឈ្មោះថ្នាក់ពេញលេញ មិនត្រូវផ្សំដោយអក្សរទេ
+ * ព្រោះពេលប្តូរទៅ Tailwind ប្រភេទចងក្រង ថ្នាក់ដែលផ្សំពេលដំណើរការនឹងបាត់
+ */
+const BMS_STEPPER_TONES = {
+    teal: { fill: 'bg-teal-600', ring: 'ring-teal-100', bar: 'bg-teal-600', text: 'text-teal-700', rgb: '13,148,136' },
+    emerald: { fill: 'bg-emerald-600', ring: 'ring-emerald-100', bar: 'bg-emerald-600', text: 'text-emerald-700', rgb: '5,150,105' },
+    sky: { fill: 'bg-sky-600', ring: 'ring-sky-100', bar: 'bg-sky-600', text: 'text-sky-700', rgb: '2,132,199' },
+    purple: { fill: 'bg-purple-600', ring: 'ring-purple-100', bar: 'bg-purple-600', text: 'text-purple-700', rgb: '147,51,234' },
+    indigo: { fill: 'bg-indigo-600', ring: 'ring-indigo-100', bar: 'bg-indigo-600', text: 'text-indigo-700', rgb: '79,70,229' },
+    rose: { fill: 'bg-rose-600', ring: 'ring-rose-100', bar: 'bg-rose-600', text: 'text-rose-700', rgb: '225,29,72' },
+    /*
+     * ពណ៌លឿងតាមរូបគំរូ #E9A23B — ប៉ុន្តែរូបតំណាងពណ៌សលើពណ៌នេះមានកម្រិតពន្លឺ
+     * ត្រឹម 2.17:1 (ត្រូវការ 3:1) ដូច្នេះរង្វង់ប្រើ #C88016 — ហ្វ័រដូចគ្នា (35.7°)
+     * តែងងឹតល្មមសម្រាប់រូបតំណាងពណ៌ស (3.20:1)។ amber-600 មិនប្រើ ព្រោះវាទៅខាងពណ៌ទឹកក្រូច
+     * អក្សរប្រើ amber-700 (5.02:1) ព្រោះ custom.css មានការកែពណ៌សម្រាប់ទម្រង់ងងឹតរួចហើយ
+     */
+    amber: { fill: 'bg-[#C88016]', ring: 'ring-amber-100', bar: 'bg-[#E9A23B]', text: 'bms-amber-text', rgb: '233,162,59' },
+    /* ពណ៌ខៀវដែនរបស់ម៉ាក (btn-navy #16255C) — រូបតំណាងពណ៌សមានកម្រិតពន្លឺ 14.5:1 */
+    navy: { fill: 'bms-navy-fill', ring: 'ring-indigo-100', bar: 'bms-navy-fill', text: 'bms-navy-text', rgb: '22,37,92' },
+    /*
+     * ពណ៌បៃតងរបស់ប្រព័ន្ធ (primary #24692D) — ដូចរបារចំហៀង និងប៊ូតុងចម្បង
+     * ក្នុងភាសាពណ៌របស់ប្រព័ន្ធ បៃតង = បានបញ្ចប់ ឯលឿង = កំពុងរង់ចាំ ឬកំពុងដំណើរការ
+     */
+    brand: { fill: 'bms-brand-fill', ring: 'ring-emerald-100', bar: 'bms-brand-fill', text: 'bms-brand-text', rgb: '36,105,45' }
+};
+BMS_STEPPER_TONES.yellow = BMS_STEPPER_TONES.amber;
+
+/**
+ * ចលនាបន្ទាត់ «កំពុងដំណើរការ» — រត់ពីជំហានបច្ចុប្បន្នទៅជំហានបន្ទាប់ម្តងហើយម្តងទៀត
+ * បញ្ចូលពី JavaScript ដើម្បីឲ្យសមាសភាគដំណើរការនៅគ្រប់ទំព័រ ដោយមិនពឹងលើឯកសារ CSS
+ * អ្នកប្រើដែលបិទចលនា (prefers-reduced-motion) ឃើញបន្ទាត់ឈរនៅ 75% ជំនួសវិញ
+ */
+function bmsEnsureStepperStyles() {
+    if (document.getElementById('bmsStepperStyles')) return;
+    const style = document.createElement('style');
+    style.id = 'bmsStepperStyles';
+    style.textContent = `
+        /* រត់ពីជំហាន ក ទៅ ខ — ឈប់បន្តិចពេលដល់ រួចចាប់ផ្តើមម្តងទៀត */
+        @keyframes bmsStepRun {
+            0%   { width: 0%;   opacity: 1; }
+            75%  { width: 100%; opacity: 1; }
+            88%  { width: 100%; opacity: 1; }
+            100% { width: 100%; opacity: 0; }
+        }
+        /* រង្វង់ពន្លឺរីកចេញពីជំហានបច្ចុប្បន្ន តាមចង្វាក់ដូចបន្ទាត់ */
+        @keyframes bmsStepHalo {
+            0%   { transform: scale(1);    opacity: .55; }
+            75%  { transform: scale(1.55); opacity: 0; }
+            100% { transform: scale(1.55); opacity: 0; }
+        }
+        /*
+         * ពណ៌ដែលមិនមានក្នុងក្ដារពណ៌ Tailwind — កំណត់ទាំងទម្រង់ភ្លឺ និងងឹត
+         * ខៀវដែនលើផ្ទៃងងឹតស្ទើរមើលមិនឃើញ ដូច្នេះប្តូរទៅខៀវភ្លឺជាងក្នុងទម្រង់ងងឹត
+         * #A46912 = ហ្វ័រដូចពណ៌លឿងរូបគំរូ តែងងឹតល្មមសម្រាប់អក្សរ (4.56:1)
+         */
+        .bms-navy-fill { background-color: #16255C; }
+        .bms-navy-text { color: #16255C; }
+        .bms-amber-text { color: #A46912; }
+        .bms-brand-fill { background-color: #24692D; }
+        .bms-brand-text { color: #1B5223; }
+        html.dark .bms-brand-fill { background-color: #2F9E44; }
+        html.dark .bms-brand-text { color: #86EFAC; }
+        html.dark .bms-navy-fill { background-color: #4F63C4; }
+        html.dark .bms-navy-text { color: #A5B4FC; }
+        html.dark .bms-amber-text { color: #F5C26B; }
+        /* ផ្លូវប្រផេះភ្លឺពេកលើផ្ទៃងងឹត ហើយរង្វង់ពណ៌ស្រាលមើលទៅធ្ងន់ — បន្ថយទាំងពីរ */
+        .bms-step-track { background-color: #E2E8F0; }
+        html.dark .bms-step-track { background-color: #334155; }
+        html.dark .bms-step-now { --tw-ring-color: rgba(var(--bms-rgb), .28); }
+        .bms-step-run  { animation: bmsStepRun 2s cubic-bezier(.4, 0, .2, 1) infinite; }
+        .bms-step-halo { animation: bmsStepHalo 2s cubic-bezier(.4, 0, .2, 1) infinite; }
+        @media (prefers-reduced-motion: reduce) {
+            .bms-step-run  { animation: none; }
+            .bms-step-halo { animation: none; opacity: 0; }
+        }`;
+    document.head.appendChild(style);
+}
+
+function bmsStepper(hostId, cfg) {
+    const host = document.getElementById(hostId);
+    if (!host) return;
+    BMS_STEPPER_STATE[hostId] = cfg;
+    bmsRenderStepper(hostId);
+}
+
+function bmsRenderStepper(hostId) {
+    const host = document.getElementById(hostId);
+    const cfg = BMS_STEPPER_STATE[hostId];
+    if (!host || !cfg) return;
+    bmsEnsureStepperStyles();
+
+    const steps = cfg.steps || [];
+    const current = Number(cfg.current) || 1;
+    const skin = BMS_STEPPER_TONES[cfg.tone] || BMS_STEPPER_TONES.teal;
+    /*
+     * doneTone: ពណ៌សម្រាប់ជំហានដែលបានបញ្ចប់ (ឧ. 'emerald')
+     * បៃតង = បានបញ្ចប់, លឿង = កំពុងដំណើរការ, ប្រផេះ = មិនទាន់ដល់
+     * បើមិនកំណត់ ជំហានបានបញ្ចប់ប្រើពណ៌ដូចជំហានបច្ចុប្បន្ន
+     */
+    const doneSkin = BMS_STEPPER_TONES[cfg.doneTone] || skin;
+    const icons = cfg.variant === 'icon';
+    const compact = cfg.compact === true;
+    const below = icons || cfg.labelAt === 'below';
+    const clickable = typeof cfg.onStep === 'function';
+
+    // ទំហំរង្វង់ និងកម្រាស់បន្ទាត់ (ភីកសែល) — ប្រើគណនាទីតាំងបន្ទាត់ភ្ជាប់
+    const R = compact ? 14 : (icons ? 28 : 18);
+    const T = compact ? 2 : (icons ? 5 : 2);
+    const circle = compact ? 'w-7 h-7' : (icons ? 'w-14 h-14' : 'w-9 h-9 text-xs');
+    /*
+     * ទំហំរូបតំណាងត្រូវដាក់លើ <i> ផ្ទាល់ជារចនាប័ទ្មក្នុងជួរ
+     * ព្រោះ custom.css មានច្បាប់ [class*="rounded-full"][class*="text-"]
+     * ដែលបង្ខំធាតុមូលទាំងអស់ឲ្យទៅ 13.5px ដោយ !important
+     */
+    const iconPx = compact ? 11 : 22;
+
+    /*
+     * បន្ទាត់ចេញពីជំហានបច្ចុប្បន្នបំពេញ 75% (វាស់ពីរូបគំរូ) ដើម្បីបង្ហាញថា
+     * កំពុងធ្វើដំណើរទៅជំហានបន្ទាប់ — មិនទាន់ដល់ទេ ប៉ុន្តែកំពុងដំណើរការ
+     * inProgress: false = ឈប់នៅជំហាននេះ (ឧ. ដឹកមិនជោគជ័យ) គ្មានវឌ្ឍនភាពទេ
+     */
+    const inProgress = cfg.inProgress !== false && current <= steps.length;
+    const duration = Number(cfg.duration) > 0 ? Number(cfg.duration) : 2;
+    const partial = Math.round((cfg.progress !== undefined ? cfg.progress : 0.75) * 100);
+    const fillFor = (n, at) => n < at ? 100 : (n === at && inProgress ? partial : 0);
+
+    // ចាំជំហានមុន ដើម្បីឲ្យបន្ទាត់រត់ពីទីតាំងចាស់ទៅទីតាំងថ្មីពេលប្តូរជំហាន
+    const from = cfg._painted !== undefined ? cfg._painted : current;
+    cfg._painted = current;
+    const reduceMotion = typeof window !== 'undefined' && window.matchMedia
+        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const animate = from !== current && !reduceMotion;
+
+    const fill = n => {
+        // បន្ទាត់ «កំពុងដំណើរការ» រត់ម្តងហើយម្តងទៀត — width ក្នុងជួរជាតម្លៃបម្រុង
+        // សម្រាប់អ្នកប្រើដែលបិទចលនា (ចលនា CSS មានអាទិភាពលើ width ក្នុងជួរ)
+        if (n === current && inProgress) {
+            const head = compact ? '' : `<span class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-3 h-3 rounded-full bg-white"
+                style="box-shadow:0 0 0 3px rgba(${skin.rgb},1),0 0 12px 3px rgba(${skin.rgb},.55)"></span>`;
+            return `<span class="bms-step-run relative block h-full rounded-full ${skin.bar}"
+                style="width:${partial}%;animation-duration:${duration}s;box-shadow:0 0 8px rgba(${skin.rgb},.45)">${head}</span>`;
+        }
+        return `<span data-bms-fill="${fillFor(n, current)}" class="block h-full rounded-full ${doneSkin.bar}"
+            style="width:${fillFor(n, animate ? from : current)}%;transition:width .7s cubic-bezier(.4,0,.2,1)"></span>`;
+    };
+
+    // current ធំជាងចំនួនជំហាន = បានបញ្ចប់គ្រប់ដំណាក់កាល
+    const aria = current > steps.length
+        ? 'បានបញ្ចប់គ្រប់ដំណាក់កាល'
+        : `ដំណាក់កាល ${current} នៃ ${steps.length}៖ ${(steps[current - 1] || {}).label || ''}`;
+
+    const face = n => {
+        const done = n < current;
+        const now = n === current;
+        if (done) return `${doneSkin.fill} text-white`;
+        if (now) return `${skin.fill} text-white ring-4 ${skin.ring} bms-step-now`;
+        return 'bg-slate-100 text-slate-500 border border-slate-200';
+    };
+
+    // ទម្រង់រូបតំណាងរក្សារូបតំណាងដើម ទោះជំហាននោះបានបញ្ចប់ក៏ដោយ
+    // ព្រោះសញ្ញាធីកបាត់ព័ត៌មានថាជាដំណាក់កាលអ្វី
+    const glyph = (s, n) => (icons && s.icon)
+        ? `<i class="fas ${s.icon}" style="font-size:${iconPx}px"></i>`
+        : (n < current ? '<i class="fas fa-check"></i>' : String(n));
+
+    const labelTone = n => n === current
+        ? `${skin.text} font-semibold`
+        : (n < current ? 'text-slate-700 font-medium' : 'text-slate-500 font-medium');
+
+    const wrap = (n, inner, extra) => {
+        const reachable = clickable && n <= current;
+        return reachable
+            ? `<button type="button" onclick="bmsStepperGo('${hostId}', ${n})" class="${extra} cursor-pointer">${inner}</button>`
+            : `<span class="${extra}${clickable ? ' cursor-not-allowed' : ''}">${inner}</span>`;
+    };
+
+    if (below) {
+        /*
+         * ប្លង់អក្សរខាងក្រោម (ដូចរូបគំរូទី 1)
+         * ជំហាននីមួយៗមានទទឹងស្មើគ្នា ហើយបន្ទាត់ភ្ជាប់ត្រូវគូរពីកណ្តាលរង្វង់មួយ
+         * ទៅកណ្តាលរង្វង់បន្ទាប់ — ដូច្នេះបន្ទាត់ប៉ះរង្វង់ជានិច្ច
+         * ទោះបីអក្សរវែងជាងរង្វង់ក៏ដោយ
+         */
+        host.innerHTML = `
+            <ol role="group" aria-label="${aria}" class="flex w-full">
+                ${steps.map((s, i) => {
+                    const n = i + 1;
+                    const connector = i < steps.length - 1
+                        ? `<span aria-hidden="true" class="absolute rounded-full bms-step-track"
+                               style="top:${R - T / 2}px;height:${T}px;left:calc(50% + ${R}px);right:calc(-50% + ${R}px)">${fill(n)}</span>`
+                        : '';
+                    const halo = n === current && inProgress && !compact
+                        ? `<span aria-hidden="true" class="bms-step-halo absolute inset-0 rounded-full"
+                               style="background:rgba(${skin.rgb},.45);animation-duration:${duration}s"></span>`
+                        : '';
+                    // សញ្ញាធីកតូចបញ្ជាក់ថាបានបញ្ចប់ ដោយមិនលុបរូបតំណាងដើមចោល
+                    const badge = n < current && icons && !compact && cfg.doneBadge === true
+                        ? `<span aria-hidden="true" class="absolute -right-1 -bottom-1 w-5 h-5 rounded-full bg-white flex items-center justify-center"
+                               style="box-shadow:0 0 0 2px #fff,0 1px 3px rgba(15,23,42,.18)">
+                               <span class="w-4 h-4 rounded-full ${doneSkin.fill} flex items-center justify-center">
+                                   <i class="fas fa-check text-white" style="font-size:8px"></i>
+                               </span>
+                           </span>`
+                        : '';
+                    const body = `
+                        <span class="relative z-10 flex-shrink-0">
+                            ${halo}
+                            <span class="relative ${circle} rounded-full flex items-center justify-center font-bold transition ${face(n)}" style="--bms-rgb:${skin.rgb}">${glyph(s, n)}</span>
+                            ${badge}
+                        </span>
+                        ${compact ? '' : `<span class="${icons ? 'text-sm' : 'sm-badge'} mt-3 px-1 text-center leading-snug ${labelTone(n)}">${s.label}</span>`}`;
+                    return `<li class="relative flex-1 min-w-0 flex justify-center">
+                        ${connector}
+                        ${wrap(n, body, 'relative flex flex-col items-center')}
+                    </li>`;
+                }).join('')}
+            </ol>`;
+        bmsAnimateStepperFill(host, animate);
+        return;
+    }
+
+    // ប្លង់អក្សរនៅក្បែរ — បន្ទាត់ជាធាតុដាច់ដោយឡែករវាងជំហាន
+    host.innerHTML = `
+        <div role="group" aria-label="${aria}" class="flex items-center overflow-x-auto scrollbar-hide">
+            ${steps.map((s, i) => {
+                const n = i + 1;
+                const body = `
+                    <span class="${circle} rounded-full flex items-center justify-center flex-shrink-0 font-bold transition ${face(n)}">${glyph(s, n)}</span>
+                    <span class="sm-badge ${labelTone(n)}">${s.label}</span>`;
+                const bar = i < steps.length - 1
+                    ? `<span aria-hidden="true" class="w-6 sm:w-12 h-0.5 mx-2 sm:mx-3 rounded-full flex-shrink-0 bms-step-track overflow-hidden">${fill(n)}</span>`
+                    : '';
+                return wrap(n, body, 'px-1 inline-flex items-center gap-2.5 flex-shrink-0') + bar;
+            }).join('')}
+        </div>`;
+    bmsAnimateStepperFill(host, animate);
+}
+
+/**
+ * បន្ទាត់ត្រូវគូរនៅទីតាំងចាស់សិន រួចទើបប្តូរទៅទីតាំងថ្មីនៅស៊ុមបន្ទាប់
+ * បើមិនដូច្នេះទេ កម្មវិធីរុករកនឹងរំលងចលនា ព្រោះធាតុទើបតែបង្កើតថ្មី
+ */
+function bmsAnimateStepperFill(host, animate) {
+    const settle = () => host.querySelectorAll('[data-bms-fill]').forEach(el => {
+        el.style.width = el.dataset.bmsFill + '%';
+    });
+    if (!animate) return;
+    if (typeof requestAnimationFrame === 'function') {
+        requestAnimationFrame(() => requestAnimationFrame(settle));
+    } else {
+        setTimeout(settle, 30);
+    }
+}
+
+function bmsStepperGo(hostId, n) {
+    const cfg = BMS_STEPPER_STATE[hostId];
+    if (!cfg || typeof cfg.onStep !== 'function') return;
+    if (n > (Number(cfg.current) || 1)) return;   // មិនអាចរំលងទៅមុខទេ
+    cfg.onStep(n);
+}
+
+/** ប្តូរជំហានបច្ចុប្បន្នដោយមិនចាំបាច់កំណត់រចនាសម្ព័ន្ធឡើងវិញ */
+function bmsStepperSet(hostId, current) {
+    const cfg = BMS_STEPPER_STATE[hostId];
+    if (!cfg) return;
+    cfg.current = current;
+    bmsRenderStepper(hostId);
+}
