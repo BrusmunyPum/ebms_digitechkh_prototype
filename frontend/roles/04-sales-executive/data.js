@@ -219,7 +219,7 @@ const SE_ACTION_HINT = {
     PENDING_APPROVAL: { label: 'រង់ចាំការអនុម័ត', tone: 'amber', cta: '' },
     REJECTED: { label: 'ត្រូវកែតាមមតិអ្នកគ្រប់គ្រង', tone: 'rose', cta: 'edit' },
     APPROVED: { label: 'ត្រូវផ្ញើជូនអតិថិជន', tone: 'sky', cta: 'send' },
-    ACCEPTED_BY_CUSTOMER: { label: 'អតិថិជនព្រមព្រៀង — ត្រូវបំប្លែង', tone: 'emerald', cta: 'convert' }
+    ACCEPTED_BY_CUSTOMER: { label: 'អតិថិជនបានយល់ព្រម ត្រូវបំប្លែង', tone: 'emerald', cta: 'convert' }
 };
 
 function quotesNeedingAction(limit) {

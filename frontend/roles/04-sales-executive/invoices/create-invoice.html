@@ -197,7 +197,7 @@
             const overLimit = paymentTerms > 0 && after > cust.creditLimit;
 
             if (!sourceQuoteId && needsManagerApproval()) {
-                return showToast(`ការបញ្ចុះតម្លៃ ${fmtPercent(totals.discountPercent)} លើសដែនកម្រិត ${fmtPercent(DISCOUNT_SELF_LIMIT)} — សូមបង្កើតជាសម្រង់តម្លៃ ដើម្បីសុំការអនុម័តជាមុនសិន`, 'error');
+                return showToast(`ការបញ្ចុះតម្លៃ ${fmtPercent(totals.discountPercent)} លើសដែនកម្រិត ${fmtPercent(DISCOUNT_SELF_LIMIT)} ដូច្នេះសូមបង្កើតជាសម្រង់តម្លៃ ដើម្បីសុំការអនុម័តជាមុនសិន`, 'error');
             }
 
             const ok = await showCustomConfirm({

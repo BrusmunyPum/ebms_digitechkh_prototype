@@ -210,7 +210,7 @@
             const creditExtra = cust.creditLimit
                 ? `<div class="sm-rail mt-2.5" style="height:6px"><span style="width:${card.usage}%;background-color:${usageTone}"></span></div>
                    <p class="sm-kpi-sub text-slate-500 mt-1.5">ប្រើ ${fmtPercent(card.usage, 0)} នៃ ${fmtUSD(cust.creditLimit)}</p>`
-                : '<p class="sm-kpi-sub text-slate-500 mt-1">មិនមានពិដានឥណទាន — ទូទាត់សាច់ប្រាក់</p>';
+                : '<p class="sm-kpi-sub text-slate-500 mt-1">មិនមានពិដានឥណទាន ដូច្នេះត្រូវទូទាត់ជាសាច់ប្រាក់</p>';
 
             document.getElementById('statRow').innerHTML =
                 statCard('ចំនួនការទិញសរុប', `${card.orderCount}`, 'text-slate-700',

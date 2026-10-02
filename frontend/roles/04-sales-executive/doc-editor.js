@@ -112,7 +112,7 @@ function customerCreditPanel(cust) {
             </div>
             <p class="sm-kpi-sub ${over ? 'text-rose-600 font-semibold' : 'text-slate-500'} mt-1.5">
                 ${over
-                    ? `លើសពិដានឥណទាន ${fmtUSD(after - cust.creditLimit)} — ត្រូវស្នើសុំការលើកលែងពីអ្នកគ្រប់គ្រង`
+                    ? `លើសពិដានឥណទាន ${fmtUSD(after - cust.creditLimit)} ដូច្នេះត្រូវស្នើសុំការលើកលែងពីអ្នកគ្រប់គ្រង`
                     : `ប្រើប្រាស់ ${fmtPercent(usage, 0)} · លក្ខខណ្ឌទូទាត់ ${cust.paymentTerms} ថ្ងៃ`}
             </p>
         </div>`;

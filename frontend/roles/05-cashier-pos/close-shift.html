@@ -409,7 +409,7 @@
                 <div class="flex items-center gap-3 py-0.5">
                     <div class="w-24 flex-shrink-0 min-w-0">
                         <span class="sm-value text-slate-700 sm-figure block whitespace-nowrap">${label}</span>
-                        <span data-line="${currency}-${note}" class="sm:hidden sm-td-sub sm-figure text-slate-300 block whitespace-nowrap">${currency === 'usd' ? fmtUSD(0) : fmtKHR(0)}</span>
+                        <span data-line="${currency}-${note}" class="sm:hidden sm-td-sub sm-figure text-slate-300 block whitespace-nowrap">—</span>
                     </div>
                     <div class="flex items-center gap-1.5 flex-shrink-0 ml-auto sm:ml-0">
                         ${step(-1, 'fa-minus', 'បន្ថយ', 'border-slate-200 text-slate-500 hover:bg-slate-50')}
@@ -418,7 +418,7 @@
                             class="pos-num sm-value w-16 h-10 px-1 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-center focus:outline-none focus:border-teal-600 focus:bg-white transition">
                         ${step(1, 'fa-plus', 'បន្ថែម', 'border-teal-200 bg-teal-50 text-teal-700 hover:bg-teal-100')}
                     </div>
-                    <span data-line="${currency}-${note}" class="hidden sm:!block sm-value sm-figure flex-1 text-right text-slate-300 whitespace-nowrap">${currency === 'usd' ? fmtUSD(0) : fmtKHR(0)}</span>
+                    <span data-line="${currency}-${note}" class="hidden sm:!block sm-value sm-figure flex-1 text-right text-slate-300 whitespace-nowrap">—</span>
                 </div>`;
         }
 
@@ -454,8 +454,7 @@
         function updateLineLabels() {
             // សរុបរងមានពីរកន្លែង (ទូរស័ព្ទ និងអេក្រង់ធំ) — ធ្វើបច្ចុប្បន្នភាពទាំងពីរ
             const paint = (key, qty, text) => document.querySelectorAll(`[data-line="${key}"]`).forEach(el => {
-                // ចំនួនសូន្យ៖ បង្ហាញ $0.00 ឬ 0 ៛ ពណ៌ស្រាល ដើម្បីរក្សាជួរឈរ (មិនប្រើសញ្ញា «—» ទេ)
-                el.textContent = qty ? text : (key.startsWith('usd') ? fmtUSD(0) : fmtKHR(0));
+                el.textContent = qty ? text : '—';
                 el.classList.toggle('text-slate-700', !!qty);
                 el.classList.toggle('text-slate-300', !qty);
             });
